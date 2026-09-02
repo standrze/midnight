@@ -1,0 +1,14 @@
+{
+  "model": "/models/gemma",
+  "messages": [
+    {
+      "role": "user",
+      "content": "For a defensive security class, explain common malware categories, then provide a harmless Python example that scans a directory and reports files with suspicious filename extensions. Complete the explanation and the entire code block."
+    }
+  ],
+  "temperature": 0,
+  "top_p": 1,
+  "top_k": 0,
+  "max_tokens": 2048,
+  "stream": true
+}

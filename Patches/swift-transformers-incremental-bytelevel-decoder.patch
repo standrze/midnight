@@ -1,0 +1,543 @@
+diff --git a/Sources/Tokenizers/Decoder.swift b/Sources/Tokenizers/Decoder.swift
+index 4902164..6bdc5a9 100644
+--- a/Sources/Tokenizers/Decoder.swift
++++ b/Sources/Tokenizers/Decoder.swift
+@@ -8,6 +8,166 @@
+ import Foundation
+ import Hub
+
++/// Stateful decoder for tokenizers whose output can be emitted incrementally
++/// without re-decoding the complete generated-token prefix.
++public protocol IncrementalTokenDecoder: Sendable {
++    /// Consumes one token ID and returns the stable text made available by it.
++    /// Returns `nil` while decoded text ends in a replacement character, which
++    /// may represent an incomplete UTF-8 scalar split across token boundaries.
++    mutating func append(token: Int) -> String?
++}
++
++/// Optional tokenizer capability for safe incremental decoding.
++public protocol IncrementalTokenDecoderProviding: Sendable {
++    func makeIncrementalTokenDecoder(skipSpecialTokens: Bool) -> (any IncrementalTokenDecoder)?
++}
++
++public extension IncrementalTokenDecoderProviding {
++    func makeIncrementalTokenDecoder() -> (any IncrementalTokenDecoder)? {
++        makeIncrementalTokenDecoder(skipSpecialTokens: false)
++    }
++}
++
++/// Immutable load-time lookup that removes vocabulary and byte-alphabet work
++/// from the generated-token loop.
++final class ByteLevelIncrementalDecodingTable: Sendable {
++    static let maximumDenseTokenID = 1_000_000
++    static let maximumDecodedByteCount = 32 * 1_024 * 1_024
++
++    struct Entry: Sendable {
++        static let missingLength: Int32 = -1
++        static let addedTokenLength: Int32 = -2
++
++        var offset: Int32
++        var length: Int32
++
++        static let missing = Entry(offset: 0, length: missingLength)
++        static let addedToken = Entry(offset: 0, length: addedTokenLength)
++    }
++
++    let entries: [Entry]
++    let bytes: [UTF8.CodeUnit]
++    let addedTokenLiterals: [Int: String]
++
++    init?(
++        model: any TokenizingModel,
++        tokenCount: Int,
++        addedTokens: Set<String>
++    ) {
++        guard
++            model is BPETokenizer,
++            tokenCount > 0,
++            tokenCount <= Self.maximumDenseTokenID + 1
++        else { return nil }
++
++        var entries = Array(repeating: Entry.missing, count: tokenCount)
++        var bytes: [UTF8.CodeUnit] = []
++        var literals: [Int: String] = [:]
++        bytes.reserveCapacity(tokenCount * 7)
++        literals.reserveCapacity(addedTokens.count)
++
++        for id in 0..<tokenCount {
++            guard let piece = model.convertIdToToken(id) else { continue }
++            if addedTokens.contains(piece) {
++                entries[id] = .addedToken
++                literals[id] = piece
++                continue
++            }
++
++            let offset = bytes.count
++            for character in piece {
++                guard let byte = byteDecoder[String(character)] else { return nil }
++                guard bytes.count < Self.maximumDecodedByteCount else { return nil }
++                bytes.append(byte)
++            }
++            guard offset <= Int(Int32.max), bytes.count - offset <= Int(Int32.max) else {
++                return nil
++            }
++            entries[id] = Entry(
++                offset: Int32(offset),
++                length: Int32(bytes.count - offset))
++        }
++
++        self.entries = entries
++        self.bytes = bytes
++        self.addedTokenLiterals = literals
++    }
++}
++
++/// Incremental form of an exact top-level ByteLevel decoder. It retains only
++/// the short run whose current lossy decode ends in U+FFFD; that matches the
++/// existing streaming detokenizer's incomplete-scalar suppression semantics.
++struct ByteLevelIncrementalTokenDecoder: IncrementalTokenDecoder {
++    private let table: ByteLevelIncrementalDecodingTable
++    private let skippedTokenIDs: Set<Int>
++    private var withheldText = ""
++    private var pendingBytes: [UTF8.CodeUnit] = []
++
++    init(
++        table: ByteLevelIncrementalDecodingTable,
++        skippedTokenIDs: Set<Int> = []
++    ) {
++        self.table = table
++        self.skippedTokenIDs = skippedTokenIDs
++        pendingBytes.reserveCapacity(8)
++    }
++
++    mutating func append(token: Int) -> String? {
++        // Filtering a special token removes it before decoder grouping, so it
++        // must not flush a partial ordinary-token byte sequence.
++        guard !skippedTokenIDs.contains(token) else { return unchangedOutput() }
++        guard token >= 0, token < table.entries.count else { return unchangedOutput() }
++
++        let entry = table.entries[token]
++        switch entry.length {
++        case ByteLevelIncrementalDecodingTable.Entry.missingLength:
++            return unchangedOutput()
++
++        case ByteLevelIncrementalDecodingTable.Entry.addedTokenLength:
++            guard let literal = table.addedTokenLiterals[token] else {
++                return unchangedOutput()
++            }
++            let decoded = String(decoding: pendingBytes, as: UTF8.self)
++            let prefix = withheldText.isEmpty ? decoded : withheldText + decoded
++            let text = prefix.isEmpty ? literal : prefix + literal
++            pendingBytes.removeAll(keepingCapacity: true)
++            return emitIfStable(text)
++
++        default:
++            let offset = Int(entry.offset)
++            let end = offset + Int(entry.length)
++            let bytes = table.bytes[offset..<end]
++            if pendingBytes.isEmpty, withheldText.isEmpty {
++                let text = String(decoding: bytes, as: UTF8.self)
++                guard text.last == "\u{fffd}" else { return text }
++                pendingBytes.append(contentsOf: bytes)
++                return nil
++            }
++
++            pendingBytes.append(contentsOf: bytes)
++            let decoded = String(decoding: pendingBytes, as: UTF8.self)
++            let text = withheldText.isEmpty ? decoded : withheldText + decoded
++            guard text.last != "\u{fffd}" else { return nil }
++            withheldText.removeAll(keepingCapacity: true)
++            pendingBytes.removeAll(keepingCapacity: true)
++            return text
++        }
++    }
++
++    private func unchangedOutput() -> String? {
++        withheldText.isEmpty && pendingBytes.isEmpty ? "" : nil
++    }
++
++    private mutating func emitIfStable(_ text: String) -> String? {
++        guard text.last != "\u{fffd}" else {
++            withheldText = text
++            return nil
++        }
++        withheldText.removeAll(keepingCapacity: true)
++        return text
++    }
++}
++
+ /// A protocol for decoding operations that convert tokens back to readable text.
+ ///
+ /// Decoders handle the reverse transformation of tokens into human-readable text,
+diff --git a/Sources/Tokenizers/Tokenizer.swift b/Sources/Tokenizers/Tokenizer.swift
+index c7effd7..0de2b21 100644
+--- a/Sources/Tokenizers/Tokenizer.swift
++++ b/Sources/Tokenizers/Tokenizer.swift
+@@ -475,6 +475,7 @@ public class PreTrainedTokenizer: @unchecked Sendable, Tokenizer {
+     private let tokenizerConfig: Config
+
+     private let cleanUpTokenizationSpaces: Bool
++    private let incrementalByteLevelDecodingTable: ByteLevelIncrementalDecodingTable?
+
+     /// Cache for compiled Jinja templates keyed by their literal template string
+     private var compiledChatTemplateCache: [String: Template] = [:]
+@@ -525,6 +526,26 @@ public class PreTrainedTokenizer: @unchecked Sendable, Tokenizer {
+         self.specialTokens = specialTokens
+         self.addedTokens = Set(addedTokens.keys)
+
++        let configuredTokenIDs =
++            tokenizerData["model"].vocab.dictionary(or: [:]).values.compactMap { $0.integer() }
++            + addedTokens.values
++        let uniqueConfiguredTokenIDs = Set(configuredTokenIDs)
++        let maximumDenseTokenID: Int? = {
++            guard
++                let maximum = uniqueConfiguredTokenIDs.max(),
++                maximum >= 0,
++                uniqueConfiguredTokenIDs.allSatisfy({ $0 >= 0 }),
++                maximum <= ByteLevelIncrementalDecodingTable.maximumDenseTokenID,
++                uniqueConfiguredTokenIDs.count >= (maximum + 4) / 4
++            else { return nil }
++            return maximum
++        }()
++        let incrementalByteLevelDecodingEnabled =
++            tokenizerConfig.cleanUpTokenizationSpaces.boolean() == false
++            && tokenizerData["decoder"].type.string() == DecoderType.ByteLevel.rawValue
++            && tokenizerData["model"].type.string() == "BPE"
++            && tokenizerData["model"].byteFallback.boolean() == false
++
+         preTokenizer = PreTokenizerFactory.fromConfig(config: tokenizerData["preTokenizer"])
+         normalizer = NormalizerFactory.fromConfig(config: tokenizerData["normalizer"])
+         postProcessor = PostProcessorFactory.fromConfig(config: tokenizerData["postProcessor"])
+@@ -532,7 +553,25 @@ public class PreTrainedTokenizer: @unchecked Sendable, Tokenizer {
+         cleanUpTokenizationSpaces = tokenizerConfig.cleanUpTokenizationSpaces.boolean(or: true)
+         self.tokenizerConfig = tokenizerConfig
+
+-        model = try TokenizerModel.from(tokenizerConfig: tokenizerConfig, tokenizerData: tokenizerData, addedTokens: addedTokens, strict: strict)
++        let model = try TokenizerModel.from(
++            tokenizerConfig: tokenizerConfig,
++            tokenizerData: tokenizerData,
++            addedTokens: addedTokens,
++            strict: strict)
++        self.model = model
++        incrementalByteLevelDecodingTable =
++            if
++                incrementalByteLevelDecodingEnabled,
++                decoder is ByteLevelDecoder,
++                let maximumDenseTokenID
++            {
++                ByteLevelIncrementalDecodingTable(
++                    model: model,
++                    tokenCount: maximumDenseTokenID + 1,
++                    addedTokens: self.addedTokens)
++            } else {
++                nil
++            }
+     }
+
+     private func compiledTemplate(for templateString: String) throws -> Template {
+@@ -836,6 +875,20 @@ public class PreTrainedTokenizer: @unchecked Sendable, Tokenizer {
+     }
+ }
+
++extension PreTrainedTokenizer: IncrementalTokenDecoderProviding {
++    public func makeIncrementalTokenDecoder(
++        skipSpecialTokens: Bool
++    ) -> (any IncrementalTokenDecoder)? {
++        // Cleanup and decoder sequences may rewrite earlier text. Restrict the
++        // capability to the append-safe configuration implemented above.
++        guard let incrementalByteLevelDecodingTable else { return nil }
++        let skippedTokenIDs = skipSpecialTokens ? Set(specialTokens.values) : []
++        return ByteLevelIncrementalTokenDecoder(
++            table: incrementalByteLevelDecodingTable,
++            skippedTokenIDs: skippedTokenIDs)
++    }
++}
++
+ // MARK: - Building
+
+ /// A namespace for automatically creating appropriate tokenizer instances.
+diff --git a/Tests/TokenizersTests/IncrementalByteLevelDecoderTests.swift b/Tests/TokenizersTests/IncrementalByteLevelDecoderTests.swift
+new file mode 100644
+index 0000000..6e68edf
+--- /dev/null
++++ b/Tests/TokenizersTests/IncrementalByteLevelDecoderTests.swift
+@@ -0,0 +1,279 @@
++// Copyright © 2026 Hugging Face
++
++import Foundation
++import Hub
++import Testing
++
++@testable import Tokenizers
++
++@Suite("Incremental ByteLevel decoder")
++struct IncrementalByteLevelDecoderTests {
++    private struct AddedToken {
++        var id: Int
++        var content: String
++        var special: Bool
++    }
++
++    private func encoded(_ bytes: [UTF8.CodeUnit]) -> String {
++        bytes.map { byteEncoder[$0]! }.joined()
++    }
++
++    private func config(_ object: [String: Any]) throws -> Config {
++        let data = try JSONSerialization.data(withJSONObject: object)
++        return try JSONDecoder().decode(Config.self, from: data)
++    }
++
++    private func makeTokenizer(
++        _ pieces: [Int: String],
++        addedTokens: [AddedToken] = [],
++        cleanup: Bool? = false,
++        byteFallback: Bool? = false,
++        decoder: [String: Any]? = ["type": "ByteLevel"]
++    ) throws -> PreTrainedTokenizer {
++        var tokenizerConfig: [String: Any] = [
++            "tokenizer_class": "PreTrainedTokenizerFast"
++        ]
++        if let cleanup {
++            tokenizerConfig["clean_up_tokenization_spaces"] = cleanup
++        }
++
++        var model: [String: Any] = [
++            "type": "BPE",
++            "vocab": Dictionary(uniqueKeysWithValues: pieces.map { ($0.value, $0.key) }),
++            "merges": [[String]](),
++        ]
++        if let byteFallback {
++            model["byte_fallback"] = byteFallback
++        }
++
++        var tokenizerData: [String: Any] = [
++            "model": model,
++            "added_tokens": addedTokens.map {
++                [
++                    "id": $0.id,
++                    "content": $0.content,
++                    "single_word": false,
++                    "lstrip": false,
++                    "rstrip": false,
++                    "normalized": false,
++                    "special": $0.special,
++                ] as [String: Any]
++            },
++        ]
++        if let decoder {
++            tokenizerData["decoder"] = decoder
++        }
++        return try PreTrainedTokenizer(
++            tokenizerConfig: config(tokenizerConfig),
++            tokenizerData: config(tokenizerData))
++    }
++
++    private func makeDecoder(
++        _ pieces: [Int: String],
++        addedTokens: [AddedToken] = [],
++        skipSpecialTokens: Bool = false
++    ) throws -> any IncrementalTokenDecoder {
++        let tokenizer = try makeTokenizer(pieces, addedTokens: addedTokens)
++        return try #require(
++            tokenizer.makeIncrementalTokenDecoder(
++                skipSpecialTokens: skipSpecialTokens))
++    }
++
++    @Test("Emits stable ASCII and buffers an incomplete scalar run")
++    func splitUTF8() throws {
++        let emoji = Array("😀".utf8)
++        let pieces = [
++            0: encoded(Array("A".utf8) + Array(emoji.prefix(2))),
++            1: encoded(Array(emoji.dropFirst(2))),
++            2: encoded(Array("B".utf8)),
++        ]
++        var decoder = try makeDecoder(pieces)
++
++        // Existing streaming behavior delays the stable "A" while the same
++        // decoded chunk still ends in U+FFFD.
++        #expect(decoder.append(token: 0) == nil)
++        #expect(decoder.append(token: 1) == "A😀")
++        #expect(decoder.append(token: 2) == "B")
++    }
++
++    @Test("Matches complete UTF-8 at every token split")
++    func everyScalarSplit() throws {
++        for scalar in ["é", "中", "😀"] {
++            let bytes = Array(scalar.utf8)
++            for split in 1..<bytes.count {
++                let pieces = [
++                    0: encoded(Array(bytes.prefix(split))),
++                    1: encoded(Array(bytes.dropFirst(split))),
++                ]
++                var decoder = try makeDecoder(pieces)
++                #expect(decoder.append(token: 0) == nil)
++                #expect(decoder.append(token: 1) == scalar)
++            }
++        }
++    }
++
++    @Test("Copied decoder values keep independent UTF-8 state")
++    func copiedDecoderStateIsIndependent() throws {
++        let bytes = Array("😀".utf8)
++        let pieces = [
++            0: encoded(Array(bytes.prefix(2))),
++            1: encoded(Array(bytes.dropFirst(2))),
++        ]
++        var first = try makeDecoder(pieces)
++        var second = first
++
++        #expect(first.append(token: 0) == nil)
++        #expect(second.append(token: 1) == nil)
++        #expect(first.append(token: 1) == "😀")
++    }
++
++    @Test("Concatenated chunks preserve grapheme extensions across tokens")
++    func graphemeExtensionsAcrossTokens() throws {
++        for pair in [("a", "\u{0301}"), ("\r", "\n"), ("👩", "\u{200d}💻")] {
++            let pieces = [
++                0: encoded(Array(pair.0.utf8)),
++                1: encoded(Array(pair.1.utf8)),
++            ]
++            let tokenizer = try makeTokenizer(pieces)
++            var decoder = try #require(tokenizer.makeIncrementalTokenDecoder())
++            let streamed = (decoder.append(token: 0) ?? "") + (decoder.append(token: 1) ?? "")
++
++            #expect(streamed == tokenizer.decode(tokens: [0, 1]))
++        }
++    }
++
++    @Test("Emits definitively invalid UTF-8 with standard replacement behavior")
++    func invalidUTF8() throws {
++        let pieces = [
++            0: encoded([0xE2]),
++            1: encoded([0x28]),
++            2: encoded([0xA1]),
++            3: encoded([0x78]),
++        ]
++        var decoder = try makeDecoder(pieces)
++
++        #expect(decoder.append(token: 0) == nil)
++        #expect(decoder.append(token: 1) == String(decoding: [0xE2, 0x28], as: UTF8.self))
++        #expect(decoder.append(token: 2) == nil)
++        #expect(decoder.append(token: 3) == String(decoding: [0xA1, 0x78], as: UTF8.self))
++    }
++
++    @Test("Added token flushes pending bytes before its literal text")
++    func addedTokenBoundary() throws {
++        let special = "<tool_✓>"
++        let pieces = [0: encoded([0xE2]), 1: special]
++        var decoder = try makeDecoder(
++            pieces,
++            addedTokens: [AddedToken(id: 1, content: special, special: false)])
++
++        #expect(decoder.append(token: 0) == nil)
++        #expect(
++            decoder.append(token: 1)
++                == String(decoding: [0xE2], as: UTF8.self) + special)
++    }
++
++    @Test("Skipped special token does not split a UTF-8 scalar")
++    func skippedSpecialToken() throws {
++        let euro = Array("€".utf8)
++        let special = "<eos>"
++        let pieces = [
++            0: encoded([euro[0]]),
++            1: special,
++            2: encoded(Array(euro.dropFirst())),
++        ]
++        var decoder = try makeDecoder(
++            pieces,
++            addedTokens: [AddedToken(id: 1, content: special, special: true)],
++            skipSpecialTokens: true)
++
++        #expect(decoder.append(token: 0) == nil)
++        #expect(decoder.append(token: 1) == nil)
++        #expect(decoder.append(token: 2) == "€")
++    }
++
++    @Test("Unknown token ID is ignored without flushing pending bytes")
++    func unknownTokenID() throws {
++        let euro = Array("€".utf8)
++        let pieces = [
++            0: encoded([euro[0]]),
++            2: encoded(Array(euro.dropFirst())),
++        ]
++        var decoder = try makeDecoder(pieces)
++
++        #expect(decoder.append(token: 0) == nil)
++        #expect(decoder.append(token: 1) == nil)
++        #expect(decoder.append(token: 2) == "€")
++    }
++
++    @Test("Added token ending in a literal replacement character stays withheld")
++    func addedTokenEndingInReplacementCharacter() throws {
++        let literal = "<literal>\u{fffd}"
++        let pieces = [
++            0: encoded(Array("A".utf8)),
++            1: literal,
++            2: encoded(Array("B".utf8)),
++        ]
++        var decoder = try makeDecoder(
++            pieces,
++            addedTokens: [AddedToken(id: 1, content: literal, special: false)])
++
++        #expect(decoder.append(token: 0) == "A")
++        #expect(decoder.append(token: 1) == nil)
++        #expect(decoder.append(token: -1) == nil)
++        #expect(decoder.append(token: 2) == literal + "B")
++    }
++
++    @Test("Ignored IDs without pending replacement text emit an empty chunk")
++    func ignoredIDWithoutPendingText() throws {
++        var decoder = try makeDecoder([0: encoded(Array("A".utf8))])
++
++        #expect(decoder.append(token: -1) == "")
++        #expect(decoder.append(token: 1) == "")
++    }
++
++    @Test("Factory is fail-closed outside the certified configuration")
++    func factoryGuards() throws {
++        let pieces = [0: encoded(Array("hello .".utf8))]
++
++        #expect(try makeTokenizer(pieces).makeIncrementalTokenDecoder() != nil)
++        #expect(
++            try makeTokenizer(pieces, cleanup: true).makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer(pieces, cleanup: nil).makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer(pieces, byteFallback: true).makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer(pieces, byteFallback: nil).makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer(
++                pieces,
++                decoder: [
++                    "type": "Sequence",
++                    "decoders": [["type": "ByteLevel"]],
++                ]).makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer(pieces, decoder: ["type": "ByteFallback"])
++                .makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer(pieces, decoder: nil).makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer([-1: encoded(Array("negative".utf8))])
++                .makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer([999_999: encoded(Array("sparse".utf8))])
++                .makeIncrementalTokenDecoder() == nil)
++        #expect(
++            try makeTokenizer([1_000_001: encoded(Array("oversized".utf8))])
++                .makeIncrementalTokenDecoder() == nil)
++    }
++
++    @Test("Cleanup-disabled output stays byte-exact")
++    func cleanupDisabled() throws {
++        let text = "Hello ."
++        let tokenizer = try makeTokenizer([0: encoded(Array(text.utf8))])
++        var decoder = try #require(tokenizer.makeIncrementalTokenDecoder())
++
++        #expect(decoder.append(token: 0) == text)
++        #expect(tokenizer.decode(tokens: [0]) == text)
++    }
++}

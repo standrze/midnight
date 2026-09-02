@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+SWIFT_PATCH="$ROOT/Patches/mlx-swift-clear-streams.patch"
+C_PATCH="$ROOT/Patches/mlx-c-clear-streams.patch"
+GLOBAL_PATCH="$ROOT/Patches/mlx-global-stream-cleanup.patch"
+C_GLOBAL_PATCH="$ROOT/Patches/mlx-c-clear-global-streams.patch"
+PREPARE="$ROOT/prepare-dependencies.sh"
+QUANTIZER="$ROOT/Sources/LagunaQuantizer/main.swift"
+RUNTIME_CLEANUP="$ROOT/Sources/ModelRunnerCore/MLXRuntimeCleanup.swift"
+RUNNER_MAIN="$ROOT/Sources/ModelRunner/main.swift"
+
+grep -Fq 'public func clearStreams()' "$SWIFT_PATCH"
+grep -Fq 'mlx_clear_streams()' "$SWIFT_PATCH"
+grep -Fq 'extern "C" int mlx_clear_streams(void)' "$C_PATCH"
+grep -Fq 'mlx::core::clear_streams();' "$C_PATCH"
+grep -Fq 'void clear_global_streams();' "$GLOBAL_PATCH"
+grep -Fq 'cu::get_global_command_encoders().clear();' "$GLOBAL_PATCH"
+grep -Fq 'metal::get_global_command_encoders().clear();' "$GLOBAL_PATCH"
+grep -Fq 'mlx::core::gpu::clear_global_streams();' "$C_GLOBAL_PATCH"
+grep -Fq '"mlx-swift clear streams API"' "$PREPARE"
+grep -Fq '"mlx-c clear streams API"' "$PREPARE"
+grep -Fq '"mlx global stream terminal cleanup"' "$PREPARE"
+grep -Fq '"mlx-c clear global streams API"' "$PREPARE"
+grep -Fq 'extern "C" int mlx_clear_streams(void)' "$PREPARE"
+grep -Fq 'mlx::core::gpu::clear_global_streams();' "$PREPARE"
+grep -Fq 'defer { clearStreams() }' "$QUANTIZER"
+grep -Fq 'clearStreams()' "$RUNTIME_CLEANUP"
+grep -Fq 'defer { clearModelRunnerMLXStreams() }' "$RUNNER_MAIN"
+
+echo "MLX clear-streams patch checks passed."

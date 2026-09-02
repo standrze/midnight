@@ -1,0 +1,267 @@
+diff --git a/Libraries/MLXLLM/Models/Mixtral.swift b/Libraries/MLXLLM/Models/Mixtral.swift
+index bc399961..9df26b81 100644
+--- a/Libraries/MLXLLM/Models/Mixtral.swift
++++ b/Libraries/MLXLLM/Models/Mixtral.swift
+@@ -138,16 +138,32 @@ class MixtralSparseMoeBlock: Module {
+         let gates = gate(x)
+ 
+         let k = topK
+-        let inds = MLX.stopGradient(MLX.argPartition(-gates, kth: k - 1, axis: -1)[.ellipsis, ..<k])
++        let inds: MLXArray
++        let selectedLogits: MLXArray
++        if shouldUseFusedMixtralRouter(gates, k: k, isTraining: training) {
++            (inds, selectedLogits) = fusedRouterTopK(
++                selection: gates, values: gates, k: k,
++                order: .descending)
++        } else {
++            inds = MLX.stopGradient(
++                MLX.argPartition(-gates, kth: k - 1, axis: -1)[.ellipsis, ..<k])
++            selectedLogits = MLX.takeAlong(gates, inds, axis: -1)
++        }
+         // Mixtral applies the softmax over the *selected* expert logits (after top-k),
+         // unlike the softmax-then-select ordering used by e.g. Qwen3MoE.
+-        let scores = MLX.softmax(MLX.takeAlong(gates, inds, axis: -1), axis: -1, precise: true)
++        let scores = MLX.softmax(selectedLogits, axis: -1, precise: true)
+ 
+         let y = switchMLP(x, inds)
+         return weightedExpertSum(y, scores)
+     }
+ }
+ 
++func shouldUseFusedMixtralRouter(
++    _ gates: MLXArray, k: Int, isTraining: Bool
++) -> Bool {
++    !isTraining && supportsFusedRouterTopK(gates, k: k)
++}
++
+ class MixtralDecoderLayer: Module {
+     @ModuleInfo(key: "self_attn") var selfAttn: MixtralAttention
+     @ModuleInfo(key: "block_sparse_moe") var blockSparseMoe: MixtralSparseMoeBlock
+diff --git a/Libraries/MLXLMCommon/MoERouterTopK.swift b/Libraries/MLXLMCommon/MoERouterTopK.swift
+new file mode 100644
+index 00000000..061aa8c6
+--- /dev/null
++++ b/Libraries/MLXLMCommon/MoERouterTopK.swift
+@@ -0,0 +1,112 @@
++import MLX
++
++// MARK: - Fused router top-k
++
++/// One-kernel replacement for the decode router tail. Generic MLX router code
++/// fully sorts all experts to name K winners, then gathers their score values.
++/// For one decode row, a single threadgroup avoids those serial dispatches.
++private let routerTopKSource = """
++    uint row = threadgroup_position_in_grid.y;
++    uint t = thread_position_in_threadgroup.x;
++
++    threadgroup ulong sk[E_];
++    threadgroup float top_v[K_];
++
++    float v = static_cast<float>(selection[row * E_ + t]);
++    uint b = as_type<uint>(v);
++    // Float comparisons treat -0 and +0 as equal. Normalize both encodings to
++    // +0 before the monotonic float-to-uint transform used for ranking.
++    b = ((b & 0x7FFFFFFFu) == 0u) ? 0u : b;
++    uint mono = isnan(v) ? 0xFFFFFFFFu : (b ^ ((uint)(((int)b) >> 31) | 0x80000000u));
++    uint tie = DESCENDING_ ? (0xFFFFFFFFu - t) : t;
++    ulong key = (((ulong)mono) << 32) | (ulong)tie;
++    sk[t] = key;
++    threadgroup_barrier(mem_flags::mem_threadgroup);
++
++    int above = 0;
++    for (uint j = 0; j < E_; ++j) {
++        above += (sk[j] > key) ? 1 : 0;
++    }
++    if (above < K_) {
++        uint slot = DESCENDING_ ? (uint)above : (uint)(K_ - 1 - above);
++        top_v[slot] = static_cast<float>(values[row * E_ + t]);
++        inds[row * K_ + slot] = t;
++    }
++    threadgroup_barrier(mem_flags::mem_threadgroup);
++
++    if (t == 0) {
++        for (int q = 0; q < K_; ++q) {
++            scores[row * K_ + q] = static_cast<T>(top_v[q]);
++        }
++    }
++    """
++
++private final class RouterTopKKernel: Sendable {
++    static let shared = RouterTopKKernel()
++    let kernel: MLXFast.MLXFastKernel
++
++    private init() {
++        kernel = MLXFast.metalKernel(
++            name: "router_topk_norm",
++            inputNames: ["selection", "values"],
++            outputNames: ["inds", "scores"],
++            source: routerTopKSource
++        )
++    }
++}
++
++/// Metal's threads-per-threadgroup ceiling. The fused router uses one thread
++/// per expert, so larger routers retain the generic MLX path.
++package let maxFusedRouterExperts = 1024
++
++/// Winner order produced by the generic router expression being replaced.
++package enum FusedRouterTopKOrder {
++    case ascending
++    case descending
++}
++
++/// Whether a router tensor can use the fused single-row Metal path.
++package func supportsFusedRouterTopK(_ selection: MLXArray, k: Int) -> Bool {
++    #if os(macOS)
++        guard Device.defaultDevice().deviceType == .gpu else { return false }
++        let e = selection.dim(-1)
++        return selection.size == e && e <= maxFusedRouterExperts && k > 0 && k <= e
++            && (selection.dtype == .float16 || selection.dtype == .bfloat16
++                || selection.dtype == .float32)
++    #else
++        return false
++    #endif
++}
++
++/// Fused top-k selection and selected-value gather. `selection` determines
++/// winners while `values` supplies their returned scores.
++package func fusedRouterTopK(
++    selection: MLXArray,
++    values: MLXArray,
++    k: Int,
++    order: FusedRouterTopKOrder
++) -> (indices: MLXArray, scores: MLXArray) {
++    precondition(selection.shape == values.shape, "router selection/value shapes must match")
++    precondition(selection.dtype == values.dtype, "router selection/value dtypes must match")
++
++    let e = selection.dim(-1)
++    precondition(e <= maxFusedRouterExperts, "fused router exceeds Metal threadgroup limit")
++    precondition(k > 0 && k <= e, "invalid fused router top-k")
++
++    let rows = selection.size / e
++    let shape = Array(selection.shape.dropLast()) + [k]
++    let out = RouterTopKKernel.shared.kernel(
++        [selection, values],
++        template: [
++            ("T", selection.dtype),
++            ("E_", e),
++            ("K_", k),
++            ("DESCENDING_", order == .descending ? 1 : 0),
++        ],
++        grid: (e, rows, 1),
++        threadGroup: (e, 1, 1),
++        outputShapes: [shape, shape],
++        outputDTypes: [.uint32, values.dtype]
++    )
++    return (out[0], out[1])
++}
+diff --git a/Tests/MLXLMTests/MixtralFusedRouterTests.swift b/Tests/MLXLMTests/MixtralFusedRouterTests.swift
+new file mode 100644
+index 00000000..be438347
+--- /dev/null
++++ b/Tests/MLXLMTests/MixtralFusedRouterTests.swift
+@@ -0,0 +1,104 @@
++import Foundation
++import MLX
++import MLXLMCommon
++import XCTest
++
++@testable import MLXLLM
++
++final class MixtralFusedRouterTests: XCTestCase {
++    #if os(macOS)
++        func testFusedDescendingRouterMatchesGenericMixtralExpression() {
++            let logits = MLXArray([
++                Float(0.25), -0.5, 0.75, 1.0, 1.0, 0.125, 0.625, -0.875,
++            ]).reshaped(1, 1, 8)
++            let k = 2
++            let genericIndices = MLX.argPartition(
++                -logits, kth: k - 1, axis: -1)[.ellipsis, ..<k]
++            let genericValues = MLX.takeAlong(logits, genericIndices, axis: -1)
++            let fused = fusedRouterTopK(
++                selection: logits, values: logits, k: k,
++                order: .descending)
++            eval(genericIndices, genericValues, fused.indices, fused.scores)
++
++            XCTAssertEqual(
++                fused.indices.reshaped(-1).asArray(UInt32.self),
++                genericIndices.reshaped(-1).asArray(UInt32.self))
++            XCTAssertEqual(
++                fused.scores.reshaped(-1).asArray(Float.self).map(\.bitPattern),
++                genericValues.reshaped(-1).asArray(Float.self).map(\.bitPattern))
++        }
++
++        func testFusedRouterRanksZeroAboveNegativeLogits() {
++            let logits = MLXArray([Float(0), -1, -2]).reshaped(1, 1, 3)
++            let k = 2
++            let genericIndices = MLX.argPartition(
++                -logits, kth: k - 1, axis: -1)[.ellipsis, ..<k]
++            let genericValues = MLX.takeAlong(logits, genericIndices, axis: -1)
++            let fused = fusedRouterTopK(
++                selection: logits, values: logits, k: k, order: .descending)
++            eval(genericIndices, genericValues, fused.indices, fused.scores)
++
++            XCTAssertEqual(
++                fused.indices.reshaped(-1).asArray(UInt32.self),
++                genericIndices.reshaped(-1).asArray(UInt32.self))
++            XCTAssertEqual(
++                fused.scores.reshaped(-1).asArray(Float.self).map(\.bitPattern),
++                genericValues.reshaped(-1).asArray(Float.self).map(\.bitPattern))
++        }
++
++        func testFusedRouterIsDisabledOnCPU() {
++            Device.withDefaultDevice(.cpu) {
++                let logits = MLXArray([Float(1), 0, -1]).reshaped(1, 1, 3)
++                XCTAssertFalse(supportsFusedRouterTopK(logits, k: 2))
++            }
++        }
++
++        func testMixtralRouterGateIsInferenceOnlyAndRejectsUnsupportedDTypes() {
++            let float64 = Device.withDefaultDevice(.cpu) {
++                MLXArray([Double(1), 0, -1]).reshaped(1, 1, 3)
++            }
++            Device.withDefaultDevice(.gpu) {
++                let logits = MLXArray([Float(1), 0, -1]).reshaped(1, 1, 3)
++                XCTAssertTrue(shouldUseFusedMixtralRouter(logits, k: 2, isTraining: false))
++                XCTAssertFalse(shouldUseFusedMixtralRouter(logits, k: 2, isTraining: true))
++                XCTAssertFalse(shouldUseFusedMixtralRouter(float64, k: 2, isTraining: false))
++            }
++        }
++
++        func testFusedRouterMatchesGenericAcrossDeterministicFixtures() {
++            var state: UInt64 = 0x5EED_2026
++            for fixture in 0 ..< 32 {
++                var values = (0 ..< 8).map { _ -> Float in
++                    state = state &* 6_364_136_223_846_793_005 &+ 1
++                    let sample = Int32(truncatingIfNeeded: state >> 32)
++                    return Float(sample) / Float(Int32.max)
++                }
++                if fixture.isMultiple(of: 4) {
++                    values[0] = 0
++                    values[1] = -0.0
++                }
++                if fixture.isMultiple(of: 5) {
++                    values[2] = values[3]
++                }
++
++                let logits = MLXArray(values).reshaped(1, 1, 8)
++                let k = 2
++                let genericIndices = MLX.argPartition(
++                    -logits, kth: k - 1, axis: -1)[.ellipsis, ..<k]
++                let genericValues = MLX.takeAlong(logits, genericIndices, axis: -1)
++                let fused = fusedRouterTopK(
++                    selection: logits, values: logits, k: k, order: .descending)
++                eval(genericIndices, genericValues, fused.indices, fused.scores)
++
++                XCTAssertEqual(
++                    fused.indices.reshaped(-1).asArray(UInt32.self),
++                    genericIndices.reshaped(-1).asArray(UInt32.self),
++                    "indices diverged for fixture \(fixture)")
++                XCTAssertEqual(
++                    fused.scores.reshaped(-1).asArray(Float.self).map(\.bitPattern),
++                    genericValues.reshaped(-1).asArray(Float.self).map(\.bitPattern),
++                    "values diverged for fixture \(fixture)")
++            }
++        }
++    #endif
++}

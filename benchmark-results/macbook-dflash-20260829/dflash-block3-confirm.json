@@ -1,0 +1,124 @@
+{
+  "created_at" : "2026-08-29T05:30:58Z",
+  "dflash_block_size" : 3,
+  "dflash_model_path" : "/path/to/models/Laguna-XS-2.1-DFlash-BF16-target-MLX-Q4R8-ScaleSearch",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 7,
+  "median_decode_tokens_per_second" : 128.74883554859457,
+  "median_prompt_tokens_per_second" : 937.6300358526391,
+  "model_path" : "/path/to/models/Laguna-XS-2.1-MLX-Q4R8-ScaleSearch-LS2",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 512,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 935.1214966458674,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 136.87010816294443
+      },
+      "sequence" : 1
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 932.3298142937535,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 139.03367641408605
+      },
+      "sequence" : 2
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 965.0615297688047,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 129.40858158678125
+      },
+      "sequence" : 3
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 907.8679584411029,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 128.74883554859457
+      },
+      "sequence" : 4
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 944.5688108439402,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 126.4763702354045
+      },
+      "sequence" : 5
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 951.2122062897415,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 126.42408979187022
+      },
+      "sequence" : 6
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 937.6300358526391,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 123.66384932647318
+      },
+      "sequence" : 7
+    }
+  ],
+  "warmup_count" : 1,
+  "warmups" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient load balancing across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy ones, leading to better resource utilization and improved performance in scenarios with irregular task distribution.\n\nThe lock-free variant of this scheduler eliminates traditional mutex-based synchronization, instead relying on atomic operations and careful memory ordering to ensure correctness while maximizing parallelism. This approach is particularly beneficial in high-contention scenarios where lock contention would otherwise become a bottleneck.\n\n## Core Concepts and Design Decisions\n\n### Work-Stealing Algorithm Overview\n\nThe fundamental principle of work-stealing involves:\n\n1. **Local Deques**: Each worker maintains a double-ended queue (deque) for its tasks\n2. **Push/Pop Operations**: Workers add and remove tasks from the same end (typically the bottom)\n3. **Steal Operations**: Idle workers attempt to steal from the top of other workers' deques\n4. **Lock-Free Synchronization**: Atomic operations replace traditional locks\n\n### Memory Ordering Considerations\n\nSwift's concurrency model and the underlying C++ `std::atomic` operations require careful consideration of memory ordering:\n\n- **Relaxed Ordering**: For operations that don't require synchronization with other threads\n- **Acquire Ordering**: For reads that need to see writes from other threads\n- **Release Ordering**: For writes that need to be visible to other threads\n- **Acq-Rel Ordering**: Combines both acquire and release semantics\n\n## Implementation Details\n\n### Task Representation\n\nLet's begin by defining the core task structure:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\nclass Task {\n    let id: UInt64\n    let priority: Int32\n    let function: () -> Void\n    \n    init(id: UInt64, priority: Int32 = 0, function: @escaping () -> Void) {\n        self.id = id\n        self.priority = priority\n        self.function = function\n    }\n    \n    func execute() {\n        function()\n    }\n}\n\n// MARK: - Task Queue Node\nfinal class TaskNode {\n    let task: Task\n    var next: TaskNode?\n    \n    init(task: Task) {\n        self.task = task\n        self.next = nil\n    }\n}\n```\n\n",
+      "metrics" : {
+        "accepted_draft_tokens" : 263,
+        "generation_token_count" : 512,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 280.9317556728966,
+        "proposed_draft_tokens" : 495,
+        "stop_reason" : "length",
+        "tokens_per_second" : 116.13413992780538
+      },
+      "sequence" : 0
+    }
+  ]
+}

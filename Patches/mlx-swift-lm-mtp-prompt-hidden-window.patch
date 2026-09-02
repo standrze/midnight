@@ -1,0 +1,60 @@
+diff --git a/Libraries/MLXLMCommon/MTPDrafterModel.swift b/Libraries/MLXLMCommon/MTPDrafterModel.swift
+index 0700c605..97270617 100644
+--- a/Libraries/MLXLMCommon/MTPDrafterModel.swift
++++ b/Libraries/MLXLMCommon/MTPDrafterModel.swift
+@@ -44,6 +44,17 @@ public protocol MTPDrafterModel: BaseLanguageModel {
+     /// probability-ratio acceptance sampler is available.
+     var requiresGreedySampling: Bool { get }
+ 
++    /// Maximum suffix of prompt hidden states needed to initialize the
++    /// drafter's private state. `nil` requires one row per prompt token.
++    /// Sliding-window drafters can bound this to avoid retaining target
++    /// features that no proposal can attend to.
++    var promptHiddenStateWindow: Int? { get }
++
++    /// Whether the target may use its normal chunked prefill while collecting
++    /// the hidden states required by this drafter. Drafters that require a
++    /// full aligned prompt tensor leave this false.
++    var supportsChunkedPromptPrefill: Bool { get }
++
+     /// K-step drafting from a constant position.
+     ///
+     /// Returns the proposed tokens as a `[B, blockSize - 1]` MLXArray. The
+@@ -89,6 +100,8 @@ extension MTPDrafterModel {
+     public var requiresSharedTargetKV: Bool { true }
+     public var requiresPromptPrefill: Bool { false }
+     public var requiresGreedySampling: Bool { false }
++    public var promptHiddenStateWindow: Int? { nil }
++    public var supportsChunkedPromptPrefill: Bool { false }
+ }
+ 
+ /// Target-side capability for rewinding an in-place speculative verify pass.
+diff --git a/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift b/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
+index 2f5ebc7c..524241a7 100644
+--- a/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
++++ b/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
+@@ -167,7 +167,7 @@ public struct MTPSpeculativeTokenIterator: TokenIteratorProtocol {
+ 
+         let prefillStart = Date.timeIntervalSinceReferenceDate
+         var mtpPrefill = parameters.prefill
+-        if drafter.requiresPromptPrefill {
++        if drafter.requiresPromptPrefill && !drafter.supportsChunkedPromptPrefill {
+             // The target must expose one hidden row per prompt token so a
+             // private Qwen MTP cache can be filled with the shifted prompt.
+             // Until model-specific chunk aggregation is available, use the
+@@ -334,10 +334,13 @@ public struct MTPSpeculativeTokenIterator: TokenIteratorProtocol {
+             let targetHidden = mainState?[mtpLastHiddenStatesKey]
+         {
+             let promptLength = input.text.tokens.dim(-1)
+-            guard targetHidden.dim(1) >= promptLength else {
++            let requiredHiddenLength = Swift.min(
++                promptLength, drafter.promptHiddenStateWindow ?? promptLength)
++            guard targetHidden.dim(1) >= requiredHiddenLength else {
+                 switchToPassthrough(
+                     reason:
+-                        "target did not emit full prompt hidden states for Qwen MTP prefill"
++                        "target emitted \(targetHidden.dim(1)) prompt hidden states; "
++                        + "drafter requires \(requiredHiddenLength)"
+                 )
+                 return
+             }

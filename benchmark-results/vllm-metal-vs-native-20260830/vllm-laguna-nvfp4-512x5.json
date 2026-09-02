@@ -1,0 +1,98 @@
+{
+  "host": "127.0.0.1",
+  "median_decode_tokens_per_second": 82.4261461280636,
+  "median_e2e_tokens_per_second": 81.37521571576524,
+  "median_ttft_milliseconds": 90.21154200308956,
+  "model": "laguna-nvfp4",
+  "port": 18082,
+  "prompt": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens": 512,
+  "trials": [
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient task distribution across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy workers' queues, achieving better load balancing and improved throughput.\n\nThe lock-free nature of this implementation ensures that threads can make progress without blocking each other, reducing contention and improving scalability on multi-core systems. This tutorial will guide you through building a complete, production-ready lock-free work-stealing scheduler in Swift.\n\n## Core Concepts and Design Decisions\n\n### Why Lock-Free?\n\nLock-free data structures provide several advantages:\n- **No deadlocks**: Since no locks are acquired, deadlock is impossible\n- **No priority inversion**: Threads cannot be blocked indefinitely by lower-priority threads\n- **Better scalability**: Reduced contention allows better performance on many-core systems\n- **Fairness**: All threads have equal opportunity to make progress\n\nHowever, lock-free programming comes with challenges:\n- **ABA problem**: Pointers can be reused, causing incorrect comparisons\n- **Memory reclamation**: Safe deletion of nodes without garbage collection\n- **Complex reasoning**: Correctness is harder to verify\n\n### Work-Stealing Algorithm Overview\n\nOur scheduler will implement the classic work-stealing algorithm:\n\n1. Each worker maintains a double-ended queue (deque) of tasks\n2. Workers prefer to pop tasks from their own deque (LIFO for stealing, FIFO for execution)\n3. When a worker runs out of tasks, it steals from another worker's deque\n4. Stealing is done from the opposite end to minimize contention\n\n## Implementation Details\n\nLet's start by defining the core components:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\npublic protocol Task {\n    func execute()\n}\n\npublic struct ClosureTask: Task {\n    private let closure: () -> Void\n    \n    public init(_ closure: @escaping () -> Void) {\n        self.closure = closure\n    }\n    \n    public func execute() {\n        closure()\n    }\n}\n\n// MARK: - Atomic Operations Helper\npublic class Atomic<T> {\n    private var _value: T\n    \n    public init(_ value: T) {\n        self._value = value\n    }\n    \n    public var value: T {\n        get { return _value }\n        set",
+      "content_sha256": "ab1be85410d8e05a5b021ac99a4b360bc423a7b06d1cf751a8cb371b6cb07eaf",
+      "decode_seconds": 6.199489167018328,
+      "decode_tokens_per_second": 82.4261461280636,
+      "e2e_seconds": 6.291842000006,
+      "e2e_tokens_per_second": 81.37521571576524,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 6.291852124995785,
+      "ttft_seconds": 0.09235283298767172
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient task distribution across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy workers' queues, achieving better load balancing and improved throughput.\n\nThe lock-free nature of this implementation ensures that threads can make progress without blocking each other, reducing contention and improving scalability on multi-core systems. This tutorial will guide you through building a complete, production-ready lock-free work-stealing scheduler in Swift.\n\n## Core Concepts and Design Decisions\n\n### Why Lock-Free?\n\nLock-free data structures provide several advantages:\n- **No deadlocks**: Since no locks are acquired, deadlock is impossible\n- **No priority inversion**: Threads cannot be blocked indefinitely by lower-priority threads\n- **Better scalability**: Reduced contention allows better performance on many-core systems\n- **Fairness**: All threads have equal opportunity to make progress\n\nHowever, lock-free programming comes with challenges:\n- **ABA problem**: Pointers can be reused, causing incorrect comparisons\n- **Memory reclamation**: Safe deletion of nodes without garbage collection\n- **Complex reasoning**: Correctness is harder to verify\n\n### Work-Stealing Algorithm Overview\n\nOur scheduler will implement the classic work-stealing algorithm:\n\n1. Each worker maintains a double-ended queue (deque) of tasks\n2. Workers prefer to pop tasks from their own deque (LIFO for stealing, FIFO for execution)\n3. When a worker runs out of tasks, it steals from another worker's deque\n4. Stealing is done from the opposite end to minimize contention\n\n## Implementation Details\n\nLet's start by defining the core components:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\npublic protocol Task {\n    func execute()\n}\n\npublic struct ClosureTask: Task {\n    private let closure: () -> Void\n    \n    public init(_ closure: @escaping () -> Void) {\n        self.closure = closure\n    }\n    \n    public func execute() {\n        closure()\n    }\n}\n\n// MARK: - Atomic Operations Helper\npublic class Atomic<T> {\n    private var _value: T\n    \n    public init(_ value: T) {\n        self._value = value\n    }\n    \n    public var value: T {\n        get { return _value }\n        set",
+      "content_sha256": "ab1be85410d8e05a5b021ac99a4b360bc423a7b06d1cf751a8cb371b6cb07eaf",
+      "decode_seconds": 6.212292416981654,
+      "decode_tokens_per_second": 82.25626961846685,
+      "e2e_seconds": 6.302503958984744,
+      "e2e_tokens_per_second": 81.23755309508397,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 6.302513625007123,
+      "ttft_seconds": 0.09021154200308956
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient task distribution across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy workers' queues, achieving better load balancing and improved throughput.\n\nThe lock-free nature of this implementation ensures that threads can make progress without blocking each other, reducing contention and improving scalability on multi-core systems. This tutorial will guide you through building a complete, production-ready lock-free work-stealing scheduler in Swift.\n\n## Core Concepts and Design Decisions\n\n### Why Lock-Free?\n\nLock-free data structures provide several advantages:\n- **No deadlocks**: Since no locks are acquired, deadlock is impossible\n- **No priority inversion**: Threads cannot be blocked indefinitely by lower-priority threads\n- **Better scalability**: Reduced contention allows better performance on many-core systems\n- **Fairness**: All threads have equal opportunity to make progress\n\nHowever, lock-free programming comes with challenges:\n- **ABA problem**: Pointers can be reused, causing incorrect comparisons\n- **Memory reclamation**: Safe deletion of nodes without garbage collection\n- **Complex reasoning**: Correctness is harder to verify\n\n### Work-Stealing Algorithm Overview\n\nOur scheduler will implement the classic work-stealing algorithm:\n\n1. Each worker maintains a double-ended queue (deque) of tasks\n2. Workers prefer to pop tasks from their own deque (LIFO for stealing, FIFO for execution)\n3. When a worker runs out of tasks, it steals from another worker's deque\n4. Stealing is done from the opposite end to minimize contention\n\n## Implementation Details\n\nLet's start by defining the core components:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\npublic protocol Task {\n    func execute()\n}\n\npublic struct ClosureTask: Task {\n    private let closure: () -> Void\n    \n    public init(_ closure: @escaping () -> Void) {\n        self.closure = closure\n    }\n    \n    public func execute() {\n        closure()\n    }\n}\n\n// MARK: - Atomic Operations Helper\npublic class Atomic<T> {\n    private var _value: T\n    \n    public init(_ value: T) {\n        self._value = value\n    }\n    \n    public var value: T {\n        get { return _value }\n        set",
+      "content_sha256": "ab1be85410d8e05a5b021ac99a4b360bc423a7b06d1cf751a8cb371b6cb07eaf",
+      "decode_seconds": 6.202956875000382,
+      "decode_tokens_per_second": 82.38006652270471,
+      "e2e_seconds": 6.29325416701613,
+      "e2e_tokens_per_second": 81.35695562455864,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 6.293263667001156,
+      "ttft_seconds": 0.0902972920157481
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient task distribution across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy workers' queues, achieving better load balancing and improved throughput.\n\nThe lock-free nature of this implementation ensures that threads can make progress without blocking each other, reducing contention and improving scalability on multi-core systems. This tutorial will guide you through building a complete, production-ready lock-free work-stealing scheduler in Swift.\n\n## Core Concepts and Design Decisions\n\n### Why Lock-Free?\n\nLock-free data structures provide several advantages:\n- **No deadlocks**: Since no locks are acquired, deadlock is impossible\n- **No priority inversion**: Threads cannot be blocked indefinitely by lower-priority threads\n- **Better scalability**: Reduced contention allows better performance on many-core systems\n- **Fairness**: All threads have equal opportunity to make progress\n\nHowever, lock-free programming comes with challenges:\n- **ABA problem**: Pointers can be reused, causing incorrect comparisons\n- **Memory reclamation**: Safe deletion of nodes without garbage collection\n- **Complex reasoning**: Correctness is harder to verify\n\n### Work-Stealing Algorithm Overview\n\nOur scheduler will implement the classic work-stealing algorithm:\n\n1. Each worker maintains a double-ended queue (deque) of tasks\n2. Workers prefer to pop tasks from their own deque (LIFO for stealing, FIFO for execution)\n3. When a worker runs out of tasks, it steals from another worker's deque\n4. Stealing is done from the opposite end to minimize contention\n\n## Implementation Details\n\nLet's start by defining the core components:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\npublic protocol Task {\n    func execute()\n}\n\npublic struct ClosureTask: Task {\n    private let closure: () -> Void\n    \n    public init(_ closure: @escaping () -> Void) {\n        self.closure = closure\n    }\n    \n    public func execute() {\n        closure()\n    }\n}\n\n// MARK: - Atomic Operations Helper\npublic class Atomic<T> {\n    private var _value: T\n    \n    public init(_ value: T) {\n        self._value = value\n    }\n    \n    public var value: T {\n        get { return _value }\n        set",
+      "content_sha256": "ab1be85410d8e05a5b021ac99a4b360bc423a7b06d1cf751a8cb371b6cb07eaf",
+      "decode_seconds": 6.188854415988317,
+      "decode_tokens_per_second": 82.56778486821085,
+      "e2e_seconds": 6.278895291005028,
+      "e2e_tokens_per_second": 81.54300657529312,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 6.278905125014717,
+      "ttft_seconds": 0.09004087501671165
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient task distribution across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy workers' queues, achieving better load balancing and improved throughput.\n\nThe lock-free nature of this implementation ensures that threads can make progress without blocking each other, reducing contention and improving scalability on multi-core systems. This tutorial will guide you through building a complete, production-ready lock-free work-stealing scheduler in Swift.\n\n## Core Concepts and Design Decisions\n\n### Why Lock-Free?\n\nLock-free data structures provide several advantages:\n- **No deadlocks**: Since no locks are acquired, deadlock is impossible\n- **No priority inversion**: Threads cannot be blocked indefinitely by lower-priority threads\n- **Better scalability**: Reduced contention allows better performance on many-core systems\n- **Fairness**: All threads have equal opportunity to make progress\n\nHowever, lock-free programming comes with challenges:\n- **ABA problem**: Pointers can be reused, causing incorrect comparisons\n- **Memory reclamation**: Safe deletion of nodes without garbage collection\n- **Complex reasoning**: Correctness is harder to verify\n\n### Work-Stealing Algorithm Overview\n\nOur scheduler will implement the classic work-stealing algorithm:\n\n1. Each worker maintains a double-ended queue (deque) of tasks\n2. Workers prefer to pop tasks from their own deque (LIFO for stealing, FIFO for execution)\n3. When a worker runs out of tasks, it steals from another worker's deque\n4. Stealing is done from the opposite end to minimize contention\n\n## Implementation Details\n\nLet's start by defining the core components:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\npublic protocol Task {\n    func execute()\n}\n\npublic struct ClosureTask: Task {\n    private let closure: () -> Void\n    \n    public init(_ closure: @escaping () -> Void) {\n        self.closure = closure\n    }\n    \n    public func execute() {\n        closure()\n    }\n}\n\n// MARK: - Atomic Operations Helper\npublic class Atomic<T> {\n    private var _value: T\n    \n    public init(_ value: T) {\n        self._value = value\n    }\n    \n    public var value: T {\n        get { return _value }\n        set",
+      "content_sha256": "ab1be85410d8e05a5b021ac99a4b360bc423a7b06d1cf751a8cb371b6cb07eaf",
+      "decode_seconds": 6.140161540999543,
+      "decode_tokens_per_second": 83.2225661471466,
+      "e2e_seconds": 6.229986040998483,
+      "e2e_tokens_per_second": 82.18316969421997,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 6.229996250011027,
+      "ttft_seconds": 0.08982449999894015
+    }
+  ],
+  "warmups": [
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that enables efficient task distribution across multiple worker threads. Unlike traditional thread pools where tasks are assigned to specific workers, work-stealing allows idle workers to \"steal\" tasks from busy workers' queues, achieving better load balancing and improved throughput.\n\nThe lock-free nature of this implementation ensures that threads can make progress without blocking each other, reducing contention and improving scalability on multi-core systems. This tutorial will guide you through building a complete, production-ready lock-free work-stealing scheduler in Swift.\n\n## Core Concepts and Design Decisions\n\n### Why Lock-Free?\n\nLock-free data structures provide several advantages:\n- **No deadlocks**: Since no locks are acquired, deadlock is impossible\n- **No priority inversion**: Threads cannot be blocked indefinitely by lower-priority threads\n- **Better scalability**: Reduced contention allows better performance on many-core systems\n- **Fairness**: All threads have equal opportunity to make progress\n\nHowever, lock-free programming comes with challenges:\n- **ABA problem**: Pointers can be reused, causing incorrect comparisons\n- **Memory reclamation**: Safe deletion of nodes without garbage collection\n- **Complex reasoning**: Correctness is harder to verify\n\n### Work-Stealing Algorithm Overview\n\nOur scheduler will implement the classic work-stealing algorithm:\n\n1. Each worker maintains a double-ended queue (deque) of tasks\n2. Workers prefer to pop tasks from their own deque (LIFO for stealing, FIFO for execution)\n3. When a worker runs out of tasks, it steals from another worker's deque\n4. Stealing is done from the opposite end to minimize contention\n\n## Implementation Details\n\nLet's start by defining the core components:\n\n```swift\nimport Foundation\nimport Dispatch\n\n// MARK: - Task Definition\npublic protocol Task {\n    func execute()\n}\n\npublic struct ClosureTask: Task {\n    private let closure: () -> Void\n    \n    public init(_ closure: @escaping () -> Void) {\n        self.closure = closure\n    }\n    \n    public func execute() {\n        closure()\n    }\n}\n\n// MARK: - Atomic Operations Helper\npublic class Atomic<T> {\n    private var _value: T\n    \n    public init(_ value: T) {\n        self._value = value\n    }\n    \n    public var value: T {\n        get { return _value }\n        set",
+      "content_sha256": "ab1be85410d8e05a5b021ac99a4b360bc423a7b06d1cf751a8cb371b6cb07eaf",
+      "decode_seconds": 6.205211041989969,
+      "decode_tokens_per_second": 82.35014031627937,
+      "e2e_seconds": 6.519475749984849,
+      "e2e_tokens_per_second": 78.53392199536748,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 6.519485708005959,
+      "ttft_seconds": 0.31426470799488015
+    }
+  ]
+}

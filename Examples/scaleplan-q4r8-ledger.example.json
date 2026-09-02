@@ -1,0 +1,121 @@
+{
+  "format": 1,
+  "status": "experimental_unbenchmarked",
+  "policy": "q4r8_affine_group64",
+  "model": "illustrative-laguna-ledger-do-not-deploy",
+  "calibration_seed": 7,
+  "environment": {
+    "chip": "replace-with-measured-chip",
+    "os": "replace-with-measured-os",
+    "mlx_commit": "replace-with-mlx-commit",
+    "converter_commit": "replace-with-converter-commit"
+  },
+  "quality_proxy": {
+    "kind": "higgs_linearized_mse",
+    "held_out_validated": false,
+    "validation_notes": "Illustrative schema only; no held-out forecast has been measured."
+  },
+  "layers": [
+    {
+      "layer": "language_model.model.layers.0.self_attn.q_proj",
+      "shape": [2048, 2048],
+      "role": "weight",
+      "quality_alpha": 1.0,
+      "candidates": [
+        {
+          "id": "q4-standard",
+          "format": "affine",
+          "calibration": "standard",
+          "bits": 4,
+          "group": 64,
+          "payload_bits": 16777216,
+          "metadata_bytes": 262144,
+          "reconstruction_mse": 1.0,
+          "relative_mse": 1.0,
+          "decode_ns": 10000,
+          "verify_ns": 30000,
+          "prefill_ns": 100000,
+          "peak_bytes": 2359296,
+          "contiguity_copy_bytes": 0,
+          "cold_compile_ms": 1.0
+        },
+        {
+          "id": "q4-affine-scale-search",
+          "format": "affine",
+          "calibration": "q4_affine_scale_search",
+          "bits": 4,
+          "group": 64,
+          "payload_bits": 16777216,
+          "metadata_bytes": 262144,
+          "reconstruction_mse": 0.92,
+          "relative_mse": 0.92,
+          "decode_ns": 10000,
+          "verify_ns": 30000,
+          "prefill_ns": 100000,
+          "peak_bytes": 2359296,
+          "contiguity_copy_bytes": 0,
+          "cold_compile_ms": 1.0
+        },
+        {
+          "id": "q8-standard",
+          "format": "affine",
+          "calibration": "standard",
+          "bits": 8,
+          "group": 64,
+          "payload_bits": 33554432,
+          "metadata_bytes": 262144,
+          "reconstruction_mse": 0.1,
+          "relative_mse": 0.1,
+          "decode_ns": 16000,
+          "verify_ns": 48000,
+          "prefill_ns": 130000,
+          "peak_bytes": 4456448,
+          "contiguity_copy_bytes": 0,
+          "cold_compile_ms": 1.0
+        }
+      ]
+    },
+    {
+      "layer": "language_model.model.layers.1.mlp.gate.proj",
+      "shape": [256, 2048],
+      "role": "router",
+      "quality_alpha": 1.0,
+      "candidates": [
+        {
+          "id": "router-q4-control",
+          "format": "affine",
+          "calibration": "standard",
+          "bits": 4,
+          "group": 64,
+          "payload_bits": 2097152,
+          "metadata_bytes": 32768,
+          "reconstruction_mse": 1.0,
+          "relative_mse": 1.0,
+          "decode_ns": 2000,
+          "verify_ns": 6000,
+          "prefill_ns": 20000,
+          "peak_bytes": 294912,
+          "contiguity_copy_bytes": 0,
+          "cold_compile_ms": 1.0
+        },
+        {
+          "id": "router-q8-required",
+          "format": "affine",
+          "calibration": "standard",
+          "bits": 8,
+          "group": 64,
+          "payload_bits": 4194304,
+          "metadata_bytes": 32768,
+          "reconstruction_mse": 0.1,
+          "relative_mse": 0.1,
+          "decode_ns": 3000,
+          "verify_ns": 9000,
+          "prefill_ns": 26000,
+          "peak_bytes": 557056,
+          "contiguity_copy_bytes": 0,
+          "cold_compile_ms": 1.0
+        }
+      ]
+    }
+  ]
+}

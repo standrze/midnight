@@ -1,0 +1,98 @@
+{
+  "host": "127.0.0.1",
+  "median_decode_tokens_per_second": 168.19404750941698,
+  "median_e2e_tokens_per_second": 164.27736105915824,
+  "median_ttft_milliseconds": 78.52275000186637,
+  "model": "laguna-native",
+  "port": 18081,
+  "prompt": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens": 512,
+  "trials": [
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\" tasks from other threads' queues\n2. **Lock-Free**: The implementation uses atomic operations instead of traditional locks\n3. **Double-Ended Queue (Deque)**: Each thread maintains a deque where it pushes/pops from the top and thieves pop from the bottom\n4. **ABA Problem**: A classic issue in lock-free programming where a value changes and changes back\n\n## Implementation Overview\n\nWe'll build the following components:\n\n1. A lock-free deque implementation\n2. Thread-local task queues\n3. The work-stealing scheduler itself\n4. Task submission and execution logic\n5. Memory management and safety considerations\n\n## Step 1: Lock-Free Deque Implementation\n\nLet's start with the core data structure - a lock-free deque that supports concurrent push/pop operations from both ends.\n\n```swift\nimport Foundation\nimport os\n\n// MARK: - Node Definition\nfinal class TaskNode<T> {\n    var value: T\n    var next: TaskNode<T>?\n    var previous: TaskNode<T>?\n    \n    init(_ value: T) {\n        self.value = value\n        self.next = nil\n        self.previous = nil\n    }\n}\n\n// MARK: - Lock-Free Deque\nfinal class LockFreeDeque<T> {\n    private var head: TaskNode<T>?\n    private var tail: TaskNode<T>?\n    private var count: Int = 0\n    \n    // Atomic operations for thread safety\n    private let headLock = os_unfair_lock()\n    private let tailLock = os_unfair_lock()\n    \n    var isEmpty: Bool {\n        return count == 0\n    }\n    \n    var size: Int {\n        return count\n    }\n    \n    // Push to the top (for the owner thread)\n    func pushTop(_ value:",
+      "content_sha256": "15dd2b195a22aea6cee85e88c88b5f6bdb538f219036350c9512d09926c915bb",
+      "decode_seconds": 3.037612790998537,
+      "decode_tokens_per_second": 168.22420603253448,
+      "e2e_seconds": 3.1159063749946654,
+      "e2e_tokens_per_second": 164.31815927103284,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 3.1159422089986037,
+      "ttft_seconds": 0.07829358399612829
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\" tasks from other threads' queues\n2. **Lock-Free**: The implementation uses atomic operations instead of traditional locks\n3. **Double-Ended Queue (Deque)**: Each thread maintains a deque where it pushes/pops from the top and thieves pop from the bottom\n4. **ABA Problem**: A classic issue in lock-free programming where a value changes and changes back\n\n## Implementation Overview\n\nWe'll build the following components:\n\n1. A lock-free deque implementation\n2. Thread-local task queues\n3. The work-stealing scheduler itself\n4. Task submission and execution logic\n5. Memory management and safety considerations\n\n## Step 1: Lock-Free Deque Implementation\n\nLet's start with the core data structure - a lock-free deque that supports concurrent push/pop operations from both ends.\n\n```swift\nimport Foundation\nimport os\n\n// MARK: - Node Definition\nfinal class TaskNode<T> {\n    var value: T\n    var next: TaskNode<T>?\n    var previous: TaskNode<T>?\n    \n    init(_ value: T) {\n        self.value = value\n        self.next = nil\n        self.previous = nil\n    }\n}\n\n// MARK: - Lock-Free Deque\nfinal class LockFreeDeque<T> {\n    private var head: TaskNode<T>?\n    private var tail: TaskNode<T>?\n    private var count: Int = 0\n    \n    // Atomic operations for thread safety\n    private let headLock = os_unfair_lock()\n    private let tailLock = os_unfair_lock()\n    \n    var isEmpty: Bool {\n        return count == 0\n    }\n    \n    var size: Int {\n        return count\n    }\n    \n    // Push to the top (for the owner thread)\n    func pushTop(_ value:",
+      "content_sha256": "15dd2b195a22aea6cee85e88c88b5f6bdb538f219036350c9512d09926c915bb",
+      "decode_seconds": 3.039664207986789,
+      "decode_tokens_per_second": 168.11067441506714,
+      "e2e_seconds": 3.118057832994964,
+      "e2e_tokens_per_second": 164.20477984149915,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 3.1181032079912256,
+      "ttft_seconds": 0.07839362500817515
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\" tasks from other threads' queues\n2. **Lock-Free**: The implementation uses atomic operations instead of traditional locks\n3. **Double-Ended Queue (Deque)**: Each thread maintains a deque where it pushes/pops from the top and thieves pop from the bottom\n4. **ABA Problem**: A classic issue in lock-free programming where a value changes and changes back\n\n## Implementation Overview\n\nWe'll build the following components:\n\n1. A lock-free deque implementation\n2. Thread-local task queues\n3. The work-stealing scheduler itself\n4. Task submission and execution logic\n5. Memory management and safety considerations\n\n## Step 1: Lock-Free Deque Implementation\n\nLet's start with the core data structure - a lock-free deque that supports concurrent push/pop operations from both ends.\n\n```swift\nimport Foundation\nimport os\n\n// MARK: - Node Definition\nfinal class TaskNode<T> {\n    var value: T\n    var next: TaskNode<T>?\n    var previous: TaskNode<T>?\n    \n    init(_ value: T) {\n        self.value = value\n        self.next = nil\n        self.previous = nil\n    }\n}\n\n// MARK: - Lock-Free Deque\nfinal class LockFreeDeque<T> {\n    private var head: TaskNode<T>?\n    private var tail: TaskNode<T>?\n    private var count: Int = 0\n    \n    // Atomic operations for thread safety\n    private let headLock = os_unfair_lock()\n    private let tailLock = os_unfair_lock()\n    \n    var isEmpty: Bool {\n        return count == 0\n    }\n    \n    var size: Int {\n        return count\n    }\n    \n    // Push to the top (for the owner thread)\n    func pushTop(_ value:",
+      "content_sha256": "15dd2b195a22aea6cee85e88c88b5f6bdb538f219036350c9512d09926c915bb",
+      "decode_seconds": 3.022863292018883,
+      "decode_tokens_per_second": 169.04502474497212,
+      "e2e_seconds": 3.101468917011516,
+      "e2e_tokens_per_second": 165.08306666937293,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 3.1014941670000553,
+      "ttft_seconds": 0.07860562499263324
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\" tasks from other threads' queues\n2. **Lock-Free**: The implementation uses atomic operations instead of traditional locks\n3. **Double-Ended Queue (Deque)**: Each thread maintains a deque where it pushes/pops from the top and thieves pop from the bottom\n4. **ABA Problem**: A classic issue in lock-free programming where a value changes and changes back\n\n## Implementation Overview\n\nWe'll build the following components:\n\n1. A lock-free deque implementation\n2. Thread-local task queues\n3. The work-stealing scheduler itself\n4. Task submission and execution logic\n5. Memory management and safety considerations\n\n## Step 1: Lock-Free Deque Implementation\n\nLet's start with the core data structure - a lock-free deque that supports concurrent push/pop operations from both ends.\n\n```swift\nimport Foundation\nimport os\n\n// MARK: - Node Definition\nfinal class TaskNode<T> {\n    var value: T\n    var next: TaskNode<T>?\n    var previous: TaskNode<T>?\n    \n    init(_ value: T) {\n        self.value = value\n        self.next = nil\n        self.previous = nil\n    }\n}\n\n// MARK: - Lock-Free Deque\nfinal class LockFreeDeque<T> {\n    private var head: TaskNode<T>?\n    private var tail: TaskNode<T>?\n    private var count: Int = 0\n    \n    // Atomic operations for thread safety\n    private let headLock = os_unfair_lock()\n    private let tailLock = os_unfair_lock()\n    \n    var isEmpty: Bool {\n        return count == 0\n    }\n    \n    var size: Int {\n        return count\n    }\n    \n    // Push to the top (for the owner thread)\n    func pushTop(_ value:",
+      "content_sha256": "15dd2b195a22aea6cee85e88c88b5f6bdb538f219036350c9512d09926c915bb",
+      "decode_seconds": 3.0754036250000354,
+      "decode_tokens_per_second": 166.15705198695477,
+      "e2e_seconds": 3.155166958022164,
+      "e2e_tokens_per_second": 162.2735046391809,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 3.155205582996132,
+      "ttft_seconds": 0.07976333302212879
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\" tasks from other threads' queues\n2. **Lock-Free**: The implementation uses atomic operations instead of traditional locks\n3. **Double-Ended Queue (Deque)**: Each thread maintains a deque where it pushes/pops from the top and thieves pop from the bottom\n4. **ABA Problem**: A classic issue in lock-free programming where a value changes and changes back\n\n## Implementation Overview\n\nWe'll build the following components:\n\n1. A lock-free deque implementation\n2. Thread-local task queues\n3. The work-stealing scheduler itself\n4. Task submission and execution logic\n5. Memory management and safety considerations\n\n## Step 1: Lock-Free Deque Implementation\n\nLet's start with the core data structure - a lock-free deque that supports concurrent push/pop operations from both ends.\n\n```swift\nimport Foundation\nimport os\n\n// MARK: - Node Definition\nfinal class TaskNode<T> {\n    var value: T\n    var next: TaskNode<T>?\n    var previous: TaskNode<T>?\n    \n    init(_ value: T) {\n        self.value = value\n        self.next = nil\n        self.previous = nil\n    }\n}\n\n// MARK: - Lock-Free Deque\nfinal class LockFreeDeque<T> {\n    private var head: TaskNode<T>?\n    private var tail: TaskNode<T>?\n    private var count: Int = 0\n    \n    // Atomic operations for thread safety\n    private let headLock = os_unfair_lock()\n    private let tailLock = os_unfair_lock()\n    \n    var isEmpty: Bool {\n        return count == 0\n    }\n    \n    var size: Int {\n        return count\n    }\n    \n    // Push to the top (for the owner thread)\n    func pushTop(_ value:",
+      "content_sha256": "15dd2b195a22aea6cee85e88c88b5f6bdb538f219036350c9512d09926c915bb",
+      "decode_seconds": 3.038157458999194,
+      "decode_tokens_per_second": 168.19404750941698,
+      "e2e_seconds": 3.1166802090010606,
+      "e2e_tokens_per_second": 164.27736105915824,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 3.116729708999628,
+      "ttft_seconds": 0.07852275000186637
+    }
+  ],
+  "warmups": [
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\" tasks from other threads' queues\n2. **Lock-Free**: The implementation uses atomic operations instead of traditional locks\n3. **Double-Ended Queue (Deque)**: Each thread maintains a deque where it pushes/pops from the top and thieves pop from the bottom\n4. **ABA Problem**: A classic issue in lock-free programming where a value changes and changes back\n\n## Implementation Overview\n\nWe'll build the following components:\n\n1. A lock-free deque implementation\n2. Thread-local task queues\n3. The work-stealing scheduler itself\n4. Task submission and execution logic\n5. Memory management and safety considerations\n\n## Step 1: Lock-Free Deque Implementation\n\nLet's start with the core data structure - a lock-free deque that supports concurrent push/pop operations from both ends.\n\n```swift\nimport Foundation\nimport os\n\n// MARK: - Node Definition\nfinal class TaskNode<T> {\n    var value: T\n    var next: TaskNode<T>?\n    var previous: TaskNode<T>?\n    \n    init(_ value: T) {\n        self.value = value\n        self.next = nil\n        self.previous = nil\n    }\n}\n\n// MARK: - Lock-Free Deque\nfinal class LockFreeDeque<T> {\n    private var head: TaskNode<T>?\n    private var tail: TaskNode<T>?\n    private var count: Int = 0\n    \n    // Atomic operations for thread safety\n    private let headLock = os_unfair_lock()\n    private let tailLock = os_unfair_lock()\n    \n    var isEmpty: Bool {\n        return count == 0\n    }\n    \n    var size: Int {\n        return count\n    }\n    \n    // Push to the top (for the owner thread)\n    func pushTop(_ value:",
+      "content_sha256": "15dd2b195a22aea6cee85e88c88b5f6bdb538f219036350c9512d09926c915bb",
+      "decode_seconds": 3.020808041008422,
+      "decode_tokens_per_second": 169.16003700434248,
+      "e2e_seconds": 3.2004877500003204,
+      "e2e_tokens_per_second": 159.97561621660597,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 3.2005269170040265,
+      "ttft_seconds": 0.17967970899189822
+    }
+  ]
+}

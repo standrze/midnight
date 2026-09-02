@@ -1,0 +1,12 @@
+.build/
+.smoke-results/
+.DS_Store
+/tmp/
+__pycache__/
+*.pyc
+bin/model-runner-rtx4090
+bin/model-runner-rtx4090.manifest
+bin/midnight-rtx4090
+bin/midnight-rtx4090.manifest
+include/
+.cuda-runtime-include.stage.*

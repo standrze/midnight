@@ -1,0 +1,13 @@
+diff --git a/Libraries/MLXLLM/Models/Gemma4Text.swift b/Libraries/MLXLLM/Models/Gemma4Text.swift
+index 6a52cc3..3d31b12 100644
+--- a/Libraries/MLXLLM/Models/Gemma4Text.swift
++++ b/Libraries/MLXLLM/Models/Gemma4Text.swift
+@@ -964,7 +964,7 @@ public class Gemma4TextModel: Module, LLMModel, KVCacheDimensionProvider {
+ 
+ extension Gemma4TextModel: LoRAModel {
+     public var loraLayers: [Module] {
+-        model.layers.map { $0.selfAttn }
++        model.layers
+     }
+ }
+ 

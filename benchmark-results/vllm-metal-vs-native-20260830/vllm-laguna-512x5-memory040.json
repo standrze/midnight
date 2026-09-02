@@ -1,0 +1,98 @@
+{
+  "host": "127.0.0.1",
+  "median_decode_tokens_per_second": 117.08888839633948,
+  "median_e2e_tokens_per_second": 115.02905209904156,
+  "median_ttft_milliseconds": 87.04724998096935,
+  "model": "laguna-bench",
+  "port": 18082,
+  "prompt": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens": 512,
+  "trials": [
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing while minimizing contention through lock-free data structures. In this comprehensive tutorial, we'll implement a complete lock-free work-stealing scheduler in Swift, covering all aspects from basic primitives to advanced optimizations.\n\n## Core Concepts\n\nBefore diving into implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that finish their own work can steal tasks from other threads' queues\n2. **Lock-Free**: Data structures that don't require traditional locks, using atomic operations instead\n3. **Double-Ended Queue (Deque)**: Allows efficient push/pop from both ends\n4. **Thread-Local Storage**: Each thread maintains its own deque for optimal performance\n\n## Implementation Plan\n\nWe'll build this step by:\n\n1. Atomic operations and memory ordering\n2. Lock-free deque implementation\n3. Thread-local storage management\n4. Work-stealing scheduler core\n5. Task submission and execution\n6. Advanced features and optimizations\n\n## Step 1: Atomic Operations and Memory Ordering\n\nFirst, let's create a foundation for atomic operations with proper memory ordering:\n\n```swift\nimport Foundation\n\n// MARK: - Atomic Operations\n// These wrappers provide type-safe atomic operations with explicit memory ordering\n\n@propertyWrapper\nstruct Atomic<Value> {\n    private var value: Value\n    private let lock = NSLock()\n    \n    var wrappedValue: Value {\n        get {\n            lock.lock()\n            defer { lock.unlock() }\n            return value\n        }\n        set {\n            lock.lock()\n            defer { lock.unlock() }\n            value = newValue\n        }\n    }\n    \n    init(wrappedValue: Value) {\n        self.value = wrappedValue\n    }\n}\n\n// For lock-free operations, we need direct memory access\n// Let's create a more low-level atomic wrapper using OSAtomic or similar\n\n#if canImport(Darwin)\nimport Darwin\n\n// Memory ordering constants\nenum MemoryOrder {\n    case relaxed\n    case acquire\n    case release\n    case acqRel\n    case seqCst\n}\n\n// Atomic integer operations\nclass AtomicInt {\n    private var _value: Int32\n    \n    init(_ initialValue: Int32 = 0) {\n",
+      "content_sha256": "3cd361f7d1569cf0fc4fe65ef9cef7c979ab96399ace4181b6a3f8ff53d28bca",
+      "decode_seconds": 4.346158166998066,
+      "decode_tokens_per_second": 117.57510434852689,
+      "e2e_seconds": 4.433224417007295,
+      "e2e_tokens_per_second": 115.49155915405521,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 4.433235375006916,
+      "ttft_seconds": 0.0870662500092294
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing while minimizing contention through lock-free data structures. In this comprehensive tutorial, we'll implement a complete lock-free work-stealing scheduler in Swift, covering all aspects from basic primitives to advanced optimizations.\n\n## Core Concepts\n\nBefore diving into implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that finish their own work can steal tasks from other threads' queues\n2. **Lock-Free**: Data structures that don't require traditional locks, using atomic operations instead\n3. **Double-Ended Queue (Deque)**: Allows efficient push/pop from both ends\n4. **Thread-Local Storage**: Each thread maintains its own deque for optimal performance\n\n## Implementation Plan\n\nWe'll build this step by:\n\n1. Atomic operations and memory ordering\n2. Lock-free deque implementation\n3. Thread-local storage management\n4. Work-stealing scheduler core\n5. Task submission and execution\n6. Advanced features and optimizations\n\n## Step 1: Atomic Operations and Memory Ordering\n\nFirst, let's create a foundation for atomic operations with proper memory ordering:\n\n```swift\nimport Foundation\n\n// MARK: - Atomic Operations\n// These wrappers provide type-safe atomic operations with explicit memory ordering\n\n@propertyWrapper\nstruct Atomic<Value> {\n    private var value: Value\n    private let lock = NSLock()\n    \n    var wrappedValue: Value {\n        get {\n            lock.lock()\n            defer { lock.unlock() }\n            return value\n        }\n        set {\n            lock.lock()\n            defer { lock.unlock() }\n            value = newValue\n        }\n    }\n    \n    init(wrappedValue: Value) {\n        self.value = wrappedValue\n    }\n}\n\n// For lock-free operations, we need direct memory access\n// Let's create a more low-level atomic wrapper using OSAtomic or similar\n\n#if canImport(Darwin)\nimport Darwin\n\n// Memory ordering constants\nenum MemoryOrder {\n    case relaxed\n    case acquire\n    case release\n    case acqRel\n    case seqCst\n}\n\n// Atomic integer operations\nclass AtomicInt {\n    private var _value: Int32\n    \n    init(_ initialValue: Int32 = 0) {\n",
+      "content_sha256": "3cd361f7d1569cf0fc4fe65ef9cef7c979ab96399ace4181b6a3f8ff53d28bca",
+      "decode_seconds": 4.358275834005326,
+      "decode_tokens_per_second": 117.24820077080406,
+      "e2e_seconds": 4.445323083986295,
+      "e2e_tokens_per_second": 115.17723016453273,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 4.445334249990992,
+      "ttft_seconds": 0.08704724998096935
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing while minimizing contention through lock-free data structures. In this comprehensive tutorial, we'll implement a complete lock-free work-stealing scheduler in Swift, covering all aspects from basic primitives to advanced optimizations.\n\n## Core Concepts\n\nBefore diving into implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that finish their own work can steal tasks from other threads' queues\n2. **Lock-Free**: Data structures that don't require traditional locks, using atomic operations instead\n3. **Double-Ended Queue (Deque)**: Allows efficient push/pop from both ends\n4. **Thread-Local Storage**: Each thread maintains its own deque for optimal performance\n\n## Implementation Plan\n\nWe'll build this step by:\n\n1. Atomic operations and memory ordering\n2. Lock-free deque implementation\n3. Thread-local storage management\n4. Work-stealing scheduler core\n5. Task submission and execution\n6. Advanced features and optimizations\n\n## Step 1: Atomic Operations and Memory Ordering\n\nFirst, let's create a foundation for atomic operations with proper memory ordering:\n\n```swift\nimport Foundation\n\n// MARK: - Atomic Operations\n// These wrappers provide type-safe atomic operations with explicit memory ordering\n\n@propertyWrapper\nstruct Atomic<Value> {\n    private var value: Value\n    private let lock = NSLock()\n    \n    var wrappedValue: Value {\n        get {\n            lock.lock()\n            defer { lock.unlock() }\n            return value\n        }\n        set {\n            lock.lock()\n            defer { lock.unlock() }\n            value = newValue\n        }\n    }\n    \n    init(wrappedValue: Value) {\n        self.value = wrappedValue\n    }\n}\n\n// For lock-free operations, we need direct memory access\n// Let's create a more low-level atomic wrapper using OSAtomic or similar\n\n#if canImport(Darwin)\nimport Darwin\n\n// Memory ordering constants\nenum MemoryOrder {\n    case relaxed\n    case acquire\n    case release\n    case acqRel\n    case seqCst\n}\n\n// Atomic integer operations\nclass AtomicInt {\n    private var _value: Int32\n    \n    init(_ initialValue: Int32 = 0) {\n",
+      "content_sha256": "3cd361f7d1569cf0fc4fe65ef9cef7c979ab96399ace4181b6a3f8ff53d28bca",
+      "decode_seconds": 4.371520624990808,
+      "decode_tokens_per_second": 116.89296330406185,
+      "e2e_seconds": 4.458079749980243,
+      "e2e_tokens_per_second": 114.84765385865272,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 4.458089666994056,
+      "ttft_seconds": 0.08655912498943508
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing while minimizing contention through lock-free data structures. In this comprehensive tutorial, we'll implement a complete lock-free work-stealing scheduler in Swift, covering all aspects from basic primitives to advanced optimizations.\n\n## Core Concepts\n\nBefore diving into implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that finish their own work can steal tasks from other threads' queues\n2. **Lock-Free**: Data structures that don't require traditional locks, using atomic operations instead\n3. **Double-Ended Queue (Deque)**: Allows efficient push/pop from both ends\n4. **Thread-Local Storage**: Each thread maintains its own deque for optimal performance\n\n## Implementation Plan\n\nWe'll build this step by:\n\n1. Atomic operations and memory ordering\n2. Lock-free deque implementation\n3. Thread-local storage management\n4. Work-stealing scheduler core\n5. Task submission and execution\n6. Advanced features and optimizations\n\n## Step 1: Atomic Operations and Memory Ordering\n\nFirst, let's create a foundation for atomic operations with proper memory ordering:\n\n```swift\nimport Foundation\n\n// MARK: - Atomic Operations\n// These wrappers provide type-safe atomic operations with explicit memory ordering\n\n@propertyWrapper\nstruct Atomic<Value> {\n    private var value: Value\n    private let lock = NSLock()\n    \n    var wrappedValue: Value {\n        get {\n            lock.lock()\n            defer { lock.unlock() }\n            return value\n        }\n        set {\n            lock.lock()\n            defer { lock.unlock() }\n            value = newValue\n        }\n    }\n    \n    init(wrappedValue: Value) {\n        self.value = wrappedValue\n    }\n}\n\n// For lock-free operations, we need direct memory access\n// Let's create a more low-level atomic wrapper using OSAtomic or similar\n\n#if canImport(Darwin)\nimport Darwin\n\n// Memory ordering constants\nenum MemoryOrder {\n    case relaxed\n    case acquire\n    case release\n    case acqRel\n    case seqCst\n}\n\n// Atomic integer operations\nclass AtomicInt {\n    private var _value: Int32\n    \n    init(_ initialValue: Int32 = 0) {\n",
+      "content_sha256": "3cd361f7d1569cf0fc4fe65ef9cef7c979ab96399ace4181b6a3f8ff53d28bca",
+      "decode_seconds": 4.379496082983678,
+      "decode_tokens_per_second": 116.68009065825312,
+      "e2e_seconds": 4.466890874988167,
+      "e2e_tokens_per_second": 114.62111216257468,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 4.466901207983028,
+      "ttft_seconds": 0.08739479200448841
+    },
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing while minimizing contention through lock-free data structures. In this comprehensive tutorial, we'll implement a complete lock-free work-stealing scheduler in Swift, covering all aspects from basic primitives to advanced optimizations.\n\n## Core Concepts\n\nBefore diving into implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that finish their own work can steal tasks from other threads' queues\n2. **Lock-Free**: Data structures that don't require traditional locks, using atomic operations instead\n3. **Double-Ended Queue (Deque)**: Allows efficient push/pop from both ends\n4. **Thread-Local Storage**: Each thread maintains its own deque for optimal performance\n\n## Implementation Plan\n\nWe'll build this step by:\n\n1. Atomic operations and memory ordering\n2. Lock-free deque implementation\n3. Thread-local storage management\n4. Work-stealing scheduler core\n5. Task submission and execution\n6. Advanced features and optimizations\n\n## Step 1: Atomic Operations and Memory Ordering\n\nFirst, let's create a foundation for atomic operations with proper memory ordering:\n\n```swift\nimport Foundation\n\n// MARK: - Atomic Operations\n// These wrappers provide type-safe atomic operations with explicit memory ordering\n\n@propertyWrapper\nstruct Atomic<Value> {\n    private var value: Value\n    private let lock = NSLock()\n    \n    var wrappedValue: Value {\n        get {\n            lock.lock()\n            defer { lock.unlock() }\n            return value\n        }\n        set {\n            lock.lock()\n            defer { lock.unlock() }\n            value = newValue\n        }\n    }\n    \n    init(wrappedValue: Value) {\n        self.value = wrappedValue\n    }\n}\n\n// For lock-free operations, we need direct memory access\n// Let's create a more low-level atomic wrapper using OSAtomic or similar\n\n#if canImport(Darwin)\nimport Darwin\n\n// Memory ordering constants\nenum MemoryOrder {\n    case relaxed\n    case acquire\n    case release\n    case acqRel\n    case seqCst\n}\n\n// Atomic integer operations\nclass AtomicInt {\n    private var _value: Int32\n    \n    init(_ initialValue: Int32 = 0) {\n",
+      "content_sha256": "3cd361f7d1569cf0fc4fe65ef9cef7c979ab96399ace4181b6a3f8ff53d28bca",
+      "decode_seconds": 4.364205749996472,
+      "decode_tokens_per_second": 117.08888839633948,
+      "e2e_seconds": 4.451049458002672,
+      "e2e_tokens_per_second": 115.02905209904156,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 4.451059250015533,
+      "ttft_seconds": 0.08684370800619945
+    }
+  ],
+  "warmups": [
+    {
+      "completion_tokens": 512,
+      "content": "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing while minimizing contention through lock-free data structures. In this comprehensive tutorial, we'll implement a complete lock-free work-stealing scheduler in Swift, covering all aspects from basic primitives to advanced optimizations.\n\n## Core Concepts\n\nBefore diving into implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that finish their own work can steal tasks from other threads' queues\n2. **Lock-Free**: Data structures that don't require traditional locks, using atomic operations instead\n3. **Double-Ended Queue (Deque)**: Allows efficient push/pop from both ends\n4. **Thread-Local Storage**: Each thread maintains its own deque for optimal performance\n\n## Implementation Plan\n\nWe'll build this step by:\n\n1. Atomic operations and memory ordering\n2. Lock-free deque implementation\n3. Thread-local storage management\n4. Work-stealing scheduler core\n5. Task submission and execution\n6. Advanced features and optimizations\n\n## Step 1: Atomic Operations and Memory Ordering\n\nFirst, let's create a foundation for atomic operations with proper memory ordering:\n\n```swift\nimport Foundation\n\n// MARK: - Atomic Operations\n// These wrappers provide type-safe atomic operations with explicit memory ordering\n\n@propertyWrapper\nstruct Atomic<Value> {\n    private var value: Value\n    private let lock = NSLock()\n    \n    var wrappedValue: Value {\n        get {\n            lock.lock()\n            defer { lock.unlock() }\n            return value\n        }\n        set {\n            lock.lock()\n            defer { lock.unlock() }\n            value = newValue\n        }\n    }\n    \n    init(wrappedValue: Value) {\n        self.value = wrappedValue\n    }\n}\n\n// For lock-free operations, we need direct memory access\n// Let's create a more low-level atomic wrapper using OSAtomic or similar\n\n#if canImport(Darwin)\nimport Darwin\n\n// Memory ordering constants\nenum MemoryOrder {\n    case relaxed\n    case acquire\n    case release\n    case acqRel\n    case seqCst\n}\n\n// Atomic integer operations\nclass AtomicInt {\n    private var _value: Int32\n    \n    init(_ initialValue: Int32 = 0) {\n",
+      "content_sha256": "3cd361f7d1569cf0fc4fe65ef9cef7c979ab96399ace4181b6a3f8ff53d28bca",
+      "decode_seconds": 4.347730750014307,
+      "decode_tokens_per_second": 117.53257719519969,
+      "e2e_seconds": 4.585002125008032,
+      "e2e_tokens_per_second": 111.6684324326465,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 79,
+      "stream_close_seconds": 4.585014624986798,
+      "ttft_seconds": 0.23727137499372475
+    }
+  ]
+}

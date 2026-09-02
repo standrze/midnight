@@ -1,0 +1,52 @@
+{
+  "status": "performance_positive_formal_abba_rejected_for_machine_state_variance",
+  "campaign_date": "2026-08-29/30",
+  "model": "Laguna-XS-2.1-Abliterated-Q4R8-ScaleSearch-LS2",
+  "method": "greedy 128-token decode; two warmups and twelve measured trials per block",
+  "correctness": {
+    "all_generated_text_matches": true,
+    "engine": "metal",
+    "prompt_token_count": 79,
+    "generation_token_count": 128,
+    "cached_prompt_token_count": 0,
+    "stop_reason": "length"
+  },
+  "stable_high_state_evidence": {
+    "baseline_median_tokens_per_second": 166.49659342047835,
+    "candidate_median_tokens_per_second": [
+      172.25904028655293,
+      171.95704126472162
+    ],
+    "candidate_mean_of_medians_tokens_per_second": 172.10804077563728,
+    "candidate_vs_baseline_percent": 3.370307608,
+    "milliseconds_saved_per_token": 0.195825110
+  },
+  "ollama_historical_exact_reference": {
+    "median_tokens_per_second": 179.5662,
+    "candidate_percent_of_ollama": 95.846568439,
+    "remaining_tokens_per_second": 7.458159224,
+    "five_percent_win_target_tokens_per_second": 188.5445
+  },
+  "best_candidate": {
+    "stable_block_median_tokens_per_second": 172.25904028655293,
+    "individual_trial_tokens_per_second": 174.57695134212693
+  },
+  "rejected_publication_windows": [
+    {
+      "blocks": ["baseline-a", "candidate-a", "candidate-b", "baseline-b"],
+      "reason": "baseline endpoint medians differed by 2.55%, above the 2% gate"
+    },
+    {
+      "blocks": ["baseline-c"],
+      "reason": "severe external contention and a trial below 90% of the block median"
+    },
+    {
+      "blocks": ["baseline-d", "candidate-c", "candidate-d", "baseline-e"],
+      "reason": "baseline endpoint medians represented different machine states"
+    },
+    {
+      "blocks": ["baseline-e", "candidate-e", "candidate-f", "baseline-f"],
+      "reason": "closing baseline collapsed mid-block; first-four and last-four means differed by 14.5%"
+    }
+  ]
+}

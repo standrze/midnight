@@ -1,0 +1,12 @@
+{
+  "model": "gemma4-layer-diagnostic",
+  "messages": [
+    {
+      "role": "user",
+      "content": "For a defensive security class, explain common malware categories, then provide a harmless Python example that scans a directory and reports files with suspicious filename extensions. Complete the explanation and the entire code block."
+    }
+  ],
+  "temperature": 0,
+  "max_tokens": 512,
+  "stream": true
+}

@@ -1,0 +1,28 @@
+diff --git a/Source/MLX/Stream.swift b/Source/MLX/Stream.swift
+index d7b17ad..13803cf 100644
+--- a/Source/MLX/Stream.swift
++++ b/Source/MLX/Stream.swift
+@@ -103,6 +103,23 @@ public final class Stream: @unchecked Sendable, Equatable {
+ 
+     @TaskLocal static var defaultStream: Stream?
+ 
++    /// Use an existing stream as ``StreamOrDevice/default`` for the duration of `body`.
++    public static func withDefaultStream<R>(
++        _ existing: Stream, body: () throws -> R
++    ) rethrows -> R {
++        try $defaultStream.withValue(existing, operation: body)
++    }
++
++    /// Use an existing stream as ``StreamOrDevice/default`` for the duration of `body`.
++    ///
++    /// Child tasks inherit the task-local stream. The caller remains responsible for
++    /// serializing access when the same stream is shared across tasks.
++    public static func withDefaultStream<R>(
++        _ existing: Stream, body: () async throws -> R
++    ) async rethrows -> R {
++        try await $defaultStream.withValue(existing, operation: body)
++    }
++
+     /// Set the ``StreamOrDevice/default`` scoped to a Task.
+     public static func withNewDefaultStream<R>(device: Device? = nil, _ body: () throws -> R)
+         rethrows -> R

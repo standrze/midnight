@@ -1,0 +1,98 @@
+diff --git a/Libraries/MLXLMCommon/KVCache.swift b/Libraries/MLXLMCommon/KVCache.swift
+index 22e5cd8e..8a08bff9 100644
+--- a/Libraries/MLXLMCommon/KVCache.swift
++++ b/Libraries/MLXLMCommon/KVCache.swift
+@@ -386,6 +386,13 @@ public func createSSMMask(h: MLXArray, cache: MambaCache?) -> MLXArray? {
+     return nil
+ }
+ 
++/// Write an exact `[B, H, range, D]` cache slice without constructing generic index operations.
++private func updateKVCacheSlice(
++    _ cache: MLXArray, with update: MLXArray, range: Range<Int>
++) {
++    cache.updateSliceAxis2(with: update, range: range)
++}
++
+ /// Standard KV cache implementation based on Python's KVCache
+ /// See https://github.com/ml-explore/mlx-examples/blob/main/llms/mlx_lm/models/base.py#L11
+ public class KVCacheSimple: BaseKVCache, CustomDebugStringConvertible {
+@@ -437,8 +444,8 @@ public class KVCacheSimple: BaseKVCache, CustomDebugStringConvertible {
+ 
+         self.offset += keys.dim(2)
+ 
+-        self.keys?[.ellipsis, previous ..< self.offset, 0...] = keys
+-        self.values?[.ellipsis, previous ..< self.offset, 0...] = values
++        updateKVCacheSlice(self.keys!, with: keys, range: previous ..< self.offset)
++        updateKVCacheSlice(self.values!, with: values, range: previous ..< self.offset)
+ 
+         let returnedKeys = self.keys![.ellipsis, ..<self.offset, 0...]
+         let returnedValues = self.values![.ellipsis, ..<self.offset, 0...]
+@@ -724,8 +731,8 @@ public class RotatingKVCache: BaseKVCache, CustomDebugStringConvertible {
+         }
+ 
+         // Assign
+-        self.keys![.ellipsis, idx ..< (idx + S), 0...] = keys
+-        self.values![.ellipsis, idx ..< (idx + S), 0...] = values
++        updateKVCacheSlice(self.keys!, with: keys, range: idx ..< (idx + S))
++        updateKVCacheSlice(self.values!, with: values, range: idx ..< (idx + S))
+         offset += S
+         idx += S
+ 
+diff --git a/Tests/MLXLMTests/KVCacheTests.swift b/Tests/MLXLMTests/KVCacheTests.swift
+index 71147850..9bff794e 100644
+--- a/Tests/MLXLMTests/KVCacheTests.swift
++++ b/Tests/MLXLMTests/KVCacheTests.swift
+@@ -1305,6 +1305,53 @@ private func fillOneAtATime(_ cache: RotatingKVCache, positions: Range<Int>) {
+     }
+ }
+ 
++@Test func testSimpleCacheDirectSliceUpdatePreservesIdentityUntilGrowth() {
++    let cache = KVCacheSimple()
++    cache.step = 2
++
++    let first = positionedKV(0 ..< 1)
++    _ = cache.update(keys: first.0, values: first.1)
++    let initial = cache.innerState()
++
++    let second = positionedKV(1 ..< 2)
++    let firstWindow = cache.update(keys: second.0, values: second.1)
++    let filled = cache.innerState()
++    #expect(initial[0] === filled[0])
++    #expect(initial[1] === filled[1])
++    #expect(encodedPositions(firstWindow.0) == [0, 1])
++
++    let third = positionedKV(2 ..< 3)
++    _ = cache.update(keys: third.0, values: third.1)
++    let grown = cache.innerState()
++    #expect(initial[0] !== grown[0], "capacity growth must install a larger key array")
++    #expect(initial[1] !== grown[1], "capacity growth must install a larger value array")
++
++    let fourth = positionedKV(3 ..< 4)
++    let fullWindow = cache.update(keys: fourth.0, values: fourth.1)
++    let refilled = cache.innerState()
++    #expect(grown[0] === refilled[0])
++    #expect(grown[1] === refilled[1])
++    #expect(encodedPositions(fullWindow.0) == [0, 1, 2, 3])
++    #expect(encodedPositions(fullWindow.1).map { -$0 } == [0, 1, 2, 3])
++}
++
++@Test func testRotatingCacheDirectSliceUpdatePreservesIdentityAcrossWrap() throws {
++    let cache = RotatingKVCache(maxSize: 4, keep: 0, step: 4)
++
++    let first = positionedKV(0 ..< 1)
++    _ = cache.update(keys: first.0, values: first.1)
++    let storage = cache.innerState()
++
++    fillOneAtATime(cache, positions: 1 ..< 10)
++    let wrapped = cache.innerState()
++    #expect(storage[0] === wrapped[0])
++    #expect(storage[1] === wrapped[1])
++
++    let view = cache.logicalView(tail: 4)
++    #expect(encodedPositions(try #require(view).0) == [6, 7, 8, 9])
++    #expect(encodedPositions(try #require(view).1).map { -$0 } == [6, 7, 8, 9])
++}
++
+ @Test func testRotatingLogicalViewIsNilBeforeFirstWrite() {
+     #expect(RotatingKVCache(maxSize: 8, keep: 0).logicalView(tail: 8) == nil)
+ }

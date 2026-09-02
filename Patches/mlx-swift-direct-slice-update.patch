@@ -1,0 +1,90 @@
+diff --git a/Source/MLX/MLXArray+Indexing.swift b/Source/MLX/MLXArray+Indexing.swift
+index bebaf23..75697c4 100644
+--- a/Source/MLX/MLXArray+Indexing.swift
++++ b/Source/MLX/MLXArray+Indexing.swift
+@@ -832,6 +832,51 @@ func gatherND(
+ 
+ // MARK: - index set (slice)
+ 
++extension MLXArray {
++
++    /// Replace an exact rank-four axis-2 slice while preserving this array's object identity.
++    ///
++    /// This specialized counterpart to a slice subscript assignment is intended for KV-cache
++    /// writers. It keeps all twelve slice-bound integers in fixed inline storage, avoids
++    /// index-operation expansion, reshape, broadcast, and temporary `MLXArray` allocation, and
++    /// preserves both the Swift array object and its C wrapper. Shape, dtype, and range invariants
++    /// are asserted in debug builds.
++    ///
++    /// - Parameters:
++    ///   - update: array whose shape exactly matches the selected slice
++    ///   - range: half-open range on axis 2
++    ///   - stream: stream or device on which to create the update
++    public func updateSliceAxis2(
++        with update: MLXArray,
++        range: Range<Int>,
++        stream: StreamOrDevice = .default
++    ) {
++        assert(ndim == 4 && update.ndim == 4, "axis-2 slice update requires rank-four arrays")
++        assert(dtype == update.dtype, "axis-2 slice update requires matching dtypes")
++        assert(range.lowerBound >= 0 && range.upperBound <= dim(2), "range is out of bounds")
++        assert(
++            update.dim(0) == dim(0) && update.dim(1) == dim(1)
++                && update.dim(2) == range.count && update.dim(3) == dim(3),
++            "update must exactly match the axis-2 slice shape")
++
++        var bounds = SIMD16<Int32>(
++            0, 0, Int32(range.lowerBound), 0,
++            Int32(dim(0)), Int32(dim(1)), Int32(range.upperBound), Int32(dim(3)),
++            1, 1, 1, 1,
++            0, 0, 0, 0)
++        let source = ctx
++        let status = withUnsafePointer(to: &bounds) { boundsPointer in
++            boundsPointer.withMemoryRebound(to: Int32.self, capacity: 16) { starts in
++                mlx_slice_update(
++                    &ctx, source, update.ctx,
++                    starts, 4, starts.advanced(by: 4), 4, starts.advanced(by: 8), 4,
++                    stream.ctx)
++            }
++        }
++        assert(status == 0, "axis-2 slice update failed")
++    }
++}
++
+ /// The result of translating index operations into `mlx_slice_update*` arguments.
+ ///
+ /// See ``sliceUpdateArguments(src:operations:update:stream:)``.
+diff --git a/Tests/MLXTests/MLXArray+IndexingTests.swift b/Tests/MLXTests/MLXArray+IndexingTests.swift
+index 68673ff..5a881dc 100644
+--- a/Tests/MLXTests/MLXArray+IndexingTests.swift
++++ b/Tests/MLXTests/MLXArray+IndexingTests.swift
+@@ -199,6 +199,29 @@ class MLXArrayIndexingTests: XCTestCase {
+         assertEqual(a, expected)
+     }
+ 
++    func testDirectSliceUpdatePreservesIdentityAndAvoidsShapeOperations() {
++        let a = MLXArray((0 ..< 20).asInt32, [2, 2, 5, 1])
++        let identity = ObjectIdentifier(a)
++        let cWrapperIdentity = a.ctx.ctx
++        let update = MLXArray((88 ..< 96).asInt32, [2, 2, 2, 1])
++
++        a.updateSliceAxis2(
++            with: update,
++            range: 2 ..< 4)
++
++        XCTAssertEqual(ObjectIdentifier(a), identity)
++        XCTAssertEqual(a.ctx.ctx, cWrapperIdentity)
++        let description = graphDescription([a])
++        XCTAssertTrue(description.contains("SliceUpdate"), "expected SliceUpdate in:\n\(description)")
++        XCTAssertFalse(description.contains("Broadcast"), "unexpected Broadcast in:\n\(description)")
++        XCTAssertFalse(description.contains("Reshape"), "unexpected Reshape in:\n\(description)")
++
++        let expected = MLXArray(
++            [0, 1, 88, 89, 4, 5, 6, 90, 91, 9, 10, 11, 92, 93, 14, 15, 16, 94, 95, 19]
++                .asInt32, [2, 2, 5, 1])
++        assertEqual(a, expected)
++    }
++
+     func testArrayMutateAdvanced() {
+         let a = MLXArray(0 ..< 35, [5, 7]).asType(Int32.self)
+ 

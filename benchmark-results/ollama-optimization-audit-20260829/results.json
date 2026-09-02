@@ -1,0 +1,104 @@
+{
+  "date": "2026-08-29",
+  "hardware": "40-GPU-core M5 Max MacBook, 64 GiB unified memory",
+  "model": "Laguna XS 2.1 abliterated Q4R8 exact-value Ollama compatibility view",
+  "software": {
+    "ollama": "0.33.1",
+    "ollama_mlx": "0.32.1-37-gc793734",
+    "native_mlx": "0.32.2"
+  },
+  "source_provenance": {
+    "ollama_tag": "v0.33.1",
+    "ollama_tag_archive_sha256": "8f47ee4029470b4cd4a338dd6eafec4181bed46c6d180bed02f4127b43f2aab5",
+    "ollama_mlx_commit": "c793734eb715dbcfdb1ced58e348ec53c2d7ed85",
+    "ollama_mlx_c_commit": "fba4470b89073180056c9ea46c443051375f7399",
+    "native_mlx_swift_commit": "72f3c3ad8aeee39bfc94f8fbeb446cac89e3a798"
+  },
+  "cache_fair_decode": {
+    "prompt_tokens": 79,
+    "prompt_ids_identical": true,
+    "ollama_think": false,
+    "prompt_final_token_id": 19,
+    "prompt_final_token": "</think>",
+    "generated_tokens": 128,
+    "kv_capacity_boundary_tokens": 256,
+    "warmups": 2,
+    "native_trials_tokens_per_second": [
+      166.15068507988755,
+      165.6809812524081,
+      165.81556227385016,
+      166.22813438983243,
+      166.40470334949066,
+      166.1821859697677,
+      166.11253999494426,
+      166.00675596596878,
+      166.10606426725437,
+      166.07718661324935,
+      165.86732922447803,
+      165.78614559214708
+    ],
+    "native_median_tokens_per_second": 166.09162544025185,
+    "ollama_trials_tokens_per_second": [
+      179.72168420734158,
+      179.56617583491698,
+      179.48326339391713,
+      179.63296617683582,
+      179.4694541103273,
+      179.54043268287663,
+      179.5662702998441,
+      179.87869447405035,
+      179.50411296021056,
+      179.6245741152218,
+      179.51869372055643,
+      179.63924781695545
+    ],
+    "ollama_median_tokens_per_second": 179.56622306738052,
+    "ollama_advantage_percent": 8.112749569047883,
+    "native_milliseconds_per_token": 6.020773156679896,
+    "ollama_milliseconds_per_token": 5.568976074218365,
+    "difference_milliseconds_per_token": 0.45179708246153094
+  },
+  "controlled_probes": {
+    "persistent_compiled_closure": {
+      "swift_wrapper_microseconds_per_token": 128.305,
+      "ollama_style_wrapper_microseconds_per_token": 104.822,
+      "difference_microseconds_per_token": 23.483,
+      "estimated_native_token_time_percent": 0.39
+    },
+    "global_encoder_lookup_first": {
+      "observed_improvement_percent_range": [0.5, 0.9],
+      "classification": "small, device-state-sensitive win"
+    },
+    "ollama_aot_metallib_in_native": {
+      "aot_median_tokens_per_second": 163.61,
+      "adjacent_jit_median_tokens_per_second": 165.47,
+      "aot_change_percent": -1.12
+    },
+    "o3_ndebug": {
+      "change_percent_range": [-0.93, -0.78]
+    },
+    "cached_routed_scale": {
+      "change_percent": -0.11
+    },
+    "thread_local_stream_without_pinned_thread": {
+      "warm_tokens_per_second_range": [164.3, 164.7],
+      "cold_thread_tokens_per_second_range": [14.0, 28.0],
+      "classification": "unsafe without permanent OS-thread affinity"
+    }
+  },
+  "source_audit": {
+    "compiled_islands_per_decode_token": 197,
+    "native_quantized_matmuls_per_decode_token": 398,
+    "ollama_quantized_matmuls_per_decode_token": 438,
+    "routed_gather_qmms_per_decode_token_both": 78,
+    "exact_tensor_payload_bytes": 18821963264,
+    "requantized": false
+  },
+  "legacy_prompt_mismatch": {
+    "description": "The original 512-token Ollama request omitted think:false. The first 78 prompt IDs matched, but native ended with token 19 (</think>) and Ollama ended with token 18 (<think>).",
+    "original_ollama_median_tokens_per_second": 173.08579304119894,
+    "original_native_median_tokens_per_second": 161.16182447681388,
+    "original_ollama_advantage_percent": 7.39875501105447
+  },
+  "evidence_boundary": "Exact tensor values and all prompt IDs are matched. Free-running output token streams later diverge, so a teacher-forced generated-token trace is still required for a strict same-kernel-path A/B."
+}

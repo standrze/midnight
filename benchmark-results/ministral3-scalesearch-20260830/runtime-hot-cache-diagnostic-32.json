@@ -1,0 +1,92 @@
+{
+  "allow_early_stop" : false,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-08-30T14:51:45Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 4,
+  "mistral_hot_cache_ab_comparison" : {
+    "cached_median_prefilled_prompt_token_count" : 24,
+    "cached_median_reused_prompt_token_count" : 602,
+    "cached_median_time_to_first_token_milliseconds" : 596.606458,
+    "cached_median_total_prompt_token_count" : 626,
+    "cached_ttft_reduction_percent" : 24.376891534848223,
+    "cold_median_prefilled_prompt_token_count" : 626,
+    "cold_median_reused_prompt_token_count" : 0,
+    "cold_median_time_to_first_token_milliseconds" : 788.920834,
+    "cold_median_total_prompt_token_count" : 626,
+    "outputs_match_exactly" : true,
+    "trials_per_mode" : 1
+  },
+  "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 32,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 32,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 907.1361647174127,
+        "stop_reason" : "length",
+        "tokens_per_second" : 38.424683825516574
+      },
+      "mode" : "mistral_hot_cache_seed_before_cold",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 649.999917
+    },
+    {
+      "content" : "---\n\n## **3. Core Data Structures: The Work Queue and Deque**\n\nBefore diving into the lock-free implementation, we need to define the fundamental data structures",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 32,
+        "prefilled_prompt_token_count" : 626,
+        "prompt_token_count" : 626,
+        "prompt_tokens_per_second" : 813.262643759779,
+        "stop_reason" : "length",
+        "tokens_per_second" : 23.137754284509036
+      },
+      "mode" : "mistral_hot_cache_cold",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 788.920834
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 32,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 764.1447383876608,
+        "stop_reason" : "length",
+        "tokens_per_second" : 37.571517609042736
+      },
+      "mode" : "mistral_hot_cache_seed_before_cached",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 755.918584
+    },
+    {
+      "content" : "---\n\n## **3. Core Data Structures: The Work Queue and Deque**\n\nBefore diving into the lock-free implementation, we need to define the fundamental data structures",
+      "metrics" : {
+        "cached_prompt_token_count" : 602,
+        "generation_token_count" : 32,
+        "prefilled_prompt_token_count" : 24,
+        "prompt_token_count" : 626,
+        "prompt_tokens_per_second" : 41.415092480461055,
+        "stop_reason" : "length",
+        "tokens_per_second" : 31.761217481885836
+      },
+      "mode" : "mistral_hot_cache_cached",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 596.606458
+    }
+  ],
+  "warmup_count" : 0,
+  "warmups" : [
+
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "host": "127.0.0.1",
+  "median_decode_tokens_per_second": 124.26156999737199,
+  "median_e2e_tokens_per_second": 122.44803640873651,
+  "median_ttft_milliseconds": 67.82070800545625,
+  "model": "laguna-3bit",
+  "port": 18082,
+  "prompt": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens": 512,
+  "trials": [
+    {
+      "completion_tokens": 512,
+      "content": "## Implementing a Lock-Free Work-Stealing Scheduler in Swift: Continuation\n\nHaving established the foundational data structures and the basic structure of a work-stealing scheduler, we now proceed to implement the core mechanisms that make such a scheduler efficient and scalable. The key insight behind work-stealing schedulers is that each worker maintains a local deque of tasks, and when a worker runs out of tasks, it attempts to steal tasks from other workers' deques. This approach minimizes contention and maximizes parallelism.\n\n### Implementing the Lock-Free Deque\n\nThe heart of a work-stealing scheduler is the deque (double-ended queue) that supports efficient push and pop operations from both ends. In a lock-free implementation, we must ensure that operations on the deque are atomic and that concurrent access does not lead to data corruption.\n\n#### Atomic Operations and Memory Ordering\n\nBefore diving into the deque implementation, let's understand the atomic operations we'll need. Swift provides the `Atomic` type from the Swift Concurrency implementation, which wraps values in a way that ensures atomic access. We'll also rely on `swift-atomics` for low-level atomic operations.\n\n```swift\nimport Atomics\n\n// Define memory ordering for atomic operations\ntypealias MemoryOrder = Swift_Atomics_AtomicsSupport.MemoryOrder\n```\n\n#### The Deque Structure\n\nOur deque will be implemented as a circular buffer with atomic head and tail pointers. The key insight is that we can use atomic operations to manage the head and tail without needing locks.\n\n```swift\nfinal class WorkStealingDeque<T> {\n    // Atomic pointers for head and tail\n    private var bottom: Atomic<Int>\n    private var top: Atomic<Int>\n    \n    // The buffer holding tasks\n    private var buffer: [T?]\n    private let capacity: Int\n    \n    // Track the number of elements\n    private var count: Int\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = Array(repeating: nil, count: capacity)\n        self.bottom = Atomic<Int>(0)\n        self.top = Atomic<Int>(0)\n        self.count = 0\n    }\n    \n    // Push a task to the top of the deque\n    func push(_ task: T) {\n        let currentBottom = bottom.load(order: .relaxed)\n        let newBottom = (currentBottom + 1) % capacity\n        \n        // Ensure we have space\n        while (current",
+      "content_sha256": "91259061ad05a1f29234e455e2aeceb670d429d28b1c85efb5d779c185cf9b0a",
+      "decode_seconds": 4.121480375004467,
+      "decode_tokens_per_second": 123.98457677951365,
+      "e2e_seconds": 4.1871792919992,
+      "e2e_tokens_per_second": 122.27802162145814,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 50,
+      "stream_close_seconds": 4.187188666983275,
+      "ttft_seconds": 0.06569891699473374
+    },
+    {
+      "completion_tokens": 512,
+      "content": "## Implementing a Lock-Free Work-Stealing Scheduler in Swift: Continuation\n\nHaving established the foundational data structures and the basic structure of a work-stealing scheduler, we now proceed to implement the core mechanisms that make such a scheduler efficient and scalable. The key insight behind work-stealing schedulers is that each worker maintains a local deque of tasks, and when a worker runs out of tasks, it attempts to steal tasks from other workers' deques. This approach minimizes contention and maximizes parallelism.\n\n### Implementing the Lock-Free Deque\n\nThe heart of a work-stealing scheduler is the deque (double-ended queue) that supports efficient push and pop operations from both ends. In a lock-free implementation, we must ensure that operations on the deque are atomic and that concurrent access does not lead to data corruption.\n\n#### Atomic Operations and Memory Ordering\n\nBefore diving into the deque implementation, let's understand the atomic operations we'll need. Swift provides the `Atomic` type from the Swift Concurrency implementation, which wraps values in a way that ensures atomic access. We'll also rely on `swift-atomics` for low-level atomic operations.\n\n```swift\nimport Atomics\n\n// Define memory ordering for atomic operations\ntypealias MemoryOrder = Swift_Atomics_AtomicsSupport.MemoryOrder\n```\n\n#### The Deque Structure\n\nOur deque will be implemented as a circular buffer with atomic head and tail pointers. The key insight is that we can use atomic operations to manage the head and tail without needing locks.\n\n```swift\nfinal class WorkStealingDeque<T> {\n    // Atomic pointers for head and tail\n    private var bottom: Atomic<Int>\n    private var top: Atomic<Int>\n    \n    // The buffer holding tasks\n    private var buffer: [T?]\n    private let capacity: Int\n    \n    // Track the number of elements\n    private var count: Int\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = Array(repeating: nil, count: capacity)\n        self.bottom = Atomic<Int>(0)\n        self.top = Atomic<Int>(0)\n        self.count = 0\n    }\n    \n    // Push a task to the top of the deque\n    func push(_ task: T) {\n        let currentBottom = bottom.load(order: .relaxed)\n        let newBottom = (currentBottom + 1) % capacity\n        \n        // Ensure we have space\n        while (current",
+      "content_sha256": "91259061ad05a1f29234e455e2aeceb670d429d28b1c85efb5d779c185cf9b0a",
+      "decode_seconds": 4.112293124984717,
+      "decode_tokens_per_second": 124.26156999737199,
+      "e2e_seconds": 4.181365540978732,
+      "e2e_tokens_per_second": 122.44803640873651,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 50,
+      "stream_close_seconds": 4.1813760829973035,
+      "ttft_seconds": 0.06907241599401459
+    },
+    {
+      "completion_tokens": 512,
+      "content": "## Implementing a Lock-Free Work-Stealing Scheduler in Swift: Continuation\n\nHaving established the foundational data structures and the basic structure of a work-stealing scheduler, we now proceed to implement the core mechanisms that make such a scheduler efficient and scalable. The key insight behind work-stealing schedulers is that each worker maintains a local deque of tasks, and when a worker runs out of tasks, it attempts to steal tasks from other workers' deques. This approach minimizes contention and maximizes parallelism.\n\n### Implementing the Lock-Free Deque\n\nThe heart of a work-stealing scheduler is the deque (double-ended queue) that supports efficient push and pop operations from both ends. In a lock-free implementation, we must ensure that operations on the deque are atomic and that concurrent access does not lead to data corruption.\n\n#### Atomic Operations and Memory Ordering\n\nBefore diving into the deque implementation, let's understand the atomic operations we'll need. Swift provides the `Atomic` type from the Swift Concurrency implementation, which wraps values in a way that ensures atomic access. We'll also rely on `swift-atomics` for low-level atomic operations.\n\n```swift\nimport Atomics\n\n// Define memory ordering for atomic operations\ntypealias MemoryOrder = Swift_Atomics_AtomicsSupport.MemoryOrder\n```\n\n#### The Deque Structure\n\nOur deque will be implemented as a circular buffer with atomic head and tail pointers. The key insight is that we can use atomic operations to manage the head and tail without needing locks.\n\n```swift\nfinal class WorkStealingDeque<T> {\n    // Atomic pointers for head and tail\n    private var bottom: Atomic<Int>\n    private var top: Atomic<Int>\n    \n    // The buffer holding tasks\n    private var buffer: [T?]\n    private let capacity: Int\n    \n    // Track the number of elements\n    private var count: Int\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = Array(repeating: nil, count: capacity)\n        self.bottom = Atomic<Int>(0)\n        self.top = Atomic<Int>(0)\n        self.count = 0\n    }\n    \n    // Push a task to the top of the deque\n    func push(_ task: T) {\n        let currentBottom = bottom.load(order: .relaxed)\n        let newBottom = (currentBottom + 1) % capacity\n        \n        // Ensure we have space\n        while (current",
+      "content_sha256": "91259061ad05a1f29234e455e2aeceb670d429d28b1c85efb5d779c185cf9b0a",
+      "decode_seconds": 4.126210832997458,
+      "decode_tokens_per_second": 123.84243575570943,
+      "e2e_seconds": 4.196223332983209,
+      "e2e_tokens_per_second": 122.01447810834351,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 50,
+      "stream_close_seconds": 4.19623358300305,
+      "ttft_seconds": 0.07001249998575076
+    },
+    {
+      "completion_tokens": 512,
+      "content": "## Implementing a Lock-Free Work-Stealing Scheduler in Swift: Continuation\n\nHaving established the foundational data structures and the basic structure of a work-stealing scheduler, we now proceed to implement the core mechanisms that make such a scheduler efficient and scalable. The key insight behind work-stealing schedulers is that each worker maintains a local deque of tasks, and when a worker runs out of tasks, it attempts to steal tasks from other workers' deques. This approach minimizes contention and maximizes parallelism.\n\n### Implementing the Lock-Free Deque\n\nThe heart of a work-stealing scheduler is the deque (double-ended queue) that supports efficient push and pop operations from both ends. In a lock-free implementation, we must ensure that operations on the deque are atomic and that concurrent access does not lead to data corruption.\n\n#### Atomic Operations and Memory Ordering\n\nBefore diving into the deque implementation, let's understand the atomic operations we'll need. Swift provides the `Atomic` type from the Swift Concurrency implementation, which wraps values in a way that ensures atomic access. We'll also rely on `swift-atomics` for low-level atomic operations.\n\n```swift\nimport Atomics\n\n// Define memory ordering for atomic operations\ntypealias MemoryOrder = Swift_Atomics_AtomicsSupport.MemoryOrder\n```\n\n#### The Deque Structure\n\nOur deque will be implemented as a circular buffer with atomic head and tail pointers. The key insight is that we can use atomic operations to manage the head and tail without needing locks.\n\n```swift\nfinal class WorkStealingDeque<T> {\n    // Atomic pointers for head and tail\n    private var bottom: Atomic<Int>\n    private var top: Atomic<Int>\n    \n    // The buffer holding tasks\n    private var buffer: [T?]\n    private let capacity: Int\n    \n    // Track the number of elements\n    private var count: Int\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = Array(repeating: nil, count: capacity)\n        self.bottom = Atomic<Int>(0)\n        self.top = Atomic<Int>(0)\n        self.count = 0\n    }\n    \n    // Push a task to the top of the deque\n    func push(_ task: T) {\n        let currentBottom = bottom.load(order: .relaxed)\n        let newBottom = (currentBottom + 1) % capacity\n        \n        // Ensure we have space\n        while (current",
+      "content_sha256": "91259061ad05a1f29234e455e2aeceb670d429d28b1c85efb5d779c185cf9b0a",
+      "decode_seconds": 4.028934999980265,
+      "decode_tokens_per_second": 126.83252522130613,
+      "e2e_seconds": 4.0967557079857215,
+      "e2e_tokens_per_second": 124.9769418767072,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 50,
+      "stream_close_seconds": 4.0967654999985825,
+      "ttft_seconds": 0.06782070800545625
+    },
+    {
+      "completion_tokens": 512,
+      "content": "## Implementing a Lock-Free Work-Stealing Scheduler in Swift: Continuation\n\nHaving established the foundational data structures and the basic structure of a work-stealing scheduler, we now proceed to implement the core mechanisms that make such a scheduler efficient and scalable. The key insight behind work-stealing schedulers is that each worker maintains a local deque of tasks, and when a worker runs out of tasks, it attempts to steal tasks from other workers' deques. This approach minimizes contention and maximizes parallelism.\n\n### Implementing the Lock-Free Deque\n\nThe heart of a work-stealing scheduler is the deque (double-ended queue) that supports efficient push and pop operations from both ends. In a lock-free implementation, we must ensure that operations on the deque are atomic and that concurrent access does not lead to data corruption.\n\n#### Atomic Operations and Memory Ordering\n\nBefore diving into the deque implementation, let's understand the atomic operations we'll need. Swift provides the `Atomic` type from the Swift Concurrency implementation, which wraps values in a way that ensures atomic access. We'll also rely on `swift-atomics` for low-level atomic operations.\n\n```swift\nimport Atomics\n\n// Define memory ordering for atomic operations\ntypealias MemoryOrder = Swift_Atomics_AtomicsSupport.MemoryOrder\n```\n\n#### The Deque Structure\n\nOur deque will be implemented as a circular buffer with atomic head and tail pointers. The key insight is that we can use atomic operations to manage the head and tail without needing locks.\n\n```swift\nfinal class WorkStealingDeque<T> {\n    // Atomic pointers for head and tail\n    private var bottom: Atomic<Int>\n    private var top: Atomic<Int>\n    \n    // The buffer holding tasks\n    private var buffer: [T?]\n    private let capacity: Int\n    \n    // Track the number of elements\n    private var count: Int\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = Array(repeating: nil, count: capacity)\n        self.bottom = Atomic<Int>(0)\n        self.top = Atomic<Int>(0)\n        self.count = 0\n    }\n    \n    // Push a task to the top of the deque\n    func push(_ task: T) {\n        let currentBottom = bottom.load(order: .relaxed)\n        let newBottom = (currentBottom + 1) % capacity\n        \n        // Ensure we have space\n        while (current",
+      "content_sha256": "91259061ad05a1f29234e455e2aeceb670d429d28b1c85efb5d779c185cf9b0a",
+      "decode_seconds": 4.0209280000126455,
+      "decode_tokens_per_second": 127.08509080450905,
+      "e2e_seconds": 4.088575166999362,
+      "e2e_tokens_per_second": 125.22699940374604,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 50,
+      "stream_close_seconds": 4.08858662500279,
+      "ttft_seconds": 0.06764716698671691
+    }
+  ],
+  "warmups": [
+    {
+      "completion_tokens": 512,
+      "content": "## Implementing a Lock-Free Work-Stealing Scheduler in Swift: Continuation\n\nHaving established the foundational data structures and the basic structure of a work-stealing scheduler, we now proceed to implement the core mechanisms that make such a scheduler efficient and scalable. The key insight behind work-stealing schedulers is that each worker maintains a local deque of tasks, and when a worker runs out of tasks, it attempts to steal tasks from other workers' deques. This approach minimizes contention and maximizes parallelism.\n\n### Implementing the Lock-Free Deque\n\nThe heart of a work-stealing scheduler is the deque (double-ended queue) that supports efficient push and pop operations from both ends. In a lock-free implementation, we must ensure that operations on the deque are atomic and that concurrent access does not lead to data corruption.\n\n#### Atomic Operations and Memory Ordering\n\nBefore diving into the deque implementation, let's understand the atomic operations we'll need. Swift provides the `Atomic` type from the Swift Concurrency implementation, which wraps values in a way that ensures atomic access. We'll also rely on `swift-atomics` for low-level atomic operations.\n\n```swift\nimport Atomics\n\n// Define memory ordering for atomic operations\ntypealias MemoryOrder = Swift_Atomics_AtomicsSupport.MemoryOrder\n```\n\n#### The Deque Structure\n\nOur deque will be implemented as a circular buffer with atomic head and tail pointers. The key insight is that we can use atomic operations to manage the head and tail without needing locks.\n\n```swift\nfinal class WorkStealingDeque<T> {\n    // Atomic pointers for head and tail\n    private var bottom: Atomic<Int>\n    private var top: Atomic<Int>\n    \n    // The buffer holding tasks\n    private var buffer: [T?]\n    private let capacity: Int\n    \n    // Track the number of elements\n    private var count: Int\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = Array(repeating: nil, count: capacity)\n        self.bottom = Atomic<Int>(0)\n        self.top = Atomic<Int>(0)\n        self.count = 0\n    }\n    \n    // Push a task to the top of the deque\n    func push(_ task: T) {\n        let currentBottom = bottom.load(order: .relaxed)\n        let newBottom = (currentBottom + 1) % capacity\n        \n        // Ensure we have space\n        while (current",
+      "content_sha256": "91259061ad05a1f29234e455e2aeceb670d429d28b1c85efb5d779c185cf9b0a",
+      "decode_seconds": 3.9859442920133006,
+      "decode_tokens_per_second": 128.20048715279307,
+      "e2e_seconds": 4.178322457999457,
+      "e2e_tokens_per_second": 122.53721562819281,
+      "finish_reason": "length",
+      "prompt_token_ids": null,
+      "prompt_tokens": 50,
+      "stream_close_seconds": 4.178336249984568,
+      "ttft_seconds": 0.1923781659861561
+    }
+  ]
+}

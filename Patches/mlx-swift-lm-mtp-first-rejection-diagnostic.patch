@@ -1,0 +1,85 @@
+--- a/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
++++ b/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
+@@ -2,6 +2,9 @@
+ 
+ import Foundation
+ import MLX
++
++private let mtpFirstRejectionDiagnosticEnabled =
++    ProcessInfo.processInfo.environment["MODEL_RUNNER_DFLASH_FIRST_REJECTION_DIAGNOSTIC"] == "1"
+ 
+ /// Generator of tokens using MTP (Multi-Token Prediction) speculative
+ /// decoding.
+@@ -73,6 +76,7 @@
+     /// `y` and scheduled the following token. Once primed, passthrough keeps
+     /// the same one-token pipeline as `TokenIterator`.
+     private var passthroughPipelinePrimed = false
++    private var didReportFirstRejection = false
+ 
+     /// Verify-position index in the prior round's emitted hidden that
+     /// produced the newly-accepted bonus's logit prediction. Set at the end
+@@ -522,6 +526,15 @@
+                 mainTokensList[accepted] == draftTokensList[accepted]
+             {
+                 accepted += 1
++            }
++            if accepted < numDraft {
++                reportFirstRejection(
++                    accepted: accepted,
++                    proposed: numDraft,
++                    queryOffset: queryOffset,
++                    draftToken: draftTokensList[accepted],
++                    targetToken: mainTokensList[accepted],
++                    logits: mainLogits[0..., verifyStart + accepted, 0...])
+             }
+ 
+             pendingTokens.append(contentsOf: mainTokensList.prefix(accepted + 1))
+@@ -543,6 +556,13 @@
+                 processor?.didSample(token: targetToken)
+                 pendingTokens.append(targetTokenValue)
+                 guard targetTokenValue == draftTokensList[i] else {
++                    reportFirstRejection(
++                        accepted: accepted,
++                        proposed: numDraft,
++                        queryOffset: queryOffset,
++                        draftToken: draftTokensList[i],
++                        targetToken: targetTokenValue,
++                        logits: logits)
+                     finalToken = targetToken
+                     break
+                 }
+@@ -630,6 +650,34 @@
+         kvCachePlan.apply(to: mainCacheStorage)
+ 
+         y = .init(tokens: emittedFinalToken)
++    }
++
++    /// Emit one opt-in record for the first normal draft/verifier rejection.
++    /// This is not an A/B output divergence; it identifies the exact round and
++    /// confidence margin to correlate with a separate target-only comparison.
++    private mutating func reportFirstRejection(
++        accepted: Int,
++        proposed: Int,
++        queryOffset: Int,
++        draftToken: Int,
++        targetToken: Int,
++        logits: MLXArray
++    ) {
++        guard mtpFirstRejectionDiagnosticEnabled, !didReportFirstRejection else { return }
++        didReportFirstRejection = true
++        let topTwo = top(logits.asType(.float32), k: 2, axis: -1).flattened()
++        eval(topTwo)
++        let values = topTwo.asArray(Float.self)
++        let margin = values.count == 2 ? abs(values[0] - values[1]) : .nan
++        print(
++            "[MTP_FIRST_REJECTION] round=\(telemetry.roundCount + 1) "
++                + "generated_index=\(tokenCount + accepted) "
++                + "verify_cache_position=\(queryOffset + accepted) "
++                + "predicted_position=\(queryOffset + accepted + 1) "
++                + "accepted_prefix=\(accepted)/\(proposed) "
++                + "draft_token=\(draftToken) target_token=\(targetToken) "
++                + "top2_margin=\(margin)"
++        )
+     }
+ 
+     /// Switch to single-token generation for the remainder of the stream.

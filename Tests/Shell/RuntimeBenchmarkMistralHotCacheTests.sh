@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PACKAGE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+BENCHMARK="$PACKAGE_ROOT/Sources/RuntimeBenchmark/main.swift"
+RUNNER="$PACKAGE_ROOT/Sources/ModelRunnerCore/LocalModelRunner.swift"
+README="$PACKAGE_ROOT/README.md"
+
+grep -Fq 'name: .customLong("mistral-hot-cache-ab")' "$BENCHMARK"
+grep -Fq 'case mistralHotCacheABComparison = "mistral_hot_cache_ab_comparison"' "$BENCHMARK"
+grep -Fq 'case continuationPrompt = "continuation_prompt"' "$BENCHMARK"
+grep -Fq 'case allowEarlyStop = "allow_early_stop"' "$BENCHMARK"
+grep -Fq 'continuationPrompt: continuationPrompt' "$BENCHMARK"
+grep -Fq 'allowEarlyStop: allowEarlyStop' "$BENCHMARK"
+grep -Fq 'coldFirst: trialIndex.isMultiple(of: 2)' "$BENCHMARK"
+grep -Fq 'coldMode.usePromptCache = false' "$BENCHMARK"
+grep -Fq 'if mistralHotCacheAB, allowEarlyStop {' "$BENCHMARK"
+grep -Fq '"--mistral-hot-cache-ab cannot be combined with --allow-early-stop."' "$BENCHMARK"
+grep -Fq 'mistral_hot_cache_seed_before_cold' "$BENCHMARK"
+grep -Fq 'mistral_hot_cache_seed_before_cached' "$BENCHMARK"
+grep -Fq 'mistralHotCacheSeedUnexpectedlyCached' "$BENCHMARK"
+grep -Fq 'mistralHotCacheSeedOutputMismatch' "$BENCHMARK"
+grep -Fq 'mistralHotCacheNotUsed' "$BENCHMARK"
+grep -Fq 'mistralHotCacheColdUnexpectedlyCached' "$BENCHMARK"
+grep -Fq 'mistralHotCacheDidNotReducePrefill' "$BENCHMARK"
+grep -Fq 'mistralHotCachePartialReuse' "$BENCHMARK"
+grep -Fq 'mistralHotCachePrefillAccountingMismatch' "$BENCHMARK"
+grep -Fq 'cachedSeed.metrics.promptTokenCount + cachedSeed.metrics.generationTokenCount' "$BENCHMARK"
+grep -Fq '== cached.metrics.promptTokenCount - cached.metrics.cachedPromptTokenCount' "$BENCHMARK"
+grep -Fq 'guard cold.metrics.prefilledPromptTokenCount == cold.metrics.promptTokenCount' "$BENCHMARK"
+grep -Fq 'mistralHotCacheOutputsMatchExactly(measuredRecords)' "$BENCHMARK"
+grep -Fq 'mistralHotCacheFirstOutputDivergence(measuredRecords)' "$BENCHMARK"
+grep -Fq 'case firstOutputDivergenceUTF8Offset = "first_output_divergence_utf8_offset"' "$BENCHMARK"
+grep -Fq 'continuation first output divergence: UTF-8 byte' "$BENCHMARK"
+! grep -Fq 'mistralHotCacheOutputMismatch' "$BENCHMARK"
+grep -Fq 'public nonisolated let supportsMistralHotConversationCache: Bool' "$RUNNER"
+
+# The new A/B remains separate from Laguna's established sibling-branch mode
+# and preserves its public flag and report field.
+grep -Fq 'name: .customLong("prompt-cache")' "$BENCHMARK"
+grep -Fq 'runPromptCacheProbe(' "$BENCHMARK"
+grep -Fq 'case promptCacheComparison = "prompt_cache_comparison"' "$BENCHMARK"
+grep -Fq -- '--mistral-hot-cache-ab' "$README"
+grep -Fq 'mistral_hot_cache_ab_comparison' "$README"
+grep -Fq '`first_output_divergence_utf8_offset`' "$README"
+
+echo "Mistral hot-cache runtime benchmark checks passed"

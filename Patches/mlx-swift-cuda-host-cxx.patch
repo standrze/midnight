@@ -1,0 +1,77 @@
+diff --git a/Plugins/CudaBuild/plugin.swift b/Plugins/CudaBuild/plugin.swift
+--- a/Plugins/CudaBuild/plugin.swift
++++ b/Plugins/CudaBuild/plugin.swift
+@@ -40,11 +40,8 @@ struct CudaBuild: BuildToolPlugin {
+             return []
+         }
+ 
+-        guard let clangUrl = try? context.tool(named: "clang++") else {
+-            fatalError("clang++ not found")
+-        }
+-
+-        print("Use clang++ at: \(clangUrl.url.path)")
++        let hostCXXPath = cudaHostCXXPath(context: context)
++        print("Use CUDA host C++ compiler at: \(hostCXXPath)")
+ 
+         let sourceDir = target.directoryURL
+ 
+@@ -141,7 +138,7 @@ struct CudaBuild: BuildToolPlugin {
+                         "Compiling \(inputFile.lastPathComponent) to \(outputCpp.lastPathComponent)",
+                     executable: encuda.url,
+                     arguments: ["compile"] + verboseFlag + stdArgs + incrementalFlag + [
+-                        "--clangpp", clangUrl.url.path,
++                        "--clangpp", hostCXXPath,
+                         "-I", sourceDir.path,
+                     ] + headerSearchPathArgs + [
+                         inputFile.path,
+@@ -168,7 +165,7 @@ struct CudaBuild: BuildToolPlugin {
+                 displayName: "Linking CUDA objects",
+                 executable: encuda.url,
+                 arguments: ["link"] + verboseFlag + stdArgs + incrementalFlag + [
+-                    "--clangpp", clangUrl.url.path,
++                    "--clangpp", hostCXXPath,
+                 ] + outputCpps.map { $0.path } + ["-o", linkOutput.path],
+                 inputFiles: outputCpps,
+                 outputFiles: [linkOutput]
+@@ -178,6 +175,41 @@ struct CudaBuild: BuildToolPlugin {
+         return commands
+     }
+ 
++    func cudaHostCXXPath(context: PluginContext) -> String {
++        let environment = ProcessInfo.processInfo.environment
++        let configuredCompiler: (name: String, path: String)?
++        if let path = environment["MLX_CUDA_HOST_CXX"] {
++            configuredCompiler = ("MLX_CUDA_HOST_CXX", path)
++        } else if let path = environment["CUDAHOSTCXX"] {
++            configuredCompiler = ("CUDAHOSTCXX", path)
++        } else {
++            configuredCompiler = nil
++        }
++
++        if let configuredCompiler {
++            guard configuredCompiler.path.hasPrefix("/") else {
++                fatalError("\(configuredCompiler.name) must be an absolute path")
++            }
++            var isDirectory = ObjCBool(false)
++            let exists = FileManager.default.fileExists(
++                atPath: configuredCompiler.path,
++                isDirectory: &isDirectory)
++            guard exists, !isDirectory.boolValue,
++                FileManager.default.isExecutableFile(atPath: configuredCompiler.path)
++            else {
++                fatalError(
++                    "\(configuredCompiler.name) must name an executable file: "
++                        + configuredCompiler.path)
++            }
++            return configuredCompiler.path
++        }
++
++        guard let clangUrl = try? context.tool(named: "clang++") else {
++            fatalError("clang++ not found")
++        }
++        return clangUrl.url.path
++    }
++
+     func isExcluded(settings: Settings, relativePath: String) -> Bool {
+         func isInFolder(path: String, folderPath: String) -> Bool {
+             let prefix = folderPath.hasSuffix("/") ? folderPath : (folderPath + "/")

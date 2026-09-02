@@ -1,0 +1,31 @@
+{
+  "status": "verified_with_contaminated_followups_excluded",
+  "date": "2026-08-29",
+  "method": "two warmups and twelve measured greedy 128-token trials per block",
+  "model": "Laguna-XS-2.1-MLX-Q4R8-ScaleSearch-LS2",
+  "clean_kv_slice_update_ab": {
+    "control_median_tokens_per_second": 163.70857290714923,
+    "candidate_median_tokens_per_second": [
+      168.59719308267566,
+      168.63795657291058
+    ],
+    "candidate_mean_of_medians_tokens_per_second": 168.61757482779313,
+    "candidate_vs_control_percent": 2.9986223894506336,
+    "milliseconds_saved_per_token": 0.17783569669490867,
+    "generated_text_matches": true
+  },
+  "autorelease_diagnostic": {
+    "single_pool_median_tokens_per_second": 165.13411115691952,
+    "unpooled_median_tokens_per_second": 166.06094989738688,
+    "production_conclusion": "too small to explain the Ollama gap; unpooled cleanup can be deferred past timing"
+  },
+  "excluded_reports": [
+    "direct-kv-stack-128x12.json",
+    "direct-kv-stack-confirm-128x12.json",
+    "direct-kv-stack-reassign-128x12.json",
+    "direct-kv-identity-functional-128x12.json",
+    "raw-handler-loaded-128x12.json",
+    "control-handler-loaded-128x12.json"
+  ],
+  "exclusion_reason": "unrelated multi-gigabyte Git packing and PDF processing caused severe system contention"
+}

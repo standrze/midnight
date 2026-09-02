@@ -1,0 +1,58 @@
+{
+  "date": "2026-08-29",
+  "hardware": "40-GPU-core M5 Max MacBook, 64 GiB unified memory",
+  "prompt_tokens": 79,
+  "generated_tokens_per_trial": 512,
+  "corrected_exact_prompt_cache_fair_comparison": {
+    "prompt_tokens": 79,
+    "prompt_ids_identical": true,
+    "ollama_think": false,
+    "generated_tokens_per_trial": 128,
+    "warmups": 2,
+    "measured_trials": 12,
+    "ollama_q4r8_median_tokens_per_second": 179.56622306738052,
+    "native_q4r8_median_tokens_per_second": 166.09162544025185,
+    "ollama_advantage_percent": 8.112749569047883,
+    "details": "../ollama-optimization-audit-20260829/results.json"
+  },
+  "original_512_prompt_mismatch": {
+    "matching_prefix_token_ids": 78,
+    "native_final_prompt_token_id": 19,
+    "native_final_prompt_token": "</think>",
+    "ollama_final_prompt_token_id": 18,
+    "ollama_final_prompt_token": "<think>",
+    "cause": "Original Ollama request omitted think:false"
+  },
+  "final_clean_comparison": {
+    "ollama_q4r8": {
+      "trials": [173.20868699901445, 173.04465104895002, 173.08579304119894],
+      "median": 173.08579304119894,
+      "model": "laguna-xs-abliterated-q4r8-ollama-compat:latest"
+    },
+    "native_q4r8": {
+      "trials": [161.16182447681388, 161.29652660025306, 160.69677514847916],
+      "median": 161.16182447681388,
+      "raw_report": "../../tmp/native-q4r8-recovery-20260829.json"
+    },
+    "ollama_stock_nvfp4": {
+      "trials": [154.67612627991568, 154.41967119618468, 154.19477549208614],
+      "median": 154.41967119618468,
+      "model": "laguna-xs-2.1:nvfp4"
+    },
+    "q4r8_ollama_vs_stock_nvfp4_percent": 12.087917103061052,
+    "q4r8_ollama_vs_native_percent": 7.39875501105447,
+    "q4r8_native_vs_stock_nvfp4_percent": 4.3661233237982655
+  },
+  "exactness_audit": {
+    "source_tensor_layers_checked": 599,
+    "exact_gate_up_splits_checked": 79,
+    "q8_routers_checked": 39,
+    "tensor_payload_bytes_checked": 18821963264,
+    "requantized": false
+  },
+  "excluded_thermal_collapse": {
+    "native_trials": [151.7848835240937, 111.25554053572735, 104.91758181184785],
+    "median": 111.25554053572735,
+    "raw_report": "../../tmp/native-q4r8-final-balanced-20260829.json"
+  }
+}

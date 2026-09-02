@@ -1,0 +1,89 @@
+diff --git a/Libraries/MLXLMCommon/ChatSession.swift b/Libraries/MLXLMCommon/ChatSession.swift
+index f8ab3bd..c85c9d5 100644
+--- a/Libraries/MLXLMCommon/ChatSession.swift
++++ b/Libraries/MLXLMCommon/ChatSession.swift
+@@ -890,7 +890,7 @@ public final class ChatSession {
+         // and are only being sent to the inner async
+         let inputMessages = SendableBox<[Chat.Message]>(messages)
+ 
+-        let task = Task {
++        let task = Task(executorPreference: MLXTaskExecutorPreference.current) {
+             [
+                 model,
+                 instructions, processing, tools, toolDispatch,
+diff --git a/Libraries/MLXLMCommon/Evaluate.swift b/Libraries/MLXLMCommon/Evaluate.swift
+index c6b2d00..baa1693 100644
+--- a/Libraries/MLXLMCommon/Evaluate.swift
++++ b/Libraries/MLXLMCommon/Evaluate.swift
+@@ -2318,7 +2318,8 @@ private func generateLoopTask<
+     let tokenCollector = consume tokenCollector
+ 
+     // Launch a Task to perform iteration asynchronously.
+-    let task = Task {
++    let task = Task(executorPreference: MLXTaskExecutorPreference.current) {
+         let performIteration = {
++            () async -> Collector.Result in
+             var iterator = iterator.consume()
+             var handler = handler.consume()
+@@ -2382,7 +2383,10 @@ private func generateLoopTask<
+ 
+                 tokenCount += 1
+                 switch handler.onToken(token, emit: continuation.yield) {
+                 case .more:
++                    if MLXTaskExecutorPreference.current != nil {
++                        await Task.yield()
++                    }
+                     break
+                 case .stop:
+                     stopReason = .stop
+@@ -2435,18 +2439,18 @@ private func generateLoopTask<
+             _ = continuation.yield(handler.infoEvent(info))
+ 
+             // Synchronize with the stream to ensure tasks are completed
+-            Stream().synchronize()
++            StreamOrDevice.default.stream.synchronize()
+ 
+             // Finalize the stream
+             continuation.finish()
+ 
+             return tokenCollector.result()
+         }
+ 
+         if let ticket = wiredMemoryTicket {
+             return await WiredMemoryTicket.withWiredLimit(ticket) {
+-                performIteration()
++                await performIteration()
+             }
+         } else {
+-            return performIteration()
++            return await performIteration()
+         }
+diff --git a/Libraries/MLXLMCommon/MLXTaskExecutorPreference.swift b/Libraries/MLXLMCommon/MLXTaskExecutorPreference.swift
+new file mode 100644
+index 0000000..cc0dc56
+--- /dev/null
++++ b/Libraries/MLXLMCommon/MLXTaskExecutorPreference.swift
+@@ -0,0 +1,10 @@
++// Copyright © 2026 Apple Inc.
++
++/// Task-scoped executor used by MLX generation's unstructured producer tasks.
++///
++/// Set the projected task-local value around model work. Both `ChatSession` and
++/// the low-level token loop explicitly pass the inherited preference to the
++/// unstructured tasks they create.
++public enum MLXTaskExecutorPreference {
++    @TaskLocal public static var current: (any TaskExecutor)?
++}
+diff --git a/Package.swift b/Package.swift
+index 97fba12..df7a78c 100644
+--- a/Package.swift
++++ b/Package.swift
+@@ -7,7 +7,7 @@ import PackageDescription
+ let package = Package(
+     name: "mlx-swift-lm",
+     platforms: [
+-        .macOS(.v14),
++        .macOS(.v15),
+         .iOS(.v17),
+         .tvOS(.v17),
+         .visionOS(.v1),

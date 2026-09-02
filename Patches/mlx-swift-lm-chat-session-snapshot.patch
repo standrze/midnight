@@ -1,0 +1,154 @@
+diff --git a/Libraries/MLXLMCommon/ChatSession.swift b/Libraries/MLXLMCommon/ChatSession.swift
+index f8ab3bd7..00000000 100644
+--- a/Libraries/MLXLMCommon/ChatSession.swift
++++ b/Libraries/MLXLMCommon/ChatSession.swift
+@@ -121,6 +121,53 @@ public struct SpeculativeDecodingConfig: Sendable {
+     }
+ }
+ 
++/// An immutable, reusable checkpoint of a ``ChatSession``.
++///
++/// Unlike ``PromptCacheSnapshot``, this also retains the structured conversation and exact
++/// token ledger used to reconcile a re-rendered chat template. That makes it suitable for
++/// branching several sessions from the same completed conversation prefix. Every restored
++/// session receives independent cache instances.
++///
++/// Model-state values are copied with Swift value semantics and must be immutable. MLX arrays
++/// satisfy that contract; callers adding reference-typed state must provide their own snapshot
++/// boundary before exposing this API for that model.
++public struct ChatSessionSnapshot: @unchecked Sendable {
++    fileprivate let main: KVCacheStorage
++    fileprivate let draft: KVCacheStorage?
++    fileprivate let state: LMOutput.State?
++    fileprivate let messages: [Chat.Message]?
++    fileprivate let cachedTokens: [Int]?
++    fileprivate let uncommittedTokens: [Int]?
++    fileprivate let instructions: String?
++
++    /// Approximate bytes occupied by the copied main and draft cache arrays.
++    ///
++    /// This is a conservative accounting value for bounded in-memory caches. Views can share
++    /// backing storage internally, so it is not a process-resident-memory measurement.
++    public let estimatedBytes: Int
++
++    fileprivate init(
++        main: KVCacheStorage,
++        draft: KVCacheStorage?,
++        state: LMOutput.State?,
++        messages: [Chat.Message]?,
++        cachedTokens: [Int]?,
++        uncommittedTokens: [Int]?,
++        instructions: String?
++    ) {
++        self.main = main
++        self.draft = draft
++        self.state = state
++        self.messages = messages
++        self.cachedTokens = cachedTokens
++        self.uncommittedTokens = uncommittedTokens
++        self.instructions = instructions
++        self.estimatedBytes =
++            self.main.cache.flatMap(\.state).reduce(0) { $0 + $1.nbytes }
++            + (self.draft?.cache.flatMap(\.state).reduce(0) { $0 + $1.nbytes } ?? 0)
++    }
++}
++
+ /// Simplified API for multi-turn conversations with LLMs and VLMs.
+ ///
+ /// For example:
+@@ -320,6 +367,57 @@ public final class ChatSession {
+     /// Speculative decoding configuration, nil if disabled.
+     public let speculativeDecoding: SpeculativeDecodingConfig?
+ 
++    /// Restore an independently mutable session from an in-memory checkpoint.
++    ///
++    /// The snapshot's instructions, structured transcript, exact token ledger, model state,
++    /// and KV-cache plan are restored together. Generation settings and tools are supplied by
++    /// the new caller so request-local behavior does not leak between branches.
++    ///
++    /// - Important: Restore only with the same model, adapter, tokenizer, and speculative
++    ///   configuration that produced the snapshot.
++    public init(
++        _ model: ModelContainer,
++        restoring snapshot: borrowing ChatSessionSnapshot,
++        speculativeDecoding: SpeculativeDecodingConfig? = nil,
++        generateParameters: GenerateParameters = .init(),
++        components: GenerationComponents = .init(),
++        processing: UserInput.Processing = .init(resize: CGSize(width: 512, height: 512)),
++        additionalContext: [String: any Sendable]? = nil,
++        tools: [ToolSpec]? = nil,
++        toolDispatch: (@Sendable (ToolCall) async throws -> String)? = nil
++    ) {
++        // A snapshot is an immutable seed. Clone its mutable storage inside the
++        // restore boundary so any number of branches can safely reuse it.
++        let main = snapshot.main.copy()
++        let draft = snapshot.draft?.copy()
++        let conversation: Conversation?
++        if let messages = snapshot.messages, let cachedTokens = snapshot.cachedTokens {
++            conversation = Conversation(
++                messages: messages,
++                cachedTokens: cachedTokens,
++                uncommittedTokens: snapshot.uncommittedTokens ?? [])
++        } else {
++            conversation = nil
++        }
++        self.model = model
++        self.instructions = snapshot.instructions
++        self.cache = .init(
++            .kvcache(
++                .init(
++                    main: main,
++                    draft: draft,
++                    state: snapshot.state,
++                    conversation: conversation)))
++        self.loadedDraftModel = .init(speculativeDecoding?.draftModel)
++        self.processing = processing
++        self.generateParameters = generateParameters
++        self.components = components
++        self.tools = tools
++        self.toolDispatch = toolDispatch
++        self.additionalContext = additionalContext
++        self.speculativeDecoding = speculativeDecoding
++    }
++
+     /// Unified KV / recurrent-cache status for this session.
+     ///
+     /// If the session owns a realized cache, this reports its actual request,
+@@ -1483,6 +1581,37 @@ public final class ChatSession {
+         await cache.read { _ in }
+     }
+ 
++    /// Capture an independently reusable in-memory checkpoint of this session.
++    ///
++    /// The main and optional draft caches are copied together with model state, structured
++    /// messages, and the exact cached/uncommitted token ledger. Restore with
++    /// ``init(_:restoring:speculativeDecoding:generateParameters:components:processing:additionalContext:tools:toolDispatch:)``.
++    ///
++    /// - Throws: ``ChatSessionError/noCacheAvailable`` before the first successful generation.
++    public func snapshot() async throws -> ChatSessionSnapshot {
++        let instructions = self.instructions
++        return try await cache.read { cache in
++            guard case .kvcache(let stored) = cache else {
++                throw ChatSessionError.noCacheAvailable
++            }
++            let mainCopy = stored.main.copy()
++            let draftCopy = stored.draft?.copy()
++            let copiedArrays =
++                mainCopy.cache.flatMap(\.state) + (draftCopy?.cache.flatMap(\.state) ?? [])
++            if !copiedArrays.isEmpty {
++                eval(copiedArrays)
++            }
++            return ChatSessionSnapshot(
++                main: mainCopy,
++                draft: draftCopy,
++                state: stored.state,
++                messages: stored.conversation?.messages,
++                cachedTokens: stored.conversation?.cachedTokens,
++                uncommittedTokens: stored.conversation?.uncommittedTokens,
++                instructions: instructions)
++        }
++    }
++
+     /// Return the legacy runtime-only view of the configured KV-cache strategy.
+     ///
+     /// The report is `nil` until a typed or legacy cache configuration exists,

@@ -1,0 +1,110 @@
+{
+  "allow_early_stop" : false,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-08-30T14:48:33Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 5,
+  "median_decode_tokens_per_second" : 56.65111133575342,
+  "median_prompt_tokens_per_second" : 752.9582976788162,
+  "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 512,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks; atomic operations ensure thread safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue)**: Efficient for both pushing (producing) and popping (consuming).\n- **Thread-Local Storage (TLS)**: Each thread has its own queue to minimize contention.\n\n---\n\n## **2. Implementation in Swift**\nWe'll use:\n- **`AtomicReference`** (for lock-free CAS operations)\n- **`DispatchQueue`** (for thread management)\n- **`UnsafeMutablePointer`** (for raw memory manipulation)\n\n### **2.1 Step 1: Define the Task Type**\n```swift\nstruct Task {\n    let id: Int\n    let work: () -> Void\n}\n```\n\n### **2.2 Step 2: Lock-Free Deque Implementation**\nA **lock-free deque** requires:\n- **Head & Tail Pointers** (atomic updates)\n- **CAS (Compare-And-Swap)** for thread-safe modifications\n\n```swift\nfinal class LockFreeDeque<T> {\n    private var head: AtomicReference<Node<T>?> = AtomicReference(nil)\n    private var tail: AtomicReference<Node<T>?> = AtomicReference(nil)\n\n    private struct Node<T",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 752.9582976788162,
+        "stop_reason" : "length",
+        "tokens_per_second" : 56.86830262726144
+      },
+      "mode" : "target_only",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 767.641042
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks; atomic operations ensure thread safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue)**: Efficient for both pushing (producing) and popping (consuming).\n- **Thread-Local Storage (TLS)**: Each thread has its own queue to minimize contention.\n\n---\n\n## **2. Implementation in Swift**\nWe'll use:\n- **`AtomicReference`** (for lock-free CAS operations)\n- **`DispatchQueue`** (for thread management)\n- **`UnsafeMutablePointer`** (for raw memory manipulation)\n\n### **2.1 Step 1: Define the Task Type**\n```swift\nstruct Task {\n    let id: Int\n    let work: () -> Void\n}\n```\n\n### **2.2 Step 2: Lock-Free Deque Implementation**\nA **lock-free deque** requires:\n- **Head & Tail Pointers** (atomic updates)\n- **CAS (Compare-And-Swap)** for thread-safe modifications\n\n```swift\nfinal class LockFreeDeque<T> {\n    private var head: AtomicReference<Node<T>?> = AtomicReference(nil)\n    private var tail: AtomicReference<Node<T>?> = AtomicReference(nil)\n\n    private struct Node<T",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 794.8594713988127,
+        "stop_reason" : "length",
+        "tokens_per_second" : 57.830589310445156
+      },
+      "mode" : "target_only",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 732.218916
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks; atomic operations ensure thread safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue)**: Efficient for both pushing (producing) and popping (consuming).\n- **Thread-Local Storage (TLS)**: Each thread has its own queue to minimize contention.\n\n---\n\n## **2. Implementation in Swift**\nWe'll use:\n- **`AtomicReference`** (for lock-free CAS operations)\n- **`DispatchQueue`** (for thread management)\n- **`UnsafeMutablePointer`** (for raw memory manipulation)\n\n### **2.1 Step 1: Define the Task Type**\n```swift\nstruct Task {\n    let id: Int\n    let work: () -> Void\n}\n```\n\n### **2.2 Step 2: Lock-Free Deque Implementation**\nA **lock-free deque** requires:\n- **Head & Tail Pointers** (atomic updates)\n- **CAS (Compare-And-Swap)** for thread-safe modifications\n\n```swift\nfinal class LockFreeDeque<T> {\n    private var head: AtomicReference<Node<T>?> = AtomicReference(nil)\n    private var tail: AtomicReference<Node<T>?> = AtomicReference(nil)\n\n    private struct Node<T",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 773.986350405632,
+        "stop_reason" : "length",
+        "tokens_per_second" : 56.65111133575342
+      },
+      "mode" : "target_only",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 752.610334
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks; atomic operations ensure thread safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue)**: Efficient for both pushing (producing) and popping (consuming).\n- **Thread-Local Storage (TLS)**: Each thread has its own queue to minimize contention.\n\n---\n\n## **2. Implementation in Swift**\nWe'll use:\n- **`AtomicReference`** (for lock-free CAS operations)\n- **`DispatchQueue`** (for thread management)\n- **`UnsafeMutablePointer`** (for raw memory manipulation)\n\n### **2.1 Step 1: Define the Task Type**\n```swift\nstruct Task {\n    let id: Int\n    let work: () -> Void\n}\n```\n\n### **2.2 Step 2: Lock-Free Deque Implementation**\nA **lock-free deque** requires:\n- **Head & Tail Pointers** (atomic updates)\n- **CAS (Compare-And-Swap)** for thread-safe modifications\n\n```swift\nfinal class LockFreeDeque<T> {\n    private var head: AtomicReference<Node<T>?> = AtomicReference(nil)\n    private var tail: AtomicReference<Node<T>?> = AtomicReference(nil)\n\n    private struct Node<T",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 740.6135986476133,
+        "stop_reason" : "length",
+        "tokens_per_second" : 55.169881767923656
+      },
+      "mode" : "target_only",
+      "sequence" : 4,
+      "time_to_first_token_milliseconds" : 786.22075
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks; atomic operations ensure thread safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue)**: Efficient for both pushing (producing) and popping (consuming).\n- **Thread-Local Storage (TLS)**: Each thread has its own queue to minimize contention.\n\n---\n\n## **2. Implementation in Swift**\nWe'll use:\n- **`AtomicReference`** (for lock-free CAS operations)\n- **`DispatchQueue`** (for thread management)\n- **`UnsafeMutablePointer`** (for raw memory manipulation)\n\n### **2.1 Step 1: Define the Task Type**\n```swift\nstruct Task {\n    let id: Int\n    let work: () -> Void\n}\n```\n\n### **2.2 Step 2: Lock-Free Deque Implementation**\nA **lock-free deque** requires:\n- **Head & Tail Pointers** (atomic updates)\n- **CAS (Compare-And-Swap)** for thread-safe modifications\n\n```swift\nfinal class LockFreeDeque<T> {\n    private var head: AtomicReference<Node<T>?> = AtomicReference(nil)\n    private var tail: AtomicReference<Node<T>?> = AtomicReference(nil)\n\n    private struct Node<T",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 738.770717495794,
+        "stop_reason" : "length",
+        "tokens_per_second" : 53.53439371045981
+      },
+      "mode" : "target_only",
+      "sequence" : 5,
+      "time_to_first_token_milliseconds" : 787.71
+    }
+  ],
+  "warmup_count" : 1,
+  "warmups" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks; atomic operations ensure thread safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue)**: Efficient for both pushing (producing) and popping (consuming).\n- **Thread-Local Storage (TLS)**: Each thread has its own queue to minimize contention.\n\n---\n\n## **2. Implementation in Swift**\nWe'll use:\n- **`AtomicReference`** (for lock-free CAS operations)\n- **`DispatchQueue`** (for thread management)\n- **`UnsafeMutablePointer`** (for raw memory manipulation)\n\n### **2.1 Step 1: Define the Task Type**\n```swift\nstruct Task {\n    let id: Int\n    let work: () -> Void\n}\n```\n\n### **2.2 Step 2: Lock-Free Deque Implementation**\nA **lock-free deque** requires:\n- **Head & Tail Pointers** (atomic updates)\n- **CAS (Compare-And-Swap)** for thread-safe modifications\n\n```swift\nfinal class LockFreeDeque<T> {\n    private var head: AtomicReference<Node<T>?> = AtomicReference(nil)\n    private var tail: AtomicReference<Node<T>?> = AtomicReference(nil)\n\n    private struct Node<T",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1592.201390639407,
+        "stop_reason" : "length",
+        "tokens_per_second" : 58.40748324277226
+      },
+      "mode" : "target_only",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 380.948458
+    }
+  ]
+}

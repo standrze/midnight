@@ -1,0 +1,541 @@
+diff --git a/Libraries/MLXHuggingFaceMacros/HuggingFaceIntegrationMacros.swift b/Libraries/MLXHuggingFaceMacros/HuggingFaceIntegrationMacros.swift
+index 35e5559c..0fed274c 100644
+--- a/Libraries/MLXHuggingFaceMacros/HuggingFaceIntegrationMacros.swift
++++ b/Libraries/MLXHuggingFaceMacros/HuggingFaceIntegrationMacros.swift
+@@ -81,7 +81,19 @@ public struct TokenizerAdaptorMacro: ExpressionMacro {
+             // import Tokenizers
+             //
+             { (huggingFaceTokenizer: Tokenizers.Tokenizer) -> MLXLMCommon.Tokenizer in
+-                struct TokenizerBridge: MLXLMCommon.Tokenizer {
++                struct TokenizerBridge: MLXLMCommon.Tokenizer, MLXLMCommon.IncrementalTokenDecoderProviding {
++                    private struct IncrementalTokenDecoderBridge: MLXLMCommon.IncrementalTokenDecoder {
++                        private var upstream: any Tokenizers.IncrementalTokenDecoder
++
++                        init(_ upstream: any Tokenizers.IncrementalTokenDecoder) {
++                            self.upstream = upstream
++                        }
++
++                        mutating func append(token: Int) -> String? {
++                            upstream.append(token: token)
++                        }
++                    }
++
+                     private let upstream: any Tokenizers.Tokenizer
+
+                     init(_ upstream: any Tokenizers.Tokenizer) {
+@@ -105,6 +117,19 @@ public struct TokenizerAdaptorMacro: ExpressionMacro {
+                         upstream.convertIdToToken(id)
+                     }
+
++                    func makeIncrementalTokenDecoder(
++                        skipSpecialTokens: Bool
++                    ) -> (any MLXLMCommon.IncrementalTokenDecoder)? {
++                        guard
++                            let provider = upstream as? any Tokenizers.IncrementalTokenDecoderProviding,
++                            let decoder = provider.makeIncrementalTokenDecoder(
++                                skipSpecialTokens: skipSpecialTokens)
++                        else {
++                            return nil
++                        }
++                        return IncrementalTokenDecoderBridge(decoder)
++                    }
++
+                     var bosToken: String? { upstream.bosToken }
+                     var eosToken: String? { upstream.eosToken }
+                     var unknownToken: String? { upstream.unknownToken }
+diff --git a/Libraries/MLXLMCommon/Tokenizer.swift b/Libraries/MLXLMCommon/Tokenizer.swift
+index c08383e6..07ed6758 100644
+--- a/Libraries/MLXLMCommon/Tokenizer.swift
++++ b/Libraries/MLXLMCommon/Tokenizer.swift
+@@ -68,17 +68,50 @@ public protocol StreamingDetokenizer: IteratorProtocol<String> {
+     mutating func append(token: Int)
+ }
+
++/// Stateful tokenizer capability that emits only newly stable decoded text.
++public protocol IncrementalTokenDecoder: Sendable {
++    mutating func append(token: Int) -> String?
++}
++
++/// Optional capability used only when a tokenizer can prove that decoding is
++/// append-safe for its exact decoder configuration.
++public protocol IncrementalTokenDecoderProviding: Sendable {
++    func makeIncrementalTokenDecoder(
++        skipSpecialTokens: Bool
++    ) -> (any IncrementalTokenDecoder)?
++}
++
+ public struct NaiveStreamingDetokenizer: StreamingDetokenizer {
+     let tokenizer: any Tokenizer
+
++    var incrementalDecoder: (any IncrementalTokenDecoder)?
++    var incrementalPendingText = ""
++    var incrementalOutputIsStable = true
++
+     var segmentTokens = [Int]()
+     var segment = ""
+
+     public init(tokenizer: any Tokenizer) {
+         self.tokenizer = tokenizer
++        self.incrementalDecoder =
++            (tokenizer as? any IncrementalTokenDecoderProviding)?
++            .makeIncrementalTokenDecoder(skipSpecialTokens: false)
+     }
+
+     public mutating func append(token: Int) {
++        if incrementalDecoder != nil {
++            if let chunk = incrementalDecoder?.append(token: token) {
++                if incrementalPendingText.isEmpty {
++                    incrementalPendingText = chunk
++                } else {
++                    incrementalPendingText += chunk
++                }
++                incrementalOutputIsStable = true
++            } else {
++                incrementalOutputIsStable = false
++            }
++            return
++        }
+         segmentTokens.append(token)
+     }
+
+@@ -94,6 +127,13 @@ public struct NaiveStreamingDetokenizer: StreamingDetokenizer {
+     }
+
+     public mutating func next() -> String? {
++        if incrementalDecoder != nil {
++            guard incrementalOutputIsStable else { return nil }
++            let result = incrementalPendingText
++            incrementalPendingText = ""
++            return result
++        }
++
+         let newSegment = tokenizer.decode(tokenIds: segmentTokens)
+
+         // Emit the part of `newSegment` beyond its common prefix with the text
+diff --git a/Tests/MLXLMTests/HarmonyOutputRouterTests.swift b/Tests/MLXLMTests/HarmonyOutputRouterTests.swift
+index 325b164b..931270d6 100644
+--- a/Tests/MLXLMTests/HarmonyOutputRouterTests.swift
++++ b/Tests/MLXLMTests/HarmonyOutputRouterTests.swift
+@@ -214,6 +214,45 @@ struct HarmonyOutputRouterTests {
+         #expect(rejections.map(\.reason) == [.undeclaredTool, .invalidArguments])
+         #expect(adapter.rejectedToolCallCount == 2)
+     }
++
++    @Test("incremental payload decoders are used and reset between Harmony frames")
++    func incrementalPayloadDecodersResetBetweenFrames() throws {
++        let pieces = [
++            "<|channel|>", "analysis", "<|message|>", "reason-one", "<|end|>",
++            "<|channel|>", "analysis", "<|message|>", "reason-two", "<|end|>",
++            "<|channel|>", "final", "<|message|>", "public-one", "<|end|>",
++            "<|channel|>", "final", "<|message|>", "public-two", "<|return|>",
++        ]
++        let probe = HarmonyIncrementalProbe()
++        let tokenizer = HarmonyIncrementalTokenizer(
++            tokens: pieces + routerControlTokens,
++            probe: probe)
++        var parser = try #require(HarmonyFrameParser(tokenizer: tokenizer))
++        var router = HarmonyOutputRouter(tokenizer: tokenizer, allowedToolNames: nil)
++        var events: [HarmonyOutputRouter.Event] = []
++
++        for piece in pieces {
++            let id = try #require(tokenizer.convertTokenToId(piece))
++            for step in parser.push(id) {
++                events.append(contentsOf: router.route(step))
++            }
++        }
++        for step in parser.finish() {
++            events.append(contentsOf: router.route(step))
++        }
++        events.append(contentsOf: router.finish())
++
++        let reasoning = events.compactMap(\.reasoning).joined()
++        let response = events.compactMap(\.response).joined()
++        #expect(reasoning == "reason-onereason-two")
++        #expect(response == "public-onepublic-two")
++        #expect(!reasoning.contains("decoder-state-leaked"))
++        #expect(!response.contains("decoder-state-leaked"))
++        #expect(probe.factoryCalls == 6)
++        #expect(probe.batchDecodeCalls == 4)
++        #expect(probe.appendedPieces == ["reason-one", "reason-two", "public-one", "public-two"])
++        #expect(probe.skipSpecialTokens == Array(repeating: false, count: 6))
++    }
+ }
+
+ // MARK: - Helpers
+@@ -294,3 +333,77 @@ private struct RouterDeterministicTokenizer: Tokenizer {
+         additionalContext: [String: any Sendable]?
+     ) throws -> [Int] { [] }
+ }
++
++private final class HarmonyIncrementalProbe: @unchecked Sendable {
++    var factoryCalls = 0
++    var batchDecodeCalls = 0
++    var appendedPieces: [String] = []
++    var skipSpecialTokens: [Bool] = []
++}
++
++private final class HarmonyFrameIncrementalDecoder: IncrementalTokenDecoder, @unchecked Sendable {
++    let idToToken: [Int: String]
++    let probe: HarmonyIncrementalProbe
++    var hasAppendedPayload = false
++
++    init(idToToken: [Int: String], probe: HarmonyIncrementalProbe) {
++        self.idToToken = idToToken
++        self.probe = probe
++    }
++
++    func append(token: Int) -> String? {
++        guard let piece = idToToken[token] else { return "" }
++        probe.appendedPieces.append(piece)
++        defer { hasAppendedPayload = true }
++        return hasAppendedPayload ? "decoder-state-leaked\(piece)" : piece
++    }
++}
++
++private struct HarmonyIncrementalTokenizer: Tokenizer, IncrementalTokenDecoderProviding {
++    private let tokenToID: [String: Int]
++    private let idToToken: [Int: String]
++    let probe: HarmonyIncrementalProbe
++
++    init(tokens: [String], probe: HarmonyIncrementalProbe) {
++        var tokenToID: [String: Int] = [:]
++        var idToToken: [Int: String] = [:]
++        var nextID = 0
++        for token in tokens where tokenToID[token] == nil {
++            tokenToID[token] = nextID
++            idToToken[nextID] = token
++            nextID += 1
++        }
++        self.tokenToID = tokenToID
++        self.idToToken = idToToken
++        self.probe = probe
++    }
++
++    func encode(text: String, addSpecialTokens: Bool) -> [Int] {
++        tokenToID[text].map { [$0] } ?? []
++    }
++
++    func decode(tokenIds: [Int], skipSpecialTokens: Bool) -> String {
++        probe.batchDecodeCalls += 1
++        return tokenIds.compactMap { idToToken[$0] }.joined()
++    }
++
++    func convertTokenToId(_ token: String) -> Int? { tokenToID[token] }
++    func convertIdToToken(_ id: Int) -> String? { idToToken[id] }
++    var bosToken: String? { nil }
++    var eosToken: String? { nil }
++    var unknownToken: String? { nil }
++
++    func applyChatTemplate(
++        messages: [[String: any Sendable]],
++        tools: [[String: any Sendable]]?,
++        additionalContext: [String: any Sendable]?
++    ) throws -> [Int] { [] }
++
++    func makeIncrementalTokenDecoder(
++        skipSpecialTokens: Bool
++    ) -> (any IncrementalTokenDecoder)? {
++        probe.factoryCalls += 1
++        probe.skipSpecialTokens.append(skipSpecialTokens)
++        return HarmonyFrameIncrementalDecoder(idToToken: idToToken, probe: probe)
++    }
++}
+diff --git a/Tests/MLXLMTests/StopStringTests.swift b/Tests/MLXLMTests/StopStringTests.swift
+index d248f616..03e56c39 100644
+--- a/Tests/MLXLMTests/StopStringTests.swift
++++ b/Tests/MLXLMTests/StopStringTests.swift
+@@ -190,6 +190,96 @@ final class StopStringTests: XCTestCase {
+         XCTAssertTrue(toolCalls.isEmpty)
+     }
+
++    func testStandardDecoderStopsOnStopStringAcrossIncrementalChunks() {
++        let probe = StopStringIncrementalProbe()
++        let tokenizer = IncrementalStopStringTokenizer(
++            pieces: [1: "visibleST", 2: "OPhidden", 3: "tail"],
++            probe: probe)
++        var decoder = StandardTokenStreamDecoder(
++            tokenizer: tokenizer,
++            format: .json,
++            tools: nil,
++            stopStrings: ["STOP"])
++        var responses: [String] = []
++        var stopped = false
++
++        XCTAssertTrue(
++            decoder.push(1) { event in
++                if case .response(let text) = event { responses.append(text) }
++                if case .stop = event { stopped = true }
++                return true
++            })
++        XCTAssertFalse(
++            decoder.push(2) { event in
++                if case .response(let text) = event { responses.append(text) }
++                if case .stop = event { stopped = true }
++                return true
++            })
++
++        XCTAssertEqual(responses, ["visible"])
++        XCTAssertTrue(stopped)
++        XCTAssertEqual(probe.factoryCalls, 1)
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++        XCTAssertEqual(probe.appendedTokens, [1, 2])
++        XCTAssertEqual(probe.skipSpecialTokens, [false])
++    }
++
++    func testStandardDecoderFinishReleasesStopStringPrefixHeldFromIncrementalChunk() {
++        let probe = StopStringIncrementalProbe()
++        let tokenizer = IncrementalStopStringTokenizer(
++            pieces: [1: "answerSTO"],
++            probe: probe)
++        var decoder = StandardTokenStreamDecoder(
++            tokenizer: tokenizer,
++            format: .json,
++            tools: nil,
++            stopStrings: ["STOP"])
++        var responses: [String] = []
++        var stopped = false
++        let emit: (TokenStreamEvent) -> Bool = { event in
++            if case .response(let text) = event { responses.append(text) }
++            if case .stop = event { stopped = true }
++            return true
++        }
++
++        XCTAssertTrue(decoder.push(1, emit: emit))
++        XCTAssertEqual(responses, ["answer"])
++        XCTAssertTrue(decoder.finish(emit: emit))
++
++        XCTAssertEqual(responses, ["answer", "STO"])
++        XCTAssertFalse(stopped)
++        XCTAssertEqual(probe.factoryCalls, 1)
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++        XCTAssertEqual(probe.appendedTokens, [1])
++    }
++
++    func testStandardDecoderFinishDoesNotFlushIncompleteIncrementalByteTail() {
++        let probe = StopStringIncrementalProbe()
++        let tokenizer = IncrementalStopStringTokenizer(
++            pieces: [1: "visible"],
++            incompleteTokens: [2],
++            probe: probe)
++        var decoder = StandardTokenStreamDecoder(
++            tokenizer: tokenizer,
++            format: .json,
++            tools: nil,
++            stopStrings: [])
++        var responses: [String] = []
++        let emit: (TokenStreamEvent) -> Bool = { event in
++            if case .response(let text) = event { responses.append(text) }
++            return true
++        }
++
++        XCTAssertTrue(decoder.push(1, emit: emit))
++        XCTAssertTrue(decoder.push(2, emit: emit))
++        XCTAssertTrue(decoder.finish(emit: emit))
++
++        XCTAssertEqual(responses, ["visible"])
++        XCTAssertEqual(probe.factoryCalls, 1)
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++        XCTAssertEqual(probe.appendedTokens, [1, 2])
++    }
++
+     func testKnownRegistryEntriesExposeFamilyStopDefaults() {
+         assertStops(LLMRegistry.gemma3_1B_qat_4bit, "<end_of_turn>")
+         assertStops(LLMRegistry.gemma3n_E4B_it_lm_4bit, "<end_of_turn>")
+@@ -281,3 +371,68 @@ private struct DeterministicStopStringTokenizer: Tokenizer {
+         []
+     }
+ }
++
++private final class StopStringIncrementalProbe: @unchecked Sendable {
++    var factoryCalls = 0
++    var batchDecodeCalls = 0
++    var appendedTokens: [Int] = []
++    var skipSpecialTokens: [Bool] = []
++}
++
++private final class StopStringIncrementalDecoder: IncrementalTokenDecoder, @unchecked Sendable {
++    let pieces: [Int: String]
++    let incompleteTokens: Set<Int>
++    let probe: StopStringIncrementalProbe
++
++    init(
++        pieces: [Int: String],
++        incompleteTokens: Set<Int>,
++        probe: StopStringIncrementalProbe
++    ) {
++        self.pieces = pieces
++        self.incompleteTokens = incompleteTokens
++        self.probe = probe
++    }
++
++    func append(token: Int) -> String? {
++        probe.appendedTokens.append(token)
++        if incompleteTokens.contains(token) { return nil }
++        return pieces[token] ?? ""
++    }
++}
++
++private struct IncrementalStopStringTokenizer: Tokenizer, IncrementalTokenDecoderProviding {
++    let pieces: [Int: String]
++    var incompleteTokens: Set<Int> = []
++    let probe: StopStringIncrementalProbe
++
++    func encode(text: String, addSpecialTokens: Bool) -> [Int] { [] }
++
++    func decode(tokenIds: [Int], skipSpecialTokens: Bool) -> String {
++        probe.batchDecodeCalls += 1
++        return "batch-decoder-must-not-run"
++    }
++
++    func convertTokenToId(_ token: String) -> Int? { nil }
++    func convertIdToToken(_ id: Int) -> String? { pieces[id] }
++    var bosToken: String? { nil }
++    var eosToken: String? { nil }
++    var unknownToken: String? { nil }
++
++    func applyChatTemplate(
++        messages: [[String: any Sendable]],
++        tools: [[String: any Sendable]]?,
++        additionalContext: [String: any Sendable]?
++    ) throws -> [Int] { [] }
++
++    func makeIncrementalTokenDecoder(
++        skipSpecialTokens: Bool
++    ) -> (any IncrementalTokenDecoder)? {
++        probe.factoryCalls += 1
++        probe.skipSpecialTokens.append(skipSpecialTokens)
++        return StopStringIncrementalDecoder(
++            pieces: pieces,
++            incompleteTokens: incompleteTokens,
++            probe: probe)
++    }
++}
+diff --git a/Tests/MLXLMTests/StreamingDetokenizerTests.swift b/Tests/MLXLMTests/StreamingDetokenizerTests.swift
+index 6fe8a80b..be7d0cef 100644
+--- a/Tests/MLXLMTests/StreamingDetokenizerTests.swift
++++ b/Tests/MLXLMTests/StreamingDetokenizerTests.swift
+@@ -99,6 +99,58 @@ private struct SplitMultibyteTokenizer: MLXLMCommon.Tokenizer {
+     ) throws -> [Int] { [] }
+ }
+
++private final class IncrementalDecoderProbe: @unchecked Sendable {
++    var batchDecodeCalls = 0
++    var factoryCalls = 0
++}
++
++private final class ScriptedIncrementalTokenDecoder: IncrementalTokenDecoder, @unchecked Sendable {
++    let pieces: [Int: String]
++    let suppressedTokens: Set<Int>
++
++    init(pieces: [Int: String], suppressedTokens: Set<Int>) {
++        self.pieces = pieces
++        self.suppressedTokens = suppressedTokens
++    }
++
++    func append(token: Int) -> String? {
++        suppressedTokens.contains(token) ? nil : pieces[token] ?? ""
++    }
++}
++
++private struct IncrementalCapableTokenizer: MLXLMCommon.Tokenizer,
++    IncrementalTokenDecoderProviding
++{
++    let pieces: [Int: String]
++    var suppressedTokens: Set<Int> = []
++    let probe: IncrementalDecoderProbe
++
++    func encode(text: String, addSpecialTokens: Bool) -> [Int] { [] }
++    func decode(tokenIds: [Int], skipSpecialTokens: Bool) -> String {
++        probe.batchDecodeCalls += 1
++        return "batch-decoder-must-not-run"
++    }
++    func convertTokenToId(_ token: String) -> Int? { nil }
++    func convertIdToToken(_ id: Int) -> String? { pieces[id] }
++    var bosToken: String? { nil }
++    var eosToken: String? { nil }
++    var unknownToken: String? { nil }
++    func applyChatTemplate(
++        messages: [[String: any Sendable]],
++        tools: [[String: any Sendable]]?,
++        additionalContext: [String: any Sendable]?
++    ) throws -> [Int] { [] }
++
++    func makeIncrementalTokenDecoder(
++        skipSpecialTokens: Bool
++    ) -> (any IncrementalTokenDecoder)? {
++        probe.factoryCalls += 1
++        return ScriptedIncrementalTokenDecoder(
++            pieces: pieces,
++            suppressedTokens: suppressedTokens)
++    }
++}
++
+ final class StreamingDetokenizerTests: XCTestCase {
+
+     private func stream(_ tokens: [Int], _ tokenizer: any Tokenizer) -> String {
+@@ -166,4 +218,65 @@ final class StreamingDetokenizerTests: XCTestCase {
+             streamed.contains(","),
+             "comma dropped across a newline segment reset: \(streamed.debugDescription)")
+     }
++
++    func testUsesIncrementalCapabilityWithoutBatchDecode() {
++        let probe = IncrementalDecoderProbe()
++        let tokenizer = IncrementalCapableTokenizer(
++            pieces: [1: "Hel", 2: "lo", 3: ", ", 4: "world"],
++            probe: probe)
++
++        XCTAssertEqual(stream([1, 2, 3, 4], tokenizer), "Hello, world")
++        XCTAssertEqual(probe.factoryCalls, 1)
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++    }
++
++    func testIncrementalIncompleteTailIsNotFlushedAtGenerationEnd() {
++        let probe = IncrementalDecoderProbe()
++        let tokenizer = IncrementalCapableTokenizer(
++            pieces: [1: "visible", 2: "unused"],
++            suppressedTokens: [2],
++            probe: probe)
++
++        XCTAssertEqual(stream([1, 2], tokenizer), "visible")
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++    }
++
++    func testMultipleAppendsAreCombinedBeforeNext() {
++        let probe = IncrementalDecoderProbe()
++        let tokenizer = IncrementalCapableTokenizer(
++            pieces: [1: "Hel", 2: "lo"],
++            probe: probe)
++        var detokenizer = NaiveStreamingDetokenizer(tokenizer: tokenizer)
++
++        detokenizer.append(token: 1)
++        detokenizer.append(token: 2)
++
++        XCTAssertEqual(detokenizer.next(), "Hello")
++        XCTAssertEqual(detokenizer.next(), "")
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++    }
++
++    func testIncompleteLaterAppendSuppressesEarlierTextUntilStable() {
++        let probe = IncrementalDecoderProbe()
++        let tokenizer = IncrementalCapableTokenizer(
++            pieces: [1: "A", 3: "B"],
++            suppressedTokens: [2],
++            probe: probe)
++        var detokenizer = NaiveStreamingDetokenizer(tokenizer: tokenizer)
++
++        detokenizer.append(token: 1)
++        detokenizer.append(token: 2)
++        XCTAssertNil(detokenizer.next())
++        XCTAssertNil(detokenizer.next())
++
++        detokenizer.append(token: 3)
++        XCTAssertEqual(detokenizer.next(), "AB")
++        XCTAssertEqual(probe.batchDecodeCalls, 0)
++    }
++
++    func testLegacyTokenizerHasNoIncrementalCapability() {
++        let tokenizer = AppendOnlyTokenizer(pieces: [1: "legacy"])
++        XCTAssertNil(tokenizer as? any IncrementalTokenDecoderProviding)
++        XCTAssertEqual(stream([1], tokenizer), "legacy")
++    }
+ }
