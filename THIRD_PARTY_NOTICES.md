@@ -12,11 +12,15 @@ Nothing in Midnight's license replaces those terms.
   copyright © 2023 Apple Inc.
 - [MLX-C](https://github.com/ml-explore/mlx-c) — MIT License,
   copyright (c) 2023 ml-explore.
+- [mlx-lm](https://github.com/ml-explore/mlx-lm) — MIT License,
+  copyright © 2023 Apple Inc.
 - [mlx-swift-lm](https://github.com/ml-explore/mlx-swift-lm) — MIT License,
   copyright (c) 2024 ml-explore.
 
 The following MIT terms apply to those projects and to portions represented in
-the corresponding files under `Patches/`:
+the corresponding files under `Patches/`,
+`Diagnostics/revert-nonrotating-gemma4-cache.patch`, and
+`benchmark-results/vllm-metal-vs-native-20260830/mlx-lm-laguna-q4r8.patch`:
 
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal
