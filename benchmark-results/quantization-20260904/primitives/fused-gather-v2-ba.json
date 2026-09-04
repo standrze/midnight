@@ -1,0 +1,405 @@
+{
+  "baselineQueuedMedianMilliseconds" : 0.0283073125,
+  "baselineSynchronizedMedianMilliseconds" : 0.1639165,
+  "candidateQueuedMedianMilliseconds" : 0.02019790625,
+  "candidateSynchronizedMedianMilliseconds" : 0.1610205,
+  "createdAt" : "2026-09-04T21:38:37Z",
+  "dtype" : "bfloat16",
+  "errors" : [
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "c0684380ad19b369",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.084107876,
+      "candidateHash" : "c0684380ad19b369",
+      "caseIndex" : 0,
+      "experts" : [
+        255,
+        0,
+        3,
+        71,
+        128,
+        14,
+        219,
+        42
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.084107876,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "52170f22c0e50166",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.04254055,
+      "candidateHash" : "52170f22c0e50166",
+      "caseIndex" : 1,
+      "experts" : [
+        7,
+        7,
+        0,
+        255,
+        7,
+        128,
+        42,
+        42
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.04254055,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "4ff719b92dc88eaa",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.04831648,
+      "candidateHash" : "4ff719b92dc88eaa",
+      "caseIndex" : 2,
+      "experts" : [
+        34,
+        63,
+        92,
+        121,
+        150,
+        179,
+        208,
+        237
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.04831648,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "aa219d963055611f",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.06069565,
+      "candidateHash" : "aa219d963055611f",
+      "caseIndex" : 3,
+      "experts" : [
+        51,
+        80,
+        109,
+        138,
+        167,
+        196,
+        225,
+        254
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.06069565,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "8eb483b806584d52",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.05275774,
+      "candidateHash" : "8eb483b806584d52",
+      "caseIndex" : 4,
+      "experts" : [
+        68,
+        97,
+        126,
+        155,
+        184,
+        213,
+        242,
+        15
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.05275774,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "df4181febc44432c",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.04398489,
+      "candidateHash" : "df4181febc44432c",
+      "caseIndex" : 5,
+      "experts" : [
+        85,
+        114,
+        143,
+        172,
+        201,
+        230,
+        3,
+        32
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.04398489,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "af5f1996ca462e71",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.041282415,
+      "candidateHash" : "af5f1996ca462e71",
+      "caseIndex" : 6,
+      "experts" : [
+        102,
+        131,
+        160,
+        189,
+        218,
+        247,
+        20,
+        49
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.041282415,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    },
+    {
+      "allCloseToBaseline" : true,
+      "baselineHash" : "986bb6340cf22c08",
+      "baselineMaxAbsoluteVersusFP32Oracle" : 0.043554544,
+      "candidateHash" : "986bb6340cf22c08",
+      "caseIndex" : 7,
+      "experts" : [
+        119,
+        148,
+        177,
+        206,
+        235,
+        8,
+        37,
+        66
+      ],
+      "maxAbsoluteVersusBaseline" : 0,
+      "maxAbsoluteVersusFP32Oracle" : 0.043554544,
+      "projectionMaxAbsoluteVersusBaseline" : 0,
+      "projectionsMatchExactly" : true,
+      "rmsVersusBaseline" : 0
+    }
+  ],
+  "firstCallBaselineMilliseconds" : 9.412042,
+  "firstCallCandidateMilliseconds" : 0.621416,
+  "firstCallOrder" : "BA",
+  "format" : 2,
+  "hardware" : "applegpu_g17s",
+  "queueDepth" : 32,
+  "queuedExecutionSpeedup" : 1.4014973705504747,
+  "queuedTotalSpeedup" : 1.3548994782608694,
+  "queuedTrials" : [
+    {
+      "baselineMilliseconds" : 0.03030209375,
+      "baselineTotalMilliseconds" : 0.03243359375,
+      "candidateMilliseconds" : 0.02085415625,
+      "candidateTotalMilliseconds" : 0.0244453125,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.02827471875,
+      "baselineTotalMilliseconds" : 0.03034375,
+      "candidateMilliseconds" : 0.0201888125,
+      "candidateTotalMilliseconds" : 0.0224609375,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.02508725,
+      "baselineTotalMilliseconds" : 0.027234375,
+      "candidateMilliseconds" : 0.0199739375,
+      "candidateTotalMilliseconds" : 0.0220924375,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.0341549375,
+      "baselineTotalMilliseconds" : 0.03618878125,
+      "candidateMilliseconds" : 0.02019790625,
+      "candidateTotalMilliseconds" : 0.02246615625,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.02858075,
+      "baselineTotalMilliseconds" : 0.03057421875,
+      "candidateMilliseconds" : 0.02006509375,
+      "candidateTotalMilliseconds" : 0.02207421875,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.02571484375,
+      "baselineTotalMilliseconds" : 0.02769790625,
+      "candidateMilliseconds" : 0.03209765625,
+      "candidateTotalMilliseconds" : 0.0394856875,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.0283073125,
+      "baselineTotalMilliseconds" : 0.0304323125,
+      "candidateMilliseconds" : 0.0211328125,
+      "candidateTotalMilliseconds" : 0.02330078125,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.028259125,
+      "baselineTotalMilliseconds" : 0.0303359375,
+      "candidateMilliseconds" : 0.02019921875,
+      "candidateTotalMilliseconds" : 0.02221484375,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.029890625,
+      "baselineTotalMilliseconds" : 0.0318111875,
+      "candidateMilliseconds" : 0.01933203125,
+      "candidateTotalMilliseconds" : 0.02147915625,
+      "order" : "BA"
+    }
+  ],
+  "scope" : "Synthetic primitive only; no production dispatch or model-speed claim. First calls include JIT and are order-sensitive. Numerical gate rtol=0.01 atol=0.02; exact hashes reported separately.",
+  "shape" : "E256 top8 K2048 gateUp1024 hidden512 Q4\/G64",
+  "status" : "measured_synthetic_prototype",
+  "synchronizedTrials" : [
+    {
+      "baselineMilliseconds" : 0.155416,
+      "baselineTotalMilliseconds" : 0.162833,
+      "candidateMilliseconds" : 0.233458,
+      "candidateTotalMilliseconds" : 0.244875,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.181375,
+      "baselineTotalMilliseconds" : 0.186709,
+      "candidateMilliseconds" : 0.122875,
+      "candidateTotalMilliseconds" : 0.131459,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.139834,
+      "baselineTotalMilliseconds" : 0.144042,
+      "candidateMilliseconds" : 0.148208,
+      "candidateTotalMilliseconds" : 0.153,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.169458,
+      "baselineTotalMilliseconds" : 0.174333,
+      "candidateMilliseconds" : 0.181209,
+      "candidateTotalMilliseconds" : 0.187292,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.143708,
+      "baselineTotalMilliseconds" : 0.151708,
+      "candidateMilliseconds" : 0.153792,
+      "candidateTotalMilliseconds" : 0.159125,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.152959,
+      "baselineTotalMilliseconds" : 0.157959,
+      "candidateMilliseconds" : 0.134166,
+      "candidateTotalMilliseconds" : 0.13875,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.149541,
+      "baselineTotalMilliseconds" : 0.154,
+      "candidateMilliseconds" : 0.183083,
+      "candidateTotalMilliseconds" : 0.188875,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.158375,
+      "baselineTotalMilliseconds" : 0.164125,
+      "candidateMilliseconds" : 0.186959,
+      "candidateTotalMilliseconds" : 0.191334,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.157041,
+      "baselineTotalMilliseconds" : 0.164375,
+      "candidateMilliseconds" : 0.148583,
+      "candidateTotalMilliseconds" : 0.152625,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.156,
+      "baselineTotalMilliseconds" : 0.160625,
+      "candidateMilliseconds" : 0.138625,
+      "candidateTotalMilliseconds" : 0.144292,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.215666,
+      "baselineTotalMilliseconds" : 0.219708,
+      "candidateMilliseconds" : 0.163667,
+      "candidateTotalMilliseconds" : 0.16775,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.225416,
+      "baselineTotalMilliseconds" : 0.230333,
+      "candidateMilliseconds" : 0.18175,
+      "candidateTotalMilliseconds" : 0.187,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.175417,
+      "baselineTotalMilliseconds" : 0.181,
+      "candidateMilliseconds" : 0.160125,
+      "candidateTotalMilliseconds" : 0.165583,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.181667,
+      "baselineTotalMilliseconds" : 0.186875,
+      "candidateMilliseconds" : 0.145,
+      "candidateTotalMilliseconds" : 0.149541,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.193167,
+      "baselineTotalMilliseconds" : 0.201125,
+      "candidateMilliseconds" : 0.166083,
+      "candidateTotalMilliseconds" : 0.171125,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.193125,
+      "baselineTotalMilliseconds" : 0.19875,
+      "candidateMilliseconds" : 0.180375,
+      "candidateTotalMilliseconds" : 0.186041,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.17625,
+      "baselineTotalMilliseconds" : 0.181958,
+      "candidateMilliseconds" : 0.161916,
+      "candidateTotalMilliseconds" : 0.166666,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.172875,
+      "baselineTotalMilliseconds" : 0.176666,
+      "candidateMilliseconds" : 0.148583,
+      "candidateTotalMilliseconds" : 0.153583,
+      "order" : "AB"
+    },
+    {
+      "baselineMilliseconds" : 0.140292,
+      "baselineTotalMilliseconds" : 0.144625,
+      "candidateMilliseconds" : 0.156625,
+      "candidateTotalMilliseconds" : 0.162375,
+      "order" : "BA"
+    },
+    {
+      "baselineMilliseconds" : 0.156875,
+      "baselineTotalMilliseconds" : 0.161667,
+      "candidateMilliseconds" : 0.202875,
+      "candidateTotalMilliseconds" : 0.207583,
+      "order" : "AB"
+    }
+  ],
+  "warmups" : 16
+}

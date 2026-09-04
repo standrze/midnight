@@ -1,0 +1,993 @@
+{
+  "format": 1,
+  "source_directory": "/private/tmp/midnight-optimization-20260904",
+  "files": [
+    {
+      "path": "corpora/laguna-heldout-192.provenance.json",
+      "bytes": 627,
+      "sha256": "d6f3ae29596bce184695c49a00696ffbc09b86389c7e26ddb5a83f58050d97f8"
+    },
+    {
+      "path": "corpora/wikitext2-long-8.provenance.json",
+      "sha256": "6c08725cb281186c6b603edcce0a2bc69d39ccec094770cbefa7ee8aac505bf9",
+      "bytes": 558
+    },
+    {
+      "path": "laguna-activation-collection/laguna-calibration-v2-build-provenance.json",
+      "sha256": "de53c7528a35e67f79598c25a20b2e812686bb1a81ecc32352fb0699b219d517",
+      "bytes": 1008
+    },
+    {
+      "path": "laguna-activation-collection/laguna-calibration-v2.json",
+      "sha256": "ce661f6e8cae0d7816c37b97228b5d766f9a5ee5d968b881237d8bfc1039282d",
+      "bytes": 716951
+    },
+    {
+      "path": "laguna-activation-collection/laguna-calibration-v2.log",
+      "sha256": "5f4d5afe135da817bdec6021da97e6ad4f17bfce6c6896846adf6455bf56759d",
+      "bytes": 2756
+    },
+    {
+      "path": "laguna-activation-collection/laguna-dev-v2-build-provenance.json",
+      "sha256": "81d4fe121be2b80ab69196c890276be450a5ba61ddd7babbede1bebac0e3a8a3",
+      "bytes": 655
+    },
+    {
+      "path": "laguna-activation-collection/laguna-dev-v2.json",
+      "sha256": "a4cc6310a2154a74dc2b607eee040711e38e33fb78844810310290186825dfd2",
+      "bytes": 690479
+    },
+    {
+      "path": "laguna-activation-collection/laguna-dev-v2.log",
+      "sha256": "059f35bc7df4a0098de2bb3051b78050e025bd315d7b883b91c878e5e455741e",
+      "bytes": 2738
+    },
+    {
+      "path": "laguna-activation-collection/measurement-summary.json",
+      "sha256": "d517fa91b77997915f5f743aeb6ee578062c34cbf7ac12ad27f39e0a4b580b18",
+      "bytes": 2996
+    },
+    {
+      "path": "laguna-awss-conversion/diagnostic-summary.json",
+      "sha256": "53191cbf9a3e8bc9ed113dd0e22fe3cda7a8b88fe84b39fd6dc5ef26cc12c9e3",
+      "bytes": 3229
+    },
+    {
+      "path": "laguna-awss-conversion/invocation-provenance.json",
+      "sha256": "b42332190bf8b899b6fae696d6ebbbd4cdb4b9c4c0fe51ad0e05a85cb7956a6e",
+      "bytes": 1573
+    },
+    {
+      "path": "laguna-awss-conversion/laguna-awss-conversion.log",
+      "sha256": "b112d9170e78bb8a44fc8e9dc302f9a0705f15877a111c0d02318b111f8a1b8a",
+      "bytes": 56006
+    },
+    {
+      "path": "laguna-awss-conversion/laguna-conversion-build-provenance.json",
+      "sha256": "7cce9a3a70df9b8d199e4e749a91bb226d2a90625e3fda1edc9841b3c855c8b8",
+      "bytes": 919
+    },
+    {
+      "path": "laguna-awss-conversion/measurement-summary.json",
+      "sha256": "157dbf4acc57c42526367752107c143f81fae8210e2f73d14b5aa9ea8586934e",
+      "bytes": 3946
+    },
+    {
+      "path": "laguna-awss-conversion/q4r8-scale-search.json.gz",
+      "sha256": "9c618851b43b89a95454592c72cefde6d01f8985b24c0bba27d67b357918c90c",
+      "bytes": 2862667,
+      "uncompressed_sha256": "2949f49bd3d5a9ce4b527ce5c5a4c2302e0a932615e357748d154fa2d7c693e1",
+      "uncompressed_bytes": 20846801,
+      "compression": "gzip (mtime=0, empty filename)"
+    },
+    {
+      "path": "laguna-awss-conversion/summarize-diagnostics.py",
+      "sha256": "00ee9d8a737000f2c23671a10378b9dc77e2eb24886832fd927c7adbdf59267a",
+      "bytes": 5322
+    },
+    {
+      "path": "laguna-heldout-192/analyze-quality-nll.py",
+      "bytes": 10777,
+      "sha256": "89d44701fce90a0dd6f1eb2d9a3936a86b4e2b9b1510b893c8ec89446bc4b95f"
+    },
+    {
+      "path": "laguna-heldout-192/invocation-provenance.json",
+      "bytes": 2505,
+      "sha256": "74d143a0eb74282862f67b4fbe83b3708b2d7941d372c2177fdac450a292d882"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-analysis.json",
+      "bytes": 11437,
+      "sha256": "894ccaf46f76ca0c2837fda633ed8d07e3147e9224aff88918c96d27bc056ec1"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-awss.json",
+      "bytes": 74949,
+      "sha256": "5eab309d1d07d65aa615b15ec7c2161d026a4bf95ba46985019af1f4290fbcd1"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-awss.log",
+      "bytes": 13446,
+      "sha256": "e37922dd19f18b69186ee6755bf3829bee62abcfed9d38f024e4c32390ec9599"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-build-provenance.json",
+      "bytes": 976,
+      "sha256": "322931bed8ca530e02a1d35264c50247ed15dc9696484f13a283aef6650231ec"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-ls2.json",
+      "bytes": 74926,
+      "sha256": "85cf58c0f0e14af3631f79353883d4600d236636db3658a05abda74756843560"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-ls2.log",
+      "bytes": 13448,
+      "sha256": "41f66162dd49e43003ef68190d29344527ad47a47857023d19d9b77db4bef690"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-standard.json",
+      "bytes": 74954,
+      "sha256": "d60662a7c128d61f420cd2e374a80ab15439e175cafbbfb822dbd5cfd99e0796"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-heldout-standard.log",
+      "bytes": 13453,
+      "sha256": "be0a886ac02bc4cc21dedcd04cc981c05a7dee4559b77b09e21e7ed60e3de22d"
+    },
+    {
+      "path": "laguna-heldout-192/laguna-model-full-hashes.json",
+      "bytes": 12596,
+      "sha256": "1df9ab5ee3c4a64133b492dfef99873ce9c855be73ae7d82acf9dea6c96c4916"
+    },
+    {
+      "path": "laguna-heldout-192/verification-summary.json",
+      "bytes": 1443,
+      "sha256": "1b76505d34873b939673e6f7e0e6afbb80aeb09a5c9e9b9cc8c434157ee2dba5"
+    },
+    {
+      "path": "laguna-kernel-runtime/invocation-provenance.json",
+      "sha256": "9a7bf93239f783d67416cc1ba77b1ec85217a2c20ccda5de8a8d824d0825744d",
+      "bytes": 6082
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-fused-trace-verification-analysis.json",
+      "sha256": "c40336809fbc45c028b0b6924ffac080bb44e3cfc30c57bac2d40d073a56235b",
+      "bytes": 8376
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-fused-trace-verification.json",
+      "sha256": "e517018566e5fa4a370db250bbfd2779bf65e1faed86dae94ecca68efa86e5af",
+      "bytes": 4726
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-fused-trace-verification.log",
+      "sha256": "649e4e16049ad7e3fdb38a7a44f5035767cc64c14be5b67c522c9c493e42a5e8",
+      "bytes": 798
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-gather-silu-ab-256-analysis.json",
+      "sha256": "6336299e6f608c96d76b094742a95fcd4e3eef33196b20ee4e517ff8d75b11af",
+      "bytes": 8047
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-gather-silu-ab-256.json",
+      "sha256": "030a0774fe283d5b02daff695602f91c6501b20b6745acd9b123b67fc4514da0",
+      "bytes": 21247
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-gather-silu-ab-512-analysis.json",
+      "sha256": "c9e3fb24f2ade24a16444db8674c79273cdac0a6c5b819640c1d874e17349792",
+      "bytes": 8143
+    },
+    {
+      "path": "laguna-kernel-runtime/laguna-gather-silu-ab-512.json",
+      "sha256": "3911de3f75b3ed3867b05ec08e6a3cd93447c9398ca3fb5697f78dbe07577a4f",
+      "bytes": 83609
+    },
+    {
+      "path": "laguna-kernel-runtime/production-runtime-build.log",
+      "sha256": "fd51ca4c830b5eb7a321155dec5de98f34e4aeab9b62fe3106bdfbfa227d383b",
+      "bytes": 1558
+    },
+    {
+      "path": "laguna-long-nll/analysis.json",
+      "bytes": 4060,
+      "sha256": "6e0e60177980997733b5da7c4462579e3c9bd6bd7d8479542a5ae70fb006e003"
+    },
+    {
+      "path": "laguna-long-nll/analyze.py",
+      "bytes": 6798,
+      "sha256": "4fc45da94f5d9a89eb7dc3a6bfda4ae074db6980fab48337c5174eea9a4d93dc"
+    },
+    {
+      "path": "laguna-long-nll/laguna-long-nll-2048.json",
+      "bytes": 4080,
+      "sha256": "eb2bb68453143cb368e7b3830d45f9f552b2ce1ff638c8ee5f0fe6ca7e67455b"
+    },
+    {
+      "path": "laguna-long-nll/laguna-long-nll-2048.log",
+      "bytes": 1506,
+      "sha256": "b2e38de676d6c6a01c1078be3212d97ae4dd19dd40fe10cad7752580f6ea6f41"
+    },
+    {
+      "path": "laguna-long-nll/laguna-long-nll-512.json",
+      "bytes": 4087,
+      "sha256": "7ca1d57269b06e866939e9211b9bac88d90e1511b931da19c65c2f3b9b283fcc"
+    },
+    {
+      "path": "laguna-long-nll/laguna-long-nll-512.log",
+      "bytes": 1505,
+      "sha256": "67ddc7b26f1969a8d13056d1b9cbadbc9ce6169012d3edeaa06a4291b9bdb1bc"
+    },
+    {
+      "path": "laguna-long-nll/post-run-artifact-snapshot.json",
+      "bytes": 974,
+      "sha256": "3422ea9b81099d7381420ac7372f7c0d032137e594ccf1c1e78bd3a0a26caa89"
+    },
+    {
+      "path": "laguna-ls2-conversion/invocation-provenance.json",
+      "sha256": "07040164be87e68a9e24e1b20f564976cb55cb577db953f49d72bff147790a82",
+      "bytes": 1226
+    },
+    {
+      "path": "laguna-ls2-conversion/laguna-conversion-build-provenance.json",
+      "sha256": "7cce9a3a70df9b8d199e4e749a91bb226d2a90625e3fda1edc9841b3c855c8b8",
+      "bytes": 919
+    },
+    {
+      "path": "laguna-ls2-conversion/laguna-ls2-conversion.log",
+      "sha256": "77ae2379cafe8ff96ba71c11cc4a1b884feb5fb895f8d030a200f6537f0ca5bc",
+      "bytes": 131268
+    },
+    {
+      "path": "laguna-ls2-conversion/measurement-summary.json",
+      "sha256": "ea48a7eaa4b5264ae08b1d73452c843cc03218d1988f6845a1da849aa346962a",
+      "bytes": 3220
+    },
+    {
+      "path": "laguna-ls2-conversion/q4r8-scale-search.json",
+      "sha256": "4a8d6d5394fd0c2a355ba888a7611e46fbe5b1399524d1bb5c009995baa9e8ae",
+      "bytes": 955
+    },
+    {
+      "path": "laguna-prefill-confirm/manifest.json",
+      "sha256": "c6665387ba0564e651f673be568e65df3f8c7cf13d5d61cd32f4d5ce23bd293a",
+      "bytes": 90969
+    },
+    {
+      "path": "laguna-prefill-confirm/provenance.json",
+      "sha256": "378f3a64fbae227d53c2f15a54987e7f4a46228a6878f6a7a7b9e19496b3d460",
+      "bytes": 90088
+    },
+    {
+      "path": "laguna-prefill-confirm/results.json",
+      "sha256": "5ff3909ce713c124cfdb8dd0329d9986d0c2a4cbd84a191709bcce86a5c10cb0",
+      "bytes": 747843
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-000-0-prefill512/invocation.json",
+      "sha256": "24f97e78ee2857f81bf4ce7e14214d5f7ae37f1b669fe12db60f2ba490015b8a",
+      "bytes": 73520
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-000-0-prefill512/native.json",
+      "sha256": "6aed9f074214ca22170de238616b841523a9b356ec148335f56df8b504e2b0f9",
+      "bytes": 74158
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-000-1-prefill2048/invocation.json",
+      "sha256": "8691861d493ecc8b5c25e9b4ca3a5f572fcf7bc19fe5621e3e3366358c615933",
+      "bytes": 73524
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-000-1-prefill2048/native.json",
+      "sha256": "cb81028eab44609b0960a147081ab075379258684d50e38d3fb2b86176d5758a",
+      "bytes": 74121
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-001-0-prefill2048/invocation.json",
+      "sha256": "51a903498ffb4f0d5fab7a64175655588d356846aec5c4d61f59d00c50ff2ab8",
+      "bytes": 73525
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-001-0-prefill2048/native.json",
+      "sha256": "5688ad67eea2fd24ced0d926251e14b3fae6efa078574dec7754a314c3766f38",
+      "bytes": 74119
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-001-1-prefill512/invocation.json",
+      "sha256": "659808cc9bdb46cdd5de631505e6381c82848303f20fbd94b37b5405ca81229b",
+      "bytes": 73520
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-001-1-prefill512/native.json",
+      "sha256": "235db4a3a5f3cb2fc808c14ae742d6f10099964642a8a6aa010e901c5a678fe1",
+      "bytes": 74158
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-002-0-prefill512/invocation.json",
+      "sha256": "b98fbceee1e923d25ae081da865bf48643c71740fa8686ed53c426cc70408944",
+      "bytes": 73518
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-002-0-prefill512/native.json",
+      "sha256": "85d35409b6cbe450f5605d6d561d7db367f638600803f2c47fd80a3551e7232f",
+      "bytes": 74159
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-002-1-prefill2048/invocation.json",
+      "sha256": "21d6a2aaaa187f0ee472b4a553f289dee5d6f4b4f2813c21b7f24906d9e54ea4",
+      "bytes": 73524
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-002-1-prefill2048/native.json",
+      "sha256": "f6db178a93376d2b4b671a96f4fb977ad6da3709e6c8c929b422a8857501cad8",
+      "bytes": 74119
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-003-0-prefill2048/invocation.json",
+      "sha256": "b626c787669723212838c332c7d6e7fd3c539c37fee74fec7038b28c0f40dfd7",
+      "bytes": 73524
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-003-0-prefill2048/native.json",
+      "sha256": "34c3b388499ddb0bd424fbedf80624451762ef078cfb4435f2b75ed3dd477e64",
+      "bytes": 74126
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-003-1-prefill512/invocation.json",
+      "sha256": "ba09af88d2534f06af36d6086ee9ac527f5fc2b179efd5fa5e35a660bab01407",
+      "bytes": 73520
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-14000-prefill2048-003-1-prefill512/native.json",
+      "sha256": "aea5ad0bd6eb47f05988b862b03df01c0a5ea0876ecba0dd49582ec62a16a4f7",
+      "bytes": 74156
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-000-0-prefill2048/invocation.json",
+      "sha256": "c10aec6e5ab9046812f2416dcd9a5382f5994f1bc5dcfafed1a0cad531cbfecf",
+      "bytes": 19735
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-000-0-prefill2048/native.json",
+      "sha256": "0bd90937b0bdf1572086039f8e94fa30cdadd99d9a43a0c9e744a2137c31a905",
+      "bytes": 20320
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-000-1-prefill512/invocation.json",
+      "sha256": "b87a74044b743d0820566cff2d802f4c396c35f95c3d8eea16ddfae738059faa",
+      "bytes": 19732
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-000-1-prefill512/native.json",
+      "sha256": "6fb656e0a2229b99389f77067deb35ed0edba8e18c1b60690d2e70ef42194881",
+      "bytes": 20264
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-001-0-prefill512/invocation.json",
+      "sha256": "1b0a982ce761711ccff30e807c4905664294c2c8beef7f4660fa1785970fdd72",
+      "bytes": 19731
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-001-0-prefill512/native.json",
+      "sha256": "306f986ed38aceb008d8cff29978cd5ac8447c876b599a694e54f1bda16d3bbc",
+      "bytes": 20263
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-001-1-prefill2048/invocation.json",
+      "sha256": "357ccfd123873b95f4de5327df7c076fc7c700a348925edf9f139bcc1d7792db",
+      "bytes": 19736
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-001-1-prefill2048/native.json",
+      "sha256": "b12d0ffeb11aed6dd47c61d0b22ef6a371b876e2c88c40015be7a7ffb29c9e3b",
+      "bytes": 20325
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-002-0-prefill2048/invocation.json",
+      "sha256": "22cd113d63f4f12baa4a29074bba6153e63f39ff1cb954ad1cec7e5cd4656463",
+      "bytes": 19738
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-002-0-prefill2048/native.json",
+      "sha256": "c79b6744d50d956400825d066ef3b94e8a164923546a43f20ec052ab1f69f969",
+      "bytes": 20326
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-002-1-prefill512/invocation.json",
+      "sha256": "fd6349cb1cc6411ac6c8791d8d7dc73b173bffd0b84f8a3fe8db8fff5905ff0a",
+      "bytes": 19745
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-002-1-prefill512/native.json",
+      "sha256": "7db7ca1dda91af95293b62da831fe1166da8c64a242c3f5e7db29d8a3bbb76cf",
+      "bytes": 20289
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-003-0-prefill512/invocation.json",
+      "sha256": "790c71464a52eb6332db2f0d554bc10ab71d85d4685a2c434e2aecac86d3ae3a",
+      "bytes": 19737
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-003-0-prefill512/native.json",
+      "sha256": "8f93bcf3aa5d6a95014651abde5c8eccb91a829832284dd3082cbd23b93e76fa",
+      "bytes": 20275
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-003-1-prefill2048/invocation.json",
+      "sha256": "2ec092c8da9581621cefbf5f560b09ac2c1deb6e71a30f36ac67a0d26ef304bb",
+      "bytes": 19735
+    },
+    {
+      "path": "laguna-prefill-confirm/runs/runtime-scheduler-3600-confirm-prefill2048-003-1-prefill2048/native.json",
+      "sha256": "04f8b66cc0fb1617571b670aa2737a74cfab3ccb2973deae6b3a2f65e790cc50",
+      "bytes": 20321
+    },
+    {
+      "path": "laguna-prefill-confirm/schedule.json",
+      "sha256": "dfe22c00ab7dc60ff1cb85af7e4dd0ad64249e75474bdce7c23fc1d47bda7e38",
+      "bytes": 4147
+    },
+    {
+      "path": "laguna-prefill-confirm/summary.json",
+      "sha256": "e1edb66ccc917cf56d7af8bbf3a3e4c8fb640f5d488ff1dea5b524af3a0d00c3",
+      "bytes": 13546
+    },
+    {
+      "path": "laguna-prefill/manifest.json",
+      "sha256": "d88afb2459f87c08ea0f1adcb56e445af7ef41a8c2bf583838f96cfa586eb4f5",
+      "bytes": 19650
+    },
+    {
+      "path": "laguna-prefill/provenance.json",
+      "sha256": "4bbcf85935344739beb20b0c8986409f4b2774b5821146421935778e8768a45d",
+      "bytes": 97534
+    },
+    {
+      "path": "laguna-prefill/results.json",
+      "sha256": "65abaa5fb31c15ae2707db0a0c06f0f6f6c3f350286841be81e39bef53d463e2",
+      "bytes": 475618
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-000-0-prefill512/invocation.json",
+      "sha256": "a2ed7ff42fdc9780ca716a0da0489a542af796b486e32031714217d0e9734868",
+      "bytes": 19711
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-000-0-prefill512/native.json",
+      "sha256": "2896d976f365abaf4176af1556cfc265a0f895a02e07e65917c4a6df3a19b934",
+      "bytes": 20266
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-000-1-prefill1024/invocation.json",
+      "sha256": "c8557b8d795fbf0d19c35df6f219fe01a292f74204728c5057369833d3d66f8c",
+      "bytes": 19710
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-000-1-prefill1024/native.json",
+      "sha256": "b09fb5dce791a59fb9bc86ca8f6ed7b3c73ef14bb09d35e402fe1d7abeeef1b6",
+      "bytes": 20326
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-001-0-prefill1024/invocation.json",
+      "sha256": "b2ad70cc14a70886470d8299802ab43de6f99c9b6e84dd54661dd85c982c6c0a",
+      "bytes": 19709
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-001-0-prefill1024/native.json",
+      "sha256": "0d4552ef2662242894910f2bc785e1cfa26770be3ecdbb73f2f244f013cb8bc4",
+      "bytes": 20315
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-001-1-prefill512/invocation.json",
+      "sha256": "b045fd62f46cb643085845de0344173e65856cad8220718bcfe43fa130103c4d",
+      "bytes": 19712
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-001-1-prefill512/native.json",
+      "sha256": "dec072cf08930ff51109be3ddb9cd440b8a71b4d5c74cd46ad92dbb7d58a3ecf",
+      "bytes": 20267
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-002-0-prefill512/invocation.json",
+      "sha256": "e1226ae356d4660238c59e9ec4e9a3701fb2731a1428e58238ab3513974c0de3",
+      "bytes": 19704
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-002-0-prefill512/native.json",
+      "sha256": "591781decc1132da01d90114f9e150f589a45ecf0799d7c9630d374f2cb92c75",
+      "bytes": 20262
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-002-1-prefill1024/invocation.json",
+      "sha256": "ec22cb6f8c684aac2e0d02333212238f2835c8158f84c002846493796f43abf0",
+      "bytes": 19710
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-002-1-prefill1024/native.json",
+      "sha256": "f58bfe96ffda5bfdfad9d7353418f723ee665e8c21835b3dd0360e4f6000fa82",
+      "bytes": 20328
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-003-0-prefill1024/invocation.json",
+      "sha256": "319098396a85c8b7854ac95222dde226a5b426f2616380e51695e807b9365af9",
+      "bytes": 19717
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-003-0-prefill1024/native.json",
+      "sha256": "8416dc7306b2ab8c5f3f7e82c49a5a770ecf27a71dae30394519a1832a58e5be",
+      "bytes": 20328
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-003-1-prefill512/invocation.json",
+      "sha256": "5b6482d0ff252ba1f222fa63c66eaf04aaac7e4c9131d5f5416ab85b054ad811",
+      "bytes": 19704
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill1024-003-1-prefill512/native.json",
+      "sha256": "8122893c2c49615d7d4f6bfe1793891ae08e51caef3bc77850bcf2097286c16e",
+      "bytes": 20259
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-000-0-prefill2048/invocation.json",
+      "sha256": "e1e61809725a7ab2118ea9420de18d99a5f62898081bf6fee438affcededbe10",
+      "bytes": 19711
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-000-0-prefill2048/native.json",
+      "sha256": "ff79b065e73225bd4437dd65bd5cfe4190be10d2504bfbdf84ef450d76c48a4a",
+      "bytes": 20326
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-000-1-prefill512/invocation.json",
+      "sha256": "2d1924bb5c8960716178eaaf4da7c4bfd3f19d47adc5c4723318e665f52278ab",
+      "bytes": 19701
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-000-1-prefill512/native.json",
+      "sha256": "2a8c8bc81060f02abfb53bafcce4ce37f58969bb0a36fe12a91b7f85997c94ee",
+      "bytes": 20265
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-001-0-prefill512/invocation.json",
+      "sha256": "03b961671af0660d095670c5bb891bbbc81537bd1187a68f5889a5ab34eb2e05",
+      "bytes": 19704
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-001-0-prefill512/native.json",
+      "sha256": "6082856f33e556b32802dea18f7a3816cc9f125ee85b37ac8620a22310128bbc",
+      "bytes": 20260
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-001-1-prefill2048/invocation.json",
+      "sha256": "36d98d6c7582a4612f016fdedbc747521d927386b7358ce2e4ca4a06eb56941b",
+      "bytes": 19710
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-001-1-prefill2048/native.json",
+      "sha256": "4489a357516bf715ba11d5a6325ae7a37284d42da2f5abbe98073486d5b5fe0e",
+      "bytes": 20326
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-002-0-prefill2048/invocation.json",
+      "sha256": "b50efce32693b22889c67a1f9aa6855c3f460e54f0c962ea8c0c2812b394d1d2",
+      "bytes": 19710
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-002-0-prefill2048/native.json",
+      "sha256": "b7680752ce73df3c27eab37e23eb9c76d84941e88768a0f3cbaff3ac56d819eb",
+      "bytes": 20324
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-002-1-prefill512/invocation.json",
+      "sha256": "2cc79dcf8785cf61f428dc2eccd400aa3fd3bb38148f168d9e933bad66748ab7",
+      "bytes": 19713
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-002-1-prefill512/native.json",
+      "sha256": "b184d152a28a2f562b64a8629924afb8943103fc2a2bb2d3ffee142b4b99cc63",
+      "bytes": 20268
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-003-0-prefill512/invocation.json",
+      "sha256": "89e49c04f87687ef9aa85a462580ad4d6083f345dfde64ce2e9901afbe99e861",
+      "bytes": 19705
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-003-0-prefill512/native.json",
+      "sha256": "426cee90e1857b001ede571330c71b9f0c63109f81bedaa3f4df6da238622c95",
+      "bytes": 20261
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-003-1-prefill2048/invocation.json",
+      "sha256": "91f93b57bc1eef52d0abced1f71229db2e9da34f689358b92b9b835433a5f8aa",
+      "bytes": 19707
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill2048-003-1-prefill2048/native.json",
+      "sha256": "ad11624fbfbd830218425d6d3c288117c110c103018f4d64301f0970161a1c7d",
+      "bytes": 20330
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-000-0-prefill512/invocation.json",
+      "sha256": "fbfd8a759fc9d8eb92b87a470d12da2900131adda70a1ef095b36c04fbbee015",
+      "bytes": 19708
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-000-0-prefill512/native.json",
+      "sha256": "bb711e68f3a99fa09c7b3470d63f7bfa13e6615971b83d54f50a2edd4ad655c2",
+      "bytes": 20269
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-000-1-prefill256/invocation.json",
+      "sha256": "814b6a4348574ce7e6c5bbeae2037ba5a3ff9ed40c8612ed5a78ff2a5907d9a9",
+      "bytes": 19699
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-000-1-prefill256/native.json",
+      "sha256": "8898e29a89a0082945b642b83382ce3b5beb6fa10a78a7e5cf027e9140196a99",
+      "bytes": 20310
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-001-0-prefill256/invocation.json",
+      "sha256": "bd5b54c248259ab2e7021fd9c9249f37f8ba315d5d40cd8c331f52f76bd46311",
+      "bytes": 19702
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-001-0-prefill256/native.json",
+      "sha256": "ab58171f107b1350bfb118dd27cdfbf13f1a07e0c70d9890384c9377bd1da291",
+      "bytes": 20309
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-001-1-prefill512/invocation.json",
+      "sha256": "a4e6e9dd8d8eec2566db2248f5947207e18696ea6639edf80823757f889f76c3",
+      "bytes": 19698
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-001-1-prefill512/native.json",
+      "sha256": "96b958efe7b898e5d15987d489fd5b85571fa765820916e1d68e434a8a29d3ab",
+      "bytes": 20257
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-002-0-prefill512/invocation.json",
+      "sha256": "8a0623e53f4b8627529a1d9abe69f94b12665f17834d00aa6a39b0c4883d8e2a",
+      "bytes": 19701
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-002-0-prefill512/native.json",
+      "sha256": "3124461881bb98444280dfb06bb35e4aab23c15920e3356cc8a624b4ae8bf1dc",
+      "bytes": 20263
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-002-1-prefill256/invocation.json",
+      "sha256": "e4eda29ce239d1d1be991c4c46184f079b8e345771502779b827296c625b6e83",
+      "bytes": 19701
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-002-1-prefill256/native.json",
+      "sha256": "099adeaee99fc1519dd005a5624abff77fc40f4ff1d3f2acc7d717639c670729",
+      "bytes": 20304
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-003-0-prefill256/invocation.json",
+      "sha256": "32663e0c4d1cc3e4ee3b45bfaf609b46ccaaaff2e25e70d7d7facd235b044aa9",
+      "bytes": 19702
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-003-0-prefill256/native.json",
+      "sha256": "542ffd8e56c340795a665a1b86b0b6d42b328e7f9ecf9f7c4cdfc0287ac7c7e6",
+      "bytes": 20305
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-003-1-prefill512/invocation.json",
+      "sha256": "c76d94cd916fc2b56ee2530e2a687aff10d6803814ccafa6139bff9f1c636ee4",
+      "bytes": 19702
+    },
+    {
+      "path": "laguna-prefill/runs/runtime-long-scheduler-notes-prefill256-003-1-prefill512/native.json",
+      "sha256": "20870df2656f79d9d7e418531307311bbf0fa9a8bf99989697f786b68aa2e517",
+      "bytes": 20262
+    },
+    {
+      "path": "laguna-prefill/schedule.json",
+      "sha256": "5aee9aa22cf64f72a0e7c3b26af63f9dff27db3b486b29686901cba5af3619ae",
+      "bytes": 6271
+    },
+    {
+      "path": "laguna-prefill/summary.json",
+      "sha256": "80f41418f5cb59deaff79ddddde936ee0b5453b7fd70b342246ffd7c54a7de8b",
+      "bytes": 19401
+    },
+    {
+      "path": "laguna-runtime-artifact-snapshot.json",
+      "sha256": "e0c382709c70c3e6f5f5550fac7dac84b22965569bea667c52ad3ab28292c90e",
+      "bytes": 1121
+    },
+    {
+      "path": "laguna-template-identity/identity-investigation-gpu.json",
+      "sha256": "623c52bfa6e207df1cea4eb302f2160acc2073c687b320270416c17b5b5d80a9",
+      "bytes": 2571
+    },
+    {
+      "path": "laguna-template-identity/identity-investigation.json",
+      "sha256": "2cd6094846db2b6dc7ea6fedcfd4a7176bfb01313dfbf627f77d433616f2f357",
+      "bytes": 2642
+    },
+    {
+      "path": "laguna-template-identity/investigate-identity-gpu.py",
+      "sha256": "69745ca043fc1611d79b516ab3630fe98d4abf8c4b5f401174675802f2e52dae",
+      "bytes": 2404
+    },
+    {
+      "path": "laguna-template-identity/investigate-identity.py",
+      "sha256": "79e2e035c207aac47ee29a4bef72a3b050ab2d7866c4483b171da1f7c199a848",
+      "bytes": 2400
+    },
+    {
+      "path": "ministral-runtime/manifest.json",
+      "sha256": "7fc051b99b56bbaaa2049fb74296236216fc641ad78e70c41fd28dd57209abba",
+      "bytes": 1565
+    },
+    {
+      "path": "ministral-runtime/provenance.json",
+      "sha256": "dfaeb0349e82c1dfa13512d1cff85a4925a29b06363e292f62c430892bf4e87d",
+      "bytes": 93374
+    },
+    {
+      "path": "ministral-runtime/results.json",
+      "sha256": "e05dc42ae657819a25cff6dcf2d4056882e1c0b1fcc616bacaf99d9836daca95",
+      "bytes": 32528
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-000-0-standard/invocation.json",
+      "sha256": "9f5b10941827da6562307c20f41d7a9b0aa7b06334252ff471e49f7558944372",
+      "bytes": 1940
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-000-0-standard/native.json",
+      "sha256": "ef3f9b44a00f84d0b7f5f82a1f0d860cf1e8ae8a9b6e132487ae2fe61ada506e",
+      "bytes": 4601
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-000-1-awss/invocation.json",
+      "sha256": "b99c2f5e96c1222acde6f748ea0ae459d865fc9a05db8e3015a4a5736fad1464",
+      "bytes": 1927
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-000-1-awss/native.json",
+      "sha256": "ae6959d287e6a05d978dc1e3f13ae3e9e0a86282509757558d29e3bd230c1d6b",
+      "bytes": 4674
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-001-0-awss/invocation.json",
+      "sha256": "07c32a5360d5776907af709b5a2b55ab263a86a440814f12c9a04090ad2d348c",
+      "bytes": 1935
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-001-0-awss/native.json",
+      "sha256": "d430503bc956aa56e1116cd29ee441d8f8f2eff69b566ad07a6ee70d9b8ccc99",
+      "bytes": 4680
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-001-1-standard/invocation.json",
+      "sha256": "6006edf148d2da6d3ca25e640e41e0b334caf670206d5546bc83f63c9427dd97",
+      "bytes": 1943
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-001-1-standard/native.json",
+      "sha256": "d8cbfc85b3c3190b4fc63f628b380fbc0ff31f5ea12b23b44866057a43a770d1",
+      "bytes": 4606
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-002-0-standard/invocation.json",
+      "sha256": "8043350e9aa9a85f56dddf6dee287e78886164c5cd2d85ef3d60d4b0ecbe4f59",
+      "bytes": 1942
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-002-0-standard/native.json",
+      "sha256": "ce0b122b5531b718b63e58850f60b49e0700a29edf248c2442b777f3ea140de8",
+      "bytes": 4608
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-002-1-awss/invocation.json",
+      "sha256": "0712c580c2de3f60381bfa9004404488e9dbd693fb9f60f2768f7f90dc9baa56",
+      "bytes": 1926
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-002-1-awss/native.json",
+      "sha256": "b3215d336f0c6cedd7aa15ef69fa138e0d1616e3db979051f52cce9c9cfa469c",
+      "bytes": 4671
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-003-0-awss/invocation.json",
+      "sha256": "8ceeaaaa35ddf22e5de87ee5f2b8faebc7eacb3a5f8b9394056709f0c0c27c89",
+      "bytes": 1926
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-003-0-awss/native.json",
+      "sha256": "a8a849ba940c6afda354d39ffcadef8384fda32078bcf438093d6b2310cb7711",
+      "bytes": 4671
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-003-1-standard/invocation.json",
+      "sha256": "e776181d457d409b95347954efa8f17f52b72256b1c184397b95e5cd83a5c8b9",
+      "bytes": 1940
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-awss-003-1-standard/native.json",
+      "sha256": "1a797456250e3c1b4ec132ae8cd6b95a6ff9a8cb69ce16a92e1a6d4283298e15",
+      "bytes": 4600
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-000-0-standard/invocation.json",
+      "sha256": "55178ba142daf7e062076ed56fd01956da4d885a52e57da27f2a6bf5194437f6",
+      "bytes": 1938
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-000-0-standard/native.json",
+      "sha256": "a0910134989394b1616bdf45badd5bb1c44c3f85e8e952bca2593b86ae917fce",
+      "bytes": 4608
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-000-1-ls2/invocation.json",
+      "sha256": "ae006e987544bdb37e381ff23de7f282cbf318f901ddcc76fbb2fddda5d694e0",
+      "bytes": 1930
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-000-1-ls2/native.json",
+      "sha256": "dcb942b3e6ea22e5e24e85923d6af6832a761f71fe5feff6028a69797eb757aa",
+      "bytes": 4670
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-001-0-ls2/invocation.json",
+      "sha256": "fe9a4c8bdca4b0ce7dce4c9d7a1c776ab36a476c5fd464cfb22433b554a82591",
+      "bytes": 1930
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-001-0-ls2/native.json",
+      "sha256": "cd0b0ce6eb1888241a904f1584884710e692f585baa311f82504972aca2e8e1a",
+      "bytes": 4669
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-001-1-standard/invocation.json",
+      "sha256": "fb004e430378d4582f15b50c918dfbdf01507a955149bfa607277a11fe1bd3de",
+      "bytes": 1935
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-001-1-standard/native.json",
+      "sha256": "d569e02cc686c3ed7fab59a9b3e941f60fa0d6e617b442aa8ba159ecd2093fec",
+      "bytes": 4600
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-002-0-standard/invocation.json",
+      "sha256": "1a8929f20f892b2ad88bfeb11932e16d4ccf4f72dced6304713d6d663950be01",
+      "bytes": 1936
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-002-0-standard/native.json",
+      "sha256": "20e9c378af392d4250ff0e265bcf24de2040817cc02e5b64d57a2de6b289d36b",
+      "bytes": 4605
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-002-1-ls2/invocation.json",
+      "sha256": "528fd538c798aadc91f79b7dfe039fecd97142df027138eec1c33935859ffd5e",
+      "bytes": 1929
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-002-1-ls2/native.json",
+      "sha256": "e235a557286b538b9e33b0d51bd7c8b9dd937ad3c4dbb54f834bba366e0981f7",
+      "bytes": 4666
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-003-0-ls2/invocation.json",
+      "sha256": "b22bb60e48ce3b02095f352f9a1bdbcc24e90f0e40b77f619b1b1480b471da03",
+      "bytes": 1929
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-003-0-ls2/native.json",
+      "sha256": "6935593262c60f5bd84408ff23edfe4699e3e3a0fea5952926ffcbac791b8f51",
+      "bytes": 4664
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-003-1-standard/invocation.json",
+      "sha256": "4beffb1363a23c2fe80825b6e398bc93d88b882bb12064789e5d24039c88303c",
+      "bytes": 1935
+    },
+    {
+      "path": "ministral-runtime/runs/runtime-swift-scheduler-ls2-003-1-standard/native.json",
+      "sha256": "d4bd3b8ea083836335bbe33f8b6a86168ffc2e90d774783a3ba3bd3b043598a5",
+      "bytes": 4601
+    },
+    {
+      "path": "ministral-runtime/schedule.json",
+      "sha256": "30b4e1fe6ec95d1492b20a26b240abea1ac17b117e1b40bca9c29da8dccf2574",
+      "bytes": 3719
+    },
+    {
+      "path": "ministral-runtime/summary.json",
+      "sha256": "390df4ff78943cc7daf31350aa805977563809df7b4f1246c348c8afe22b06b6",
+      "bytes": 13107
+    },
+    {
+      "path": "prepare-laguna-heldout-corpus.py",
+      "bytes": 2639,
+      "sha256": "5669d9ddad92f6a27c5fcf1967df7bd5773a2ad8ce8ec2414815892c02c4a907"
+    },
+    {
+      "path": "prepare-long-context-corpus.py",
+      "sha256": "efc98bac64441924d60263ab0330e13afacc60bb18a2c937645724a3f467df56",
+      "bytes": 2106
+    },
+    {
+      "path": "primitives/fused-gather-ab.json",
+      "sha256": "6152e75cc69441436ed340d1286e8161c3f2e0a0cff9aab1a740075d39069fd9",
+      "bytes": 4748
+    },
+    {
+      "path": "primitives/fused-gather-v2-ab.json",
+      "sha256": "1f0cc22b422b91976579305026161dcbafd36c23244466691170030029fc5fa0",
+      "bytes": 11594
+    },
+    {
+      "path": "primitives/fused-gather-v2-ba.json",
+      "sha256": "81e504845c146500b43fb76dc12a6e6672c07549d73eaeb560d012397d207265",
+      "bytes": 11612
+    },
+    {
+      "path": "validation/beta2-production-build.log",
+      "bytes": 3982,
+      "sha256": "336c152983d7901e9a09827ceb66b2c4e72d861594c6f9bf92a79dba3d3d9a25"
+    },
+    {
+      "path": "validation/full-release-tests-v6.log",
+      "bytes": 41939,
+      "sha256": "716dfdba4d1c4abb6111cd3a86aab56ef3993395a3664d7b4179788cfbcf65db"
+    },
+    {
+      "path": "validation/laguna-runtime-smoke-AWSS.json",
+      "bytes": 3675,
+      "sha256": "8331c5321dcf9085f2538cfb34d781cd713f2363a9822a1428a840687162239f"
+    },
+    {
+      "path": "validation/laguna-runtime-smoke-AWSS.log",
+      "bytes": 1304,
+      "sha256": "bde6aa2fe5cba21490444c8536093b679140387d115cb00b4fbe7fa3114610f5"
+    },
+    {
+      "path": "validation/laguna-runtime-smoke-LS2.json",
+      "bytes": 3568,
+      "sha256": "d59b23c351deebeb56c87c7fcd6663f13338c1d8ec97e4bcbb6dd1cfb15ef54e"
+    },
+    {
+      "path": "validation/laguna-runtime-smoke-LS2.log",
+      "bytes": 1302,
+      "sha256": "3c417928fca0b3535871f6ef876499088f2a17d7aeb9a88a681577b8fe7cb2e7"
+    },
+    {
+      "path": "validation/shell-tests-final.log",
+      "bytes": 1776,
+      "sha256": "03c501292dda16b06acf135999be1acb5a11d2b7efdd29c5b68155b5f4d76c9b"
+    },
+    {
+      "path": "validation/summary.json",
+      "bytes": 2286,
+      "sha256": "e7e17d74856e47d4e7aa06c6b9daafb3a61fcf5d362f632c0251b55cf81a21b1"
+    }
+  ],
+  "omissions": [
+    "Runtime stdout/stderr logs: all invocations succeeded; native reports and complete invocation records retained.",
+    "Laguna successful runtime/prefill stdout/stderr logs omitted; same-loaded command provenance and the production runtime build log retained.",
+    "Confirmation campaign successful stdout/stderr logs omitted. Long-context corpus text omitted; pinned provenance and byte-exact reconstruction script retained.",
+    "Calibration and development v2 moment safetensors (~101MiB each) intentionally omitted; complete JSON reports, /usr/bin/time logs, artifact snapshots and parsed measurement summary retained."
+  ],
+  "limitations": [
+    "Campaign provenance records executable/Metal library hashes and a source snapshot. Unrelated calibration/kernel source edits occurred during the campaign; the source snapshot is not proof of the exact sources compiled into the binary.",
+    "Primitive first-call timing includes JIT and order effects; it is not a speed comparison.",
+    "The primitive reports do not independently attest exact executable/kernel source hashes; the retained report hashes establish archive integrity, not build provenance.",
+    "Laguna same-loaded argv is reconstructed from execution tool history; native JSON lacks artifact hashes. A post-run pre-next-build snapshot matches the subsequent prefill campaign artifact hashes.",
+    "Instrumented trace verification is one 32-token AB pair with 39 fused graph constructions: functional evidence only. Its later build is not identified by the earlier artifact snapshot; historical reports without counters retain explicit missing-trace provenance in the current analyzer."
+  ],
+  "extended_at_utc": "2026-09-04T22:38:30.875574+00:00"
+}

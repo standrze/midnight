@@ -218,6 +218,12 @@ private struct ModelQuantizer: AsyncParsableCommand {
   )
   var template: String?
 
+  @Option(name: .customLong("activation-stats"), help: "Laguna --template expert-conditional calibration statistics.")
+  var activationStats: String?
+
+  @Option(name: .customLong("validation-stats"), help: "Disjoint Laguna dev statistics for --activation-stats.")
+  var validationStats: String?
+
   @Option(
     name: .customLong("q8-module"),
     help: "Module path or */? glob to keep in standard affine Q8; repeat as needed."
@@ -259,6 +265,12 @@ private struct ModelQuantizer: AsyncParsableCommand {
   var overwrite = false
 
   mutating func validate() throws {
+    guard activationStats == nil || template != nil else {
+      throw ValidationError("--activation-stats currently requires Laguna --template.")
+    }
+    guard validationStats == nil || activationStats != nil else {
+      throw ValidationError("--validation-stats requires --activation-stats.")
+    }
     guard maximumShardGiB.isFinite, maximumShardGiB > 0 else {
       throw ValidationError("--max-shard-gib must be a finite positive number.")
     }
@@ -333,6 +345,8 @@ private struct ModelQuantizer: AsyncParsableCommand {
       template: template,
       destination: destination,
       expertBatch: expertBatch,
+      activationStats: activationStats,
+      validationStats: validationStats,
       preflightOnly: dryRun,
       cpu: cpu || dryRun
     )

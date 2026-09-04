@@ -14,6 +14,8 @@ public struct PreparedModelPrompt: Sendable {
   fileprivate let tools: [OpenAIToolDefinition]?
   fileprivate let tokenIDs: [Int]
   public var promptTokenCount: Int { tokenIDs.count }
+  /// Exact rendered input, exposed read-only for reproducible benchmark comparisons.
+  public var promptTokenIDs: [Int] { tokenIDs }
 }
 
 public enum LocalModelRunnerEvent: Equatable, Sendable {
@@ -598,6 +600,14 @@ public actor LocalModelRunner {
     }
   }
 
+  /// Metadata-only capability check for the opt-in same-loaded kernel benchmark.
+  public func lagunaFusedGateUpSiluCoverage() async -> (eligible: Int, sparse: Int, traces: Int) {
+    await container.perform { context in
+      guard let model = context.model as? LagunaModel else { return (0, 0, 0) }
+      return (model.fusedGateUpSiluEligibleLayerCount, model.fusedGateUpSiluSparseLayerCount, model.fusedGateUpSiluTraceCount)
+    }
+  }
+
   public func stream(
     messages: [OpenAIMessage],
     maximumTokens: Int?,
@@ -613,31 +623,35 @@ public actor LocalModelRunner {
       engine: engine,
       compiledBlockTailOverride: LagunaRuntimeTuning.useCompiledBlockTail,
       fusedRouterTopKOverride: LagunaRuntimeTuning.useFusedRouterTopK)
+    let fusedGateUpSilu = engine == .metal && (LagunaRuntimeTuning.useFusedGateUpSilu
+      ?? (ProcessInfo.processInfo.environment["MODEL_RUNNER_LAGUNA_FUSED_GATHER_SILU"] == "1"))
     return AsyncThrowingStream { continuation in
-      let generationTask = LagunaRuntimeTuning.$useCompiledBlockTail.withValue(
-        lagunaFastPaths.useCompiledBlockTail
-      ) {
-        LagunaRuntimeTuning.$useFusedRouterTopK.withValue(
-          lagunaFastPaths.useFusedRouterTopK
+      let generationTask = LagunaRuntimeTuning.$useFusedGateUpSilu.withValue(fusedGateUpSilu) {
+        LagunaRuntimeTuning.$useCompiledBlockTail.withValue(
+          lagunaFastPaths.useCompiledBlockTail
         ) {
-          Task {
-            do {
-              try await generate(
-                messages: messages,
-                maximumTokens: maximumTokens,
-                temperature: temperature,
-                topP: topP,
-                stop: stop,
-                tools: tools,
-                enablePromptCache: enablePromptCache,
-                enableSpeculativeDecoding: enableSpeculativeDecoding,
-                preparedPrompt: preparedPrompt
-              ) {
-                continuation.yield($0)
+          LagunaRuntimeTuning.$useFusedRouterTopK.withValue(
+            lagunaFastPaths.useFusedRouterTopK
+          ) {
+            Task {
+              do {
+                try await generate(
+                  messages: messages,
+                  maximumTokens: maximumTokens,
+                  temperature: temperature,
+                  topP: topP,
+                  stop: stop,
+                  tools: tools,
+                  enablePromptCache: enablePromptCache,
+                  enableSpeculativeDecoding: enableSpeculativeDecoding,
+                  preparedPrompt: preparedPrompt
+                ) {
+                  continuation.yield($0)
+                }
+                continuation.finish()
+              } catch {
+                continuation.finish(throwing: error)
               }
-              continuation.finish()
-            } catch {
-              continuation.finish(throwing: error)
             }
           }
         }

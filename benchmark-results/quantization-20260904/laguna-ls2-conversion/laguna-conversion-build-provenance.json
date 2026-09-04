@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-09-04T22:37:32.683348+00:00",
+  "build_mode": "release with -Xswiftc -enable-testing",
+  "cpu_build_overlap": true,
+  "timing_use": "conversion wall time diagnostic; primary checks output quality and memory",
+  "files": {
+    ".build/release/model-runner-laguna-q4r8-rescore": "2bc5ab66d9653b8a66d0a52f66a84826f47fbe9f2d047fe2b337375d7c693629",
+    ".build/release/mlx.metallib": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+    "Sources/LagunaScaleSearchRescorer/LagunaScaleSearchRescorer.swift": "83cbde9fedb35107d93b2dadabe7cc40e8813812dee8451f8b472e4c49b2060b",
+    "Sources/LagunaScaleSearchRescorer/LagunaActivationStatistics.swift": "1d368313de5bebc85bee7a6b8aefd0439fa1e1e983f852bc57555d065eff9a10",
+    "Sources/MistralActivationScaleSearchCore/ExpertActivationWeightedScaleSearch.swift": "a51b4edb42687453708d811c95b9059b451b5c66927233fa2756d1727c469d67"
+  }
+}

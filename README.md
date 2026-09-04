@@ -16,6 +16,15 @@ serving path.
 > **Beta:** Midnight is prerelease software. CLI, API, and runtime behavior may
 > change before the first stable release.
 
+## Quantization and reproducible benchmarks
+
+Version **0.2.0-beta.2** adds bounded Laguna calibration and Q4R8 refinement,
+reproducible quality/runtime comparisons, and an upstream M5 NAX correctness
+fix. The experimental fused gate/up-SiLU kernel remains opt-in. Quantizer
+quality varies by domain; see the [measured results](benchmark-results/quantization-20260904/README.md),
+[benchmarking workflow](Docs/benchmarking.md), and
+[quantization research](Docs/mlx-quantization-research-20260904.md).
+
 ## Memory and context controls
 
 Version **0.2.0-beta.1** adds request memory admission, device-aware Metal

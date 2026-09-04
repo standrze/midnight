@@ -15,12 +15,14 @@ MLX_SWIFT_CLEAR_STREAMS_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-clear-streams.pat
 MLX_SWIFT_EXISTING_DEFAULT_STREAM_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-existing-default-stream.patch"
 MLX_SWIFT_DIRECT_SLICE_UPDATE_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-direct-slice-update.patch"
 MLX_SWIFT_AFFINE_Q4_QMV_JIT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-affine-q4-qmv-jit.patch"
+MLX_SWIFT_SORTED_GATHER_QMM_NAX_JIT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-sorted-gather-qmm-nax-row-bounds-jit.patch"
 MLX_SWIFT_DARWIN_EXPECTED_REVISION="72f3c3ad8aeee39bfc94f8fbeb446cac89e3a798"
 MLX_SWIFT_LINUX_EXPECTED_REVISION="2d2724006b62855c6c2a71df633baf4ee4ad8a0f"
 MLX_SOURCE_CHECKOUT="$MLX_SWIFT_CHECKOUT/Source/Cmlx/mlx"
 MLX_SOURCE_PATCH="$PACKAGE_ROOT/Patches/mlx-cuda-half-fmod.patch"
 MLX_SOURCE_GLOBAL_STREAM_CLEANUP_PATCH="$PACKAGE_ROOT/Patches/mlx-global-stream-cleanup.patch"
 MLX_SOURCE_AFFINE_Q4_QMV_PATCH="$PACKAGE_ROOT/Patches/mlx-affine-q4-qmv-specialization.patch"
+MLX_SOURCE_SORTED_GATHER_QMM_NAX_PATCH="$PACKAGE_ROOT/Patches/mlx-sorted-gather-qmm-nax-row-bounds.patch"
 MLX_SOURCE_DARWIN_EXPECTED_REVISION="1f8e74e3f12f31365464a6867c6579f0e9b29d85"
 MLX_SOURCE_LINUX_EXPECTED_REVISION="7a1d4f5c12ac82f4b4d0a6e71538d89ca0605247"
 MLX_C_SOURCE_CHECKOUT="$MLX_SWIFT_CHECKOUT/Source/Cmlx/mlx-c"
@@ -254,6 +256,16 @@ if [[ "$APPLY_LINUX_DEPENDENCY_PATCHES" == "1" ]]; then
 fi
 
 if [[ "$HOST_OS" == "Darwin" ]]; then
+  # Upstream d73eb752: clamp large sorted expert-row counts before narrowing.
+  # Keep compiled Metal headers and generated JIT shader sources synchronized.
+  apply_dependency_patch \
+    "mlx sorted gather QMM NAX row bounds" \
+    "$MLX_SOURCE_CHECKOUT" \
+    "$MLX_SOURCE_SORTED_GATHER_QMM_NAX_PATCH"
+  apply_dependency_patch \
+    "mlx-swift sorted gather QMM NAX generated JIT" \
+    "$MLX_SWIFT_CHECKOUT" \
+    "$MLX_SWIFT_SORTED_GATHER_QMM_NAX_JIT_PATCH"
   apply_dependency_patch \
     "mlx affine Q4 QMV specialization" \
     "$MLX_SOURCE_CHECKOUT" \

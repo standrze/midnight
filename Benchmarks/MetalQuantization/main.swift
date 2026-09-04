@@ -51,6 +51,7 @@ private let lagunaGraphABOnly = CommandLine.arguments.contains("--laguna-graph-a
 private let mistralGraphABOnly = CommandLine.arguments.contains("--mistral-graph-ab")
 private let qmvSpecializationOnly = CommandLine.arguments.contains("--qmv-specialization")
 private let routerPrecisionABOnly = CommandLine.arguments.contains("--router-precision-ab")
+private let fusedGatherSiluABOnly = CommandLine.arguments.contains("--fused-gather-silu-ab")
 
 private let siluProduct: @Sendable (MLXArray, MLXArray) -> MLXArray = compile(
   shapeless: true
@@ -64,7 +65,10 @@ guard warmupCount >= 1, iterationCount >= 3, queueDepth >= 2, queueRounds >= 3 e
   )
 }
 
-if scaleSearchOnly {
+if fusedGatherSiluABOnly {
+  benchmarkFusedGatherSilu(warmups: warmupCount, iterations: iterationCount,
+    queueDepth: queueDepth, queueRounds: queueRounds)
+} else if scaleSearchOnly {
   benchmarkAffineScaleSearch()
 } else if formatABOnly {
   benchmarkFormatAB()

@@ -23,6 +23,9 @@ public enum LagunaRuntimeTuning {
   // overrides, including an explicit false control.
   @TaskLocal public static var useCompiledBlockTail: Bool? = nil
   @TaskLocal public static var useFusedRouterTopK: Bool? = nil
+  // Experimental affine Q4 gate/up + SiLU fusion. nil permits the runner's
+  // explicit environment opt-in; ordinary execution continues to default off.
+  @TaskLocal public static var useFusedGateUpSilu: Bool? = nil
 }
 
 enum LagunaCompiledBlockTailEligibility {
@@ -633,7 +636,15 @@ private final class LagunaMoEGate: Module {
 }
 
 private final class LagunaMoE: Module, UnaryLayer {
+  private(set) var fusedGateUpSiluTraceCount = 0
   let routedScalingFactor: Float
+  private var calibrationObserver: LagunaRoutedActivationObserver?
+  private var calibrationPath: String?
+  private var calibrationGateUp: SwitchLinear?
+  private var calibrationDown: SwitchLinear?
+  private let expertCount: Int
+  var observesCalibration: Bool { calibrationObserver != nil }
+  var supportsFusedGateUpSilu: Bool { LagunaFusedGateUpSiluBinding(switchMLP) != nil }
 
   @ModuleInfo(key: "gate") var gate: LagunaMoEGate
   @ModuleInfo(key: "switch_mlp") var switchMLP: FusedGateUpSwitchGLU
@@ -641,6 +652,7 @@ private final class LagunaMoE: Module, UnaryLayer {
 
   init(_ configuration: LagunaConfiguration) {
     routedScalingFactor = configuration.routedScalingFactor
+    expertCount = configuration.numberOfExperts
     _gate.wrappedValue = LagunaMoEGate(configuration)
     _switchMLP.wrappedValue = FusedGateUpSwitchGLU(
       inputDims: configuration.hiddenSize,
@@ -654,9 +666,68 @@ private final class LagunaMoE: Module, UnaryLayer {
     super.init()
   }
 
+  func setCalibrationObserver(_ observer: LagunaRoutedActivationObserver?, path: String) throws {
+    guard let observer else {
+      calibrationObserver = nil
+      calibrationPath = nil
+      calibrationGateUp = nil
+      calibrationDown = nil
+      return
+    }
+    let leaves = Dictionary(uniqueKeysWithValues: switchMLP.leafModules().flattened())
+    guard let gateUp = leaves["gate_up_proj"] as? SwitchLinear,
+      let down = leaves["down_proj"] as? SwitchLinear,
+      !(gateUp is Quantized), !(down is Quantized)
+    else {
+      throw LagunaActivationStatisticsError.invalidInput(
+        "\(path) requires unquantized fused gate/up and down projections")
+    }
+    calibrationObserver = observer
+    calibrationPath = path
+    calibrationGateUp = gateUp
+    calibrationDown = down
+  }
+
+  private func calibratedExpertOutput(
+    _ input: MLXArray, _ indices: MLXArray, useFusedGateUpSilu: Bool = false
+  ) -> MLXArray {
+    guard let observer = calibrationObserver, let path = calibrationPath,
+      let gateUp = calibrationGateUp, let down = calibrationDown
+    else {
+      // This branch is traced only in the distinct opt-in compiled closure.
+      // Preserve the ordinary path for every unsupported parameter/input shape.
+      if useFusedGateUpSilu, !training, calibrationObserver == nil,
+        let binding = LagunaFusedGateUpSiluBinding(switchMLP),
+        let output = binding(input, indices)
+      {
+        // Runs while building the distinct compiled graph, never per token in
+        // the cached trace. Benchmarks use it to reject silent fallback runs.
+        fusedGateUpSiluTraceCount += 1
+        return output
+      }
+      return switchMLP(input, indices)
+    }
+
+    // Match the ordinary fused switch layer's sorted and unsorted schedules.
+    var x = MLX.expandedDimensions(input, axes: [-2, -3])
+    var ids = indices
+    var inverseOrder = MLXArray()
+    let sorted = indices.size >= 64
+    if sorted { (x, ids, inverseOrder) = gatherSort(x: x, indices: indices) }
+    observer.observeRoutedProjection(
+      path: path + ".gate_up_proj", input: x, indices: ids, expertCount: expertCount)
+    let parts = MLX.split(gateUp(x, ids, sortedIndices: sorted), parts: 2, axis: -1)
+    let activated = compiledSiluProduct(parts[0], parts[1])
+    observer.observeRoutedProjection(
+      path: path + ".down_proj", input: activated, indices: ids, expertCount: expertCount)
+    x = down(activated, ids, sortedIndices: sorted)
+    if sorted { x = scatterUnsort(x: x, invOrder: inverseOrder, shape: indices.shape) }
+    return MLX.squeezed(x, axis: -2)
+  }
+
   func callAsFunction(_ x: MLXArray) -> MLXArray {
     let route = gate(x, useCompiledFusion: false)
-    let expertOutput = switchMLP(x, route.indices)
+    let expertOutput = calibratedExpertOutput(x, route.indices)
     let routedOutput = weightedExpertSum(expertOutput, route.weights)
     return routedOutput * routedScalingFactor + sharedExpert(x)
   }
@@ -665,7 +736,8 @@ private final class LagunaMoE: Module, UnaryLayer {
     _ x: MLXArray,
     adding residual: MLXArray,
     useCompiledFusion: Bool,
-    useFusedRouterTopK: Bool = false
+    useFusedRouterTopK: Bool = false,
+    useFusedGateUpSilu: Bool = false
   ) -> MLXArray {
     guard useCompiledFusion else {
       return residual + callAsFunction(x)
@@ -675,7 +747,8 @@ private final class LagunaMoE: Module, UnaryLayer {
       x,
       useCompiledFusion: true,
       useFusedRouterTopK: useFusedRouterTopK)
-    let expertOutput = switchMLP(x, route.indices)
+    let expertOutput = calibratedExpertOutput(
+      x, route.indices, useFusedGateUpSilu: useFusedGateUpSilu)
     let sharedOutput = sharedExpert(x)
     let scale = MLXArray(routedScalingFactor).asType(expertOutput.dtype)
     return compiledLagunaMoEWeightedSharedResidual(
@@ -721,6 +794,17 @@ private final class LagunaTransformerBlock: Module {
       ]
     }
 
+  // Separate from both existing traces: toggling the experiment on the same
+  // loaded model must never reuse a graph traced for the opposite A/B arm.
+  private lazy var fusedGateUpCompiledDecodeTail: @Sendable ([MLXArray]) -> [MLXArray] =
+    compile { [unowned self] inputs in
+      [self.eagerTail(
+        residual: inputs[0], normalizedAttentionInput: inputs[1],
+        perHeadAttentionOutput: inputs[2], useCompiledAttentionGate: true,
+        useCompiledMoEFusion: true, useFusedRouterTopK: true,
+        useFusedGateUpSilu: true)]
+    }
+
   init(_ configuration: LagunaConfiguration, layerIndex: Int) {
     let attention = LagunaAttention(configuration, layerIndex: layerIndex)
     usesSlidingWindow = attention.usesSlidingWindow
@@ -748,6 +832,7 @@ private final class LagunaTransformerBlock: Module {
     useCompiledAttentionGate: Bool,
     useCompiledBlockTail: Bool,
     useFusedRouterTopK: Bool,
+    useFusedGateUpSilu: Bool = false,
     capturesHiddenStates: Bool
   ) -> MLXArray {
     // Snapshot the offset before attention mutates the cache. This keeps a
@@ -763,6 +848,13 @@ private final class LagunaTransformerBlock: Module {
     let normalizedInput = inputNorm(x)
     let perHeadOutput = attention.core(normalizedInput, mask: mask, cache: cache)
     if useCompiledTail {
+      if LagunaFusedGateUpSiluEligibility.allows(
+        runtimeEnabled: useFusedGateUpSilu, useCompiledTail: useCompiledTail,
+        useFusedRouter: useFusedRouterTopK, training: training,
+        hasCalibrationObserver: (mlp as? LagunaMoE)?.observesCalibration ?? false)
+      {
+        return fusedGateUpCompiledDecodeTail([x, normalizedInput, perHeadOutput])[0]
+      }
       if useFusedRouterTopK {
         return fusedRouterCompiledDecodeTail([x, normalizedInput, perHeadOutput])[0]
       }
@@ -783,7 +875,8 @@ private final class LagunaTransformerBlock: Module {
     perHeadAttentionOutput: MLXArray,
     useCompiledAttentionGate: Bool,
     useCompiledMoEFusion: Bool,
-    useFusedRouterTopK: Bool
+    useFusedRouterTopK: Bool,
+    useFusedGateUpSilu: Bool = false
   ) -> MLXArray {
     let attended = x + attention.finish(
       perHeadAttentionOutput,
@@ -794,13 +887,15 @@ private final class LagunaTransformerBlock: Module {
         postAttentionNorm(attended),
         adding: attended,
         useCompiledFusion: useCompiledMoEFusion,
-        useFusedRouterTopK: useFusedRouterTopK)
+        useFusedRouterTopK: useFusedRouterTopK,
+        useFusedGateUpSilu: useFusedGateUpSilu)
     }
     return attended + mlp(postAttentionNorm(attended))
   }
 }
 
 public final class LagunaModelInner: Module {
+  fileprivate var hasRoutedActivationObserver = false
   @ModuleInfo(key: "embed_tokens") var embedTokens: Embedding
   fileprivate let layers: [LagunaTransformerBlock]
   @ModuleInfo(key: "norm") var norm: RMSNorm
@@ -838,8 +933,10 @@ public final class LagunaModelInner: Module {
     var hidden = embedTokens(inputs)
     let useCompiledMoEFusion = LagunaRuntimeTuning.useCompiledMoEFusion
     let useCompiledAttentionGate = LagunaRuntimeTuning.useCompiledAttentionGate
-    let useCompiledBlockTail = LagunaRuntimeTuning.useCompiledBlockTail ?? false
+    let useCompiledBlockTail = (LagunaRuntimeTuning.useCompiledBlockTail ?? false)
+      && !hasRoutedActivationObserver
     let useFusedRouterTopK = LagunaRuntimeTuning.useFusedRouterTopK ?? false
+    let useFusedGateUpSilu = LagunaRuntimeTuning.useFusedGateUpSilu ?? false
     let capturesHiddenStates = !captureLayerIDs.isEmpty
     var captured = [MLXArray]()
     captured.reserveCapacity(captureLayerIDs.count)
@@ -870,6 +967,7 @@ public final class LagunaModelInner: Module {
         useCompiledAttentionGate: useCompiledAttentionGate,
         useCompiledBlockTail: useCompiledBlockTail,
         useFusedRouterTopK: useFusedRouterTopK,
+        useFusedGateUpSilu: useFusedGateUpSilu,
         capturesHiddenStates: capturesHiddenStates
       )
       if captureLayerIDs.contains(index) {
@@ -935,8 +1033,49 @@ public final class LagunaModel: Module, LLMModel, KVCacheDimensionProvider {
     super.init()
   }
 
+  /// Metadata-only capability counts for rejecting an unsupported benchmark
+  /// checkpoint before a fallback-only A/B run can be reported as an experiment.
+  public var fusedGateUpSiluSparseLayerCount: Int {
+    languageModel.model.layers.filter { $0.mlp is LagunaMoE }.count
+  }
+
+  public var fusedGateUpSiluTraceCount: Int {
+    languageModel.model.layers.reduce(0) { $0 + (($1.mlp as? LagunaMoE)?.fusedGateUpSiluTraceCount ?? 0) }
+  }
+
+  public var fusedGateUpSiluEligibleLayerCount: Int {
+    #if os(macOS)
+    guard configuration.hiddenSize == 2048, configuration.moeIntermediateSize == 512,
+      configuration.numberOfExperts == 256, configuration.expertsPerToken == 8
+    else { return 0 }
+    return languageModel.model.layers.reduce(0) { count, layer in
+      count + (((layer.mlp as? LagunaMoE)?.supportsFusedGateUpSilu ?? false) ? 1 : 0)
+    }
+    #else
+    return 0
+    #endif
+  }
+
   public func callAsFunction(_ inputs: MLXArray, cache: [KVCache]?) -> MLXArray {
     languageModel(inputs, cache: cache)
+  }
+
+  /// Opt-in expert calibration for an unquantized teacher. Call with nil to
+  /// restore normal serving. Collection automatically bypasses compiled block
+  /// tails so the observer runs for every segment, including cached decode.
+  public func setRoutedActivationObserver(_ observer: LagunaRoutedActivationObserver?) throws {
+    if observer != nil,
+      leafModules().flattened().contains(where: { $0.1 is Quantized })
+    {
+      throw LagunaActivationStatisticsError.invalidInput("use the unquantized Laguna teacher")
+    }
+    languageModel.model.hasRoutedActivationObserver = observer != nil
+    for (index, layer) in languageModel.model.layers.enumerated() {
+      if let moe = layer.mlp as? LagunaMoE {
+        try moe.setCalibrationObserver(
+          observer, path: "language_model.model.layers.\(index).mlp.switch_mlp")
+      }
+    }
   }
 
   public func callAsFunction(
@@ -1104,6 +1243,12 @@ public final class LagunaModel: Module, LLMModel, KVCacheDimensionProvider {
   }
 
   public func sanitize(weights: [String: MLXArray]) -> [String: MLXArray] {
+    Self.sanitizedWeights(weights, configuration: configuration)
+  }
+
+  fileprivate static func sanitizedWeights(
+    _ weights: [String: MLXArray], configuration: LagunaConfiguration
+  ) -> [String: MLXArray] {
     var sanitized: [String: MLXArray] = [:]
     sanitized.reserveCapacity(weights.count)
 
@@ -1261,4 +1406,67 @@ public enum LagunaModelRegistration {
   public static func isRegistered() async -> Bool {
     await LLMTypeRegistry.shared.contains("laguna")
   }
+}
+
+
+/// A single native Laguna transformer block for bounded offline teacher runs.
+/// It owns only this block, and always starts each segment with an empty KV cache.
+public final class LagunaCalibrationBlock {
+  private let block: LagunaTransformerBlock
+  private let configuration: LagunaConfiguration
+  public let layerIndex: Int
+  public var module: Module { block }
+  public var modulePrefix: String { "language_model.model.layers.\(layerIndex)" }
+
+  public init(configuration: LagunaConfiguration, layerIndex: Int, sourceWeights: [String: MLXArray]) throws {
+    guard (0..<configuration.hiddenLayers).contains(layerIndex) else {
+      throw LagunaActivationStatisticsError.invalidInput("invalid calibration layer index")
+    }
+    self.configuration = configuration
+    self.layerIndex = layerIndex
+    block = LagunaTransformerBlock(configuration, layerIndex: layerIndex)
+    let prefix = "language_model.model.layers.\(layerIndex)."
+    let sanitized = LagunaModel.sanitizedWeights(sourceWeights, configuration: configuration)
+    var weights = [String: MLXArray]()
+    for (key, value) in sanitized {
+      guard key.hasPrefix(prefix) else {
+        throw LagunaActivationStatisticsError.invalidInput("unrelated tensor supplied to single-layer calibration")
+      }
+      weights[String(key.dropFirst(prefix.count))] = value
+    }
+    try block.update(parameters: ModuleParameters.unflattened(weights), verify: .all)
+    for (path, module) in block.leafModules().flattened() where module is SwitchLinear {
+      guard !(module is Quantized),
+        let weight = Dictionary(uniqueKeysWithValues: module.parameters().flattened())["weight"],
+        weight.ndim == 3, weight.dtype == .bfloat16
+      else {
+        throw LagunaActivationStatisticsError.invalidInput(
+          "layerwise teacher \(path) requires rank-3 BF16 expert weights")
+      }
+    }
+    block.train(false)
+    try MLX.checkedEval(block.parameters().flattened().map(\.1))
+  }
+
+  public func setRoutedActivationObserver(_ observer: LagunaRoutedActivationObserver?) throws {
+    if let moe = block.mlp as? LagunaMoE {
+      try moe.setCalibrationObserver(observer, path: modulePrefix + ".mlp.switch_mlp")
+    }
+  }
+
+  public func callAsFunction(_ hidden: MLXArray) -> MLXArray {
+    let mask = createAttentionMask(h: hidden, cache: nil,
+      windowSize: block.usesSlidingWindow ? configuration.slidingWindow : nil)
+    return block(hidden, mask: mask, cache: nil,
+      useCompiledMoEFusion: LagunaRuntimeTuning.useCompiledMoEFusion,
+      useCompiledAttentionGate: LagunaRuntimeTuning.useCompiledAttentionGate,
+      useCompiledBlockTail: false, useFusedRouterTopK: false, capturesHiddenStates: false)
+  }
+}
+
+public extension LagunaConfiguration {
+  var calibrationLayerCount: Int { hiddenLayers }
+  var calibrationHiddenSize: Int { hiddenSize }
+  var calibrationRMSNormEpsilon: Float { rmsNormEpsilon }
+  var calibrationTiesWordEmbeddings: Bool { tieWordEmbeddings }
 }

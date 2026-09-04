@@ -2,6 +2,7 @@ import ArgumentParser
 import Foundation
 import MLX
 import MLXLMCommon
+import MistralActivationScaleSearchCore
 
 private struct SafetensorsIndex: Decodable {
   var weightMap: [String: String]
@@ -38,6 +39,20 @@ private struct RescoreProvenance: Encodable {
   var q8ModulesPreserved: Int
   var standardQ4EmbeddingsPreserved: Int
   var expertBatchSize: Int
+  var activationStatistics: String? = nil
+  var sourceWeightFingerprint: String? = nil
+  var sourceWeightFingerprintMethod: String? = nil
+  var validationStatistics: String? = nil
+  var calibrationCorpusFingerprint: String? = nil
+  var validationCorpusFingerprint: String? = nil
+  var minimumExpertPositions: Int? = nil
+  var retainedTemplateExperts: [String: [Int]]? = nil
+  var activationDiagnostics: [String: ActivationWeightedScaleSearchDiagnostics]? = nil
+  var peakMLXMemoryBytes: Int = 0
+  var preflightPeakMLXMemoryBytes: Int = 0
+  var sourceTensorsReleased: Int = 0
+  var sourceTensorsRemaining: Int = 0
+  var quantizationDevice: String = "unspecified"
 
   enum CodingKeys: String, CodingKey {
     case format, status, algorithm, bits
@@ -52,6 +67,20 @@ private struct RescoreProvenance: Encodable {
     case q8ModulesPreserved = "q8_modules_preserved"
     case standardQ4EmbeddingsPreserved = "standard_q4_embeddings_preserved"
     case expertBatchSize = "expert_batch_size"
+    case activationStatistics = "activation_statistics"
+    case sourceWeightFingerprint = "source_weight_fingerprint"
+    case sourceWeightFingerprintMethod = "source_weight_fingerprint_method"
+    case validationStatistics = "validation_statistics"
+    case calibrationCorpusFingerprint = "calibration_corpus_fingerprint"
+    case validationCorpusFingerprint = "validation_corpus_fingerprint"
+    case minimumExpertPositions = "minimum_expert_positions"
+    case retainedTemplateExperts = "retained_template_experts"
+    case activationDiagnostics = "activation_diagnostics"
+    case peakMLXMemoryBytes = "peak_mlx_memory_bytes"
+    case preflightPeakMLXMemoryBytes = "preflight_peak_mlx_memory_bytes"
+    case sourceTensorsReleased = "source_tensors_released"
+    case sourceTensorsRemaining = "source_tensors_remaining"
+    case quantizationDevice = "quantization_device"
   }
 }
 
@@ -72,6 +101,37 @@ private enum RescoreError: Error, LocalizedError {
     case .incompatibleTemplate(let message): "Incompatible Q4R8 template: \(message)"
     case .missingTensor(let key): "Missing source tensor: \(key)"
     }
+  }
+}
+
+/// Counts consumers rather than assuming every output projection owns unique
+/// source tensors. In particular, fused and split gate/up outputs can overlap.
+struct LagunaSourceUsePlan {
+  private var keysByModule: [String: [String]]
+  private(set) var remainingUses: [String: Int] = [:]
+
+  init(keysByModule: [String: [String]]) {
+    self.keysByModule = keysByModule.mapValues { Array(Set($0)).sorted() }
+    for keys in self.keysByModule.values {
+      for key in keys { remainingUses[key, default: 0] += 1 }
+    }
+  }
+
+  mutating func finish(module: String) throws -> [String] {
+    guard let keys = keysByModule.removeValue(forKey: module) else {
+      throw RescoreError.invalidInput("unknown or repeated source consumer \(module)")
+    }
+    var released = [String]()
+    for key in keys {
+      guard let count = remainingUses[key], count > 0 else {
+        throw RescoreError.invalidInput("invalid source use count for \(key)")
+      }
+      if count == 1 {
+        remainingUses.removeValue(forKey: key)
+        released.append(key)
+      } else { remainingUses[key] = count - 1 }
+    }
+    return released
   }
 }
 
@@ -97,6 +157,14 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
   )
   var expertBatch = 16
 
+  @Option(name: .customLong("activation-stats"),
+    help: "Laguna expert-conditional BF16 calibration safetensors; enables activation-weighted refinement.")
+  var activationStats: String?
+
+  @Option(name: .customLong("validation-stats"),
+    help: "Disjoint Laguna dev statistics; covered candidates must not worsen its stored-grid objective.")
+  var validationStats: String?
+
   @Flag(help: "Validate source/template identity and mappings without writing a destination.")
   var preflightOnly = false
 
@@ -110,6 +178,8 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     template: String,
     destination: String,
     expertBatch: Int = 16,
+    activationStats: String? = nil,
+    validationStats: String? = nil,
     preflightOnly: Bool = false,
     cpu: Bool = false
   ) throws {
@@ -118,6 +188,8 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     command.template = template
     command.destination = destination
     command.expertBatch = expertBatch
+    command.activationStats = activationStats
+    command.validationStats = validationStats
     command.preflightOnly = preflightOnly
     command.cpu = cpu
     try command.validate()
@@ -125,6 +197,9 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
   }
 
   public mutating func validate() throws {
+    guard validationStats == nil || activationStats != nil else {
+      throw ValidationError("--validation-stats requires --activation-stats.")
+    }
     guard expertBatch >= 1, expertBatch <= 256 else {
       throw ValidationError("--expert-batch must be in 1...256.")
     }
@@ -144,6 +219,7 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
 
   private func execute() throws {
     Memory.cacheLimit = 512 * 1_024 * 1_024
+    Memory.peakMemory = 0
 
     let sourceURL = URL(fileURLWithPath: source).standardizedFileURL
     let templateURL = URL(fileURLWithPath: template).standardizedFileURL
@@ -185,11 +261,12 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     guard !q4Modules.isEmpty else {
       throw RescoreError.incompatibleTemplate("no affine Q4 modules were found")
     }
-    try validateSourceMappings(
-      q4Modules,
-      sourceWeightMap: sourceIndex.weightMap,
-      numberOfExperts: sourceConfiguration.numberOfExperts
-    )
+    let availableSourceKeys = Set(sourceIndex.weightMap.keys)
+    var sourceUsePlan = LagunaSourceUsePlan(keysByModule: try Dictionary(uniqueKeysWithValues:
+      q4Modules.map { module in
+        (module, try Self.sourceKeys(for: module, availableKeys: availableSourceKeys,
+          numberOfExperts: sourceConfiguration.numberOfExperts))
+      }))
 
     print(
       "Laguna Q4R8 LS2 rescore preflight: \(q4Modules.count) Q4 modules, "
@@ -201,18 +278,56 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
         + "experts=\(sourceConfiguration.numberOfExperts) device=\(Device.defaultDevice())"
     )
 
-    let sourceArrays = try loadSourceArrays(sourceURL: sourceURL, index: sourceIndex)
+    let sourceConfigData = try Data(contentsOf: sourceURL.appendingPathComponent("config.json"))
+    let sourceIndexData = try Data(contentsOf: sourceIndexURL)
+    let calibration = try activationStats.map {
+      try LagunaActivationStatistics.load(from: URL(fileURLWithPath: $0).standardizedFileURL,
+        sourceURL: sourceURL, sourceConfig: sourceConfigData, sourceIndex: sourceIndexData)
+    }
+    let validation = try validationStats.map {
+      try LagunaActivationStatistics.load(from: URL(fileURLWithPath: $0).standardizedFileURL,
+        sourceURL: sourceURL, sourceConfig: sourceConfigData, sourceIndex: sourceIndexData,
+        sourceWeightFingerprint: calibration?.metadata["source_weight_fingerprint"])
+    }
+    if let calibration, let validation { try validation.requireDisjoint(from: calibration) }
+    let searchedTemplate = try calibration != nil && templateUsesScaleSearch(templateURL)
+    if let calibration {
+      try validateActivationCoverage(calibration, validation: validation,
+        q4Modules: q4Modules, q8Modules: q8Modules, expertCount: sourceConfiguration.numberOfExperts)
+    }
+    var sourceArrays = try loadSourceArrays(sourceURL: sourceURL, index: sourceIndex)
+    if let calibration {
+      try validateActivationSourceGeometry(calibration, q4Modules: q4Modules, sourceArrays: sourceArrays)
+    }
     try verifyTemplateIdentity(
       sourceArrays: sourceArrays,
       templateURL: templateURL,
-      templateIndex: templateIndex
+      templateIndex: templateIndex,
+      searchedTemplate: searchedTemplate
     )
-    print("Template identity checks passed for direct Q4, routed Q4, fused gate/up Q4, and router Q8.")
+    if calibration != nil {
+      try verifyAllRouters(q8Modules, sourceArrays: sourceArrays,
+        templateURL: templateURL, templateIndex: templateIndex)
+    }
+    let preflightPeakMemory = Memory.peakMemory
+    print("Template identity checks passed for dense Q4, routed gate/up/down Q4, and router Q8.")
+    print("Preflight peak MLX memory: \(preflightPeakMemory) bytes.")
     if preflightOnly { return }
+    // loadArrays creates lazy Load nodes, not memory maps. Once evaluated, their
+    // payloads stay resident while retained. Keep only actual conversion inputs,
+    // and release each after its final evaluated output has consumed it.
+    let originalSourceTensorCount = sourceArrays.count
+    sourceArrays = sourceArrays.filter { sourceUsePlan.remainingUses[$0.key] != nil }
+    var sourceTensorsReleased = originalSourceTensorCount - sourceArrays.count
+    Memory.clearCache()
 
     try FileManager.default.createDirectory(
       at: destinationURL, withIntermediateDirectories: false)
+    var outputComplete = false
+    defer { if !outputComplete { try? FileManager.default.removeItem(at: destinationURL) } }
     try copySidecars(from: templateURL, to: destinationURL)
+    var activationDiagnostics = [String: ActivationWeightedScaleSearchDiagnostics]()
+    var retainedTemplateExperts = [String: [Int]]()
 
     let shardNames = Set(templateIndex.weightMap.values).sorted()
     let shardOrder = Dictionary(
@@ -248,20 +363,35 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
 
       for module in modules {
         let replacement: QuantizedArrays
-        if let routed = Self.routedProjection(module) {
+        if let calibration {
+          let baseline = QuantizedArrays(
+            weight: try templateArray(templateURL: templateURL, index: templateIndex, key: module + ".weight", expert: nil),
+            scales: try templateArray(templateURL: templateURL, index: templateIndex, key: module + ".scales", expert: nil),
+            biases: try templateArray(templateURL: templateURL, index: templateIndex, key: module + ".biases", expert: nil))
+          replacement = try activationRefined(
+            module: module, baseline: baseline, sourceArrays: sourceArrays,
+            numberOfExperts: sourceConfiguration.numberOfExperts, calibration: calibration,
+            validation: validation, diagnostics: &activationDiagnostics,
+            retained: &retainedTemplateExperts)
+        } else if let routed = Self.routedProjection(module) {
           replacement = try quantizeRoutedProjection(
             routed,
             sourceArrays: sourceArrays,
             numberOfExperts: sourceConfiguration.numberOfExperts
           )
         } else {
-          let sourceKey = try Self.directSourceWeightKey(for: module)
-          guard let sourceWeight = sourceArrays[sourceKey] else {
-            throw RescoreError.missingTensor(sourceKey)
-          }
-          replacement = searched(sourceWeight)
+          replacement = searched(try directSourceWeight(module, sourceArrays: sourceArrays))
         }
 
+        // Detach output graphs from source weights before releasing the last
+        // source owner; concatenated expert batches may still be lazy here.
+        try MLX.checkedEval(replacement.weight, replacement.scales, replacement.biases)
+        for key in try sourceUsePlan.finish(module: module) {
+          guard sourceArrays.removeValue(forKey: key) != nil else {
+            throw RescoreError.invalidInput("source tensor released before its final consumer: \(key)")
+          }
+          sourceTensorsReleased += 1
+        }
         for (key, value) in replacementEntries(replacement, module: module) {
           if arrays[key] != nil {
             try install(value, key: key, arrays: &arrays)
@@ -276,7 +406,8 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
           }
         }
         completedModules += 1
-        print("  [\(completedModules)/\(q4Modules.count)] \(module)")
+        print("  [\(completedModules)/\(q4Modules.count)] \(module) "
+          + "source_tensors_remaining=\(sourceArrays.count) mlx_active_bytes=\(Memory.activeMemory)")
         Memory.clearCache()
       }
 
@@ -287,6 +418,9 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       try FileManager.default.moveItem(at: temporaryURL, to: outputURL)
       arrays.removeAll(keepingCapacity: false)
       Memory.clearCache()
+    }
+    guard sourceUsePlan.remainingUses.isEmpty, sourceArrays.isEmpty else {
+      throw RescoreError.invalidInput("conversion retained source tensors after their final consumers")
     }
     guard pendingReplacements.isEmpty, completedModules == q4Modules.count else {
       throw RescoreError.incompatibleTemplate(
@@ -299,7 +433,7 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       at: templateIndexURL,
       to: destinationURL.appendingPathComponent("model.safetensors.index.json")
     )
-    let provenance = RescoreProvenance(
+    var provenance = RescoreProvenance(
       createdAt: ISO8601DateFormatter().string(from: Date()),
       sourceModel: sourceURL.path,
       templateModel: templateURL.path,
@@ -308,13 +442,33 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       standardQ4EmbeddingsPreserved: embeddingModules.count,
       expertBatchSize: expertBatch
     )
+    provenance.peakMLXMemoryBytes = Memory.peakMemory
+    provenance.preflightPeakMLXMemoryBytes = preflightPeakMemory
+    provenance.sourceTensorsReleased = sourceTensorsReleased
+    provenance.sourceTensorsRemaining = sourceArrays.count
+    provenance.quantizationDevice = String(describing: Device.defaultDevice())
+    if let calibration {
+      provenance.algorithm = "laguna_q4r8_activation_weighted_scale_search"
+      provenance.activationStatistics = calibration.url.path
+      provenance.sourceWeightFingerprint = calibration.metadata["source_weight_fingerprint"]
+      provenance.sourceWeightFingerprintMethod = IndexedSafetensorsFingerprint.method
+      provenance.validationStatistics = validation?.url.path
+      provenance.calibrationCorpusFingerprint = calibration.metadata["corpus_fingerprint"]
+      provenance.validationCorpusFingerprint = validation?.metadata["corpus_fingerprint"]
+      provenance.minimumExpertPositions = max(calibration.minimumExpertPositions, validation?.minimumExpertPositions ?? 0)
+      provenance.retainedTemplateExperts = retainedTemplateExperts
+      provenance.activationDiagnostics = activationDiagnostics
+    }
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     try encoder.encode(provenance).write(
       to: destinationURL.appendingPathComponent("q4r8-scale-search.json"),
       options: .atomic
     )
-    print("Created \(destinationURL.path) from \(shardNames.count) streamed shard(s).")
+    outputComplete = true
+    print("Created \(destinationURL.path) from \(shardNames.count) streamed shard(s). "
+      + "Peak MLX memory: \(provenance.peakMLXMemoryBytes) bytes; "
+      + "released \(sourceTensorsReleased) source tensors.")
   }
 
   private func loadSourceArrays(
@@ -373,9 +527,9 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
           guard let up = sourceArrays[upKey] else { throw RescoreError.missingTensor(upKey) }
           batch.append(concatenated([gate, up], axis: -2))
         } else {
-          let key = "\(prefix).\(expert).down_proj.weight"
-          guard let down = sourceArrays[key] else { throw RescoreError.missingTensor(key) }
-          batch.append(down)
+          let key = "\(prefix).\(expert).\(routed.projection).weight"
+          guard let source = sourceArrays[key] else { throw RescoreError.missingTensor(key) }
+          batch.append(source)
         }
       }
 
@@ -435,9 +589,13 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
   private func verifyTemplateIdentity(
     sourceArrays: [String: MLXArray],
     templateURL: URL,
-    templateIndex: SafetensorsIndex
+    templateIndex: SafetensorsIndex,
+    searchedTemplate: Bool = false
   ) throws {
-    let checks: [(module: String, bits: Int, source: String, expert: Int?)] = [
+    // Affine CPU/GPU conversion can differ in exact integer assignments and
+    // stored scales. Verify using the same device selected for this conversion,
+    // just as searched() does, and retain strict byte-for-byte identity.
+    var checks: [(module: String, bits: Int, source: String, expert: Int?)] = [
       (
         "language_model.model.layers.1.mlp.shared_expert.down_proj",
         4,
@@ -458,6 +616,15 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       ),
     ]
 
+    let fusedModule = "language_model.model.layers.1.mlp.switch_mlp.gate_up_proj"
+    let hasFusedGateUp = templateIndex.weightMap[fusedModule + ".weight"] != nil
+    if !hasFusedGateUp {
+      for projection in ["gate_proj", "up_proj"] {
+        checks.append(("language_model.model.layers.1.mlp.switch_mlp." + projection, 4,
+          "model.layers.1.mlp.experts.0." + projection + ".weight", 0))
+      }
+    }
+
     for check in checks {
       let weightKey = "\(check.module).weight"
       guard templateIndex.weightMap[weightKey] != nil else {
@@ -466,10 +633,15 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       guard let source = sourceArrays[check.source] else {
         throw RescoreError.missingTensor(check.source)
       }
-      let standard = MLX.quantized(
-        source, groupSize: 64, bits: check.bits, mode: .affine, stream: .cpu)
-      guard let standardBiases = standard.biases else {
-        throw RescoreError.incompatibleTemplate("standard affine quantization omitted biases")
+      let standard: QuantizedArrays
+      if searchedTemplate && check.bits == 4 {
+        standard = searched(source)
+      } else {
+        let ordinary = MLX.quantized(source, groupSize: 64, bits: check.bits, mode: .affine)
+        guard let biases = ordinary.biases else {
+          throw RescoreError.incompatibleTemplate("standard affine quantization omitted biases")
+        }
+        standard = .init(weight: ordinary.wq, scales: ordinary.scales, biases: biases)
       }
       let expectedWeight = try templateArray(
         templateURL: templateURL,
@@ -489,9 +661,9 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
         key: "\(check.module).biases",
         expert: check.expert
       )
-      guard arraysEqual(standard.wq, expectedWeight),
+      guard arraysEqual(standard.weight, expectedWeight),
         arraysEqual(standard.scales, expectedScales),
-        arraysEqual(standardBiases, expectedBiases)
+        arraysEqual(standard.biases, expectedBiases)
       else {
         throw RescoreError.incompatibleTemplate(
           "\(check.module) does not match standard \(check.bits)-bit quantization of the source"
@@ -500,26 +672,24 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       Memory.clearCache()
     }
 
-    let fusedModule = "language_model.model.layers.1.mlp.switch_mlp.gate_up_proj"
-    guard templateIndex.weightMap["\(fusedModule).weight"] != nil else {
-      throw RescoreError.incompatibleTemplate("missing fused gate/up identity check")
-    }
+    guard hasFusedGateUp else { return }
     let gateKey = "model.layers.1.mlp.experts.0.gate_proj.weight"
     let upKey = "model.layers.1.mlp.experts.0.up_proj.weight"
     guard let gate = sourceArrays[gateKey] else { throw RescoreError.missingTensor(gateKey) }
     guard let up = sourceArrays[upKey] else { throw RescoreError.missingTensor(upKey) }
     let standardGate = MLX.quantized(
-      gate, groupSize: 64, bits: 4, mode: .affine, stream: .cpu)
+      gate, groupSize: 64, bits: 4, mode: .affine)
     let standardUp = MLX.quantized(
-      up, groupSize: 64, bits: 4, mode: .affine, stream: .cpu)
+      up, groupSize: 64, bits: 4, mode: .affine)
     guard let gateBiases = standardGate.biases, let upBiases = standardUp.biases else {
       throw RescoreError.incompatibleTemplate("standard fused quantization omitted biases")
     }
-    let standardFused = QuantizedArrays(
+    var standardFused = QuantizedArrays(
       weight: concatenated([standardGate.wq, standardUp.wq], axis: -2),
       scales: concatenated([standardGate.scales, standardUp.scales], axis: -2),
       biases: concatenated([gateBiases, upBiases], axis: -2)
     )
+    if searchedTemplate { standardFused = searched(concatenated([gate, up], axis: -2)) }
     guard arraysEqual(
       standardFused.weight,
       try templateArray(
@@ -596,28 +766,27 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     }
   }
 
-  private func validateSourceMappings(
-    _ modules: [String],
-    sourceWeightMap: [String: String],
-    numberOfExperts: Int
-  ) throws {
-    for module in modules {
-      if let routed = Self.routedProjection(module) {
-        let prefix = "model.layers.\(routed.layer).mlp.experts"
-        for expert in 0 ..< numberOfExperts {
-          let projections =
-            routed.projection == "gate_up_proj"
-            ? ["gate_proj", "up_proj"] : ["down_proj"]
-          for projection in projections {
-            let key = "\(prefix).\(expert).\(projection).weight"
-            guard sourceWeightMap[key] != nil else { throw RescoreError.missingTensor(key) }
-          }
-        }
-      } else {
-        let key = try Self.directSourceWeightKey(for: module)
-        guard sourceWeightMap[key] != nil else { throw RescoreError.missingTensor(key) }
+  static func sourceKeys(
+    for module: String, availableKeys: Set<String>, numberOfExperts: Int
+  ) throws -> [String] {
+    if let routed = Self.routedProjection(module) {
+      let prefix = "model.layers.\(routed.layer).mlp.experts"
+      let projections = routed.projection == "gate_up_proj"
+        ? ["gate_proj", "up_proj"] : [routed.projection]
+      let keys = (0..<numberOfExperts).flatMap { expert in
+        projections.map { "\(prefix).\(expert).\($0).weight" }
       }
+      for key in keys where !availableKeys.contains(key) { throw RescoreError.missingTensor(key) }
+      return keys
     }
+    let key = try Self.directSourceWeightKey(for: module)
+    if availableKeys.contains(key) { return [key] }
+    if key.hasSuffix("gate_up_proj.weight") {
+      let prefix = String(key.dropLast("gate_up_proj.weight".count))
+      let keys = [prefix + "gate_proj.weight", prefix + "up_proj.weight"]
+      if keys.allSatisfy(availableKeys.contains) { return keys }
+    }
+    throw RescoreError.missingTensor(key)
   }
 
   private func decodeIndex(at url: URL) throws -> SafetensorsIndex {
@@ -663,8 +832,183 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       let layer = Int(parts[3]),
       parts[4] == "mlp",
       parts[5] == "switch_mlp",
-      parts[6] == "down_proj" || parts[6] == "gate_up_proj"
+      ["down_proj", "gate_up_proj", "gate_proj", "up_proj"].contains(String(parts[6]))
     else { return nil }
     return (layer, String(parts[6]))
+  }
+}
+
+private extension LagunaScaleSearchRescorer {
+  func templateUsesScaleSearch(_ templateURL: URL) throws -> Bool {
+    for name in ["q4r8-scale-search.json", "scale-search-quantization.json"] {
+      let url = templateURL.appendingPathComponent(name)
+      guard FileManager.default.fileExists(atPath: url.path) else { continue }
+      guard let json = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any],
+        json["algorithm"] as? String == "q4r8_affine_scale_search_ls2"
+      else { throw RescoreError.incompatibleTemplate("activation refinement requires a standard Q4R8 or verified LS2 template") }
+      return true
+    }
+    return false
+  }
+
+  func validateActivationCoverage(
+    _ calibration: LagunaActivationStatistics, validation: LagunaActivationStatistics?,
+    q4Modules: [String], q8Modules: [String], expertCount: Int
+  ) throws {
+    for stats in [calibration, validation].compactMap({ $0 }) {
+      var allowed = Set<String>()
+      for module in q4Modules + q8Modules {
+        let path = try stats.momentPath(for: module)
+        allowed.insert(path)
+        let moments = stats.moments[path]!
+        if Self.routedProjection(module) != nil {
+          guard moments.ndim == 2, moments.dim(0) == expertCount,
+            stats.counts[path]?.count == expertCount
+          else { throw LagunaActivationInputError(message: "expected expert-conditional matrix for \(module)") }
+        } else if moments.ndim != 1 {
+          throw LagunaActivationInputError(message: "expected dense input vector for \(module)")
+        }
+      }
+      guard allowed == Set(stats.moments.keys) else {
+        throw LagunaActivationInputError(message: "statistics include unexpected projections")
+      }
+      for module in q4Modules {
+        guard let routed = Self.routedProjection(module), routed.projection != "down_proj" else { continue }
+        let gatePath = try stats.momentPath(for: module)
+        let down = "language_model.model.layers.\(routed.layer).mlp.switch_mlp.down_proj"
+        let downPath = try stats.momentPath(for: down)
+        guard stats.counts[gatePath] == stats.counts[downPath] else {
+          throw LagunaActivationInputError(message: "gate/up and down selected-position counts disagree for \(module)")
+        }
+      }
+    }
+    if let validation {
+      for module in q4Modules {
+        let lhs = try calibration.momentPath(for: module)
+        let rhs = try validation.momentPath(for: module)
+        guard calibration.moments[lhs]?.shape == validation.moments[rhs]?.shape else {
+          throw LagunaActivationInputError(message: "calibration and dev geometry differ for \(module)")
+        }
+      }
+    }
+  }
+
+  func verifyAllRouters(
+    _ modules: [String], sourceArrays: [String: MLXArray],
+    templateURL: URL, templateIndex: SafetensorsIndex
+  ) throws {
+    for module in modules {
+      let sourceKey = String(module.dropFirst("language_model.".count))
+        .replacingOccurrences(of: ".gate.proj", with: ".gate") + ".weight"
+      guard let source = sourceArrays[sourceKey] else { throw RescoreError.missingTensor(sourceKey) }
+      let result = MLX.quantized(source, groupSize: 64, bits: 8, mode: .affine)
+      guard let biases = result.biases else { throw RescoreError.incompatibleTemplate("missing Q8 affine biases") }
+      for (suffix, array) in [("weight", result.wq), ("scales", result.scales), ("biases", biases)] {
+        guard arraysEqual(array, try templateArray(templateURL: templateURL, index: templateIndex,
+          key: module + "." + suffix, expert: nil))
+        else { throw RescoreError.incompatibleTemplate("router \(module) is not the source's standard Q8 quantization") }
+      }
+    }
+  }
+
+  func validateActivationSourceGeometry(
+    _ stats: LagunaActivationStatistics, q4Modules: [String], sourceArrays: [String: MLXArray]
+  ) throws {
+    for module in q4Modules {
+      let path = try stats.momentPath(for: module)
+      let width = stats.moments[path]!.dim(-1)
+      let source: MLXArray
+      if let routed = Self.routedProjection(module) {
+        let projection = routed.projection == "gate_up_proj" ? "gate_proj" : routed.projection
+        let key = "model.layers.\(routed.layer).mlp.experts.0.\(projection).weight"
+        guard let array = sourceArrays[key] else { throw RescoreError.missingTensor(key) }
+        source = array
+      } else { source = try directSourceWeight(module, sourceArrays: sourceArrays) }
+      guard source.ndim == 2, source.dim(-1) == width, width % 64 == 0,
+        source.dtype == .bfloat16
+      else { throw LagunaActivationInputError(message: "source BF16 shape/dtype does not match \(module)") }
+    }
+  }
+
+  func directSourceWeight(_ module: String, sourceArrays: [String: MLXArray]) throws -> MLXArray {
+    let key = try Self.directSourceWeightKey(for: module)
+    if let value = sourceArrays[key] { return value }
+    if key.hasSuffix(".gate_up_proj.weight") {
+      let prefix = String(key.dropLast("gate_up_proj.weight".count))
+      if let gate = sourceArrays[prefix + "gate_proj.weight"],
+        let up = sourceArrays[prefix + "up_proj.weight"], gate.shape == up.shape, gate.dtype == up.dtype
+      { return concatenated([gate, up], axis: -2) }
+    }
+    throw RescoreError.missingTensor(key)
+  }
+
+  func activationRefined(
+    module: String, baseline: QuantizedArrays, sourceArrays: [String: MLXArray],
+    numberOfExperts: Int, calibration: LagunaActivationStatistics,
+    validation: LagunaActivationStatistics?,
+    diagnostics: inout [String: ActivationWeightedScaleSearchDiagnostics],
+    retained: inout [String: [Int]]
+  ) throws -> QuantizedArrays {
+    let calibrationPath = try calibration.momentPath(for: module)
+    let validationPath = try validation?.momentPath(for: module)
+    let calibrationMoments = calibration.moments[calibrationPath]!
+    let validationMoments = validationPath.flatMap { validation?.moments[$0] }
+    guard let routed = Self.routedProjection(module) else {
+      let result = try MistralActivationWeightedScaleSearch.rescore(
+        sourceWeight: directSourceWeight(module, sourceArrays: sourceArrays),
+        templateWeight: baseline.weight, templateScales: baseline.scales, templateBiases: baseline.biases,
+        calibrationSecondMoments: calibrationMoments, validationSecondMoments: validationMoments)
+      diagnostics[module] = result.diagnostics
+      return .init(weight: result.weight, scales: result.scales, biases: result.biases)
+    }
+    guard baseline.weight.ndim == 3, baseline.weight.dim(0) == numberOfExperts,
+      baseline.scales.ndim == 3, baseline.scales.dim(0) == numberOfExperts,
+      baseline.biases.shape == baseline.scales.shape,
+      let calibrationCounts = calibration.counts[calibrationPath]
+    else { throw RescoreError.incompatibleTemplate("invalid stacked expert template for \(module)") }
+    let validationCounts = validationPath.flatMap { validation?.counts[$0] }
+    var weights = [MLXArray](), scales = [MLXArray](), biases = [MLXArray]()
+    var retainedExperts = [Int]()
+    for start in stride(from: 0, to: numberOfExperts, by: expertBatch) {
+      let end = min(start + expertBatch, numberOfExperts)
+      var sourceBatch = [MLXArray]()
+      for expert in start..<end {
+        let prefix = "model.layers.\(routed.layer).mlp.experts.\(expert)."
+        if routed.projection == "gate_up_proj" {
+          guard let gate = sourceArrays[prefix + "gate_proj.weight"],
+            let up = sourceArrays[prefix + "up_proj.weight"]
+          else { throw RescoreError.missingTensor(prefix + "gate_proj/up_proj.weight") }
+          guard gate.dtype == .bfloat16, up.dtype == .bfloat16, gate.shape == up.shape else {
+            throw RescoreError.invalidInput("invalid BF16 fused gate/up source for \(prefix)")
+          }
+          sourceBatch.append(concatenated([gate, up], axis: -2))
+        } else {
+          let key = prefix + routed.projection + ".weight"
+          guard let source = sourceArrays[key], source.dtype == .bfloat16 else {
+            throw RescoreError.missingTensor(key + " (BF16)")
+          }
+          sourceBatch.append(source)
+        }
+      }
+      let result = try MistralActivationWeightedScaleSearch.rescoreExperts(
+        sourceWeight: MLX.stacked(sourceBatch),
+        templateWeight: baseline.weight[start..<end],
+        templateScales: baseline.scales[start..<end], templateBiases: baseline.biases[start..<end],
+        calibrationSecondMoments: calibrationMoments[start..<end],
+        calibrationPositionCounts: Array(calibrationCounts[start..<end]),
+        validationSecondMoments: validationMoments.map { $0[start..<end] },
+        validationPositionCounts: validationCounts.map { Array($0[start..<end]) },
+        minimumExpertPositions: max(calibration.minimumExpertPositions, validation?.minimumExpertPositions ?? 0))
+      weights.append(result.weight)
+      scales.append(result.scales)
+      biases.append(result.biases)
+      for (expert, diagnostic) in result.diagnostics { diagnostics[module + ".expert.\(start + expert)"] = diagnostic }
+      retainedExperts.append(contentsOf: result.retainedTemplateExperts.map { start + $0 })
+      MLX.eval(result.weight, result.scales, result.biases)
+      Memory.clearCache()
+    }
+    retained[module] = retainedExperts
+    return .init(weight: concatenated(weights, axis: 0), scales: concatenated(scales, axis: 0),
+      biases: concatenated(biases, axis: 0))
   }
 }

@@ -8,7 +8,7 @@ struct MidnightCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "midnight",
         abstract: "Midnight Runner — serve a local MLX model through OpenAI-compatible chat and local audio APIs.",
-        version: "0.2.0-beta.1"
+        version: "0.2.0-beta.2"
     )
 
     @Option(name: .shortAndLong, help: "Model name in ~/.runner/models or an MLX folder")

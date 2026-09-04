@@ -1,0 +1,27 @@
+{
+  "recorded_at": "2026-09-04T21:39:11.471122+00:00",
+  "source_revision": "f214f1671bd045726e32099a3ba42b8d4f943766",
+  "source_revision_basis": "Experiment coordinator identified this existing release teacher-KL binary as the f214f16 build; source and metallib were subsequently patched.",
+  "teacher_benchmark": {
+    "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/model-runner-teacher-kl-bench",
+    "bytes": 52108736,
+    "sha256": "df561456f5730e82973c865ba5f980777024c8f3b3b83ae1be0396c85f89625f",
+    "modified_at": "2026-09-04T20:17:56.480411+00:00"
+  },
+  "metallib": {
+    "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/mlx.metallib",
+    "bytes": 1941214,
+    "sha256": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+    "modified_at": "2026-09-04T21:24:28.230366+00:00"
+  },
+  "artifact_hash_timing": "Captured after the completed teacher evaluation; executable and metallib modification times precede the report creation time.",
+  "mlx_swift_revision": "72f3c3ad8aeee39bfc94f8fbeb446cac89e3a798",
+  "embedded_mlx_revision": "1f8e74e3f12f31365464a6867c6579f0e9b29d85",
+  "mlx_swift_lm_revision": "14414441fa44f45eee35a61e9fa0bab577cf9734",
+  "library_state": "Rebuilt patched Metal library from the current experiment working tree; not an unmodified f214f16 library.",
+  "concurrent_activity": "Download and CPU build activity occurred during the experiment. All elapsed-time fields are retained diagnostics and are excluded from performance conclusions.",
+  "bf16_repository": "mistralai/Ministral-3-14B-Instruct-2512-BF16",
+  "bf16_revision": "3cea74c1ebaf5ce5f5a2553de470e2ceab825142",
+  "bf16_manifest_sha256": "58f1b623481f3bb5f34b84cbc74305c2890c4ed6330ff6c4e0ca71cb39595308",
+  "native_report_sha256": "44aee3f9b6265f1098c814370b5274115b1fe2e82beaab473bbc9f0299af8280"
+}

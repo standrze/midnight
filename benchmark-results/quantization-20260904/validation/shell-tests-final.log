@@ -1,0 +1,35 @@
+Build cache/success profile separation checks passed
+CUDA dependency checks passed
+CUDA half/bfloat16 fmod compatibility patch checks passed
+CUDA host compiler checks passed
+CUDA runtime environment and header publication checks passed
+CUDA smoke harness checks passed
+CUDA toolkit compiler selection checks passed
+Gemma 4 non-rotating cache patch checks passed
+Gemma 4 LoRA layer coverage patch checks passed
+Generic Swift ScaleSearch quantizer checks passed
+incremental ByteLevel streaming patch checks passed
+Laguna Q4R8 quantizer checks passed
+MLX affine Q4 QMV specialization patch tests passed.
+MLX clear-streams patch checks passed.
+MLX direct KV slice-update patch persistence checks passed
+mlx-swift-lm backend-aware token evaluation patch checks passed
+mlx-swift-lm ChatSession snapshot patch checks passed
+mlx-swift-lm CoreFoundation compatibility patch checks passed
+mlx-swift-lm MTP scheduling and first-rejection patch checks passed
+mlx-swift-lm MTP prompt hidden-window patch checks passed
+mlx-swift-lm Mistral hybrid-attention patch checks passed
+mlx-swift-lm Mixtral fused-router patch checks passed
+MLX Metal backend provenance checks passed
+Sorted gather QMM NAX patch tests passed (source/JIT round-trip, idempotence, conflict rejection).
+test cross-thread stream overlay disabled and absent.
+Enabled test cross-thread stream overlay.
+test cross-thread stream overlay already enabled.
+Removed disabled test cross-thread stream overlay.
+test cross-thread stream overlay disabled and absent.
+Enabled test cross-thread stream overlay.
+mlx-swift cross-thread stream default/reversal checks passed
+Metal build/launch configuration tests passed
+Release publisher checks passed
+Mistral hot-cache runtime benchmark checks passed
+SwiftPM scratch-path checks passed

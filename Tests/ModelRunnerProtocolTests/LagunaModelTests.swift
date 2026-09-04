@@ -1,5 +1,6 @@
 import Foundation
 import MLX
+import MLXNN
 import Testing
 
 @testable import ModelRunnerCore
@@ -333,6 +334,91 @@ struct LagunaModelTests {
     #expect(legacyCache.allSatisfy { $0.offset == 4 })
     #expect(fusedCache.allSatisfy { $0.offset == 4 })
     #expect(MLX.arrayEqual(legacy, fused).item(Bool.self))
+  }
+
+  @Test("Chunked NLL matches an independent CPU target oracle through sliding-cache wrap")
+  func chunkedNLLPreservesTargetsAcrossCacheWrap() throws {
+    try Device.withDefaultDevice(.cpu) {
+      let configuration = try decodeConfiguration()
+      let model = withRandomState(MLXRandom.RandomState(seed: 101)) { LagunaModel(configuration) }
+      model.train(false)
+      // Twenty predictions cross the tiny model's eight-token window twice.
+      let tokens = (0..<21).map { ($0 * 7 + 3) % 32 }
+      let logits = model(MLXArray(Array(tokens.dropLast())).reshaped(1, 20), cache: nil)
+      let logProbabilities = logSoftmax(logits.asType(.float32), axis: -1)
+      eval(logProbabilities)
+      // Select each target independently of the scorer's slicing and loss reduction.
+      let oracleNLL = (0..<20).reduce(0.0) { sum, position in
+        sum - Double(logProbabilities[0, position, tokens[position + 1]].item(Float.self))
+      }
+
+      for step in [0, 1, 3, 8, 16, 32] {
+        let score = try ModelQualityScoring.scoreNLL(
+          tokens: tokens, model: model, prefillStepSize: step)
+        let effectiveStep = step == 0 ? 20 : step
+        #expect(score.scoredTokenCount == 20)
+        #expect(score.chunkCount == (20 + effectiveStep - 1) / effectiveStep)
+        #expect(score.maximumLogitsTokenCount == min(effectiveStep, 20))
+        #expect(score.finalCacheOffsets == (step == 0 ? [] : [20, 20]))
+        #expect(abs(score.nllSum - oracleNLL) < 1e-4, "step \(step) must score every oracle target")
+      }
+      let repeated = try ModelQualityScoring.scoreNLL(
+        tokens: tokens, model: model, prefillStepSize: 3)
+      #expect(abs(repeated.nllSum - oracleNLL) < 1e-4)
+      #expect(repeated.finalCacheOffsets == [20, 20])
+    }
+  }
+
+  @Test("Native-device chunked NLL preserves targets and compiled/eager parity per chunk size")
+  func chunkedNLLCompiledPathsMatchEagerForEachSize() throws {
+    let configuration = try decodeConfiguration()
+    let model = withRandomState(MLXRandom.RandomState(seed: 101)) { LagunaModel(configuration) }
+    model.train(false)
+    let tokens = (0..<21).map { ($0 * 7 + 3) % 32 }
+    var eagerByStep = [Int: Double]()
+    // GPU one-token and multi-token arithmetic need not produce identical logits.
+    // Compare each chunk size against its eager counterpart; the independent CPU
+    // oracle above checks indexing, boundary targets and cache wrapping strictly.
+    for gate in [false, true] {
+      for moe in [false, true] {
+        try LagunaRuntimeTuning.$useCompiledAttentionGate.withValue(gate) {
+          try LagunaRuntimeTuning.$useCompiledMoEFusion.withValue(moe) {
+            for step in [0, 1, 3, 8, 16, 32] {
+              let score = try ModelQualityScoring.scoreNLL(
+                tokens: tokens, model: model, prefillStepSize: step)
+              #expect(score.scoredTokenCount == 20)
+              #expect(score.finalCacheOffsets == (step == 0 ? [] : [20, 20]))
+              #expect(score.nllSum.isFinite && score.nllSum > 0)
+              if !gate && !moe {
+                eagerByStep[step] = score.nllSum
+              } else {
+                let eager = try #require(eagerByStep[step])
+                #expect(abs(score.nllSum - eager) < 1e-4,
+                  "step \(step), attention gate \(gate), MoE \(moe)")
+              }
+            }
+          }
+        }
+      }
+    }
+    let repeated = try ModelQualityScoring.scoreNLL(
+      tokens: tokens, model: model, prefillStepSize: 1)
+    let eagerOneToken = try #require(eagerByStep[1])
+    #expect(abs(repeated.nllSum - eagerOneToken) < 1e-4)
+    #expect(repeated.finalCacheOffsets == [20, 20])
+  }
+
+  @Test("NLL scoring rejects invalid token and chunk bounds before model execution")
+  func chunkedNLLRejectsInvalidInputs() throws {
+    let model = LagunaModel(try decodeConfiguration())
+    #expect(throws: ModelQualityScoringError.self) {
+      try ModelQualityScoring.scoreNLL(tokens: [1], model: model, prefillStepSize: 3)
+    }
+    for step in [-1, 8_193] {
+      #expect(throws: ModelQualityScoringError.self) {
+        try ModelQualityScoring.scoreNLL(tokens: [1, 2], model: model, prefillStepSize: step)
+      }
+    }
   }
 
   private func decodeConfiguration(

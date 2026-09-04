@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-09-04T22:30:37.808646+00:00",
+  "artifacts": [
+    {
+      "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/model-runner-quality-bench",
+      "sha256": "a52b964d2acc968956f5d5657f8b2f9fbfc13f16feec9e754f7925b6a44efd5a",
+      "bytes": 51953912,
+      "mtime_ns": 1788560824087928595
+    },
+    {
+      "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/mlx.metallib",
+      "sha256": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+      "bytes": 1941214,
+      "mtime_ns": 1788557068230365615
+    }
+  ],
+  "attribution": "Captured after completed quality runs and before subsequent build; exact source/build mapping is not independently established by the native JSON. Parent attributes the release executable to the coordinated enable-testing build with Laguna registration fix. Concurrent CPU/build activity makes timing diagnostic only."
+}

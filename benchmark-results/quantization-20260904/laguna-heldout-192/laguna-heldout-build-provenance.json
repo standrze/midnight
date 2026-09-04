@@ -1,0 +1,16 @@
+{
+  "captured_at": "2026-09-04T23:03:27.930694+00:00",
+  "build_mode": "release with -Xswiftc -enable-testing",
+  "prefill_step_size": 512,
+  "maximum_tokens_per_sample": 2048,
+  "device": "gpu",
+  "corpus": "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+  "purpose": "matched reference NLL, not runtime throughput",
+  "files": {
+    ".build/release/model-runner-quality-bench": "67e6b7db1b3827ac95195f8ba5ac574ee2727bc09460ac4d0d8c6a7afb1d5187",
+    ".build/release/mlx.metallib": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+    "Sources/ModelQualityBenchmark/main.swift": "b1cddb52a65f09b715a5f46452c9ae54223f2989c360cad71094458c2857c755",
+    "Sources/ModelRunnerCore/ModelQualityScoring.swift": "8ba112196787e6be0171bfa8f95130175afb006ad14efb4e266a05670ab72f6d",
+    "Sources/ModelRunnerCore/LagunaModel.swift": "1af9dcffc78b4e58884d60c8bef46d461b6f68fa797e202d8118520a79f3f07c"
+  }
+}

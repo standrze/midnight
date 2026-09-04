@@ -148,6 +148,7 @@ let package = Package(
         .executableTarget(
             name: "MetalQuantizationBenchmark",
             dependencies: [
+                "ModelRunnerCore",
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
             ],
@@ -185,6 +186,7 @@ let package = Package(
         .target(
             name: "LagunaScaleSearchCore",
             dependencies: [
+                "MistralActivationScaleSearchCore",
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
@@ -221,6 +223,8 @@ let package = Package(
             dependencies: [
                 "ModelRunnerCore",
                 "ModelRunnerProtocol",
+                "ModelQualityCore",
+                .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
@@ -247,6 +251,7 @@ let package = Package(
         .executableTarget(
             name: "MistralActivationStats",
             dependencies: [
+                "MistralActivationScaleSearchCore",
                 "ModelQualityCore",
                 "ModelRunnerCore",
                 "ModelRunnerProtocol",
@@ -310,6 +315,8 @@ let package = Package(
         .testTarget(
             name: "ModelQuantizerTests",
             dependencies: [
+                "MistralActivationScaleSearchCore",
+                "LagunaScaleSearchCore",
                 "ModelRunnerCore",
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "MLXNN", package: "mlx-swift"),

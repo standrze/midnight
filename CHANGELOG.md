@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.0-beta.2
+
+- Add source-verified, layerwise Laguna activation calibration with bounded
+  tensor and Foundation-buffer lifetimes.
+- Support public split gate/up Q4R8 templates in ScaleSearch and optional
+  activation-weighted refinement, retaining insufficiently covered experts.
+- Validate template identity on the selected quantization device and release
+  BF16 tensors after their final conversion consumer.
+- Add reproducible benchmark campaigns, pinned reference corpora, chunked NLL
+  scoring, paired uncertainty analysis, and drift/identity checks.
+- Backport the upstream M5 NAX sorted-gather row-bound fix to offline and JIT
+  Metal sources, with long-row GPU regression coverage.
+- Add an opt-in fused Laguna gate/up-SiLU experiment and same-loaded A/B tools.
+  It remains off by default; experiments did not establish a decode speedup.
+
+The prefill default remains 512 tokens. Held-out quantization results vary by
+model and domain; neither ScaleSearch nor activation weighting is promoted as
+a universal quality winner. See `Docs/benchmarking.md` and
+`benchmark-results/quantization-20260904/README.md` for evidence and limitations.
+
 ## 0.2.0-beta.1
 
 - Admit text requests using exact prompt tokens, requested output, conservative

@@ -1,0 +1,301 @@
+{
+  "comparisons": [
+    {
+      "acceptance_reasons": [],
+      "accepted_paired_median_decode_ratio": 1.0480763953222825,
+      "accepted_paired_median_ttft_speed_ratio": null,
+      "baseline": "prefill512",
+      "baseline_drift_fraction": 0.06029558387825029,
+      "baseline_median_decode_tokens_per_second": 117.78870020125217,
+      "baseline_median_peak_active_memory_bytes": 20642528782.0,
+      "baseline_median_prefill_tokens_per_second": 2496.8405493192386,
+      "baseline_median_total_milliseconds": 6047.040229,
+      "baseline_median_ttft_ms": 5771.4135205,
+      "candidate": "prefill2048",
+      "candidate_drift_fraction": 0.05639901343799214,
+      "candidate_median_decode_tokens_per_second": 122.56512254742503,
+      "candidate_median_peak_active_memory_bytes": 21214944736.0,
+      "candidate_median_prefill_tokens_per_second": 2682.8641817492435,
+      "candidate_median_total_milliseconds": 5642.4154165,
+      "candidate_median_ttft_ms": 5378.217146,
+      "comparable": true,
+      "diagnostic_paired_decode_ratios": [
+        1.0373500284660904,
+        1.0588027621784746,
+        1.0223521087212892,
+        1.0856119790271903
+      ],
+      "expected_pairs": 4,
+      "metrics": {
+        "decode": {
+          "acceptance_reasons": [],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            1.0223521087212892,
+            1.0856119790271903
+          ],
+          "accepted_paired_median_ratio": 1.0480763953222825,
+          "baseline_drift_fraction": 0.06029558387825029,
+          "baseline_median": 117.78870020125217,
+          "candidate_drift_fraction": 0.05639901343799214,
+          "candidate_median": 122.56512254742503,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.0223521087212892,
+            1.0856119790271903
+          ],
+          "diagnostic_paired_median_ratio": 1.0480763953222825,
+          "diagnostic_paired_ratios": [
+            1.0373500284660904,
+            1.0588027621784746,
+            1.0223521087212892,
+            1.0856119790271903
+          ],
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference.",
+          "order_effect_fraction": 0.03950383402543545,
+          "paired_ratio_max": 1.0856119790271903,
+          "paired_ratio_median_absolute_deviation": 0.018225326728592672,
+          "paired_ratio_min": 1.0223521087212892,
+          "ratio_direction": "candidate/baseline (rate)"
+        },
+        "prefill": {
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable"
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "accepted_paired_median_ratio": null,
+          "baseline_drift_fraction": 0.1114688785794099,
+          "baseline_median": 2496.8405493192386,
+          "candidate_drift_fraction": 0.09613049503986115,
+          "candidate_median": 2682.8641817492435,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.0419157561094992,
+            1.1846318561934834
+          ],
+          "diagnostic_paired_median_ratio": 1.0871471099510601,
+          "diagnostic_paired_ratios": [
+            1.0575733564461387,
+            1.1167208634559813,
+            1.0419157561094992,
+            1.1846318561934834
+          ],
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference.",
+          "order_effect_fraction": 0.08771519696666674,
+          "paired_ratio_max": 1.1846318561934834,
+          "paired_ratio_median_absolute_deviation": 0.03740255367324119,
+          "paired_ratio_min": 1.0419157561094992,
+          "ratio_direction": "candidate/baseline (rate)"
+        },
+        "ttft": {
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "accepted_paired_median_ratio": null,
+          "baseline_drift_fraction": 0.13876059335480173,
+          "baseline_median": 5771.4135205,
+          "candidate_drift_fraction": 0.11150514491942287,
+          "candidate_median": 5378.217146,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.0381931289515012,
+            1.1799385146312513
+          ],
+          "diagnostic_paired_median_ratio": 1.0858815820978776,
+          "diagnostic_paired_ratios": [
+            1.054196485519819,
+            1.1175666786759362,
+            1.0381931289515012,
+            1.1799385146312513
+          ],
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference.",
+          "order_effect_fraction": 0.08927752565408131,
+          "paired_ratio_max": 1.1799385146312513,
+          "paired_ratio_median_absolute_deviation": 0.0396867748622175,
+          "paired_ratio_min": 1.0381931289515012,
+          "ratio_direction": "baseline/candidate (latency)"
+        }
+      },
+      "mode": "runtime",
+      "native_settings_by_model": {
+        "prefill2048": {
+          "--context-length": "32768",
+          "--engine": "metal",
+          "--kv-compression": "none",
+          "--prefill-step-size": "2048",
+          "--tokens": "32",
+          "--warmups": "1"
+        },
+        "prefill512": {
+          "--context-length": "32768",
+          "--engine": "metal",
+          "--kv-compression": "none",
+          "--prefill-step-size": "512",
+          "--tokens": "32",
+          "--warmups": "1"
+        }
+      },
+      "order_effect_fraction": 0.03950383402543545,
+      "outputs_match": false,
+      "prompt_token_identity_verified": true,
+      "rejected_pairs": [],
+      "valid_pairs": 4,
+      "workload": "scheduler-14000"
+    },
+    {
+      "acceptance_reasons": [
+        "baseline drift exceeds threshold or is unavailable",
+        "candidate drift exceeds threshold or is unavailable"
+      ],
+      "accepted_paired_median_decode_ratio": null,
+      "accepted_paired_median_ttft_speed_ratio": null,
+      "baseline": "prefill512",
+      "baseline_drift_fraction": 0.13270640980462634,
+      "baseline_median_decode_tokens_per_second": 132.01104484429715,
+      "baseline_median_peak_active_memory_bytes": 19819024074.0,
+      "baseline_median_prefill_tokens_per_second": 2731.9483500491515,
+      "baseline_median_total_milliseconds": 1578.2109584999998,
+      "baseline_median_ttft_ms": 1331.582667,
+      "candidate": "prefill2048",
+      "candidate_drift_fraction": 0.1216073580378555,
+      "candidate_median_decode_tokens_per_second": 138.36317183294656,
+      "candidate_median_peak_active_memory_bytes": 20230993418.0,
+      "candidate_median_prefill_tokens_per_second": 3153.4890979421143,
+      "candidate_median_total_milliseconds": 1385.113104,
+      "candidate_median_ttft_ms": 1151.1257500000002,
+      "comparable": true,
+      "diagnostic_paired_decode_ratios": [
+        1.0269729908424856,
+        1.017163149903081,
+        1.0888381346578644,
+        0.9820548944558627
+      ],
+      "expected_pairs": 4,
+      "metrics": {
+        "decode": {
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "accepted_paired_median_ratio": null,
+          "baseline_drift_fraction": 0.13270640980462634,
+          "baseline_median": 132.01104484429715,
+          "candidate_drift_fraction": 0.1216073580378555,
+          "candidate_median": 138.36317183294656,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9820548944558627,
+            1.0888381346578644
+          ],
+          "diagnostic_paired_median_ratio": 1.0220680703727834,
+          "diagnostic_paired_ratios": [
+            1.0269729908424856,
+            1.017163149903081,
+            1.0888381346578644,
+            0.9820548944558627
+          ],
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference.",
+          "order_effect_fraction": 0.05510561870868036,
+          "paired_ratio_max": 1.0888381346578644,
+          "paired_ratio_median_absolute_deviation": 0.02245904819331146,
+          "paired_ratio_min": 0.9820548944558627,
+          "ratio_direction": "candidate/baseline (rate)"
+        },
+        "prefill": {
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable",
+            "AB/BA order effect exceeds threshold or is unavailable"
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "accepted_paired_median_ratio": null,
+          "baseline_drift_fraction": 0.2606592715090864,
+          "baseline_median": 2731.9483500491515,
+          "candidate_drift_fraction": 0.2808314967167761,
+          "candidate_median": 3153.4890979421143,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.079423701252254,
+            1.2361517735725114
+          ],
+          "diagnostic_paired_median_ratio": 1.1577383087333126,
+          "diagnostic_paired_ratios": [
+            1.2361517735725114,
+            1.110079070802182,
+            1.2053975466644433,
+            1.079423701252254
+          ],
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference.",
+          "order_effect_fraction": 0.10323221656569159,
+          "paired_ratio_max": 1.2361517735725114,
+          "paired_ratio_median_absolute_deviation": 0.06298692270609463,
+          "paired_ratio_min": 1.079423701252254,
+          "ratio_direction": "candidate/baseline (rate)"
+        },
+        "ttft": {
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "accepted_paired_median_ratio": null,
+          "baseline_drift_fraction": 0.3447810541893377,
+          "baseline_median": 1331.582667,
+          "candidate_drift_fraction": 0.3781763908916098,
+          "candidate_median": 1151.1257500000002,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.0770777521486046,
+            1.2263356342331735
+          ],
+          "diagnostic_paired_median_ratio": 1.155277170487441,
+          "diagnostic_paired_ratios": [
+            1.2263356342331735,
+            1.109461577244357,
+            1.201092763730525,
+            1.0770777521486046
+          ],
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference.",
+          "order_effect_fraction": 0.09923632300454743,
+          "paired_ratio_max": 1.2263356342331735,
+          "paired_ratio_median_absolute_deviation": 0.05843702849440835,
+          "paired_ratio_min": 1.0770777521486046,
+          "ratio_direction": "baseline/candidate (latency)"
+        }
+      },
+      "mode": "runtime",
+      "native_settings_by_model": {
+        "prefill2048": {
+          "--context-length": "32768",
+          "--engine": "metal",
+          "--kv-compression": "none",
+          "--prefill-step-size": "2048",
+          "--tokens": "32",
+          "--warmups": "1"
+        },
+        "prefill512": {
+          "--context-length": "32768",
+          "--engine": "metal",
+          "--kv-compression": "none",
+          "--prefill-step-size": "512",
+          "--tokens": "32",
+          "--warmups": "1"
+        }
+      },
+      "order_effect_fraction": 0.05510561870868036,
+      "outputs_match": false,
+      "prompt_token_identity_verified": true,
+      "rejected_pairs": [],
+      "valid_pairs": 4,
+      "workload": "scheduler-3600-confirm"
+    }
+  ],
+  "completed_runs": 16,
+  "created_at": "2026-09-04T22:07:27.530553+00:00",
+  "failed_runs": 0,
+  "limitations": [
+    "Runtime uses greedy natural generation: quantized models can follow different token trajectories. Ratios describe end-to-end native generation, not isolated kernel speed or equal-output quality.",
+    "Every arm starts a new process and performs its own warmups; loading is excluded from native decode/TTFT metrics but not wall time. OS file caches are not flushed.",
+    "The order seed controls scheduling only. The native runtime has no sampling-seed flag; no unsupported seed argument is injected.",
+    "A release directory is required, but directory names and hashes do not prove compiler optimization flags. Build these artifacts with the documented release commands."
+  ],
+  "scheduled_runs": 16,
+  "status": "complete",
+  "version": 1
+}

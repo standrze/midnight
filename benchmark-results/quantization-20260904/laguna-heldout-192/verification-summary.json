@@ -1,0 +1,19 @@
+{
+  "status": "verified",
+  "sample_count_per_report": 192,
+  "scored_token_count_per_report": 50096,
+  "truncated_samples": 0,
+  "matched_sample_identities_and_token_lengths": true,
+  "verification": "Independent math.fsum recomputation of sample totals and all overall/category point estimates. Independent paired-ID bootstrap resampling verified every retained 95% interval to absolute tolerance 1e-12 using seed 20260904 and 10,000 draws. Archived analyzer SHA256 matches original analysis provenance.",
+  "reports_sha256": {
+    "laguna-heldout-standard.json": "d60662a7c128d61f420cd2e374a80ab15439e175cafbbfb822dbd5cfd99e0796",
+    "laguna-heldout-standard.log": "be0a886ac02bc4cc21dedcd04cc981c05a7dee4559b77b09e21e7ed60e3de22d",
+    "laguna-heldout-ls2.json": "85cf58c0f0e14af3631f79353883d4600d236636db3658a05abda74756843560",
+    "laguna-heldout-ls2.log": "41f66162dd49e43003ef68190d29344527ad47a47857023d19d9b77db4bef690",
+    "laguna-heldout-awss.json": "5eab309d1d07d65aa615b15ec7c2161d026a4bf95ba46985019af1f4290fbcd1",
+    "laguna-heldout-awss.log": "e37922dd19f18b69186ee6755bf3829bee62abcfed9d38f024e4c32390ec9599",
+    "laguna-heldout-analysis.json": "894ccaf46f76ca0c2837fda633ed8d07e3147e9224aff88918c96d27bc056ec1",
+    "laguna-heldout-build-provenance.json": "322931bed8ca530e02a1d35264c50247ed15dc9696484f13a283aef6650231ec"
+  },
+  "analyzer_sha256": "89d44701fce90a0dd6f1eb2d9a3936a86b4e2b9b1510b893c8ec89446bc4b95f"
+}

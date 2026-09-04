@@ -1,5 +1,7 @@
 import ArgumentParser
 import Foundation
+import MLX
+import ModelQualityCore
 import ModelRunnerCore
 import ModelRunnerProtocol
 
@@ -47,10 +49,16 @@ private struct RecordedTrial: Encodable {
   var mode: String
   var metrics: RecordedMetrics
   var timeToFirstTokenMilliseconds: Double
+  var totalMilliseconds: Double
+  var peakActiveMemoryBytes: Int
+  var promptTokenIDFingerprint: String
   var content: String
 
   enum CodingKeys: String, CodingKey {
     case sequence, mode, metrics, content
+    case totalMilliseconds = "total_milliseconds"
+    case peakActiveMemoryBytes = "peak_active_memory_bytes"
+    case promptTokenIDFingerprint = "prompt_token_id_fingerprint"
     case timeToFirstTokenMilliseconds = "time_to_first_token_milliseconds"
   }
 }
@@ -224,6 +232,7 @@ private struct GenerationMode {
   var useCompiledAttentionGate: Bool
   var useCompiledBlockTail: Bool? = nil
   var useFusedRouterTopK: Bool? = nil
+  var useFusedGateUpSilu: Bool? = nil
   var usePromptCache = true
 }
 
@@ -238,6 +247,10 @@ private struct RuntimeBenchmarkReport: Encodable {
   var engine: String
   var prompt: String
   var continuationPrompt: String
+  var contextLength: Int
+  var prefillStepSize: Int
+  var kvCompression: String
+  var memoryLimitBytes: Int
   var allowEarlyStop: Bool
   var requestedTokens: Int
   var warmupCount: Int
@@ -249,6 +262,8 @@ private struct RuntimeBenchmarkReport: Encodable {
   var lagunaAttentionGateABComparison: LagunaAttentionGateABComparison?
   var lagunaBlockTailABComparison: LagunaBlockTailABComparison?
   var lagunaRouterTopKABComparison: LagunaRouterTopKABComparison?
+  var lagunaGatherSiluABComparison: LagunaRouterTopKABComparison?
+  var lagunaGatherSiluTraceCount: Int?
   var promptCacheComparison: PromptCacheComparison?
   var mistralHotCacheABComparison: MistralHotCacheABComparison?
   var warmups: [RecordedTrial]
@@ -262,6 +277,10 @@ private struct RuntimeBenchmarkReport: Encodable {
     case dflashModelPath = "dflash_model_path"
     case dflashBlockSize = "dflash_block_size"
     case continuationPrompt = "continuation_prompt"
+    case contextLength = "context_length"
+    case prefillStepSize = "prefill_step_size"
+    case kvCompression = "kv_compression"
+    case memoryLimitBytes = "memory_limit_bytes"
     case allowEarlyStop = "allow_early_stop"
     case requestedTokens = "requested_tokens"
     case warmupCount = "warmup_count"
@@ -273,6 +292,8 @@ private struct RuntimeBenchmarkReport: Encodable {
     case lagunaAttentionGateABComparison = "laguna_attention_gate_ab_comparison"
     case lagunaBlockTailABComparison = "laguna_block_tail_ab_comparison"
     case lagunaRouterTopKABComparison = "laguna_router_topk_ab_comparison"
+    case lagunaGatherSiluABComparison = "laguna_gather_silu_ab_comparison"
+    case lagunaGatherSiluTraceCount = "laguna_gather_silu_trace_count"
     case promptCacheComparison = "prompt_cache_comparison"
     case mistralHotCacheABComparison = "mistral_hot_cache_ab_comparison"
   }
@@ -355,6 +376,15 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
   @Option(help: "Generated tokens per warm-up and measured trial.")
   var tokens = 256
 
+  @Option(help: "Prompt plus output context ceiling; cannot exceed model metadata.")
+  var contextLength: Int?
+
+  @Option(help: "Prefill chunk size (1...8192).")
+  var prefillStepSize = 512
+
+  @Option(help: "KV compression: none, affine8, affine4, or turbo8v4.")
+  var kvCompression = "none"
+
   @Option(help: "Poolside Laguna DFlash drafter checkpoint directory.")
   var dflashModel: String?
 
@@ -395,6 +425,10 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       "Alternate legacy and fused Laguna decode router top-k tails on one loaded target; both arms use compiled block tails and --trials is the count per mode."
   )
   var lagunaRouterTopKAB = false
+
+  @Flag(name: .customLong("laguna-gather-silu-ab"), help:
+    "Alternate stock and fused Q4 gate/up-SiLU on one loaded Laguna target; both arms use compiled tails and fused routers. Experimental; --trials is per mode.")
+  var lagunaGatherSiluAB = false
 
   @Flag(
     name: .customLong("prompt-cache"),
@@ -467,6 +501,9 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       throw ValidationError(
         "--laguna-router-topk-ab cannot be combined with --dflash-model.")
     }
+    if lagunaGatherSiluAB, dflashModel != nil {
+      throw ValidationError("--laguna-gather-silu-ab cannot be combined with --dflash-model.")
+    }
     if promptCache, dflashModel != nil {
       throw ValidationError("--prompt-cache cannot be combined with --dflash-model.")
     }
@@ -480,11 +517,11 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     }
     let exclusiveModes = [
       dflashAB, lagunaFusionAB, lagunaAttentionGateAB, lagunaBlockTailAB,
-      lagunaRouterTopKAB, promptCache, mistralHotCacheAB,
+      lagunaRouterTopKAB, lagunaGatherSiluAB, promptCache, mistralHotCacheAB,
     ].filter { $0 }.count
     if exclusiveModes > 1 {
       throw ValidationError(
-        "--dflash-ab, --laguna-fusion-ab, --laguna-attention-gate-ab, --laguna-block-tail-ab, --laguna-router-topk-ab, --prompt-cache, and --mistral-hot-cache-ab are mutually exclusive."
+        "--dflash-ab, --laguna-fusion-ab, --laguna-attention-gate-ab, --laguna-block-tail-ab, --laguna-router-topk-ab, --laguna-gather-silu-ab, --prompt-cache, and --mistral-hot-cache-ab are mutually exclusive."
       )
     }
   }
@@ -503,7 +540,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     guard !FileManager.default.fileExists(atPath: outputURL.path) else {
       throw BenchmarkError.invalidInput("output already exists: \(outputURL.path)")
     }
-    if lagunaRouterTopKAB {
+    if lagunaRouterTopKAB || lagunaGatherSiluAB {
       try validateFusedRouterCheckpoint(modelURL)
     }
     let requestedEngine: ModelEngine
@@ -519,15 +556,23 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       engine: requestedEngine,
       maximumTokens: tokens,
       dflashModelPath: dflashModel,
-      dflashBlockSize: dflashBlockSize
+      dflashBlockSize: dflashBlockSize,
+      longContext: try LongContextOptions(contextLength: contextLength,
+        prefillStepSize: prefillStepSize, kvCompression: kvCompression)
     )
     if mistralHotCacheAB, !runner.supportsMistralHotConversationCache {
       throw BenchmarkError.unsupportedMistralHotCacheModel
     }
-    if lagunaRouterTopKAB, runner.engine != .metal {
+    if lagunaRouterTopKAB || lagunaGatherSiluAB, runner.engine != .metal {
       throw BenchmarkError.invalidInput(
         "--laguna-router-topk-ab requires the Metal engine; resolved \(runner.engine.rawValue)."
       )
+    }
+    if lagunaGatherSiluAB {
+      let coverage = await runner.lagunaFusedGateUpSiluCoverage()
+      guard coverage.sparse > 0, coverage.eligible == coverage.sparse else {
+        throw BenchmarkError.invalidInput("Fused gate/up-SiLU requires every sparse layer to match BF16 affine Q4/G64 E256/top8/K2048/hidden512; eligible \(coverage.eligible)/\(coverage.sparse).")
+      }
     }
     let messages = [OpenAIMessage(role: "user", content: prompt)]
     var warmupRecords = [RecordedTrial]()
@@ -578,6 +623,15 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       label: "laguna_router_topk_fused", useDFlash: false,
       useLagunaFusion: true, useCompiledAttentionGate: true,
       useCompiledBlockTail: true, useFusedRouterTopK: true)
+
+    let gatherSiluStockMode = GenerationMode(
+      label: "laguna_gather_silu_stock", useDFlash: false,
+      useLagunaFusion: true, useCompiledAttentionGate: true,
+      useCompiledBlockTail: true, useFusedRouterTopK: true, useFusedGateUpSilu: false)
+    let gatherSiluFusedMode = GenerationMode(
+      label: "laguna_gather_silu_fused", useDFlash: false,
+      useLagunaFusion: true, useCompiledAttentionGate: true,
+      useCompiledBlockTail: true, useFusedRouterTopK: true, useFusedGateUpSilu: true)
 
     if promptCache {
       for warmupIndex in 0..<warmups {
@@ -641,6 +695,8 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
         warmupModes = [blockTailEagerMode, blockTailCompiledMode]
       } else if lagunaRouterTopKAB {
         warmupModes = [routerTopKLegacyMode, routerTopKFusedMode]
+      } else if lagunaGatherSiluAB {
+        warmupModes = [gatherSiluStockMode, gatherSiluFusedMode]
       } else {
         warmupModes = [ordinaryMode]
       }
@@ -686,6 +742,10 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
             trialIndex.isMultiple(of: 2)
             ? [routerTopKLegacyMode, routerTopKFusedMode]
             : [routerTopKFusedMode, routerTopKLegacyMode]
+        } else if lagunaGatherSiluAB {
+          measuredModes = trialIndex.isMultiple(of: 2)
+            ? [gatherSiluStockMode, gatherSiluFusedMode]
+            : [gatherSiluFusedMode, gatherSiluStockMode]
         } else {
           measuredModes = [ordinaryMode]
         }
@@ -728,6 +788,8 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     let routerTopKFusedRecords = measuredRecords.filter {
       $0.mode == "laguna_router_topk_fused"
     }
+    let gatherSiluStockRecords = measuredRecords.filter { $0.mode == "laguna_gather_silu_stock" }
+    let gatherSiluFusedRecords = measuredRecords.filter { $0.mode == "laguna_gather_silu_fused" }
     let promptCacheCachedRecords = measuredRecords.filter {
       $0.mode == "prompt_cache_cached"
     }
@@ -751,6 +813,8 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       primaryRecords = blockTailCompiledRecords
     } else if lagunaRouterTopKAB {
       primaryRecords = routerTopKFusedRecords
+    } else if lagunaGatherSiluAB {
+      primaryRecords = gatherSiluFusedRecords
     } else if promptCache || mistralHotCacheAB {
       primaryRecords = []
     } else {
@@ -860,6 +924,18 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     } else {
       lagunaRouterTopKComparison = nil
     }
+    let lagunaGatherSiluComparison: LagunaRouterTopKABComparison?
+    if lagunaGatherSiluAB {
+      let stockMedian = median(gatherSiluStockRecords.map(\.metrics.tokensPerSecond))
+      let fusedMedian = median(gatherSiluFusedRecords.map(\.metrics.tokensPerSecond))
+      let reference = gatherSiluStockRecords.first?.content
+      lagunaGatherSiluComparison = LagunaRouterTopKABComparison(
+        trialsPerMode: trials, legacyMedianDecodeTokensPerSecond: stockMedian,
+        fusedMedianDecodeTokensPerSecond: fusedMedian,
+        fusedSpeedupPercent: 100 * (fusedMedian / stockMedian - 1),
+        outputsMatchExactly: reference != nil
+          && (gatherSiluStockRecords + gatherSiluFusedRecords).allSatisfy { $0.content == reference })
+    } else { lagunaGatherSiluComparison = nil }
     let promptCacheModeComparison: PromptCacheComparison?
     if promptCache {
       let cachedTTFT = median(
@@ -930,6 +1006,10 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       engine: runner.engine.rawValue,
       prompt: prompt,
       continuationPrompt: continuationPrompt,
+      contextLength: runner.contextLength,
+      prefillStepSize: runner.prefillStepSize,
+      kvCompression: runner.kvCompression,
+      memoryLimitBytes: runner.memoryLimitBytes,
       allowEarlyStop: allowEarlyStop,
       requestedTokens: tokens,
       warmupCount: warmupRecords.count,
@@ -943,6 +1023,8 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       lagunaAttentionGateABComparison: lagunaAttentionGateComparison,
       lagunaBlockTailABComparison: lagunaBlockTailComparison,
       lagunaRouterTopKABComparison: lagunaRouterTopKComparison,
+      lagunaGatherSiluABComparison: lagunaGatherSiluComparison,
+      lagunaGatherSiluTraceCount: lagunaGatherSiluAB ? (await runner.lagunaFusedGateUpSiluCoverage()).traces : nil,
       promptCacheComparison: promptCacheModeComparison,
       mistralHotCacheABComparison: mistralHotCacheModeComparison,
       warmups: warmupRecords,
@@ -951,6 +1033,15 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
     try encoder.encode(report).write(to: outputURL, options: .atomic)
+    if let comparison = lagunaGatherSiluComparison {
+      guard (report.lagunaGatherSiluTraceCount ?? 0) > 0 else {
+        throw BenchmarkError.invalidInput("No fused gate/up-SiLU graph was built; stock fallback report retained.")
+      }
+      print("Gather/SiLU A/B: stock \(comparison.legacyMedianDecodeTokensPerSecond) tok/s, fused \(comparison.fusedMedianDecodeTokensPerSecond) tok/s; output text matches: \(comparison.outputsMatchExactly)")
+      guard comparison.outputsMatchExactly else {
+        throw BenchmarkError.invalidInput("Fused gate/up-SiLU changed greedy output text; diagnostic report retained at \(outputURL.path).")
+      }
+    }
     if let comparison = dflashComparison {
       print(
         String(
@@ -1099,7 +1190,10 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     mode: GenerationMode
   ) async throws -> RecordedTrial {
     let clock = ContinuousClock()
+    Memory.peakMemory = 0
     let startedAt = clock.now
+    let prepared = try await runner.preparePrompt(messages: messages, maximumTokens: tokens)
+    let promptFingerprint = ModelQualityCore.tokenIDFingerprint(prepared.promptTokenIDs)
     let events = await LagunaRuntimeTuning.$useCompiledMoEFusion.withValue(
       mode.useLagunaFusion
     ) {
@@ -1112,14 +1206,17 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
           await LagunaRuntimeTuning.$useFusedRouterTopK.withValue(
             mode.useFusedRouterTopK
           ) {
-            await runner.stream(
-              messages: messages,
-              maximumTokens: tokens,
-              temperature: 0,
-              topP: 1,
-              enablePromptCache: mode.usePromptCache,
-              enableSpeculativeDecoding: mode.useDFlash
-            )
+            await LagunaRuntimeTuning.$useFusedGateUpSilu.withValue(mode.useFusedGateUpSilu) {
+              await runner.stream(
+                messages: messages,
+                maximumTokens: tokens,
+                temperature: 0,
+                topP: 1,
+                enablePromptCache: mode.usePromptCache,
+                enableSpeculativeDecoding: mode.useDFlash,
+                preparedPrompt: prepared
+              )
+            }
           }
         }
       }
@@ -1151,6 +1248,9 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       mode: mode.label,
       metrics: RecordedMetrics(finalMetrics),
       timeToFirstTokenMilliseconds: milliseconds(startedAt.duration(to: firstTokenAt)),
+      totalMilliseconds: milliseconds(startedAt.duration(to: clock.now)),
+      peakActiveMemoryBytes: Memory.peakMemory,
+      promptTokenIDFingerprint: promptFingerprint,
       content: content
     )
   }

@@ -1,0 +1,499 @@
+{
+  "allow_early_stop" : false,
+  "context_length" : 262144,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-09-04T21:56:58Z",
+  "engine" : "metal",
+  "format" : 1,
+  "kv_compression" : "none",
+  "laguna_gather_silu_ab_comparison" : {
+    "fused_median_decode_tokens_per_second" : 115.15059068949245,
+    "fused_speedup_percent" : -0.6516399008979712,
+    "legacy_median_decode_tokens_per_second" : 115.90587964877062,
+    "outputs_match_exactly" : true,
+    "trials_per_mode" : 8
+  },
+  "measured_trials" : 16,
+  "median_decode_tokens_per_second" : 115.15059068949245,
+  "median_prompt_tokens_per_second" : 774.17771809676,
+  "memory_limit_bytes" : 54975581389,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+  "prefill_step_size" : 512,
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 512,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 714.4494334557496,
+        "stop_reason" : "length",
+        "tokens_per_second" : 112.76859796767121
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028537764,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 10,
+      "time_to_first_token_milliseconds" : 74.132375,
+      "total_milliseconds" : 4616.593125
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 692.6174053334611,
+        "stop_reason" : "length",
+        "tokens_per_second" : 130.7438237456336
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028537764,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 11,
+      "time_to_first_token_milliseconds" : 77.177292,
+      "total_milliseconds" : 3994.746417
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 807.7681869479977,
+        "stop_reason" : "length",
+        "tokens_per_second" : 137.29408953554383
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538080,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 12,
+      "time_to_first_token_milliseconds" : 65.832625,
+      "total_milliseconds" : 3796.162708
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 753.4768081054863,
+        "stop_reason" : "length",
+        "tokens_per_second" : 119.76187800100595
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538080,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 13,
+      "time_to_first_token_milliseconds" : 70.348292,
+      "total_milliseconds" : 4346.680042
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 725.7836996020072,
+        "stop_reason" : "length",
+        "tokens_per_second" : 117.8690932315127
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538080,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 14,
+      "time_to_first_token_milliseconds" : 72.939458,
+      "total_milliseconds" : 4417.8265
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 839.3627389178729,
+        "stop_reason" : "length",
+        "tokens_per_second" : 117.43757560186943
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538396,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 15,
+      "time_to_first_token_milliseconds" : 63.577125,
+      "total_milliseconds" : 4424.619459
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 683.1737096543008,
+        "stop_reason" : "length",
+        "tokens_per_second" : 101.68844341461455
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538396,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 16,
+      "time_to_first_token_milliseconds" : 77.59425,
+      "total_milliseconds" : 5113.943167
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 659.2651157088316,
+        "stop_reason" : "length",
+        "tokens_per_second" : 105.85721150905127
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 17,
+      "time_to_first_token_milliseconds" : 79.890583,
+      "total_milliseconds" : 4919.593208
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 702.7212138067841,
+        "stop_reason" : "length",
+        "tokens_per_second" : 113.43447599739905
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 18,
+      "time_to_first_token_milliseconds" : 75.629333,
+      "total_milliseconds" : 4590.713375
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 765.3685783679525,
+        "stop_reason" : "length",
+        "tokens_per_second" : 112.86360577711547
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 19,
+      "time_to_first_token_milliseconds" : 69.745166,
+      "total_milliseconds" : 4607.651416
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 679.9762009367233,
+        "stop_reason" : "length",
+        "tokens_per_second" : 109.5278308767248
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 20,
+      "time_to_first_token_milliseconds" : 77.99475,
+      "total_milliseconds" : 4754.436625
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 750.8075877265999,
+        "stop_reason" : "length",
+        "tokens_per_second" : 116.93790830222997
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 21,
+      "time_to_first_token_milliseconds" : 70.490708,
+      "total_milliseconds" : 4450.142375
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 769.5024648345983,
+        "stop_reason" : "length",
+        "tokens_per_second" : 119.96844250083846
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 22,
+      "time_to_first_token_milliseconds" : 68.732791,
+      "total_milliseconds" : 4337.698291
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 835.4787818909056,
+        "stop_reason" : "length",
+        "tokens_per_second" : 111.46473474188632
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 23,
+      "time_to_first_token_milliseconds" : 63.783042,
+      "total_milliseconds" : 4658.907625
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 782.9868578255675,
+        "stop_reason" : "length",
+        "tokens_per_second" : 131.31245631802082
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 24,
+      "time_to_first_token_milliseconds" : 67.856791,
+      "total_milliseconds" : 3968.076208
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 704.185351521511,
+        "stop_reason" : "length",
+        "tokens_per_second" : 114.87385099531127
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028538712,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 25,
+      "time_to_first_token_milliseconds" : 75.176333,
+      "total_milliseconds" : 4533.259333
+    }
+  ],
+  "warmup_count" : 10,
+  "warmups" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 717.2582677946334,
+        "stop_reason" : "length",
+        "tokens_per_second" : 119.9799945035056
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 18934097100,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 79.207792,
+      "total_milliseconds" : 4348.641292
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 530.9265731388854,
+        "stop_reason" : "length",
+        "tokens_per_second" : 127.99939346600887
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028470600,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 96.519292,
+      "total_milliseconds" : 4098.841333
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 564.4606655685109,
+        "stop_reason" : "length",
+        "tokens_per_second" : 130.39752073412268
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028487312,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 91.02825,
+      "total_milliseconds" : 4019.802042
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 567.3375752066831,
+        "stop_reason" : "length",
+        "tokens_per_second" : 128.15843331731665
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028504024,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 91.368583,
+      "total_milliseconds" : 4088.991375
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 623.8534511736935,
+        "stop_reason" : "length",
+        "tokens_per_second" : 132.95092587636918
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028537120,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 4,
+      "time_to_first_token_milliseconds" : 83.792625,
+      "total_milliseconds" : 3937.149084
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 655.2125771701367,
+        "stop_reason" : "length",
+        "tokens_per_second" : 136.59514515849213
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028537436,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 5,
+      "time_to_first_token_milliseconds" : 79.354458,
+      "total_milliseconds" : 3830.032
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 693.2413045346661,
+        "stop_reason" : "length",
+        "tokens_per_second" : 128.59807645155473
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028537436,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 6,
+      "time_to_first_token_milliseconds" : 75.732541,
+      "total_milliseconds" : 4058.544083
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 707.5542899750164,
+        "stop_reason" : "length",
+        "tokens_per_second" : 123.71811561846955
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028537436,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 7,
+      "time_to_first_token_milliseconds" : 74.309666,
+      "total_milliseconds" : 4213.997791
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 717.0203927427889,
+        "stop_reason" : "length",
+        "tokens_per_second" : 121.32526205820567
+      },
+      "mode" : "laguna_gather_silu_stock",
+      "peak_active_memory_bytes" : 19028537436,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 8,
+      "time_to_first_token_milliseconds" : 73.819,
+      "total_milliseconds" : 4296.118375
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across multiple threads while maintaining high throughput and minimizing contention. The core idea is to allow each thread to maintain its own local queue of tasks, and when a thread runs out of work, it can \"steal\" tasks from other threads' queues. This approach provides excellent load balancing and scalability, especially when dealing with irregular task workloads.\n\nIn this comprehensive tutorial, we will implement a lock-free work-stealing scheduler in Swift. We'll cover the theoretical foundations, data structures, atomic operations, and provide detailed code examples throughout.\n\n## Core Concepts\n\n### Work-Stealing Algorithm\n\nThe work-stealing algorithm operates on the following principles:\n\n1. **Local Queues**: Each worker thread maintains a double-ended queue (deque) of tasks.\n2. **Local Execution**: Threads preferentially execute tasks from the top (front) of their own deque.\n3. **Stealing**: When a thread's deque is empty, it attempts to steal tasks from the bottom (back) of other threads' deques.\n4. **Lock-Free Design**: All operations use atomic primitives to avoid traditional locks, enabling better scalability.\n\n### Why Double-Ended Queues?\n\nUsing deques (double-ended queues) is crucial for the work-stealing algorithm:\n\n- **Push/Pop at Top**: The owner thread performs LIFO (Last-In-First-Out) operations at the top, which is cache-friendly and efficient.\n- **Steal at Bottom**: Stealing threads perform FIFO (First-In-First-Out) operations at the bottom, ensuring stolen tasks are older and potentially more substantial.\n\nThis dual-access pattern helps maintain good load balancing while keeping the algorithm efficient.\n\n## Data Structures\n\nLet's begin by defining the core data structures for our scheduler.\n\n### Task Definition\n\nFirst, we need a way to represent tasks. In Swift, we can use closures or protocol-based abstractions.\n\n```swift\nimport Dispatch\n\n/// A protocol representing a unit of work\nprotocol Task {\n    func execute()\n}\n\n/// A closure-based task wrapper\nstruct ClosureTask: Task {\n    let closure: () -> Void\n    \n    func execute() {\n        closure()\n    }\n}\n\n/// Factory method to create tasks from closures\nextension Task where Self == ClosureTask {\n    static func closure(_ work: @escaping () -> Void) -> Self {\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 724.6589045900377,
+        "stop_reason" : "length",
+        "tokens_per_second" : 123.21509373727766
+      },
+      "mode" : "laguna_gather_silu_fused",
+      "peak_active_memory_bytes" : 19028537448,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 9,
+      "time_to_first_token_milliseconds" : 72.715833,
+      "total_milliseconds" : 4230.252042
+    }
+  ]
+}

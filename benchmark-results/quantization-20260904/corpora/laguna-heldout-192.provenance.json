@@ -1,0 +1,16 @@
+{
+  "source_files": [
+    {
+      "name": "wikitext-2-raw-eval.jsonl",
+      "sha256": "be40b2e92a40298a2e7c29b1b52844f4c57b096a27250ddcaf4733cc5dcba0e7"
+    },
+    {
+      "name": "code-math-128.jsonl",
+      "sha256": "5fc84a9794338a138e7284f415018323aa6bfec54227d09db8a95ad562e532f6"
+    }
+  ],
+  "method": "WikiText64 followed by MBPP64 and GSM8K64; preserve records, compact JSON UTF-8, one LF per record.",
+  "output_sha256": "9490178eb34b57526a8245632272824bab040dd3c8556735233b2dc30b69a5b5",
+  "record_count": 192,
+  "purpose": "Matched reference NLL across standard Q4R8, LS2 and AWSS; not generated task accuracy."
+}

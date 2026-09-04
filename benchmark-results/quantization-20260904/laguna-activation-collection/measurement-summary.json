@@ -1,0 +1,65 @@
+{
+  "format": 1,
+  "archived_at_utc": "2026-09-04T22:36:33.527676+00:00",
+  "source_indexed_shards": 14,
+  "runs": [
+    {
+      "label": "laguna-calibration-v2",
+      "autorelease_lifetime_fix": false,
+      "report": "laguna-calibration-v2.json",
+      "log": "laguna-calibration-v2.log",
+      "build_provenance": "laguna-calibration-v2-build-provenance.json",
+      "observed_tokens": 65536,
+      "segments": 168,
+      "observed_samples": 73,
+      "report_elapsed_seconds": 97.99253775,
+      "process_wall_seconds": 169.53,
+      "mlx_peak_memory_bytes": 3952355116,
+      "process_maximum_resident_set_size_bytes": 28442083328,
+      "process_peak_memory_footprint_bytes": 70150652696,
+      "dense_projection_count": 320,
+      "expert_projection_count": 78,
+      "expert_projection_entries": 19968,
+      "eligible_expert_projection_entries": 19684,
+      "minimum_expert_positions": [
+        32
+      ],
+      "source_weight_fingerprint": "fnv1a64:d76936c8b3e3e53b",
+      "source_weight_fingerprint_method": "indexed-safetensors-full-content-fnv1a64-v1"
+    },
+    {
+      "label": "laguna-dev-v2",
+      "autorelease_lifetime_fix": true,
+      "report": "laguna-dev-v2.json",
+      "log": "laguna-dev-v2.log",
+      "build_provenance": "laguna-dev-v2-build-provenance.json",
+      "observed_tokens": 15997,
+      "segments": 47,
+      "observed_samples": 32,
+      "report_elapsed_seconds": 34.644131416,
+      "process_wall_seconds": 104.04,
+      "mlx_peak_memory_bytes": 3952354672,
+      "process_maximum_resident_set_size_bytes": 2511093760,
+      "process_peak_memory_footprint_bytes": 4331555312,
+      "dense_projection_count": 320,
+      "expert_projection_count": 78,
+      "expert_projection_entries": 19968,
+      "eligible_expert_projection_entries": 17190,
+      "minimum_expert_positions": [
+        32
+      ],
+      "source_weight_fingerprint": "fnv1a64:d76936c8b3e3e53b",
+      "source_weight_fingerprint_method": "indexed-safetensors-full-content-fnv1a64-v1"
+    }
+  ],
+  "interpretation": [
+    "MLX peak is allocator accounting; maximum RSS and peak footprint are separate whole-process metrics from /usr/bin/time -l. They are not interchangeable or expected to agree.",
+    "The collector timer starts after full-source hashing and corpus preparation and stops before final statistics/report writes. Process wall time includes these excluded stages.",
+    "Runs used different corpora and token counts and different instrumented executable builds. They are not a matched memory-reduction or speed experiment.",
+    "Both runs processed all 40 native layers and verified the same 14 indexed source shards with the same full-content fingerprint. The lower post-fix whole-process memory is consistent with bounded Foundation temporary lifetimes, but exact causal reduction and worst-case bounds remain unmeasured."
+  ],
+  "omitted_artifacts": [
+    "laguna-calibration-v2.safetensors (105698740 bytes)",
+    "laguna-dev-v2.safetensors (105693980 bytes)"
+  ]
+}

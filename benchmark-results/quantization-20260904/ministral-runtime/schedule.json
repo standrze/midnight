@@ -1,0 +1,162 @@
+[
+  {
+    "baseline_first": true,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-ls2-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "ls2",
+    "pair_id": "runtime-swift-scheduler-ls2-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-awss-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "awss",
+    "pair_id": "runtime-swift-scheduler-awss-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "ls2",
+    "pair_id": "runtime-swift-scheduler-ls2-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-ls2-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "awss",
+    "pair_id": "runtime-swift-scheduler-awss-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-awss-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-awss-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "awss",
+    "pair_id": "runtime-swift-scheduler-awss-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-ls2-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "ls2",
+    "pair_id": "runtime-swift-scheduler-ls2-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "awss",
+    "pair_id": "runtime-swift-scheduler-awss-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "awss",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-awss-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "ls2",
+    "pair_id": "runtime-swift-scheduler-ls2-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "swift-scheduler"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "ls2",
+    "mode": "runtime",
+    "model": "standard",
+    "pair_id": "runtime-swift-scheduler-ls2-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "swift-scheduler"
+  }
+]

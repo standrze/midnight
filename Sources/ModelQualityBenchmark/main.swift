@@ -14,6 +14,7 @@ import Tokenizers
 private struct ScoringPayload: Sendable {
   var samples: [ModelQualityCorpusSample]
   var maximumTokensPerSample: Int
+  var prefillStepSize: Int
 }
 
 private struct ScoredCorpus: Sendable {
@@ -35,6 +36,7 @@ private struct QualityBenchmarkReport: Encodable, Sendable {
   var device: String
   var addSpecialTokens = true
   var maximumTokensPerSample: Int
+  var prefillStepSize: Int
   var sampleCount: Int
   var scoredTokenCount: Int
   var nllSum: Double
@@ -54,6 +56,7 @@ private struct QualityBenchmarkReport: Encodable, Sendable {
     case tokenIDFingerprint = "token_id_fingerprint"
     case addSpecialTokens = "add_special_tokens"
     case maximumTokensPerSample = "maximum_tokens_per_sample"
+    case prefillStepSize = "prefill_step_size"
     case sampleCount = "sample_count"
     case scoredTokenCount = "scored_token_count"
     case nllSum = "nll_sum"
@@ -94,8 +97,11 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
   @Argument(help: "JSON report path.")
   var output: String
 
-  @Option(help: "Maximum encoded tokens evaluated per sample (2...2048).")
+  @Option(help: "Maximum encoded tokens per sample (2...2048, or up to 32768 with positive --prefill-step-size).")
   var maxTokensPerSample = 512
+
+  @Option(help: "Scoring chunk size (1...8192); 0 keeps all-at-once scoring without a KV cache.")
+  var prefillStepSize = 0
 
   @Flag(help: "Run on CPU instead of the default MLX device.")
   var cpu = false
@@ -104,8 +110,12 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
   var overwrite = false
 
   mutating func validate() throws {
-    guard (2...2_048).contains(maxTokensPerSample) else {
-      throw ValidationError("--max-tokens-per-sample must be in 2...2048.")
+    guard (0...8_192).contains(prefillStepSize) else {
+      throw ValidationError("--prefill-step-size must be in 0...8192.")
+    }
+    let maximum = prefillStepSize == 0 ? 2_048 : 32_768
+    guard (2...maximum).contains(maxTokensPerSample) else {
+      throw ValidationError("--max-tokens-per-sample must be in 2...\(maximum) for this prefill setting.")
     }
   }
 
@@ -118,7 +128,8 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
     let samples = try ModelQualityCore.loadCorpus(from: corpusURL)
     let payload = ScoringPayload(
       samples: samples,
-      maximumTokensPerSample: maxTokensPerSample
+      maximumTokensPerSample: maxTokensPerSample,
+      prefillStepSize: prefillStepSize
     )
     let resourceLimits = try MLXResourceLimits.resolve(
       for: cpu ? .cpu : benchmarkEngine,
@@ -128,6 +139,7 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
 
     let runBenchmark: @Sendable () async throws -> ScoredCorpus = {
       Memory.peakMemory = 0
+      await LagunaModelRegistration.register()
       try MLXResourceGuard.apply(resourceLimits)
       let container = try await #huggingFaceLoadModelContainer(
         configuration: ModelConfiguration(directory: modelURL)
@@ -155,7 +167,9 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
             )
           }
 
-          let nllSum = scoreNLL(tokens: evaluatedTokens, model: context.model)
+          let score = try ModelQualityScoring.scoreNLL(
+            tokens: evaluatedTokens, model: context.model,
+            prefillStepSize: payload.prefillStepSize)
           let fingerprint = ModelQualityCore.tokenIDFingerprint(evaluatedTokens)
           let measurement = try ModelQualitySampleResult(
             id: sample.id,
@@ -163,7 +177,7 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
             originalTokenCount: originalTokens.count,
             evaluatedTokenCount: evaluatedTokens.count,
             tokenIDFingerprint: fingerprint,
-            nllSum: nllSum
+            nllSum: score.nllSum
           )
           measurements.append(measurement)
           tokenSequences.append(
@@ -202,6 +216,7 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
       backend: backendName,
       device: cpu ? "cpu" : (Device.defaultDevice().deviceType?.rawValue ?? "unknown"),
       maximumTokensPerSample: maxTokensPerSample,
+      prefillStepSize: prefillStepSize,
       sampleCount: summary.sampleCount,
       scoredTokenCount: summary.scoredTokenCount,
       nllSum: summary.nllSum,
@@ -257,16 +272,6 @@ private struct ModelQualityBenchmark: AsyncParsableCommand {
       )
     }
   }
-}
-
-private func scoreNLL(tokens: [Int], model: any LanguageModel) -> Double {
-  let inputCount = tokens.count - 1
-  let inputs = MLXArray(Array(tokens.dropLast())).reshaped(1, inputCount)
-  let targets = MLXArray(Array(tokens.dropFirst())).reshaped(1, inputCount)
-  let logits = model(inputs, cache: nil).asType(.float32)
-  let lossSum = MLXFast.crossEntropy(logits: logits, targets: targets).sum()
-  MLX.eval(lossSum)
-  return Double(lossSum.item(Float.self))
 }
 
 private func localURL(_ path: String, isDirectory: Bool = false) -> URL {
