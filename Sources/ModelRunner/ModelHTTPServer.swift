@@ -166,7 +166,9 @@ final class ModelHTTPServer: @unchecked Sendable {
     }
 
     private func modelDescriptor() -> ModelResponse {
-        ModelResponse(id: servedModelName, created: modelCreated)
+        ModelResponse(id: servedModelName, created: modelCreated,
+            contextLength: runner?.contextLength, prefillStepSize: runner?.prefillStepSize,
+            kvCompression: runner?.kvCompression, memoryLimitBytes: runner?.memoryLimitBytes)
     }
 
     private func handleAudio(
@@ -977,6 +979,20 @@ final class ModelHTTPServer: @unchecked Sendable {
                 code: "invalid_parameter"
             )
         }
+        let preparedPrompt: PreparedModelPrompt
+        do {
+            preparedPrompt = try await runner.preparePrompt(messages: completion.messages,
+                maximumTokens: requestedMaximumTokens, tools: completion.tools)
+        } catch let error as RequestAdmissionError {
+            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+                code: "request_exceeds_limits")
+        } catch LocalModelRunnerError.busy {
+            throw ModelHTTPError(status: .conflict, message: LocalModelRunnerError.busy.localizedDescription,
+                code: "model_busy")
+        } catch {
+            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+                code: "invalid_prompt")
+        }
         let maximumTokensDescription = requestedMaximumTokens.map { String($0) } ?? "default"
         let temperatureDescription = completion.temperature.map { String($0) } ?? "default"
         let topPDescription = completion.topP.map { String($0) } ?? "default"
@@ -992,6 +1008,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         if completion.stream == true {
             try await handleStreamingChat(
                 completion,
+                preparedPrompt: preparedPrompt,
                 runner: runner,
                 maximumTokens: requestedMaximumTokens,
                 stop: stop,
@@ -1001,6 +1018,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         } else {
             try await handleNonStreamingChat(
                 completion,
+                preparedPrompt: preparedPrompt,
                 runner: runner,
                 maximumTokens: requestedMaximumTokens,
                 stop: stop,
@@ -1012,6 +1030,7 @@ final class ModelHTTPServer: @unchecked Sendable {
 
     private func handleStreamingChat(
         _ completion: ChatCompletionRequest,
+        preparedPrompt: PreparedModelPrompt,
         runner: LocalModelRunner,
         maximumTokens: Int?,
         stop: [String],
@@ -1046,7 +1065,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                 temperature: completion.temperature,
                 topP: completion.topP,
                 stop: stop,
-                tools: completion.tools
+                tools: completion.tools,
+                preparedPrompt: preparedPrompt
             )
             var finishReason = "stop"
             var toolCallIndex = 0
@@ -1148,6 +1168,7 @@ final class ModelHTTPServer: @unchecked Sendable {
 
     private func handleNonStreamingChat(
         _ completion: ChatCompletionRequest,
+        preparedPrompt: PreparedModelPrompt,
         runner: LocalModelRunner,
         maximumTokens: Int?,
         stop: [String],
@@ -1164,7 +1185,8 @@ final class ModelHTTPServer: @unchecked Sendable {
             temperature: completion.temperature,
             topP: completion.topP,
             stop: stop,
-            tools: completion.tools
+            tools: completion.tools,
+            preparedPrompt: preparedPrompt
         )
         do {
             for try await event in events {
@@ -1176,6 +1198,9 @@ final class ModelHTTPServer: @unchecked Sendable {
                     logGeneration(metrics, requestID: requestID)
                 }
             }
+        } catch let error as RequestAdmissionError {
+            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+                code: "request_exceeds_limits")
         } catch LocalModelRunnerError.busy {
             throw ModelHTTPError(
                 status: .conflict,
@@ -1475,10 +1500,18 @@ private struct ModelResponse: Encodable {
     let created: Int
     let object = "model"
     let ownedBy = "midnight"
+    let contextLength: Int?
+    let prefillStepSize: Int?
+    let kvCompression: String?
+    let memoryLimitBytes: Int?
 
     enum CodingKeys: String, CodingKey {
         case id, created, object
         case ownedBy = "owned_by"
+        case contextLength = "context_length"
+        case prefillStepSize = "prefill_step_size"
+        case kvCompression = "kv_compression"
+        case memoryLimitBytes = "memory_limit_bytes"
     }
 }
 

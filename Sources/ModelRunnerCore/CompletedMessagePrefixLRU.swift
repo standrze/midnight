@@ -48,6 +48,25 @@ struct CompletedMessagePrefixLRU<Value: Sendable>: Sendable {
     )
   }
 
+  func canStore(costBytes: Int, reservedBytes: Int = 0) -> Bool {
+    maximumEntries > 0 && costBytes >= 0 && reservedBytes >= 0
+      && reservedBytes <= maximumBytes && costBytes <= maximumBytes - reservedBytes
+  }
+
+  mutating func removeAll() {
+    entries.removeAll()
+    totalBytes = 0
+    count = 0
+  }
+
+  mutating func trim(toBytes budget: Int) {
+    while totalBytes > max(0, budget),
+      let oldest = entries.indices.min(by: { entries[$0].lastAccess < entries[$1].lastAccess }) {
+      totalBytes -= entries.remove(at: oldest).costBytes
+    }
+    count = entries.count
+  }
+
   mutating func insert(
     _ value: Value,
     committedMessages: [OpenAIMessage],

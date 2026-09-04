@@ -339,3 +339,8 @@ apply_dependency_patch \
   "mlx-swift-lm Q4 affine joint fit" \
   "$MLX_SWIFT_LM_CHECKOUT" \
   "$MLX_SWIFT_LM_Q4_AFFINE_JOINT_FIT_PATCH"
+
+apply_dependency_patch \
+  "mlx-swift-lm cache memory accounting" \
+  "$MLX_SWIFT_LM_CHECKOUT" \
+  "$PACKAGE_ROOT/Patches/mlx-swift-lm-chat-cache-memory.patch"

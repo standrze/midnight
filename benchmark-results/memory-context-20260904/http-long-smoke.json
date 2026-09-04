@@ -1,0 +1,48 @@
+[
+  {
+    "scheme": "none",
+    "model": "Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "descriptor": {
+      "id": "memory-test",
+      "object": "model",
+      "created": 1788552876,
+      "context_length": 32768,
+      "memory_limit_bytes": 54975581389,
+      "prefill_step_size": 256,
+      "kv_compression": "none",
+      "owned_by": "midnight"
+    },
+    "usage": {
+      "prompt_tokens": 11344,
+      "completion_tokens": 3,
+      "total_tokens": 11347
+    },
+    "content": "**Blue**",
+    "request_seconds": 7.7284672919195145,
+    "overflow_rejected_json_both_modes": true,
+    "cached_continuation_stream_passed": true
+  },
+  {
+    "scheme": "affine8",
+    "model": "Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "descriptor": {
+      "created": 1788552886,
+      "prefill_step_size": 256,
+      "id": "memory-test",
+      "context_length": 32768,
+      "owned_by": "midnight",
+      "kv_compression": "affine8",
+      "object": "model",
+      "memory_limit_bytes": 54975581389
+    },
+    "usage": {
+      "total_tokens": 11347,
+      "prompt_tokens": 11344,
+      "completion_tokens": 3
+    },
+    "content": "**Blue**",
+    "request_seconds": 8.635570917045698,
+    "overflow_rejected_json_both_modes": true,
+    "cached_continuation_stream_passed": true
+  }
+]

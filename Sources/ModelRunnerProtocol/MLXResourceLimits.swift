@@ -3,6 +3,7 @@ import Foundation
 /// Fail-closed MLX allocator limits resolved before a model is loaded.
 public struct MLXResourceLimits: Equatable, Sendable {
   public static let memoryLimitEnvironmentKey = "MODEL_RUNNER_MLX_MEMORY_LIMIT_GIB"
+  public static let reserveEnvironmentKey = "MODEL_RUNNER_HOST_RESERVE_GIB"
   public static let cacheLimitEnvironmentKey = "MODEL_RUNNER_MLX_CACHE_LIMIT_MIB"
 
   public let memoryLimitBytes: Int
@@ -13,9 +14,11 @@ public struct MLXResourceLimits: Equatable, Sendable {
   public static func resolve(
     for engine: ModelEngine,
     physicalMemoryBytes: UInt64,
+    recommendedWorkingSetBytes: Int? = nil,
     environment: [String: String] = ProcessInfo.processInfo.environment
   ) throws -> Self {
-    let policy = try Policy(engine: engine, physicalMemoryBytes: physicalMemoryBytes)
+    let policy = try Policy(engine: engine, physicalMemoryBytes: physicalMemoryBytes,
+      recommendedWorkingSetBytes: recommendedWorkingSetBytes, environment: environment)
     let memoryLimit =
       try parseOverride(
         key: memoryLimitEnvironmentKey,
@@ -82,7 +85,8 @@ extension MLXResourceLimits {
     let defaultCacheBytes: Int
     let maximumCacheBytes: Int
 
-    init(engine: ModelEngine, physicalMemoryBytes: UInt64) throws {
+    init(engine: ModelEngine, physicalMemoryBytes: UInt64,
+         recommendedWorkingSetBytes: Int?, environment: [String: String]) throws {
       switch engine {
       case .cuda:
         self.init(
@@ -95,16 +99,25 @@ extension MLXResourceLimits {
           maximumCacheBytes: 1_024 * MLXResourceLimits.mebibyte
         )
       case .metal:
-        let physicalMaximum = try Self.halfPhysicalMemory(physicalMemoryBytes)
-        let maximum = min(32 * MLXResourceLimits.gibibyte, physicalMaximum)
+        let physical = Int(min(physicalMemoryBytes, UInt64(Int.max)))
+        guard physical >= 2 * MLXResourceLimits.gibibyte else {
+          throw MLXResourceLimitError.physicalMemoryTooSmall(physicalMemoryBytes)
+        }
+        let defaultReserve = max(2 * MLXResourceLimits.gibibyte, physical / 5)
+        let reserve = try MLXResourceLimits.parseOverride(
+          key: MLXResourceLimits.reserveEnvironmentKey, environment: environment,
+          unitBytes: MLXResourceLimits.gibibyte,
+          minimumBytes: 2 * MLXResourceLimits.gibibyte,
+          maximumBytes: physical - MLXResourceLimits.gibibyte) ?? defaultReserve
+        let maximum = min(physical - reserve, recommendedWorkingSetBytes ?? physical)
         guard maximum >= MLXResourceLimits.gibibyte else {
           throw MLXResourceLimitError.physicalMemoryTooSmall(physicalMemoryBytes)
         }
         self.init(
-          defaultMemoryBytes: min(24 * MLXResourceLimits.gibibyte, maximum),
+          defaultMemoryBytes: maximum,
           maximumMemoryBytes: maximum,
-          defaultCacheBytes: 256 * MLXResourceLimits.mebibyte,
-          maximumCacheBytes: 256 * MLXResourceLimits.mebibyte
+          defaultCacheBytes: min(256 * MLXResourceLimits.mebibyte, maximum / 16),
+          maximumCacheBytes: min(2 * MLXResourceLimits.gibibyte, maximum / 8)
         )
       case .cpu:
         let physicalMaximum = try Self.halfPhysicalMemory(physicalMemoryBytes)

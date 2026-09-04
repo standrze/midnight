@@ -49,30 +49,36 @@ struct MLXResourceLimitsTests {
     }
   }
 
-  @Test("Metal is bounded by 32 GiB and half of physical RAM")
+  @Test("Metal scales with device capacity and preserves host headroom")
   func metalBounds() throws {
-    let largeHost = try MLXResourceLimits.resolve(
-      for: .metal,
-      physicalMemoryBytes: 128 * UInt64(gibibyte),
-      environment: [:]
-    )
-    #expect(largeHost.memoryLimitBytes == 24 * gibibyte)
-    #expect(largeHost.maximumMemoryLimitBytes == 32 * gibibyte)
-    #expect(largeHost.cacheLimitBytes == 256 * mebibyte)
-
-    let smallHost = try MLXResourceLimits.resolve(
-      for: .metal,
-      physicalMemoryBytes: 32 * UInt64(gibibyte),
-      environment: [:]
-    )
-    #expect(smallHost.memoryLimitBytes == 16 * gibibyte)
-    #expect(smallHost.maximumMemoryLimitBytes == 16 * gibibyte)
+    let large = try MLXResourceLimits.resolve(for: .metal,
+      physicalMemoryBytes: 128 * UInt64(gibibyte), recommendedWorkingSetBytes: 96 * gibibyte,
+      environment: [:])
+    #expect(large.memoryLimitBytes == 96 * gibibyte)
+    #expect(large.maximumMemoryLimitBytes == 96 * gibibyte)
+    #expect(large.maximumCacheLimitBytes == 2 * gibibyte)
+    let small = try MLXResourceLimits.resolve(for: .metal,
+      physicalMemoryBytes: 8 * UInt64(gibibyte), recommendedWorkingSetBytes: 6 * gibibyte,
+      environment: [:])
+    #expect(small.memoryLimitBytes == 6 * gibibyte)
     #expect(throws: MLXResourceLimitError.self) {
-      try MLXResourceLimits.resolve(
-        for: .metal,
-        physicalMemoryBytes: 32 * UInt64(gibibyte),
-        environment: [MLXResourceLimits.memoryLimitEnvironmentKey: "24"]
-      )
+      try MLXResourceLimits.resolve(for: .metal, physicalMemoryBytes: 8 * UInt64(gibibyte),
+        recommendedWorkingSetBytes: 6 * gibibyte,
+        environment: [MLXResourceLimits.memoryLimitEnvironmentKey: "7"])
+    }
+  }
+
+  @Test("Host reserve is configurable but cannot consume the entire machine")
+  func hostReserve() throws {
+    let limits = try MLXResourceLimits.resolve(for: .metal,
+      physicalMemoryBytes: 64 * UInt64(gibibyte), recommendedWorkingSetBytes: 48 * gibibyte,
+      environment: [MLXResourceLimits.reserveEnvironmentKey: "24"])
+    #expect(limits.memoryLimitBytes == 40 * gibibyte)
+    for reserve in ["0", "1", "64", "nan"] {
+      #expect(throws: MLXResourceLimitError.self) {
+        try MLXResourceLimits.resolve(for: .metal, physicalMemoryBytes: 64 * UInt64(gibibyte),
+          environment: [MLXResourceLimits.reserveEnvironmentKey: reserve])
+      }
     }
   }
 

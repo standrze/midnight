@@ -60,7 +60,8 @@ public actor VoxtralTTSSynthesizer: LocalSpeechSynthesizing {
     let device: Device = engine == .cpu ? .cpu : .gpu
     let resourceLimits = try MLXResourceLimits.resolve(
       for: engine,
-      physicalMemoryBytes: ProcessInfo.processInfo.physicalMemory
+      physicalMemoryBytes: ProcessInfo.processInfo.physicalMemory,
+      recommendedWorkingSetBytes: engine == .metal ? GPU.maxRecommendedWorkingSetBytes() : nil
     )
 
     let modules = try Device.withDefaultDevice(device) {

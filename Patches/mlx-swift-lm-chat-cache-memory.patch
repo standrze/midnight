@@ -1,0 +1,18 @@
+--- a/Libraries/MLXLMCommon/ChatSession.swift
++++ b/Libraries/MLXLMCommon/ChatSession.swift
+@@ -436,6 +436,15 @@
+             return realized
+         }
+         return try await model.cacheStatus(parameters: parameters)
++    }
++
++    /// Resident main/draft KV bytes without creating or evaluating a snapshot.
++    public func cacheMemoryBytes() async -> Int {
++        await cache.read { cache in
++            guard case .kvcache(let stored) = cache else { return 0 }
++            return stored.main.cache.flatMap(\.state).reduce(0) { $0 + $1.nbytes }
++                + (stored.draft?.cache.flatMap(\.state).reduce(0) { $0 + $1.nbytes } ?? 0)
++        }
+     }
+ 
+     /// Initialize the `ChatSession`.

@@ -8,7 +8,7 @@ struct MidnightCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "midnight",
         abstract: "Midnight Runner — serve a local MLX model through OpenAI-compatible chat and local audio APIs.",
-        version: "0.1.0-beta.1"
+        version: "0.2.0-beta.1"
     )
 
     @Option(name: .shortAndLong, help: "Model name in ~/.runner/models or an MLX folder")
@@ -40,6 +40,15 @@ struct MidnightCommand: AsyncParsableCommand {
 
     @Option(name: .long, help: "Default and hard maximum generated tokens per request")
     var maxTokens: Int?
+
+    @Option(name: .long, help: "Maximum prompt plus output tokens (cannot exceed model context)")
+    var contextLength: Int?
+
+    @Option(name: .long, help: "Maximum tokens per prefill chunk (1...8192; default 512)")
+    var prefillStepSize: Int?
+
+    @Option(name: .long, help: "Experimental KV compression: none, affine8, affine4, turbo8v4")
+    var kvCompression: String?
 
     @Option(name: .long, help: "Execution engine: auto, metal, cuda, or cpu")
     var engine: String?
@@ -82,6 +91,10 @@ struct MidnightCommand: AsyncParsableCommand {
         let maxTokens = maxTokens ?? fileSettings?.maximumTokens ?? 512
         let dflashModel = dflashModel ?? fileSettings?.dflashModelPath
         let dflashBlockSize = dflashBlockSize ?? fileSettings?.dflashBlockSize
+        let longContext = try LongContextOptions(
+            contextLength: contextLength ?? fileSettings?.contextLength,
+            prefillStepSize: prefillStepSize ?? fileSettings?.prefillStepSize ?? 512,
+            kvCompression: kvCompression ?? fileSettings?.kvCompression ?? "none")
         let tokenLimit: GenerationTokenLimit
         do {
             tokenLimit = try GenerationTokenLimit(configuredMaximum: maxTokens)
@@ -95,6 +108,11 @@ struct MidnightCommand: AsyncParsableCommand {
         }
 
         if (try? VoxtralVoiceCatalog(modelDirectory: selection.modelPath)) != nil {
+            guard contextLength == nil, prefillStepSize == nil, kvCompression == nil,
+                fileSettings?.contextLength == nil, fileSettings?.prefillStepSize == nil,
+                fileSettings?.kvCompression == nil else {
+                throw ValidationError("Context and KV-cache options apply to text models only")
+            }
             guard selection.adapterPath == nil else {
                 throw ValidationError("Voxtral TTS does not support a LoRA adapter")
             }
@@ -145,7 +163,8 @@ struct MidnightCommand: AsyncParsableCommand {
             adapterPath: selection.adapterPath,
             adapterScale: adapterScale,
             dflashModelPath: dflashModel,
-            dflashBlockSize: dflashBlockSize
+            dflashBlockSize: dflashBlockSize,
+            longContext: longContext
         )
         let server = ModelHTTPServer(
             runner: runner,

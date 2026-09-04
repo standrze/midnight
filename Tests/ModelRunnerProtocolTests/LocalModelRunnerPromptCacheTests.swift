@@ -5,6 +5,24 @@ import Testing
 
 @Suite("Local model runner prompt cache")
 struct LocalModelRunnerPromptCacheTests {
+  @Test("Retention admission reserves hot-session bytes before snapshot allocation")
+  func retentionBudget() {
+    var cache = CompletedMessagePrefixLRU<Int>(maximumEntries: 2, maximumBytes: 100)
+    #expect(!cache.canStore(costBytes: 60, reservedBytes: 60))
+    #expect(cache.canStore(costBytes: 50, reservedBytes: 50))
+    #expect(!CompletedMessagePrefixLRU<Int>(maximumEntries: 0, maximumBytes: 100).canStore(costBytes: 1))
+    let a = [OpenAIMessage(role: "assistant", content: "A")]
+    let b = [OpenAIMessage(role: "assistant", content: "B")]
+    cache.insert(1, committedMessages: a, costBytes: 40)
+    cache.insert(2, committedMessages: b, costBytes: 40)
+    cache.trim(toBytes: 40)
+    #expect(cache.count == 1)
+    #expect(cache.totalBytes == 40)
+    #expect(cache.longestPrefix(of: a + [OpenAIMessage(role: "user", content: "next")]) == nil)
+    cache.removeAll()
+    #expect(cache.count == 0 && cache.totalBytes == 0)
+  }
+
   @Test("A strict transcript extension starts after every committed message")
   func strictExtension() {
     let committed = [

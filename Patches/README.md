@@ -15,3 +15,7 @@ File prefixes identify their upstream project:
 See [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) for attribution and
 license notices. Copyright and authorship lines present in upstream source are
 retained inside the patch hunks.
+
+`mlx-swift-lm-chat-cache-memory.patch` adds a read-only ChatSession cache-byte
+query so admission and retention decisions do not allocate a snapshot. It
+applies independently after the existing session-snapshot patch.

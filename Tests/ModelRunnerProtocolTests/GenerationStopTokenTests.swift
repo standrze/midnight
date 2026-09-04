@@ -27,7 +27,7 @@ struct GenerationStopTokenTests {
     #expect(source.contains("case \"system\", \"developer\""))
     #expect(source.contains("requestContext.configuration.stopStrings"))
     #expect(source.contains("topP: Float(topP)"))
-    #expect(source.contains("promptTokenIDs.remove(at: 1)"))
+    #expect(source.contains("tokens.remove(at: 1)"))
     #expect(source.contains("MLXLMCommon.generateTask("))
     #expect(source.contains("info.totalPromptTokenCount"))
     #expect(source.contains("info.generationTokenCount"))

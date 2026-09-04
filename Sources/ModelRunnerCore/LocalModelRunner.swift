@@ -7,6 +7,15 @@ import MLXLMCommon
 import ModelRunnerProtocol
 import Tokenizers
 
+/// Prepared by this runner; reused by the HTTP path to avoid tokenizing twice.
+public struct PreparedModelPrompt: Sendable {
+  fileprivate let modelPath: String
+  fileprivate let messages: [OpenAIMessage]
+  fileprivate let tools: [OpenAIToolDefinition]?
+  fileprivate let tokenIDs: [Int]
+  public var promptTokenCount: Int { tokenIDs.count }
+}
+
 public enum LocalModelRunnerEvent: Equatable, Sendable {
   case content(String)
   case toolCall(OpenAIToolCall)
@@ -111,6 +120,8 @@ private final class ChatSessionReference: @unchecked Sendable {
   func synchronize() async {
     await session.synchronize()
   }
+
+  func cacheMemoryBytes() async -> Int { await session.cacheMemoryBytes() }
 
   func snapshot() async throws -> ChatSessionSnapshotReference {
     ChatSessionSnapshotReference(try await session.snapshot())
@@ -231,6 +242,14 @@ public actor LocalModelRunner {
   public nonisolated let dflashBlockSize: Int?
   public nonisolated let supportsMistralHotConversationCache: Bool
 
+  public nonisolated let contextLength: Int
+  public nonisolated let prefillStepSize: Int
+  public nonisolated let kvCompression: String
+  public nonisolated let memoryLimitBytes: Int
+  private let longContext: LongContextOptions
+  private let memoryProfile: ModelMemoryProfile
+  private let residentModelBytes: Int
+  private var hotCacheBytes = 0
   private let container: ModelContainer
   private let tokenLimit: GenerationTokenLimit
   private let device: Device
@@ -254,7 +273,8 @@ public actor LocalModelRunner {
     adapterPath: String? = nil,
     adapterScale: Float? = nil,
     dflashModelPath: String? = nil,
-    dflashBlockSize: Int? = nil
+    dflashBlockSize: Int? = nil,
+    longContext: LongContextOptions = try! LongContextOptions()
   ) async throws {
     let tokenLimit = try GenerationTokenLimit(configuredMaximum: maximumTokens)
 
@@ -262,7 +282,8 @@ public actor LocalModelRunner {
     let device: Device = engine == .cpu ? .cpu : .gpu
     let resourceLimits = try MLXResourceLimits.resolve(
       for: engine,
-      physicalMemoryBytes: ProcessInfo.processInfo.physicalMemory
+      physicalMemoryBytes: ProcessInfo.processInfo.physicalMemory,
+      recommendedWorkingSetBytes: engine == .metal ? GPU.maxRecommendedWorkingSetBytes() : nil
     )
 
     let expandedPath = NSString(string: modelPath).expandingTildeInPath
@@ -272,6 +293,20 @@ public actor LocalModelRunner {
     try Self.validateModelFolder(modelURL)
     let normalizesGemma4Prompt = try Self.isGemma4Model(modelURL)
     let runtimeCapabilities = try ModelRuntimeCapabilities.load(from: modelURL)
+    let memoryProfile = try ModelMemoryProfile(
+      configuration: Data(contentsOf: modelURL.appendingPathComponent("config.json")), options: longContext)
+    if longContext.compression != .none && dflashModelPath != nil {
+      throw RequestAdmissionError.configuration("KV compression with DFlash is not supported")
+    }
+    // Prevent loading a checkpoint whose stored payload alone exceeds the allocator budget.
+    let shards = try FileManager.default.contentsOfDirectory(at: modelURL,
+      includingPropertiesForKeys: [.fileSizeKey]).filter { $0.pathExtension == "safetensors" }
+    let storedBytes = try shards.reduce(0) { total, url in
+      ModelMemoryProfile.add(total, try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0)
+    }
+    guard storedBytes < resourceLimits.memoryLimitBytes else {
+      throw RequestAdmissionError.memoryExceeded(required: storedBytes, available: resourceLimits.memoryLimitBytes)
+    }
 
     let dflashURL: URL? = try dflashModelPath.map { path in
       let expanded = NSString(string: path).expandingTildeInPath
@@ -409,16 +444,29 @@ public actor LocalModelRunner {
         context.model is LagunaModel
       }
     #endif
+    var cacheParameters = GenerateParameters(maxTokens: 1, temperature: 0)
+    try longContext.apply(to: &cacheParameters)
+    if longContext.compression != .none {
+      guard supportsLagunaPromptCache || runtimeCapabilities.mistralFamily != nil else {
+        throw RequestAdmissionError.configuration("KV compression is currently supported only for Laguna and Mistral-family text models")
+      }
+      let status = try await container.cacheStatus(parameters: cacheParameters)
+      guard status.pendingLayerCount + status.compressedLayerCount > 0 else {
+        throw RequestAdmissionError.configuration("no attention layer supports the requested KV compression")
+      }
+      print("Experimental KV compression: \(longContext.compression.rawValue), eligible=\(status.pendingLayerCount + status.compressedLayerCount), skipped=\(status.skippedLayerCount)")
+    }
+    let tuningParameters = cacheParameters
     let environment = ProcessInfo.processInfo.environment
     var wiredMemoryPlan: MLXWiredMemoryPlan?
     if engine == .metal, MLXWiredMemoryPlan.isEnabled(environment: environment) {
-      let tuningTokens = MLXWiredMemoryPlan.tuningTokenCount(environment: environment)
+      let tuningTokens = min(memoryProfile.contextLength, MLXWiredMemoryPlan.tuningTokenCount(environment: environment))
       let measure: @Sendable () async throws -> WiredMemoryMeasurement = {
         try await container.perform { context in
           try await WiredMemoryUtils.tune(
             context: context,
             tokenCount: tuningTokens,
-            parameters: GenerateParameters(maxTokens: 1, temperature: 0)
+            parameters: tuningParameters
           )
         }
       }
@@ -461,6 +509,18 @@ public actor LocalModelRunner {
         wiredMemoryPlan = nil
       }
     }
+    let residentModelBytes = await container.perform { context in
+      eval(context.model.parameters().flattened().map { $0.1 })
+      return Memory.activeMemory
+    }
+    self.longContext = longContext
+    self.memoryProfile = memoryProfile
+    self.residentModelBytes = residentModelBytes
+    self.contextLength = memoryProfile.contextLength
+    self.prefillStepSize = longContext.prefillStepSize
+    self.kvCompression = longContext.compression.rawValue
+    self.memoryLimitBytes = resourceLimits.memoryLimitBytes
+    print("Context policy: limit=\(memoryProfile.contextLength), prefill=\(longContext.prefillStepSize), KV=\(longContext.compression.rawValue), geometry=\(memoryProfile.hasKnownGeometry ? "known" : "conservative fallback")")
     self.container = container
     self.modelPath = modelURL.path
     self.servedModelName =
@@ -505,6 +565,39 @@ public actor LocalModelRunner {
     }
   }
 
+  /// Validate exact rendered prompt tokens before HTTP response headers or GPU prefill.
+  public func preparePrompt(messages: [OpenAIMessage], maximumTokens: Int?,
+                            tools: [OpenAIToolDefinition]? = nil) async throws -> PreparedModelPrompt {
+    guard !isGenerating else { throw LocalModelRunnerError.busy }
+    let prepared = try await renderPrompt(messages: messages, tools: tools)
+    try validateAdmission(prompt: prepared.promptTokenCount,
+      output: tokenLimit.resolve(requested: maximumTokens), resident: residentModelBytes)
+    return prepared
+  }
+
+  private func renderPrompt(messages: [OpenAIMessage], tools: [OpenAIToolDefinition]?) async throws -> PreparedModelPrompt {
+    guard let last = messages.last, last.role == "user" || last.role == "tool" else {
+      throw LocalModelRunnerError.lastMessageMustBeUserOrTool
+    }
+    let chatMessages = try messages.map(Self.chatMessage)
+    let toolSpecs = try Self.toolSpecs(tools)
+    let input = try await container.prepare(input: UserInput(chat: chatMessages, tools: toolSpecs))
+    var tokens = input.text.tokens.asArray(Int.self)
+    if normalizesGemma4Prompt, tokens.count >= 3, Array(tokens.prefix(3)) == [2, 107, 105] {
+      tokens.remove(at: 1)
+    }
+    return PreparedModelPrompt(modelPath: modelPath, messages: messages, tools: tools, tokenIDs: tokens)
+  }
+
+  private func validateAdmission(prompt: Int, output: Int, resident: Int) throws {
+    try memoryProfile.validateContext(prompt: prompt, output: output)
+    let required = memoryProfile.requestBytes(prompt: prompt, output: output,
+      prefillStepSize: min(longContext.prefillStepSize, max(1, prompt)), residentBytes: resident)
+    guard required <= memoryLimitBytes else {
+      throw RequestAdmissionError.memoryExceeded(required: required, available: memoryLimitBytes)
+    }
+  }
+
   public func stream(
     messages: [OpenAIMessage],
     maximumTokens: Int?,
@@ -513,7 +606,8 @@ public actor LocalModelRunner {
     stop: [String] = [],
     tools: [OpenAIToolDefinition]? = nil,
     enablePromptCache: Bool = true,
-    enableSpeculativeDecoding: Bool = true
+    enableSpeculativeDecoding: Bool = true,
+    preparedPrompt: PreparedModelPrompt? = nil
   ) -> AsyncThrowingStream<LocalModelRunnerEvent, Error> {
     let lagunaFastPaths = LagunaDecodeFastPathSelection.resolve(
       engine: engine,
@@ -536,7 +630,8 @@ public actor LocalModelRunner {
                 stop: stop,
                 tools: tools,
                 enablePromptCache: enablePromptCache,
-                enableSpeculativeDecoding: enableSpeculativeDecoding
+                enableSpeculativeDecoding: enableSpeculativeDecoding,
+                preparedPrompt: preparedPrompt
               ) {
                 continuation.yield($0)
               }
@@ -560,6 +655,7 @@ public actor LocalModelRunner {
     tools: [OpenAIToolDefinition]?,
     enablePromptCache: Bool,
     enableSpeculativeDecoding: Bool,
+    preparedPrompt: PreparedModelPrompt?,
     onEvent: @escaping @Sendable (LocalModelRunnerEvent) throws -> Void
   ) async throws {
     guard !isGenerating else { throw LocalModelRunnerError.busy }
@@ -567,12 +663,37 @@ public actor LocalModelRunner {
     isGenerating = true
     defer { isGenerating = false }
 
-    let settings = try generationRequestSettings(
+    let prepared: PreparedModelPrompt
+    if let preparedPrompt, preparedPrompt.modelPath == modelPath,
+      preparedPrompt.messages == messages, preparedPrompt.tools == tools {
+      prepared = preparedPrompt
+    } else {
+      prepared = try await renderPrompt(messages: messages, tools: tools)
+    }
+    try validateAdmission(prompt: prepared.promptTokenCount, output: effectiveMaximumTokens,
+      resident: residentModelBytes)
+    let required = memoryProfile.requestBytes(prompt: prepared.promptTokenCount,
+      output: effectiveMaximumTokens, prefillStepSize: min(longContext.prefillStepSize, max(1, prepared.promptTokenCount)),
+      residentBytes: residentModelBytes)
+    // Reserve for both the requested cache and existing retained caches. Evict first;
+    // never keep branch snapshots at the expense of admitting a fitting request.
+    let spare = max(0, memoryLimitBytes - required)
+    conversationCache.trim(toBytes: max(0, spare - hotCacheBytes))
+    if hotCacheBytes > spare {
+      hotConversation = nil
+      hotCacheBytes = 0
+    }
+    // Account for live allocations beyond the model baseline before starting prefill.
+    try validateAdmission(prompt: prepared.promptTokenCount, output: effectiveMaximumTokens,
+      resident: max(residentModelBytes, Memory.activeMemory))
+    var settings = try generationRequestSettings(
       maximumTokens: effectiveMaximumTokens,
       temperature: temperature,
       topP: topP,
       normalizesGemma4Prompt: normalizesGemma4Prompt
     )
+    try longContext.apply(to: &settings.parameters)
+    let requestSettings = settings
     #if os(macOS) && MODEL_RUNNER_PINNED_MLX
       try await withPinnedMLXRuntime(device: device, stream: mlxStream) {
         try await self.withGenerationWiredResidency {
@@ -585,7 +706,8 @@ public actor LocalModelRunner {
             tools: tools,
             enablePromptCache: enablePromptCache,
             enableSpeculativeDecoding: enableSpeculativeDecoding,
-            settings: settings,
+            settings: requestSettings,
+            prepared: prepared,
             onEvent: onEvent
           )
         }
@@ -601,7 +723,8 @@ public actor LocalModelRunner {
           tools: tools,
           enablePromptCache: enablePromptCache,
           enableSpeculativeDecoding: enableSpeculativeDecoding,
-          settings: settings,
+          settings: requestSettings,
+          prepared: prepared,
           onEvent: onEvent
         )
       }
@@ -656,6 +779,7 @@ public actor LocalModelRunner {
     enablePromptCache: Bool,
     enableSpeculativeDecoding: Bool,
     settings: GenerationRequestSettings,
+    prepared: PreparedModelPrompt,
     onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
   ) async throws {
     let usesDFlash =
@@ -691,6 +815,7 @@ public actor LocalModelRunner {
     // strings, Gemma prompt normalization, or Laguna's custom DFlash iterator).
     // Do not retain a session across either side of that boundary.
     hotConversation = nil
+    hotCacheBytes = 0
     try await generateOnDevice(
       container: container,
       device: device,
@@ -703,6 +828,8 @@ public actor LocalModelRunner {
       normalizesGemma4Prompt: normalizesGemma4Prompt,
       dflash: dflash,
       enableSpeculativeDecoding: enableSpeculativeDecoding,
+      preparedTokenIDs: prepared.tokenIDs,
+      longContext: longContext,
       onEvent: onEvent
     )
   }
@@ -881,16 +1008,16 @@ public actor LocalModelRunner {
       await session.synchronize()
     } catch {
       await session.synchronize()
-      if reusedHotConversation { hotConversation = nil }
+      if reusedHotConversation { hotConversation = nil; hotCacheBytes = 0 }
       throw error
     }
 
     guard producedOutput else {
-      if reusedHotConversation { hotConversation = nil }
+      if reusedHotConversation { hotConversation = nil; hotCacheBytes = 0 }
       throw LocalModelRunnerError.emptyResponse
     }
     guard canRetainSession else {
-      if reusedHotConversation { hotConversation = nil }
+      if reusedHotConversation { hotConversation = nil; hotCacheBytes = 0 }
       return
     }
     guard allowsReuse else { return }
@@ -907,7 +1034,19 @@ public actor LocalModelRunner {
     // established branchable LRU unchanged, but make the Mistral-family fast
     // path zero-copy: the hot session handles the common append-only chat case
     // without adding a potentially GiB-scale copy after each response.
+    hotCacheBytes = await session.cacheMemoryBytes()
+    guard hotCacheBytes <= conversationCache.maximumBytes else {
+      hotConversation = nil
+      hotCacheBytes = 0
+      conversationCache.removeAll()
+      return
+    }
+    conversationCache.trim(toBytes: conversationCache.maximumBytes - hotCacheBytes)
     guard retainsBranchSnapshots else { return }
+    guard conversationCache.canStore(costBytes: hotCacheBytes, reservedBytes: hotCacheBytes),
+      hotCacheBytes <= max(0, memoryLimitBytes - Memory.activeMemory - 512 * 1_048_576) else { return }
+    // Evict BEFORE allocating the independent snapshot, accounting for the hot cache too.
+    conversationCache.trim(toBytes: conversationCache.maximumBytes - 2 * hotCacheBytes)
     let snapshot = try await session.snapshot()
     conversationCache.insert(
       snapshot,
@@ -1091,7 +1230,7 @@ public actor LocalModelRunner {
 
 private struct GenerationRequestSettings: Sendable {
   let temperature: Double
-  let parameters: GenerateParameters
+  var parameters: GenerateParameters
   let components: GenerationComponents
 }
 
@@ -1142,6 +1281,8 @@ private func generateOnDevice(
   normalizesGemma4Prompt: Bool,
   dflash: LoadedDFlash?,
   enableSpeculativeDecoding: Bool,
+  preparedTokenIDs: [Int],
+  longContext: LongContextOptions,
   onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
 ) async throws {
   try await Device.withDefaultDevice(device) {
@@ -1152,33 +1293,19 @@ private func generateOnDevice(
       throw LocalModelRunnerError.lastMessageMustBeUserOrTool
     }
 
-    let chatMessages = try messages.map(LocalModelRunner.chatMessage)
     let toolSpecs = try LocalModelRunner.toolSpecs(tools)
-    let preparedInput = try await container.prepare(
-      input: UserInput(chat: chatMessages, tools: toolSpecs)
-    )
-    var promptTokenIDs = preparedInput.text.tokens.asArray(Int.self)
-    // The pinned Swift Jinja renderer inserts a newline between Gemma 4's BOS
-    // and first turn token. Python mlx-vlm/Transformers renders `<bos><|turn>`
-    // directly. Remove only that model-specific, verified token sequence so
-    // both runtimes feed the checkpoint the same prompt.
-    if normalizesGemma4Prompt,
-      promptTokenIDs.count >= 3,
-      promptTokenIDs[0] == 2,
-      promptTokenIDs[1] == 107,
-      promptTokenIDs[2] == 105
-    {
-      promptTokenIDs.remove(at: 1)
-    }
+    let promptTokenIDs = preparedTokenIDs
     if ProcessInfo.processInfo.environment["MODEL_RUNNER_DEBUG_PROMPT_TOKENS"] == "1" {
       print("Prompt token IDs (\(promptTokenIDs.count)): \(promptTokenIDs)")
     }
-    let settings = try generationRequestSettings(
+    var settings = try generationRequestSettings(
       maximumTokens: maximumTokens,
       temperature: requestedTemperature,
       topP: requestedTopP,
       normalizesGemma4Prompt: normalizesGemma4Prompt
     )
+    try longContext.apply(to: &settings.parameters)
+    let requestSettings = settings
     // The pinned MTP verifier is lossless for greedy decoding. Explicitly
     // sampled requests stay on the ordinary target path until probability-
     // ratio rejection sampling is available; this also avoids paying DFlash's
@@ -1199,9 +1326,9 @@ private func generateOnDevice(
           input: input,
           mainModel: requestContext.model,
           drafter: dflash.model.model,
-          parameters: settings.parameters,
+          parameters: requestSettings.parameters,
           blockSize: dflash.blockSize,
-          components: settings.components
+          components: requestSettings.components
         )
         return MLXLMCommon.generateTask(
           promptTokenCount: promptTokenCount,
@@ -1214,8 +1341,8 @@ private func generateOnDevice(
       let iterator = try TokenIterator(
         input: input,
         model: requestContext.model,
-        parameters: settings.parameters,
-        components: settings.components
+        parameters: requestSettings.parameters,
+        components: requestSettings.components
       )
       return MLXLMCommon.generateTask(
         promptTokenCount: promptTokenCount,

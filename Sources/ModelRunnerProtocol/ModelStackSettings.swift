@@ -8,6 +8,9 @@ public struct ModelStackSettings: Decodable, Sendable {
         public let host: String?
         public let port: Int?
         public let maximumTokens: Int?
+        public let contextLength: Int?
+        public let prefillStepSize: Int?
+        public let kvCompression: String?
         public let dflashModelPath: String?
         public let dflashBlockSize: Int?
     }

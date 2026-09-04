@@ -4,7 +4,7 @@ set -euo pipefail
 PACKAGE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BENCHMARK="$PACKAGE_ROOT/Sources/RuntimeBenchmark/main.swift"
 RUNNER="$PACKAGE_ROOT/Sources/ModelRunnerCore/LocalModelRunner.swift"
-README="$PACKAGE_ROOT/README.md"
+README="$PACKAGE_ROOT/Docs/reference.md"
 
 grep -Fq 'name: .customLong("mistral-hot-cache-ab")' "$BENCHMARK"
 grep -Fq 'case mistralHotCacheABComparison = "mistral_hot_cache_ab_comparison"' "$BENCHMARK"

@@ -399,12 +399,17 @@ Settings are discovered automatically. `MODEL_STACK_CONFIG` or `--config PATH` c
 
 ### Resource guard
 
+See [memory and context controls](memory-and-context.md) for the 0.2 release's
+request admission, context/prefill options, shared cache budget, and experimental
+KV compression. On Metal, host reserve defaults to max(2 GiB, 20% of RAM),
+configurable with `MODEL_RUNNER_HOST_RESERVE_GIB`.
+
 The runner resolves, applies, and reads back conservative MLX allocator limits immediately before the Hugging Face model-container load. The process refuses to load the model if an override is malformed or outside its backend's bounds, or if MLX does not report the requested limits after they are applied.
 
 | Backend | Default memory limit | Absolute memory limit | Default / maximum cache |
 | --- | ---: | ---: | ---: |
-| CUDA | 18 GiB | 20 GiB | 128 MiB |
-| Metal | 24 GiB, clamped down when needed | the smaller of 32 GiB or half physical RAM | 256 MiB |
+| CUDA | 18 GiB | 20 GiB | 128 MiB / 1024 MiB |
+| Metal | device-aware ceiling | smaller of recommended working set and physical RAM minus host reserve | up to 256 MiB default; up to 2 GiB maximum |
 | CPU | 18 GiB, clamped down when needed | the smaller of 20 GiB or half physical RAM | 128 MiB |
 
 These strict plain-decimal environment overrides are available:
@@ -430,7 +435,7 @@ length. A failed measurement is non-fatal and leaves generation unwired.
 
 Native Laguna conversations retain a hot linear session and a bounded LRU of
 immutable completed-message checkpoints for interleaved conversations and
-branches. Defaults are four checkpoints and 2,048 MiB; set
+branches. Defaults are four checkpoints and 2,048 MiB shared with the retained hot session; set
 `MODEL_RUNNER_PREFIX_CACHE_ENTRIES=0...64` and
 `MODEL_RUNNER_PREFIX_CACHE_MIB=0...16384` to tune or disable it. This is exact
 completed-transcript matching, not a promise of bit-identical floating-point

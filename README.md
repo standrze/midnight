@@ -16,6 +16,14 @@ serving path.
 > **Beta:** Midnight is prerelease software. CLI, API, and runtime behavior may
 > change before the first stable release.
 
+## Memory and context controls
+
+Version **0.2.0-beta.1** adds request memory admission, device-aware Metal
+budgets, shared conversation-cache accounting, configurable chunked prefill,
+and opt-in KV compression. The Mac launcher now uses release by default.
+See [memory and long-context operation](Docs/memory-and-context.md) for settings
+and experimental-feature limits.
+
 ## What is included
 
 - Native Mistral-family text inference with append-only conversation-prefix

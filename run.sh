@@ -23,9 +23,9 @@ else
   # Bash 3.2 reports an empty array expansion as unbound under `set -u`.
   # macOS normally uses the default scratch tree, so keep that path explicit.
   if [[ -n "${MODEL_RUNNER_SWIFT_BUILD_SCRATCH_ARGS+configured}" ]]; then
-    BIN_DIR="$(swift build "${MODEL_RUNNER_SWIFT_BUILD_SCRATCH_ARGS[@]}" --show-bin-path)"
+    BIN_DIR="$(swift build --configuration "${MODEL_RUNNER_BUILD_CONFIGURATION:-release}" "${MODEL_RUNNER_SWIFT_BUILD_SCRATCH_ARGS[@]}" --show-bin-path)"
   else
-    BIN_DIR="$(swift build --show-bin-path)"
+    BIN_DIR="$(swift build --configuration "${MODEL_RUNNER_BUILD_CONFIGURATION:-release}" --show-bin-path)"
   fi
 fi
 exec "$BIN_DIR/midnight" "$@"
