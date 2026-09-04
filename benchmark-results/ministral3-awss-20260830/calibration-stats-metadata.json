@@ -6,7 +6,7 @@
   ],
   "backend" : "metal",
   "corpus_fingerprint" : "fnv1a64:535aa441808a576c",
-  "corpus_path" : "/path/to/midnight/tmp/calibration/mlx-lm-calibration-v5-awss.jsonl",
+  "corpus_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/mlx-lm-calibration-v5-awss.jsonl",
   "corpus_sample_count" : 128,
   "created_at" : "2026-08-30T19:23:45Z",
   "device" : "gpu",
@@ -2550,7 +2550,7 @@
   "observed_sample_count" : 87,
   "observed_segment_count" : 177,
   "observed_token_count" : 65536,
-  "output_path" : "/path/to/midnight/tmp/calibration/ministral3-awss-calibration-stats.safetensors",
+  "output_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/ministral3-awss-calibration-stats.safetensors",
   "samples" : [
     {
       "category" : "mlx-lm-calibration",
@@ -3340,7 +3340,7 @@
   "segmentation" : "contiguous_nonoverlapping_independent",
   "source_config_fingerprint" : "fnv1a64:070723084045d98f",
   "source_index_fingerprint" : "fnv1a64:b0248d7b1544b9f8",
-  "source_model" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
+  "source_model" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
   "source_weight_dtype" : "bfloat16",
   "status" : "measured",
   "text_model_type" : "ministral3",

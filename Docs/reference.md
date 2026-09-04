@@ -267,7 +267,7 @@ Serving the resulting checkpoint remains entirely in the native Swift/MLX
 runtime.
 
 The converter has produced
-`/home/example/models/Laguna-XS-2.1-MLX-Q4R8-v1` on the project server:
+`/home/sandrzej/models/Laguna-XS-2.1-MLX-Q4R8-v1` on the project server:
 18,821,963,264 tensor bytes, four shards, Q4 group-64 plus exactly 39 Q8 routers.
 A matched five-trial RTX 4090 run measured 126.93 tok/s median decode versus
 127.45 tok/s for the prior compact Q4 control, so the new native conversion has
@@ -275,7 +275,7 @@ no measurable packing penalty. Extra Q8 modules remain opt-in until a
 BF16-teacher calibration demonstrates an accuracy gain.
 
 The completed same-format LS2 candidate is
-`/home/example/models/Laguna-XS-2.1-MLX-Q4R8-ScaleSearch-LS2`. Its conversion
+`/home/sandrzej/models/Laguna-XS-2.1-MLX-Q4R8-ScaleSearch-LS2`. Its conversion
 searches nine nearby Q4 scales, one least-squares bias update, and two joint
 slope/intercept refinements while retaining ordinary MLX affine-Q4 arrays and
 the 39 standard Q8 routers. A 48-tensor/411-million-value BF16 audit reduced

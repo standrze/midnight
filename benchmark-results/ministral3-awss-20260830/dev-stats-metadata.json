@@ -6,7 +6,7 @@
   ],
   "backend" : "metal",
   "corpus_fingerprint" : "fnv1a64:a591da3d7ade3828",
-  "corpus_path" : "/path/to/midnight/tmp/calibration/wikitext-2-raw-dev.jsonl",
+  "corpus_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/wikitext-2-raw-dev.jsonl",
   "corpus_sample_count" : 32,
   "created_at" : "2026-08-30T19:27:12Z",
   "device" : "gpu",
@@ -2550,7 +2550,7 @@
   "observed_sample_count" : 32,
   "observed_segment_count" : 43,
   "observed_token_count" : 15688,
-  "output_path" : "/path/to/midnight/tmp/calibration/ministral3-awss-dev-stats.safetensors",
+  "output_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/ministral3-awss-dev-stats.safetensors",
   "samples" : [
     {
       "category" : "wikitext-2-raw-validation",
@@ -2845,7 +2845,7 @@
   "segmentation" : "contiguous_nonoverlapping_independent",
   "source_config_fingerprint" : "fnv1a64:070723084045d98f",
   "source_index_fingerprint" : "fnv1a64:b0248d7b1544b9f8",
-  "source_model" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
+  "source_model" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
   "source_weight_dtype" : "bfloat16",
   "status" : "measured",
   "text_model_type" : "ministral3",

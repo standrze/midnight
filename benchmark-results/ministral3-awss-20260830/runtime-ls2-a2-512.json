@@ -7,7 +7,7 @@
   "measured_trials" : 5,
   "median_decode_tokens_per_second" : 41.09696466798629,
   "median_prompt_tokens_per_second" : 575.652902543536,
-  "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+  "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
   "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
   "requested_tokens" : 512,
   "served_model_name" : "runtime-benchmark",

@@ -2,7 +2,7 @@
   "add_special_tokens" : true,
   "backend" : "metal",
   "corpus_fingerprint" : "fnv1a64:24f2484ba366e7c5",
-  "corpus_path" : "/path/to/midnight/tmp/calibration/wikitext-2-raw-eval.jsonl",
+  "corpus_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/wikitext-2-raw-eval.jsonl",
   "created_at" : "2026-08-30T19:43:06Z",
   "device" : "gpu",
   "elapsed_seconds" : 112.020078875,
@@ -21,7 +21,7 @@
       "declared_dtype" : "bfloat16",
       "elapsed_seconds" : 22.568001042,
       "mlx_peak_memory_bytes" : 8699181516,
-      "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+      "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
       "model_type" : "mistral3",
       "samples" : [
         {
@@ -1137,7 +1137,7 @@
       "declared_dtype" : "bfloat16",
       "elapsed_seconds" : 22.95651375,
       "mlx_peak_memory_bytes" : 8699186036,
-      "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+      "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
       "model_type" : "mistral3",
       "samples" : [
         {
@@ -2253,7 +2253,7 @@
       "declared_dtype" : "bfloat16",
       "elapsed_seconds" : 23.479723041,
       "mlx_peak_memory_bytes" : 8699190556,
-      "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-AWSS1-3cea74c",
+      "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-AWSS1-3cea74c",
       "model_type" : "mistral3",
       "samples" : [
         {
@@ -3372,7 +3372,7 @@
     "ground_truth_top1_accuracy" : 0.5409389733714058,
     "ground_truth_top1_correct_count" : 16292,
     "mlx_peak_memory_bytes" : 27414028288,
-    "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
+    "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
     "model_type" : "mistral3",
     "samples" : [
       {
