@@ -1,0 +1,241 @@
+{
+  "format": 1,
+  "purpose": "Paired task-accuracy comparison from retained scored reports; no Docker or generation rerun.",
+  "provenance": {
+    "inputs": [
+      {
+        "label": "standard",
+        "path": "/private/tmp/midnight-priorities-20260904/generated/standard-scores.json",
+        "bytes": 86334,
+        "sha256": "4ece11086fd596d071314926e0f2c43d9f9de07cddbb083c8089e3e5ffda2091"
+      },
+      {
+        "label": "ls2",
+        "path": "/private/tmp/midnight-priorities-20260904/generated/ls2-scores.json",
+        "bytes": 86159,
+        "sha256": "ac4fdb61dba729c172f564a705065eb5b6a18375994854df303e68090151d306"
+      }
+    ],
+    "scorer": {
+      "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/Scripts/evaluate-generated.py",
+      "bytes": 27332,
+      "sha256": "47710a59b9f1fc96bcdd426e7229e0d1d5cff635382d26cecf40d8f2329927c9"
+    },
+    "reproducer": {
+      "path": "/private/tmp/midnight-priorities-20260904/generated/compare-scored-reports.py",
+      "bytes": 3971,
+      "sha256": "9f9affeffd1cb95ffa556c04eea797ef3d637dc07d7db5cef09e741b72373880"
+    },
+    "shared_identity": {
+      "tasks": "f0bc4abb263adf68d3de793c6e5128417b5969b8314d5f6aaa9962b2eb8af114",
+      "private_answers": "2ffe2f3de3957a259244842ace1d10ccac0d1a3d0b61bb9e2525227ee143ff0f",
+      "sandbox": {
+        "image": "python@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea",
+        "image_id": "sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea",
+        "architecture": "arm64",
+        "timeout_seconds": 15,
+        "docker_executable": {
+          "path": "/Applications/Docker.app/Contents/Resources/bin/docker",
+          "bytes": 41522608,
+          "sha256": "0d0bf14589b0c8bb1c92bfea4c8eb84a86e2ac0c5cee9bb6c38e90d2cf0ddcaf"
+        },
+        "network": "none",
+        "rootfs": "read-only",
+        "user": "65534:65534",
+        "memory_bytes": 268435456,
+        "pids": 64,
+        "cpus": 1,
+        "output_limit_bytes": 131072,
+        "policy_version": 1
+      }
+    }
+  },
+  "bootstrap": {
+    "draws": 10000,
+    "seed": 20260904,
+    "unit": "paired task; overall stratified by category, record-weighted"
+  },
+  "models": {
+    "standard": {
+      "overall": {
+        "tasks": 137,
+        "scored": 137,
+        "passed": 106,
+        "accuracy": 0.7737226277372263,
+        "scored_subset_accuracy_diagnostic": 0.7737226277372263,
+        "complete": true,
+        "output_limit_reached": 1
+      },
+      "categories": {
+        "code": {
+          "tasks": 64,
+          "scored": 64,
+          "passed": 39,
+          "accuracy": 0.609375,
+          "scored_subset_accuracy_diagnostic": 0.609375,
+          "complete": true,
+          "output_limit_reached": 0
+        },
+        "math": {
+          "tasks": 64,
+          "scored": 64,
+          "passed": 61,
+          "accuracy": 0.953125,
+          "scored_subset_accuracy_diagnostic": 0.953125,
+          "complete": true,
+          "output_limit_reached": 1
+        },
+        "retrieval": {
+          "tasks": 9,
+          "scored": 9,
+          "passed": 6,
+          "accuracy": 0.6666666666666666,
+          "scored_subset_accuracy_diagnostic": 0.6666666666666666,
+          "complete": true,
+          "output_limit_reached": 0
+        }
+      },
+      "settings": {
+        "model_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+        "requested_tokens": 1024,
+        "temperature": 0,
+        "top_p": 1,
+        "context_length": 262144,
+        "prefill_step_size": 512,
+        "kv_compression": "none",
+        "engine": "metal",
+        "prompt_format": "single_user_message_checkpoint_chat_template",
+        "prompt_cache": false,
+        "speculative_decoding": false,
+        "fused_gate_up_silu": false,
+        "compiled_laguna_block_tail": true,
+        "fused_laguna_router_top_k": true,
+        "runtime_environment": {},
+        "memory_limit_bytes": 54975581389
+      }
+    },
+    "ls2": {
+      "overall": {
+        "tasks": 137,
+        "scored": 137,
+        "passed": 111,
+        "accuracy": 0.8102189781021898,
+        "scored_subset_accuracy_diagnostic": 0.8102189781021898,
+        "complete": true,
+        "output_limit_reached": 0
+      },
+      "categories": {
+        "code": {
+          "tasks": 64,
+          "scored": 64,
+          "passed": 41,
+          "accuracy": 0.640625,
+          "scored_subset_accuracy_diagnostic": 0.640625,
+          "complete": true,
+          "output_limit_reached": 0
+        },
+        "math": {
+          "tasks": 64,
+          "scored": 64,
+          "passed": 63,
+          "accuracy": 0.984375,
+          "scored_subset_accuracy_diagnostic": 0.984375,
+          "complete": true,
+          "output_limit_reached": 0
+        },
+        "retrieval": {
+          "tasks": 9,
+          "scored": 9,
+          "passed": 7,
+          "accuracy": 0.7777777777777778,
+          "scored_subset_accuracy_diagnostic": 0.7777777777777778,
+          "complete": true,
+          "output_limit_reached": 0
+        }
+      },
+      "settings": {
+        "model_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269",
+        "requested_tokens": 1024,
+        "temperature": 0,
+        "top_p": 1,
+        "context_length": 262144,
+        "prefill_step_size": 512,
+        "kv_compression": "none",
+        "engine": "metal",
+        "prompt_format": "single_user_message_checkpoint_chat_template",
+        "prompt_cache": false,
+        "speculative_decoding": false,
+        "fused_gate_up_silu": false,
+        "compiled_laguna_block_tail": true,
+        "fused_laguna_router_top_k": true,
+        "runtime_environment": {},
+        "memory_limit_bytes": 54975581389
+      }
+    }
+  },
+  "comparisons": {
+    "ls2_minus_standard": {
+      "overall": {
+        "tasks": 137,
+        "qualified": true,
+        "reasons": [],
+        "setting_differences": {},
+        "comparison_kind": "matched_generation_settings",
+        "accuracy_delta": 0.0364963503649635,
+        "paired_95_percent_interval": [
+          -0.014598540145985401,
+          0.08759124087591241
+        ],
+        "candidate_only_correct": 9,
+        "baseline_only_correct": 4
+      },
+      "code": {
+        "tasks": 64,
+        "qualified": true,
+        "reasons": [],
+        "setting_differences": {},
+        "comparison_kind": "matched_generation_settings",
+        "accuracy_delta": 0.03125,
+        "paired_95_percent_interval": [
+          -0.046875,
+          0.109375
+        ],
+        "candidate_only_correct": 4,
+        "baseline_only_correct": 2
+      },
+      "math": {
+        "tasks": 64,
+        "qualified": true,
+        "reasons": [],
+        "setting_differences": {},
+        "comparison_kind": "matched_generation_settings",
+        "accuracy_delta": 0.03125,
+        "paired_95_percent_interval": [
+          -0.03125,
+          0.09375
+        ],
+        "candidate_only_correct": 3,
+        "baseline_only_correct": 1
+      },
+      "retrieval": {
+        "tasks": 9,
+        "qualified": true,
+        "reasons": [],
+        "setting_differences": {},
+        "comparison_kind": "matched_generation_settings",
+        "accuracy_delta": 0.1111111111111111,
+        "paired_95_percent_interval": [
+          -0.2222222222222222,
+          0.4444444444444444
+        ],
+        "candidate_only_correct": 2,
+        "baseline_only_correct": 1
+      }
+    }
+  },
+  "limitations": [
+    "Strict primary scores are reused unchanged. Retrieval content/tag diagnostics do not alter pass criteria.",
+    "Intervals describe this finite public regression suite; contamination, source correlation, run/numerical variation and multiple comparisons are not corrected.",
+    "No timing claim or universal quality ranking follows."
+  ]
+}

@@ -50,6 +50,7 @@ MLX_SWIFT_LM_Q4_AFFINE_SCALE_SEARCH_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4
 MLX_SWIFT_LM_Q4_AFFINE_CENTERED_SCALE_SEARCH_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4-affine-centered-scale-search.patch"
 MLX_SWIFT_LM_Q4_AFFINE_BIAS_REFINEMENT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4-affine-bias-refinement.patch"
 MLX_SWIFT_LM_Q4_AFFINE_JOINT_FIT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4-affine-joint-fit.patch"
+MLX_SWIFT_LM_Q4_AFFINE_GROUP_SIZE_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4-affine-group-size.patch"
 MLX_SWIFT_LM_MISTRAL_HYBRID_ATTENTION_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-mistral-hybrid-attention.patch"
 MLX_SWIFT_LM_MIXTRAL_FUSED_ROUTER_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-mixtral-fused-router.patch"
 MLX_SWIFT_LM_EXPECTED_REVISION="14414441fa44f45eee35a61e9fa0bab577cf9734"
@@ -351,6 +352,10 @@ apply_dependency_patch \
   "mlx-swift-lm Q4 affine joint fit" \
   "$MLX_SWIFT_LM_CHECKOUT" \
   "$MLX_SWIFT_LM_Q4_AFFINE_JOINT_FIT_PATCH"
+apply_dependency_patch \
+  "mlx-swift-lm Q4 affine group size" \
+  "$MLX_SWIFT_LM_CHECKOUT" \
+  "$MLX_SWIFT_LM_Q4_AFFINE_GROUP_SIZE_PATCH"
 
 apply_dependency_patch \
   "mlx-swift-lm cache memory accounting" \

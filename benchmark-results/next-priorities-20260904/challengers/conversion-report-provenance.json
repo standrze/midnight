@@ -1,0 +1,45 @@
+{
+  "purpose": "Preserve completed G128 conversion reports and exact small checkpoint configuration/index files. Model weight payloads are excluded.",
+  "files": [
+    {
+      "source_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/q4r8-scale-search.json",
+      "archive_path": "conversions/g128-standard/q4r8-scale-search.json",
+      "bytes": 66292,
+      "sha256": "71a69980413e706583b912d4eea5ef849c4e6ff1261f5b4c9a186d4e7c4edaa1"
+    },
+    {
+      "source_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/config.json",
+      "archive_path": "conversions/g128-standard/config.json",
+      "bytes": 135583,
+      "sha256": "81acb3cac6e30b3d3a52cd79a4ad1f8ea1e333a7805c9da363b006644eb7ebb5"
+    },
+    {
+      "source_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/model.safetensors.index.json",
+      "archive_path": "conversions/g128-standard/model.safetensors.index.json",
+      "bytes": 167756,
+      "sha256": "29814788222efc84ca501bdccbda4c39204daccd1efc5a9dafa7281d67d13153"
+    },
+    {
+      "source_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/q4r8-scale-search.json",
+      "archive_path": "conversions/g128-ls2/q4r8-scale-search.json",
+      "bytes": 66396,
+      "sha256": "22635ef5e2c091d80682a1d93a5294f513300e30c47e96541f0c5de83765466c"
+    },
+    {
+      "source_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/config.json",
+      "archive_path": "conversions/g128-ls2/config.json",
+      "bytes": 135583,
+      "sha256": "81acb3cac6e30b3d3a52cd79a4ad1f8ea1e333a7805c9da363b006644eb7ebb5"
+    },
+    {
+      "source_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/model.safetensors.index.json",
+      "archive_path": "conversions/g128-ls2/model.safetensors.index.json",
+      "bytes": 167756,
+      "sha256": "29814788222efc84ca501bdccbda4c39204daccd1efc5a9dafa7281d67d13153"
+    }
+  ],
+  "limitations": [
+    "These copied metadata files do not themselves verify all regrouped Q4 weight payloads. The independent audits hash every retained tensor and check regrouped tensor geometry; generation/NLL evaluate behavior separately.",
+    "Conversion invocations, binary identities and run start/finish times are retained in provenance.json and the original conversion logs."
+  ]
+}

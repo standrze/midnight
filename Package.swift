@@ -76,6 +76,10 @@ let package = Package(
             targets: ["ModelQualityBenchmark"]
         ),
         .executable(
+            name: "model-runner-generation-bench",
+            targets: ["ModelGenerationBenchmark"]
+        ),
+        .executable(
             name: "model-runner-mistral-activation-stats",
             targets: ["MistralActivationStats"]
         ),
@@ -230,6 +234,16 @@ let package = Package(
         ),
         .target(
             name: "ModelQualityCore"
+        ),
+        .executableTarget(
+            name: "ModelGenerationBenchmark",
+            dependencies: [
+                "ModelQualityCore",
+                "ModelRunnerCore",
+                "ModelRunnerProtocol",
+                .product(name: "MLX", package: "mlx-swift"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
         ),
         .executableTarget(
             name: "ModelQualityBenchmark",

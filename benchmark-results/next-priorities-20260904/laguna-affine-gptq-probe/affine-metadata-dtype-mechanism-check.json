@@ -1,0 +1,55 @@
+{
+  "mlx_version": "0.31.2",
+  "device": "Device(cpu, 0)",
+  "scope": "Tiny CPU dtype-dispatch mechanism, no GPU latency measurement",
+  "results": [
+    {
+      "input_dtype": "mlx.core.bfloat16",
+      "metadata_dtype": "mlx.core.bfloat16",
+      "quantized_matmul_output_dtype": "mlx.core.bfloat16",
+      "quantized_matmul_output_shape": [
+        1,
+        64
+      ],
+      "finite": true,
+      "gather_qmm_output_dtype": "mlx.core.bfloat16",
+      "gather_qmm_output_shape": [
+        1,
+        1,
+        64
+      ]
+    },
+    {
+      "input_dtype": "mlx.core.bfloat16",
+      "metadata_dtype": "mlx.core.float16",
+      "quantized_matmul_output_dtype": "mlx.core.float32",
+      "quantized_matmul_output_shape": [
+        1,
+        64
+      ],
+      "finite": true,
+      "gather_qmm_output_dtype": "mlx.core.float32",
+      "gather_qmm_output_shape": [
+        1,
+        1,
+        64
+      ]
+    },
+    {
+      "input_dtype": "mlx.core.bfloat16",
+      "metadata_dtype": "mlx.core.float32",
+      "quantized_matmul_output_dtype": "mlx.core.float32",
+      "quantized_matmul_output_shape": [
+        1,
+        64
+      ],
+      "finite": true,
+      "gather_qmm_output_dtype": "mlx.core.float32",
+      "gather_qmm_output_shape": [
+        1,
+        1,
+        64
+      ]
+    }
+  ]
+}

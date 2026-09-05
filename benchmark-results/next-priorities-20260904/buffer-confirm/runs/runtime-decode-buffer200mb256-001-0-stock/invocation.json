@@ -1,0 +1,52 @@
+{
+  "baseline_first": true,
+  "candidate": "buffer200mb256",
+  "command": [
+    "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/model-runner-runtime-bench",
+    "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+    "/private/tmp/midnight-priorities-20260904/buffer-confirm/runs/runtime-decode-buffer200mb256-001-0-stock/native.json",
+    "--engine",
+    "metal",
+    "--tokens",
+    "512",
+    "--warmups",
+    "3",
+    "--trials",
+    "1",
+    "--prompt",
+    "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early."
+  ],
+  "directory": "/private/tmp/midnight-priorities-20260904/buffer-confirm/runs/runtime-decode-buffer200mb256-001-0-stock",
+  "elapsed_seconds": 22.022939500049688,
+  "environment": {
+    "MLX_MAX_MB_PER_BUFFER": null,
+    "MLX_MAX_OPS_PER_BUFFER": null
+  },
+  "exit_code": 0,
+  "finished_at": "2026-09-05T00:13:34.818044+00:00",
+  "measurement": {
+    "content_sha256": "d00a6407c9c4c96df3e3f772608960058df1e35a4ba416bdb88657a3e55ba881",
+    "context_length": 262144,
+    "decode_tokens_per_second": 99.27170982503407,
+    "engine": "metal",
+    "generation_tokens": 512,
+    "kv_compression": "none",
+    "memory_limit_bytes": 54975581389,
+    "native_mode": "target_only",
+    "peak_active_memory_bytes": 19028519076,
+    "prefill_step_size": 512,
+    "prefill_tokens_per_second": 763.4516288153887,
+    "prompt_token_id_fingerprint": "fnv1a64:01cd0f777fe2a08d",
+    "prompt_tokens": 50,
+    "total_milliseconds": 5228.914208,
+    "ttft_ms": 70.001541
+  },
+  "mode": "runtime",
+  "model": "stock",
+  "pair_id": "runtime-decode-buffer200mb256-001",
+  "position": 0,
+  "repetition": 1,
+  "started_at": "2026-09-05T00:13:12.794559+00:00",
+  "status": "measured",
+  "workload": "decode"
+}

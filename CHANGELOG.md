@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0-beta.3
+
+- Add a native load-once generated evaluation tool with greedy independent
+  requests, exact prompt fingerprints, admission checks and atomic partial reports.
+- Add pinned question-only code/math and synthetic retrieval tasks, isolated
+  Docker code scoring, reference-solution validation and paired accuracy analysis.
+- Add bounded standard-affine and ScaleSearch Q4/G128 Laguna conversion while
+  preserving Q8/G64 routers and Q4/G64 embeddings, with explicit module metadata.
+- Add a bounded, source-fingerprinted native-affine GPTQ projection probe and
+  source-verified AutoRound/MLX metadata compatibility research.
+- Add weighted Instruments CPU profile analysis and command-buffer experiments.
+  Runtime defaults remain evidence-gated; profiling timings are diagnostic.
+
 ## 0.2.0-beta.2
 
 - Add source-verified, layerwise Laguna activation calibration with bounded

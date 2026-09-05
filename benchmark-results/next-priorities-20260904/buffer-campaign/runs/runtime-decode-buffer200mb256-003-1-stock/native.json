@@ -1,0 +1,96 @@
+{
+  "allow_early_stop" : false,
+  "context_length" : 262144,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-09-05T00:11:15Z",
+  "engine" : "metal",
+  "format" : 1,
+  "kv_compression" : "none",
+  "measured_trials" : 1,
+  "median_decode_tokens_per_second" : 160.0809936233981,
+  "median_prompt_tokens_per_second" : 799.9496491653014,
+  "memory_limit_bytes" : 54975581389,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+  "prefill_step_size" : 512,
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 512,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2 – Core Data Structures and Atomic Operations\n\nIn the previous part of this tutorial, we laid the groundwork for understanding what a work-stealing scheduler is and why it's beneficial for concurrent task execution. We also began discussing the design principles behind lock-free programming and introduced the basic structure of our scheduler. Now, we'll dive deep into the implementation details, focusing on the core data structures and atomic operations that make our scheduler both efficient and safe.\n\n## Core Data Structures\n\n### The Work-Stealing Queue\n\nAt the heart of our scheduler lies the work-stealing queue. Each worker thread maintains its own deque (double-ended queue) to store tasks. Tasks are added to the top of the deque and removed from the same end by the owning worker. When a worker needs to steal tasks, it removes them from the bottom of the deque. This design minimizes contention between the owner and thieves.\n\nLet's define the `WorkStealingQueue` structure:\n\n```swift\nimport Foundation\n\nfinal class WorkStealingQueue<Task> {\n    private let buffer: UnsafeMutablePointer<Atomic<Task?>>\n    private let capacity: Int\n    \n    // The bottom index is accessed by the owner thread without synchronization\n    private var bottom: Int = 0\n    \n    // The top index is accessed atomically by both owner and thief threads\n    private let top = Atomic<Int>(0)\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = UnsafeMutablePointer<Atomic<Task?>>.allocate(\n            capacity: capacity,\n            alignment: MemoryLayout<Atomic<Task?>>.alignment\n        )\n        \n        // Initialize all slots to nil\n        for i in 0..<capacity {\n            buffer[i] = Atomic<Task?>(nil)\n        }\n    }\n    \n    deinit {\n        buffer.deallocate()\n    }\n    \n    func push(_ task: Task) {\n        let currentBottom = bottom\n        buffer[currentBottom].store(task)\n        bottom = (bottom + 1) % capacity\n    }\n    \n    func pop() -> Task? {\n        let currentBottom = bottom\n        guard currentBottom > 0 else { return nil }\n        \n        bottom = (currentBottom - 1) % capacity\n        return buffer[bottom",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 799.9496491653014,
+        "stop_reason" : "length",
+        "tokens_per_second" : 160.0809936233981
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 19028502364,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 65.110083,
+      "total_milliseconds" : 3265.755375
+    }
+  ],
+  "warmup_count" : 3,
+  "warmups" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2 – Core Data Structures and Atomic Operations\n\nIn the previous part of this tutorial, we laid the groundwork for understanding what a work-stealing scheduler is and why it's beneficial for concurrent task execution. We also began discussing the design principles behind lock-free programming and introduced the basic structure of our scheduler. Now, we'll dive deep into the implementation details, focusing on the core data structures and atomic operations that make our scheduler both efficient and safe.\n\n## Core Data Structures\n\n### The Work-Stealing Queue\n\nAt the heart of our scheduler lies the work-stealing queue. Each worker thread maintains its own deque (double-ended queue) to store tasks. Tasks are added to the top of the deque and removed from the same end by the owning worker. When a worker needs to steal tasks, it removes them from the bottom of the deque. This design minimizes contention between the owner and thieves.\n\nLet's define the `WorkStealingQueue` structure:\n\n```swift\nimport Foundation\n\nfinal class WorkStealingQueue<Task> {\n    private let buffer: UnsafeMutablePointer<Atomic<Task?>>\n    private let capacity: Int\n    \n    // The bottom index is accessed by the owner thread without synchronization\n    private var bottom: Int = 0\n    \n    // The top index is accessed atomically by both owner and thief threads\n    private let top = Atomic<Int>(0)\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = UnsafeMutablePointer<Atomic<Task?>>.allocate(\n            capacity: capacity,\n            alignment: MemoryLayout<Atomic<Task?>>.alignment\n        )\n        \n        // Initialize all slots to nil\n        for i in 0..<capacity {\n            buffer[i] = Atomic<Task?>(nil)\n        }\n    }\n    \n    deinit {\n        buffer.deallocate()\n    }\n    \n    func push(_ task: Task) {\n        let currentBottom = bottom\n        buffer[currentBottom].store(task)\n        bottom = (bottom + 1) % capacity\n    }\n    \n    func pop() -> Task? {\n        let currentBottom = bottom\n        guard currentBottom > 0 else { return nil }\n        \n        bottom = (currentBottom - 1) % capacity\n        return buffer[bottom",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 794.0283701638109,
+        "stop_reason" : "length",
+        "tokens_per_second" : 169.82642286761237
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 18934097100,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 73.061292,
+      "total_milliseconds" : 3089.849458
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2 – Core Data Structures and Atomic Operations\n\nIn the previous part of this tutorial, we laid the groundwork for understanding what a work-stealing scheduler is and why it's beneficial for concurrent task execution. We also began discussing the design principles behind lock-free programming and introduced the basic structure of our scheduler. Now, we'll dive deep into the implementation details, focusing on the core data structures and atomic operations that make our scheduler both efficient and safe.\n\n## Core Data Structures\n\n### The Work-Stealing Queue\n\nAt the heart of our scheduler lies the work-stealing queue. Each worker thread maintains its own deque (double-ended queue) to store tasks. Tasks are added to the top of the deque and removed from the same end by the owning worker. When a worker needs to steal tasks, it removes them from the bottom of the deque. This design minimizes contention between the owner and thieves.\n\nLet's define the `WorkStealingQueue` structure:\n\n```swift\nimport Foundation\n\nfinal class WorkStealingQueue<Task> {\n    private let buffer: UnsafeMutablePointer<Atomic<Task?>>\n    private let capacity: Int\n    \n    // The bottom index is accessed by the owner thread without synchronization\n    private var bottom: Int = 0\n    \n    // The top index is accessed atomically by both owner and thief threads\n    private let top = Atomic<Int>(0)\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = UnsafeMutablePointer<Atomic<Task?>>.allocate(\n            capacity: capacity,\n            alignment: MemoryLayout<Atomic<Task?>>.alignment\n        )\n        \n        // Initialize all slots to nil\n        for i in 0..<capacity {\n            buffer[i] = Atomic<Task?>(nil)\n        }\n    }\n    \n    deinit {\n        buffer.deallocate()\n    }\n    \n    func push(_ task: Task) {\n        let currentBottom = bottom\n        buffer[currentBottom].store(task)\n        bottom = (bottom + 1) % capacity\n    }\n    \n    func pop() -> Task? {\n        let currentBottom = bottom\n        guard currentBottom > 0 else { return nil }\n        \n        bottom = (currentBottom - 1) % capacity\n        return buffer[bottom",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 804.2074988735392,
+        "stop_reason" : "length",
+        "tokens_per_second" : 166.9475694347808
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 19028469268,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 64.740542,
+      "total_milliseconds" : 3133.683125
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2 – Core Data Structures and Atomic Operations\n\nIn the previous part of this tutorial, we laid the groundwork for understanding what a work-stealing scheduler is and why it's beneficial for concurrent task execution. We also began discussing the design principles behind lock-free programming and introduced the basic structure of our scheduler. Now, we'll dive deep into the implementation details, focusing on the core data structures and atomic operations that make our scheduler both efficient and safe.\n\n## Core Data Structures\n\n### The Work-Stealing Queue\n\nAt the heart of our scheduler lies the work-stealing queue. Each worker thread maintains its own deque (double-ended queue) to store tasks. Tasks are added to the top of the deque and removed from the same end by the owning worker. When a worker needs to steal tasks, it removes them from the bottom of the deque. This design minimizes contention between the owner and thieves.\n\nLet's define the `WorkStealingQueue` structure:\n\n```swift\nimport Foundation\n\nfinal class WorkStealingQueue<Task> {\n    private let buffer: UnsafeMutablePointer<Atomic<Task?>>\n    private let capacity: Int\n    \n    // The bottom index is accessed by the owner thread without synchronization\n    private var bottom: Int = 0\n    \n    // The top index is accessed atomically by both owner and thief threads\n    private let top = Atomic<Int>(0)\n    \n    init(capacity: Int) {\n        self.capacity = capacity\n        self.buffer = UnsafeMutablePointer<Atomic<Task?>>.allocate(\n            capacity: capacity,\n            alignment: MemoryLayout<Atomic<Task?>>.alignment\n        )\n        \n        // Initialize all slots to nil\n        for i in 0..<capacity {\n            buffer[i] = Atomic<Task?>(nil)\n        }\n    }\n    \n    deinit {\n        buffer.deallocate()\n    }\n    \n    func push(_ task: Task) {\n        let currentBottom = bottom\n        buffer[currentBottom].store(task)\n        bottom = (bottom + 1) % capacity\n    }\n    \n    func pop() -> Task? {\n        let currentBottom = bottom\n        guard currentBottom > 0 else { return nil }\n        \n        bottom = (currentBottom - 1) % capacity\n        return buffer[bottom",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 798.4283865072717,
+        "stop_reason" : "length",
+        "tokens_per_second" : 156.97956932811502
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 19028485968,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 65.052166,
+      "total_milliseconds" : 3328.7225829999998
+    }
+  ]
+}

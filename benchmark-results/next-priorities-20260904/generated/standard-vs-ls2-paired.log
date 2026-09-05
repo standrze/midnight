@@ -1,0 +1,60 @@
+{
+  "ls2_minus_standard": {
+    "overall": {
+      "tasks": 137,
+      "qualified": true,
+      "reasons": [],
+      "setting_differences": {},
+      "comparison_kind": "matched_generation_settings",
+      "accuracy_delta": 0.0364963503649635,
+      "paired_95_percent_interval": [
+        -0.014598540145985401,
+        0.08759124087591241
+      ],
+      "candidate_only_correct": 9,
+      "baseline_only_correct": 4
+    },
+    "code": {
+      "tasks": 64,
+      "qualified": true,
+      "reasons": [],
+      "setting_differences": {},
+      "comparison_kind": "matched_generation_settings",
+      "accuracy_delta": 0.03125,
+      "paired_95_percent_interval": [
+        -0.046875,
+        0.109375
+      ],
+      "candidate_only_correct": 4,
+      "baseline_only_correct": 2
+    },
+    "math": {
+      "tasks": 64,
+      "qualified": true,
+      "reasons": [],
+      "setting_differences": {},
+      "comparison_kind": "matched_generation_settings",
+      "accuracy_delta": 0.03125,
+      "paired_95_percent_interval": [
+        -0.03125,
+        0.09375
+      ],
+      "candidate_only_correct": 3,
+      "baseline_only_correct": 1
+    },
+    "retrieval": {
+      "tasks": 9,
+      "qualified": true,
+      "reasons": [],
+      "setting_differences": {},
+      "comparison_kind": "matched_generation_settings",
+      "accuracy_delta": 0.1111111111111111,
+      "paired_95_percent_interval": [
+        -0.2222222222222222,
+        0.4444444444444444
+      ],
+      "candidate_only_correct": 2,
+      "baseline_only_correct": 1
+    }
+  }
+}

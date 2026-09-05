@@ -1,0 +1,11 @@
+{
+  "ls2": {
+    "tasks": 137,
+    "scored": 137,
+    "passed": 111,
+    "accuracy": 0.8102189781021898,
+    "scored_subset_accuracy_diagnostic": 0.8102189781021898,
+    "complete": true,
+    "output_limit_reached": 0
+  }
+}

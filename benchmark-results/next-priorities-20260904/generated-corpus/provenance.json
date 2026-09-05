@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "sources": [
+    {
+      "name": "mbpp",
+      "repo": "google-research/google-research",
+      "revision": "f82046ba5aabbbb427dbfd38a254d26bff08b533",
+      "path": "mbpp/mbpp.jsonl",
+      "source_sha256": "ccf64ceae9c5403bf50a044cb6d505bfd2a2963ee58338ba268fd65beab92a9f"
+    },
+    {
+      "name": "gsm8k",
+      "repo": "openai/grade-school-math",
+      "revision": "b0bb162abedc65e1fdd8e93ed090fd7598ee68bc",
+      "path": "grade_school_math/data/test.jsonl",
+      "source_sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14"
+    }
+  ],
+  "seed": 20260904,
+  "selection": {
+    "math_count": 64,
+    "code_count": 64,
+    "retrieval_context_token_estimates": [
+      4096,
+      16384,
+      32768
+    ]
+  },
+  "task_count": 137,
+  "files": {
+    "tasks.jsonl": "f0bc4abb263adf68d3de793c6e5128417b5969b8314d5f6aaa9962b2eb8af114",
+    "answers.jsonl": "2ffe2f3de3957a259244842ace1d10ccac0d1a3d0b61bb9e2525227ee143ff0f"
+  },
+  "builder_sha256": "28d44452da5ef0ac0021228dd4e5174eaf62d18070ae0cc2bb941fd75ded3a6d",
+  "limitations": [
+    "Only tasks.jsonl is passed to generation. Gold answers, tests and reference bodies are excluded from prompts.",
+    "Code APIs are extracted from reference signatures; private tests stay in the scoring key. Three public MBPP test cases are used, not challenge tests or hidden HumanEval tests.",
+    "Public benchmark training contamination and reuse in prior reference evaluation are possible. Do not use these records for fitting or candidate selection.",
+    "Retrieval contains its supporting fact in the context by design; the scorer key is separate. Context lengths are estimates until measured by the model tokenizer."
+  ]
+}

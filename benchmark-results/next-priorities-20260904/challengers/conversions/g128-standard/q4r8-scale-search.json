@@ -1,0 +1,2418 @@
+{
+  "algorithm" : "q4r8_affine_standard",
+  "bias_refinement_iterations" : 0,
+  "bits" : 4,
+  "created_at" : "2026-09-05T00:47:39Z",
+  "expert_batch_size" : 16,
+  "format" : 1,
+  "group_size" : 128,
+  "joint_affine_refinement_iterations" : 0,
+  "module_quantization_overrides" : {
+    "language_model.lm_head" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.embed_tokens" : {
+      "bits" : 4,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.0.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.1.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.10.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.11.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.12.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.13.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.14.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.15.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.16.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.17.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.18.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.19.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.2.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.20.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.21.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.22.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.23.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.24.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.25.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.26.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.27.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.28.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.29.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.3.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.30.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.31.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.32.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.33.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.34.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.35.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.36.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.37.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.38.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.39.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.4.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.5.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.6.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.7.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.8.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.gate.proj" : {
+      "bits" : 8,
+      "group_size" : 64,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.shared_expert.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.shared_expert.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.shared_expert.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.switch_mlp.down_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.switch_mlp.gate_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.mlp.switch_mlp.up_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.self_attn.g_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.self_attn.k_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.self_attn.o_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.self_attn.q_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    },
+    "language_model.model.layers.9.self_attn.v_proj" : {
+      "bits" : 4,
+      "group_size" : 128,
+      "mode" : "affine"
+    }
+  },
+  "output_tensor_bytes" : 17783948800,
+  "peak_mlx_memory_bytes" : 5734290432,
+  "preflight_peak_mlx_memory_bytes" : 144900240,
+  "q4_modules_rescored" : 438,
+  "q8_modules_preserved" : 39,
+  "quantization_device" : "Device(gpu, 0)",
+  "search_factors" : [
+
+  ],
+  "source_model" : "\/Users\/stephen\/Documents\/ChatGPT\/midnight\/tmp\/models\/Laguna-XS-2.1-BF16-c5f36269",
+  "source_tensors_released" : 30513,
+  "source_tensors_remaining" : 0,
+  "standard_q4_embeddings_preserved" : 1,
+  "status" : "experimental_measured_candidate",
+  "template_model" : "\/Users\/stephen\/Documents\/ChatGPT\/midnight\/tmp\/models\/Laguna-XS-2.1-Q4R8-c42e0a8f",
+  "template_tensor_bytes" : 18821963264
+}

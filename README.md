@@ -18,12 +18,14 @@ serving path.
 
 ## Quantization and reproducible benchmarks
 
-Version **0.2.0-beta.2** adds bounded Laguna calibration and Q4R8 refinement,
-reproducible quality/runtime comparisons, and an upstream M5 NAX correctness
-fix. The experimental fused gate/up-SiLU kernel remains opt-in. Quantizer
-quality varies by domain; see the [measured results](benchmark-results/quantization-20260904/README.md),
-[benchmarking workflow](Docs/benchmarking.md), and
+Version **0.2.0-beta.3** adds generated code/math and long-context retrieval
+checks, isolated code scoring, and bounded standard/ScaleSearch Q4/G128 conversion.
+See the [generated evaluation workflow](Docs/generated-evaluation.md),
+[runtime profiling](Docs/runtime-profiling.md),
+[measured results](benchmark-results/next-priorities-20260904/README.md), and
 [quantization research](Docs/mlx-quantization-research-20260904.md).
+Quantization quality varies by model and domain; runtime defaults change only
+when controlled measurements support them.
 
 ## Memory and context controls
 

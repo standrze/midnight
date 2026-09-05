@@ -53,6 +53,9 @@ private struct RescoreProvenance: Encodable {
   var sourceTensorsReleased: Int = 0
   var sourceTensorsRemaining: Int = 0
   var quantizationDevice: String = "unspecified"
+  var moduleQuantizationOverrides: [String: LagunaQuantizationGeometry]? = nil
+  var templateTensorBytes: Int = 0
+  var outputTensorBytes: Int = 0
 
   enum CodingKeys: String, CodingKey {
     case format, status, algorithm, bits
@@ -81,6 +84,9 @@ private struct RescoreProvenance: Encodable {
     case sourceTensorsReleased = "source_tensors_released"
     case sourceTensorsRemaining = "source_tensors_remaining"
     case quantizationDevice = "quantization_device"
+    case moduleQuantizationOverrides = "module_quantization_overrides"
+    case templateTensorBytes = "template_tensor_bytes"
+    case outputTensorBytes = "output_tensor_bytes"
   }
 }
 
@@ -157,6 +163,13 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
   )
   var expertBatch = 16
 
+  @Option(name: .customLong("group-size"),
+    help: "Output Q4 group size, 64 or 128. G128 preserves Q8/G64 routers and the Q4/G64 embedding.")
+  var groupSize = 64
+
+  @Flag(name: .customLong("standard-q4"), help: "Use native affine Q4 without ScaleSearch as a grouping control.")
+  var standardQ4 = false
+
   @Option(name: .customLong("activation-stats"),
     help: "Laguna expert-conditional BF16 calibration safetensors; enables activation-weighted refinement.")
   var activationStats: String?
@@ -178,6 +191,8 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     template: String,
     destination: String,
     expertBatch: Int = 16,
+    groupSize: Int = 64,
+    standardQ4: Bool = false,
     activationStats: String? = nil,
     validationStats: String? = nil,
     preflightOnly: Bool = false,
@@ -188,6 +203,8 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     command.template = template
     command.destination = destination
     command.expertBatch = expertBatch
+    command.groupSize = groupSize
+    command.standardQ4 = standardQ4
     command.activationStats = activationStats
     command.validationStats = validationStats
     command.preflightOnly = preflightOnly
@@ -197,6 +214,10 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
   }
 
   public mutating func validate() throws {
+    guard [64, 128].contains(groupSize) else { throw ValidationError("--group-size must be 64 or 128.") }
+    guard activationStats == nil || (groupSize == 64 && !standardQ4) else {
+      throw ValidationError("--activation-stats currently requires searched Q4 group-64; G128 and --standard-q4 are separate challengers.")
+    }
     guard validationStats == nil || activationStats != nil else {
       throw ValidationError("--validation-stats requires --activation-stats.")
     }
@@ -278,6 +299,10 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
         + "experts=\(sourceConfiguration.numberOfExperts) device=\(Device.defaultDevice())"
     )
 
+    let groupPolicy = groupSize == 64 ? nil : try LagunaGroupSizePolicy(
+      templateConfiguration: Data(contentsOf: templateURL.appendingPathComponent("config.json")),
+      groupSize: groupSize, q4Modules: q4Modules, q8Modules: q8Modules, embeddings: embeddingModules)
+    print("Output Q4 policy: group_size=\(groupSize) method=\(standardQ4 ? "standard" : "LS2"); routers and embedding retain G64.")
     let sourceConfigData = try Data(contentsOf: sourceURL.appendingPathComponent("config.json"))
     let sourceIndexData = try Data(contentsOf: sourceIndexURL)
     let calibration = try activationStats.map {
@@ -296,6 +321,14 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
         q4Modules: q4Modules, q8Modules: q8Modules, expertCount: sourceConfiguration.numberOfExperts)
     }
     var sourceArrays = try loadSourceArrays(sourceURL: sourceURL, index: sourceIndex)
+    if groupSize != 64 {
+      for key in sourceUsePlan.remainingUses.keys {
+        guard let weight = sourceArrays[key], weight.ndim == 2,
+          weight.dim(-1) > 0, weight.dim(-1) % groupSize == 0 else {
+          throw RescoreError.invalidInput("source input width is not compatible with group-\(groupSize): \(key)")
+        }
+      }
+    }
     if let calibration {
       try validateActivationSourceGeometry(calibration, q4Modules: q4Modules, sourceArrays: sourceArrays)
     }
@@ -326,6 +359,9 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     var outputComplete = false
     defer { if !outputComplete { try? FileManager.default.removeItem(at: destinationURL) } }
     try copySidecars(from: templateURL, to: destinationURL)
+    if let groupPolicy {
+      try groupPolicy.configuration.write(to: destinationURL.appendingPathComponent("config.json"), options: .atomic)
+    }
     var activationDiagnostics = [String: ActivationWeightedScaleSearchDiagnostics]()
     var retainedTemplateExperts = [String: [Int]]()
 
@@ -350,9 +386,12 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     }
     var pendingReplacements = [String: MLXArray]()
     var completedModules = 0
+    var templateTensorBytes = 0
+    var outputTensorBytes = 0
     for (shardOffset, shardName) in shardNames.enumerated() {
       let sourceShardURL = templateURL.appendingPathComponent(shardName)
       var arrays = try loadArrays(url: sourceShardURL, stream: .cpu)
+      templateTensorBytes += arrays.values.reduce(0) { $0 + $1.nbytes }
       let modules = (modulesByShard[shardName] ?? []).sorted()
       print("[shard \(shardOffset + 1)/\(shardNames.count)] \(shardName): \(modules.count) Q4 module(s)")
 
@@ -413,6 +452,7 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
 
       Stream.defaultStream(Device.defaultDevice()).synchronize()
       let temporaryURL = destinationURL.appendingPathComponent(".\(shardName).partial.safetensors")
+      outputTensorBytes += arrays.values.reduce(0) { $0 + $1.nbytes }
       try save(arrays: arrays, metadata: ["format": "mlx"], url: temporaryURL)
       let outputURL = destinationURL.appendingPathComponent(shardName)
       try FileManager.default.moveItem(at: temporaryURL, to: outputURL)
@@ -429,10 +469,13 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       )
     }
 
-    try FileManager.default.copyItem(
-      at: templateIndexURL,
-      to: destinationURL.appendingPathComponent("model.safetensors.index.json")
-    )
+    let outputIndexURL = destinationURL.appendingPathComponent("model.safetensors.index.json")
+    if groupPolicy != nil {
+      try LagunaGroupSizePolicy.updatedIndex(Data(contentsOf: templateIndexURL), tensorBytes: outputTensorBytes)
+        .write(to: outputIndexURL, options: .atomic)
+    } else {
+      try FileManager.default.copyItem(at: templateIndexURL, to: outputIndexURL)
+    }
     var provenance = RescoreProvenance(
       createdAt: ISO8601DateFormatter().string(from: Date()),
       sourceModel: sourceURL.path,
@@ -442,6 +485,16 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
       standardQ4EmbeddingsPreserved: embeddingModules.count,
       expertBatchSize: expertBatch
     )
+    provenance.groupSize = groupSize
+    provenance.templateTensorBytes = templateTensorBytes
+    provenance.outputTensorBytes = outputTensorBytes
+    provenance.moduleQuantizationOverrides = groupPolicy?.overrides
+    if standardQ4 {
+      provenance.algorithm = "q4r8_affine_standard"
+      provenance.searchFactors = []
+      provenance.biasRefinementIterations = 0
+      provenance.jointAffineRefinementIterations = 0
+    }
     provenance.peakMLXMemoryBytes = Memory.peakMemory
     provenance.preflightPeakMLXMemoryBytes = preflightPeakMemory
     provenance.sourceTensorsReleased = sourceTensorsReleased
@@ -496,7 +549,14 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
   }
 
   private func searched(_ source: MLXArray) -> QuantizedArrays {
-    let result = q4AffineScaleSearchQuantized(source)
+    let result: QuantizedArrays
+    if standardQ4 {
+      let arrays = MLX.quantized(source, groupSize: groupSize, bits: 4, mode: .affine)
+      result = .init(weight: arrays.wq, scales: arrays.scales, biases: arrays.biases!)
+    } else {
+      let arrays = q4AffineScaleSearchQuantized(source, groupSize: groupSize)
+      result = .init(weight: arrays.weight, scales: arrays.scales, biases: arrays.biases)
+    }
     MLX.eval(result.weight, result.scales, result.biases)
     Stream.defaultStream(Device.defaultDevice()).synchronize()
     return .init(weight: result.weight, scales: result.scales, biases: result.biases)
@@ -574,12 +634,20 @@ public struct LagunaScaleSearchRescorer: ParsableCommand {
     guard let templateValue = arrays[key] else {
       throw RescoreError.incompatibleTemplate("\(key) is not in its declared shard")
     }
-    guard value.shape == templateValue.shape,
+    var expectedShape = templateValue.shape
+    if groupSize != 64, key.hasSuffix(".scales") || key.hasSuffix(".biases") {
+      guard let last = expectedShape.last, last % (groupSize / 64) == 0 else {
+        throw RescoreError.incompatibleTemplate("template metadata cannot be regrouped: \(key)")
+      }
+      expectedShape[expectedShape.count - 1] = last / (groupSize / 64)
+    }
+    let expectedBytes = expectedShape.reduce(templateValue.dtype.size, *)
+    guard value.shape == expectedShape,
       value.dtype == templateValue.dtype,
-      value.nbytes == templateValue.nbytes
+      value.nbytes == expectedBytes
     else {
       throw RescoreError.incompatibleTemplate(
-        "\(key) expected shape=\(templateValue.shape) dtype=\(templateValue.dtype) bytes=\(templateValue.nbytes), "
+        "\(key) expected shape=\(expectedShape) dtype=\(templateValue.dtype) bytes=\(expectedBytes), "
           + "got shape=\(value.shape) dtype=\(value.dtype) bytes=\(value.nbytes)"
       )
     }

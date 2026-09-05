@@ -1,0 +1,398 @@
+{
+  "binaries": {
+    "model-runner-laguna-q4r8-rescore": "b52a633c894ded1facd462b80fba5bf92c809d0031892e20409f3101080bb080",
+    "model-runner-generation-bench": "adaa43996c9d4a3d4a90bf920254de175cc7427440d4d33b95ecd88c304f5a9e",
+    "model-runner-quality-bench": "d3bf479d6ae06fb35e25a17a410adcdddfb2ff85034d7da0e4c6479cc7b6b4e7"
+  },
+  "runs": [
+    {
+      "label": "standard-nll",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/standard-nll.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "started_at": "2026-09-05T00:44:16.774805+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T00:45:17.324140+00:00"
+    },
+    {
+      "label": "ls2-nll",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/ls2-nll.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "started_at": "2026-09-05T00:45:17.325397+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T00:46:20.895464+00:00"
+    },
+    {
+      "label": "awss-nll",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/awss-nll.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "started_at": "2026-09-05T00:46:20.896829+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T00:47:21.180786+00:00"
+    },
+    {
+      "label": "g128-standard-conversion",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-laguna-q4r8-rescore",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-BF16-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269",
+        "--expert-batch",
+        "16",
+        "--group-size",
+        "128",
+        "--standard-q4"
+      ],
+      "started_at": "2026-09-05T00:47:21.182165+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T00:47:39.840282+00:00"
+    },
+    {
+      "label": "g128-standard-generation",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-generation-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269",
+        "/private/tmp/midnight-priorities-20260904/generated-corpus/tasks.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/g128-standard-generation.json",
+        "--engine",
+        "metal",
+        "--tokens",
+        "1024",
+        "--prefill-step-size",
+        "512",
+        "--kv-compression",
+        "none"
+      ],
+      "started_at": "2026-09-05T00:47:46.544119+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T00:53:37.955985+00:00"
+    },
+    {
+      "label": "g128-standard-nll",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/g128-standard-nll.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "started_at": "2026-09-05T00:53:37.956701+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T00:54:22.540956+00:00"
+    },
+    {
+      "label": "g128-ls2-conversion",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-laguna-q4r8-rescore",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-BF16-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269",
+        "--expert-batch",
+        "16",
+        "--group-size",
+        "128"
+      ],
+      "started_at": "2026-09-05T00:54:22.541468+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T01:07:55.530833+00:00"
+    },
+    {
+      "label": "g128-ls2-generation",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-generation-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269",
+        "/private/tmp/midnight-priorities-20260904/generated-corpus/tasks.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/g128-ls2-generation.json",
+        "--engine",
+        "metal",
+        "--tokens",
+        "1024",
+        "--prefill-step-size",
+        "512",
+        "--kv-compression",
+        "none"
+      ],
+      "started_at": "2026-09-05T01:08:02.103100+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T01:14:12.264271+00:00"
+    },
+    {
+      "label": "g128-ls2-nll",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/g128-ls2-nll.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "started_at": "2026-09-05T01:14:12.265575+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T01:14:59.811860+00:00"
+    },
+    {
+      "label": "kv-none",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-generation-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+        "/private/tmp/midnight-priorities-20260904/retrieval-corpus/tasks.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/kv-none.json",
+        "--engine",
+        "metal",
+        "--tokens",
+        "1024",
+        "--prefill-step-size",
+        "512",
+        "--kv-compression",
+        "none"
+      ],
+      "started_at": "2026-09-05T01:14:59.813434+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T01:17:10.342622+00:00"
+    },
+    {
+      "label": "kv-affine8",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-generation-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+        "/private/tmp/midnight-priorities-20260904/retrieval-corpus/tasks.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/kv-affine8.json",
+        "--engine",
+        "metal",
+        "--tokens",
+        "1024",
+        "--prefill-step-size",
+        "512",
+        "--kv-compression",
+        "affine8"
+      ],
+      "started_at": "2026-09-05T01:17:10.343238+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T01:19:12.601637+00:00"
+    },
+    {
+      "label": "kv-turbo8v4",
+      "command": [
+        "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-generation-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+        "/private/tmp/midnight-priorities-20260904/retrieval-corpus/tasks.jsonl",
+        "/private/tmp/midnight-priorities-20260904/challengers/kv-turbo8v4.json",
+        "--engine",
+        "metal",
+        "--tokens",
+        "1024",
+        "--prefill-step-size",
+        "512",
+        "--kv-compression",
+        "turbo8v4"
+      ],
+      "started_at": "2026-09-05T01:19:12.602095+00:00",
+      "exit_code": 0,
+      "finished_at": "2026-09-05T01:21:24.919528+00:00"
+    }
+  ],
+  "models": [
+    {
+      "label": "g128-standard",
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269",
+      "metadata": [
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/chat_template.jinja",
+          "bytes": 6116,
+          "mtime_ns": 1788556802043898720,
+          "sha256": "5f1bf14725b6a0e662678e7ca66d7b347bbaa436b09db038472045aba37da2f2"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/config.json",
+          "bytes": 135583,
+          "mtime_ns": 1788569242758520221,
+          "sha256": "81acb3cac6e30b3d3a52cd79a4ad1f8ea1e333a7805c9da363b006644eb7ebb5"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/generation_config.json",
+          "bytes": 463,
+          "mtime_ns": 1788556801698311006,
+          "sha256": "00380271cff87fdd107f7e9a6ca562ec03527db044faa976883fc3399f8a1463"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/midnight-source.json",
+          "bytes": 107,
+          "mtime_ns": 1788557067931411400,
+          "sha256": "542bd79f779d408550925f1cdffed7b640827e71908a0e2444613037d0e9f427"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/model.safetensors.index.json",
+          "bytes": 167756,
+          "mtime_ns": 1788569259827061665,
+          "sha256": "29814788222efc84ca501bdccbda4c39204daccd1efc5a9dafa7281d67d13153"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/q4r8-scale-search.json",
+          "bytes": 66292,
+          "mtime_ns": 1788569259829403515,
+          "sha256": "71a69980413e706583b912d4eea5ef849c4e6ff1261f5b4c9a186d4e7c4edaa1"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/special_tokens_map.json",
+          "bytes": 214,
+          "mtime_ns": 1788557027966150104,
+          "sha256": "70cd3459fde61761e9440751a590e89a108c09b1803cc7727f5ad1ed1ea6122b"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/tokenizer.json",
+          "bytes": 7287678,
+          "mtime_ns": 1788557032872367021,
+          "sha256": "ff04405d2d1e1b6c77a8be25f0fce9371003a558b055c23248d9e8ca1d956d92"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/tokenizer_config.json",
+          "bytes": 429,
+          "mtime_ns": 1788557029218358303,
+          "sha256": "1c05d3da3b62a884f66d05c0b68327a69c491bc105ba370cae94d14f3e4f6af9"
+        }
+      ],
+      "weights": [
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/model-00001-of-00004.safetensors",
+          "bytes": 4956812602,
+          "mtime_ns": 1788569247519551034,
+          "sha256": "aac7eee7d8d32f72d6bf28260b1530550f95d0ccc7993e927328a910412d4ec8"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/model-00002-of-00004.safetensors",
+          "bytes": 5072838050,
+          "mtime_ns": 1788569252443337617,
+          "sha256": "59dfb9e8cbf0157f41044fb5497b467dab52eec293671038f5471c0d56b3e389"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/model-00003-of-00004.safetensors",
+          "bytes": 4969374385,
+          "mtime_ns": 1788569257142089910,
+          "sha256": "3e105f4e95f9e0be187a392d184ebdbe12155bd8daba654d23072beefe0dbad2"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269/model-00004-of-00004.safetensors",
+          "bytes": 2785142818,
+          "mtime_ns": 1788569259794186893,
+          "sha256": "ef025c3c243d02c61c6539882f0a24e9ca0edb544790b08e575a511a3fac0a36"
+        }
+      ],
+      "weight_hash_policy": "full_sha256"
+    },
+    {
+      "label": "g128-ls2",
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269",
+      "metadata": [
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/chat_template.jinja",
+          "bytes": 6116,
+          "mtime_ns": 1788556802043898720,
+          "sha256": "5f1bf14725b6a0e662678e7ca66d7b347bbaa436b09db038472045aba37da2f2"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/config.json",
+          "bytes": 135583,
+          "mtime_ns": 1788569662858807398,
+          "sha256": "81acb3cac6e30b3d3a52cd79a4ad1f8ea1e333a7805c9da363b006644eb7ebb5"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/generation_config.json",
+          "bytes": 463,
+          "mtime_ns": 1788556801698311006,
+          "sha256": "00380271cff87fdd107f7e9a6ca562ec03527db044faa976883fc3399f8a1463"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/midnight-source.json",
+          "bytes": 107,
+          "mtime_ns": 1788557067931411400,
+          "sha256": "542bd79f779d408550925f1cdffed7b640827e71908a0e2444613037d0e9f427"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/model.safetensors.index.json",
+          "bytes": 167756,
+          "mtime_ns": 1788570475520497713,
+          "sha256": "29814788222efc84ca501bdccbda4c39204daccd1efc5a9dafa7281d67d13153"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/q4r8-scale-search.json",
+          "bytes": 66396,
+          "mtime_ns": 1788570475524089346,
+          "sha256": "22635ef5e2c091d80682a1d93a5294f513300e30c47e96541f0c5de83765466c"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/special_tokens_map.json",
+          "bytes": 214,
+          "mtime_ns": 1788557027966150104,
+          "sha256": "70cd3459fde61761e9440751a590e89a108c09b1803cc7727f5ad1ed1ea6122b"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/tokenizer.json",
+          "bytes": 7287678,
+          "mtime_ns": 1788557032872367021,
+          "sha256": "ff04405d2d1e1b6c77a8be25f0fce9371003a558b055c23248d9e8ca1d956d92"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/tokenizer_config.json",
+          "bytes": 429,
+          "mtime_ns": 1788557029218358303,
+          "sha256": "1c05d3da3b62a884f66d05c0b68327a69c491bc105ba370cae94d14f3e4f6af9"
+        }
+      ],
+      "weights": [
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/model-00001-of-00004.safetensors",
+          "bytes": 4956812494,
+          "mtime_ns": 1788569890039921001,
+          "sha256": "1c71e3f4032f9467a3c3a22ab38ff2b0d44b0c3e3f4981340a6275d95ab23383"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/model-00002-of-00004.safetensors",
+          "bytes": 5072838074,
+          "mtime_ns": 1788570119958616397,
+          "sha256": "3b92a5bbfd35366c6d527e836373a8ce8315c9ec55a91462787820c31c494190"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/model-00003-of-00004.safetensors",
+          "bytes": 4969374091,
+          "mtime_ns": 1788570350619186720,
+          "sha256": "62bdd7ac4453fb0b9e97cf7a6239f4d2e3209fc8b6a33037cdcf670eaa6ae67e"
+        },
+        {
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-LS2-c5f36269/model-00004-of-00004.safetensors",
+          "bytes": 2785142758,
+          "mtime_ns": 1788570475482545451,
+          "sha256": "1969428bf3dc4132f091de290dcd89f25a8cccbc45d3dd060a9f7d980748779d"
+        }
+      ],
+      "weight_hash_policy": "full_sha256"
+    }
+  ]
+}

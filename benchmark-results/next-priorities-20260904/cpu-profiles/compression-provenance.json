@@ -1,0 +1,66 @@
+{
+  "purpose": "Lossless deterministic compression of target-only Time Profiler XML exports; original bytes and SHA256 remain reproducible.",
+  "profiles": [
+    {
+      "source_path": "/private/tmp/midnight-priorities-20260904/attached-time-profile.xml",
+      "original_name": "attached-time-profile.xml",
+      "original_bytes": 2813396,
+      "original_sha256": "477bebc8ee0c8e401b20273606d0dda8662d2da89488ed2035aedadff83b4fdb",
+      "archive_name": "attached-time-profile.xml.gz",
+      "compressed_bytes": 256268,
+      "compressed_sha256": "d4444afe3cfb2d52268951d386fca69ed22d1e9c74ac20a4e60b0ca770b54b2c",
+      "compression": {
+        "format": "gzip",
+        "mtime": 0,
+        "filename": "",
+        "level": 9
+      },
+      "target_process_row_counts": {
+        "model-runner-runtime-bench (10555)": 3986
+      },
+      "thread_state_row_counts": {
+        "Running": 3986
+      },
+      "analysis_name": "profile-analysis.json",
+      "analysis_interval_seconds": {
+        "start": 0,
+        "end": null
+      }
+    },
+    {
+      "source_path": "/private/tmp/midnight-priorities-20260904/generated-time-profile.xml",
+      "original_name": "generated-time-profile.xml",
+      "original_bytes": 20023754,
+      "original_sha256": "27a36310f181baa9e95f94278cb572ca474d74443202f03f8bcc0cd08a9dfac7",
+      "archive_name": "generated-time-profile.xml.gz",
+      "compressed_bytes": 1737587,
+      "compressed_sha256": "fda3a8addb7b69fada1fedb25fd5446adf1e7681ea00f0dc2c22d17fac27afcb",
+      "compression": {
+        "format": "gzip",
+        "mtime": 0,
+        "filename": "",
+        "level": 9
+      },
+      "target_process_row_counts": {
+        "model-runner-generation-bench (18453)": 40440
+      },
+      "thread_state_row_counts": {
+        "Running": 40440
+      },
+      "analysis_name": "generated-profile-analysis.json",
+      "analysis_interval_seconds": {
+        "start": 5.0,
+        "end": 25.0
+      }
+    }
+  ],
+  "limitations": [
+    "These are sampled CPU stack weights, not wall-clock percentages or GPU utilization.",
+    "Use the recorded analysis interval; a full export can also contain loading, prefill or teardown.",
+    "Profiled generation/runtime timings are diagnostic and must not be used as unprofiled speed evidence.",
+    "The attached runtime run has its original profile-provenance.json. The generated export has its saved analysis; this archival manifest does not reconstruct missing contemporaneous invocation/build provenance."
+  ],
+  "excluded": [
+    "Raw Instruments .trace bundles, raw Metal traces, and the failed direct-launch startup-only time-profile.xml."
+  ]
+}

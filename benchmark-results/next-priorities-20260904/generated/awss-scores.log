@@ -1,0 +1,11 @@
+{
+  "awss": {
+    "tasks": 137,
+    "scored": 137,
+    "passed": 106,
+    "accuracy": 0.7737226277372263,
+    "scored_subset_accuracy_diagnostic": 0.7737226277372263,
+    "complete": true,
+    "output_limit_reached": 0
+  }
+}

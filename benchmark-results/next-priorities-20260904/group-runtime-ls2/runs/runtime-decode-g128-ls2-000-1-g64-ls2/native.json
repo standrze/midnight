@@ -1,0 +1,96 @@
+{
+  "allow_early_stop" : false,
+  "context_length" : 262144,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-09-05T01:25:20Z",
+  "engine" : "metal",
+  "format" : 1,
+  "kv_compression" : "none",
+  "measured_trials" : 1,
+  "median_decode_tokens_per_second" : 104.43197341849276,
+  "median_prompt_tokens_per_second" : 449.5796616927795,
+  "memory_limit_bytes" : 54975581389,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269",
+  "prefill_step_size" : 512,
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 512,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2\n\nIn the previous part, we laid the groundwork for implementing a lock-free work-stealing scheduler in Swift. We defined the core data structures, including the `Task` struct and the `WorkStealingScheduler` class, and we began implementing the `submit` and `run` methods. In this continuation, we'll dive deeper into the implementation details, focusing on the lock-free queue implementation, the work-stealing algorithm, and the integration with Swift's concurrency model.\n\n## Lock-Free Queue Implementation\n\nThe heart of our work-stealing scheduler is the lock-free queue. This queue must support concurrent access from multiple threads without the use of traditional locks. Instead, we'll use atomic operations provided by Swift's `Atomic` types to ensure thread safety.\n\n### Designing the Queue Structure\n\nOur queue will be a circular buffer implemented as a dynamically-sized array. The queue maintains two atomic pointers: `head` and `tail`. The `head` pointer points to the front of the queue (where tasks are dequeued), and the `tail` pointer points to the back (where tasks are enqueued).\n\n```swift\nimport Atomics\n\nfinal class LockFreeQueue<T> {\n    private var buffer: [T?]\n    private var capacity: Int\n    private let initialCapacity: Int\n    \n    // Atomic pointers for head and tail\n    private let head = ManagedAtomic<Int>(0)\n    private let tail = ManagedAtomic<Int>(0)\n    \n    // Memory order for atomic operations\n    private let memoryOrder = Ordering.acqRel\n    \n    init(initialCapacity: Int = 16) {\n        self.initialCapacity = max(1, initialCapacity)\n        self.capacity = self.initialCapacity\n        self.buffer = Array(repeating: nil, count: self.capacity)\n    }\n    \n    func enqueue(_ element: T) {\n        let currentTail = tail.load(ordering: memoryOrder)\n        let currentHead = head.load(ordering: memoryOrder)\n        \n        // Check if the queue is full\n        if currentTail - currentHead >= capacity {\n            // Resize the buffer\n            resize()\n        }\n        \n        // Store the element\n        let index = currentTail & (capacity - 1)\n        buffer[index] = element\n        \n        // Increment the tail\n       ",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 449.5796616927795,
+        "stop_reason" : "length",
+        "tokens_per_second" : 104.43197341849276
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 19028502364,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 117.050792,
+      "total_milliseconds" : 5020.971834
+    }
+  ],
+  "warmup_count" : 3,
+  "warmups" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2\n\nIn the previous part, we laid the groundwork for implementing a lock-free work-stealing scheduler in Swift. We defined the core data structures, including the `Task` struct and the `WorkStealingScheduler` class, and we began implementing the `submit` and `run` methods. In this continuation, we'll dive deeper into the implementation details, focusing on the lock-free queue implementation, the work-stealing algorithm, and the integration with Swift's concurrency model.\n\n## Lock-Free Queue Implementation\n\nThe heart of our work-stealing scheduler is the lock-free queue. This queue must support concurrent access from multiple threads without the use of traditional locks. Instead, we'll use atomic operations provided by Swift's `Atomic` types to ensure thread safety.\n\n### Designing the Queue Structure\n\nOur queue will be a circular buffer implemented as a dynamically-sized array. The queue maintains two atomic pointers: `head` and `tail`. The `head` pointer points to the front of the queue (where tasks are dequeued), and the `tail` pointer points to the back (where tasks are enqueued).\n\n```swift\nimport Atomics\n\nfinal class LockFreeQueue<T> {\n    private var buffer: [T?]\n    private var capacity: Int\n    private let initialCapacity: Int\n    \n    // Atomic pointers for head and tail\n    private let head = ManagedAtomic<Int>(0)\n    private let tail = ManagedAtomic<Int>(0)\n    \n    // Memory order for atomic operations\n    private let memoryOrder = Ordering.acqRel\n    \n    init(initialCapacity: Int = 16) {\n        self.initialCapacity = max(1, initialCapacity)\n        self.capacity = self.initialCapacity\n        self.buffer = Array(repeating: nil, count: self.capacity)\n    }\n    \n    func enqueue(_ element: T) {\n        let currentTail = tail.load(ordering: memoryOrder)\n        let currentHead = head.load(ordering: memoryOrder)\n        \n        // Check if the queue is full\n        if currentTail - currentHead >= capacity {\n            // Resize the buffer\n            resize()\n        }\n        \n        // Store the element\n        let index = currentTail & (capacity - 1)\n        buffer[index] = element\n        \n        // Increment the tail\n       ",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 717.3196013811763,
+        "stop_reason" : "length",
+        "tokens_per_second" : 131.72305389666903
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 18934097100,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 79.713833,
+      "total_milliseconds" : 3969.4245
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2\n\nIn the previous part, we laid the groundwork for implementing a lock-free work-stealing scheduler in Swift. We defined the core data structures, including the `Task` struct and the `WorkStealingScheduler` class, and we began implementing the `submit` and `run` methods. In this continuation, we'll dive deeper into the implementation details, focusing on the lock-free queue implementation, the work-stealing algorithm, and the integration with Swift's concurrency model.\n\n## Lock-Free Queue Implementation\n\nThe heart of our work-stealing scheduler is the lock-free queue. This queue must support concurrent access from multiple threads without the use of traditional locks. Instead, we'll use atomic operations provided by Swift's `Atomic` types to ensure thread safety.\n\n### Designing the Queue Structure\n\nOur queue will be a circular buffer implemented as a dynamically-sized array. The queue maintains two atomic pointers: `head` and `tail`. The `head` pointer points to the front of the queue (where tasks are dequeued), and the `tail` pointer points to the back (where tasks are enqueued).\n\n```swift\nimport Atomics\n\nfinal class LockFreeQueue<T> {\n    private var buffer: [T?]\n    private var capacity: Int\n    private let initialCapacity: Int\n    \n    // Atomic pointers for head and tail\n    private let head = ManagedAtomic<Int>(0)\n    private let tail = ManagedAtomic<Int>(0)\n    \n    // Memory order for atomic operations\n    private let memoryOrder = Ordering.acqRel\n    \n    init(initialCapacity: Int = 16) {\n        self.initialCapacity = max(1, initialCapacity)\n        self.capacity = self.initialCapacity\n        self.buffer = Array(repeating: nil, count: self.capacity)\n    }\n    \n    func enqueue(_ element: T) {\n        let currentTail = tail.load(ordering: memoryOrder)\n        let currentHead = head.load(ordering: memoryOrder)\n        \n        // Check if the queue is full\n        if currentTail - currentHead >= capacity {\n            // Resize the buffer\n            resize()\n        }\n        \n        // Store the element\n        let index = currentTail & (capacity - 1)\n        buffer[index] = element\n        \n        // Increment the tail\n       ",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 476.7354287409482,
+        "stop_reason" : "length",
+        "tokens_per_second" : 125.5236684496911
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 19028469268,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 108.62875,
+      "total_milliseconds" : 4190.439917
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift: Part 2\n\nIn the previous part, we laid the groundwork for implementing a lock-free work-stealing scheduler in Swift. We defined the core data structures, including the `Task` struct and the `WorkStealingScheduler` class, and we began implementing the `submit` and `run` methods. In this continuation, we'll dive deeper into the implementation details, focusing on the lock-free queue implementation, the work-stealing algorithm, and the integration with Swift's concurrency model.\n\n## Lock-Free Queue Implementation\n\nThe heart of our work-stealing scheduler is the lock-free queue. This queue must support concurrent access from multiple threads without the use of traditional locks. Instead, we'll use atomic operations provided by Swift's `Atomic` types to ensure thread safety.\n\n### Designing the Queue Structure\n\nOur queue will be a circular buffer implemented as a dynamically-sized array. The queue maintains two atomic pointers: `head` and `tail`. The `head` pointer points to the front of the queue (where tasks are dequeued), and the `tail` pointer points to the back (where tasks are enqueued).\n\n```swift\nimport Atomics\n\nfinal class LockFreeQueue<T> {\n    private var buffer: [T?]\n    private var capacity: Int\n    private let initialCapacity: Int\n    \n    // Atomic pointers for head and tail\n    private let head = ManagedAtomic<Int>(0)\n    private let tail = ManagedAtomic<Int>(0)\n    \n    // Memory order for atomic operations\n    private let memoryOrder = Ordering.acqRel\n    \n    init(initialCapacity: Int = 16) {\n        self.initialCapacity = max(1, initialCapacity)\n        self.capacity = self.initialCapacity\n        self.buffer = Array(repeating: nil, count: self.capacity)\n    }\n    \n    func enqueue(_ element: T) {\n        let currentTail = tail.load(ordering: memoryOrder)\n        let currentHead = head.load(ordering: memoryOrder)\n        \n        // Check if the queue is full\n        if currentTail - currentHead >= capacity {\n            // Resize the buffer\n            resize()\n        }\n        \n        // Store the element\n        let index = currentTail & (capacity - 1)\n        buffer[index] = element\n        \n        // Increment the tail\n       ",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 472.17095087031214,
+        "stop_reason" : "length",
+        "tokens_per_second" : 113.06376592236886
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 19028485980,
+      "prompt_token_id_fingerprint" : "fnv1a64:01cd0f777fe2a08d",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 109.511041,
+      "total_milliseconds" : 4639.816625
+    }
+  ]
+}

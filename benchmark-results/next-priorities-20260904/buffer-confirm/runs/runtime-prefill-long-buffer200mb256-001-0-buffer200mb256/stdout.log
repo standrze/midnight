@@ -1,0 +1,10 @@
+MLX resource guard: memory=54975581389 bytes cache=268435456 bytes
+Measured MLX wired-memory plan: peak=20694462226 kv=83927040 workspace=1788571922 limit=23032343905 cap=54975581389
+Context policy: limit=262144, prefill=512, KV=none, geometry=known
+Conversation prefix cache: entries=4 memory=2147483648 bytes
+warmup 1/3 [target_only]: 108.81 tok/s, TTFT 1650.93 ms
+warmup 2/3 [target_only]: 93.34 tok/s, TTFT 1931.16 ms
+warmup 3/3 [target_only]: 84.66 tok/s, TTFT 1710.45 ms
+trial 1/1 [target_only]: 82.20 tok/s, TTFT 2063.79 ms
+median decode: 82.20 tok/s
+Wrote /private/tmp/midnight-priorities-20260904/buffer-confirm/runs/runtime-prefill-long-buffer200mb256-001-0-buffer200mb256/native.json

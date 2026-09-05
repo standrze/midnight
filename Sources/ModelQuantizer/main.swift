@@ -201,7 +201,7 @@ private struct ModelQuantizer: AsyncParsableCommand {
       gates remain Q8; the larger draft projections use searched Q4.
 
       Laguna can additionally use --template to invoke the proven bounded-memory streaming
-      converter while preserving its fused expert layout and exact Q8 router policy.
+      converter while preserving its expert layout and exact Q8 router policy.
       """
   )
 
@@ -214,9 +214,12 @@ private struct ModelQuantizer: AsyncParsableCommand {
   @Option(
     name: .customLong("template"),
     help:
-      "Laguna-only standard Q4R8 template; enables bounded shard conversion and preserves the proven fused layout."
+      "Laguna-only standard Q4R8/G64 template; enables bounded shard conversion and preserves its layout."
   )
   var template: String?
+
+  @Option(name: .customLong("group-size"), help: "Q4 group size, 64 or 128; G128 currently requires Laguna --template.")
+  var groupSize = 64
 
   @Option(name: .customLong("activation-stats"), help: "Laguna --template expert-conditional calibration statistics.")
   var activationStats: String?
@@ -245,7 +248,7 @@ private struct ModelQuantizer: AsyncParsableCommand {
   @Flag(
     name: .customLong("standard-q4"),
     help:
-      "Use ordinary MLX affine Q4 group-64 calibration for eligible matrices as a matched ScaleSearch control."
+      "Use ordinary MLX affine Q4 calibration for eligible matrices as a matched ScaleSearch control."
   )
   var standardQ4 = false
 
@@ -265,6 +268,12 @@ private struct ModelQuantizer: AsyncParsableCommand {
   var overwrite = false
 
   mutating func validate() throws {
+    guard [64, 128].contains(groupSize), groupSize == 64 || template != nil else {
+      throw ValidationError("--group-size must be 64 or 128; G128 currently requires Laguna --template.")
+    }
+    guard activationStats == nil || (groupSize == 64 && !standardQ4) else {
+      throw ValidationError("--activation-stats requires searched Q4 group-64.")
+    }
     guard activationStats == nil || template != nil else {
       throw ValidationError("--activation-stats currently requires Laguna --template.")
     }
@@ -296,11 +305,6 @@ private struct ModelQuantizer: AsyncParsableCommand {
       guard !overwrite else {
         throw ValidationError(
           "--overwrite is not supported with --template; choose a new destination."
-        )
-      }
-      guard !standardQ4 else {
-        throw ValidationError(
-          "--standard-q4 is a generic-conversion control; Laguna --template retains its exact searched-Q4 layout."
         )
       }
     }
@@ -345,10 +349,12 @@ private struct ModelQuantizer: AsyncParsableCommand {
       template: template,
       destination: destination,
       expertBatch: expertBatch,
+      groupSize: groupSize,
+      standardQ4: standardQ4,
       activationStats: activationStats,
       validationStats: validationStats,
       preflightOnly: dryRun,
-      cpu: cpu || dryRun
+      cpu: cpu
     )
   }
 
