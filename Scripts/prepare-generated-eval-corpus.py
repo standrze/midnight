@@ -15,7 +15,6 @@ from __future__ import annotations
 import argparse
 import ast
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
 import random
@@ -23,10 +22,18 @@ import re
 import sys
 import warnings
 
-_path = Path(__file__).with_name("prepare-quantization-corpus.py")
-_spec = importlib.util.spec_from_file_location("pinned_reference_corpus", _path)
-pinned = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(pinned)
+class pinned:
+    # Shared data, not an import of the retired Python corpus builder. The
+    # generation/scoring workflow remains Python until its separate migration.
+    _manifest = Path(__file__).resolve().parents[1] / "Sources/CorpusPreparationCore/Resources/pinned-sources.json"
+    SOURCES = json.loads(_manifest.read_text(encoding="utf-8"))["sources"]
+
+    @staticmethod
+    def verify(data, expected, description):
+        actual = hashlib.sha256(data).hexdigest()
+        if actual != expected:
+            raise ValueError(f"SHA256 mismatch for {description}: expected {expected}, got {actual}")
+        return data
 
 
 def payload(records):

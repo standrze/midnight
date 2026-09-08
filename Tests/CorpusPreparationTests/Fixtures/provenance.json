@@ -1,0 +1,8 @@
+{
+  "purpose": "Frozen outputs from original Python builders, retained as data for independent Swift parity tests.",
+  "original_sources": {
+    "test_prepare_quantization_corpus.py": "b96ef0544e1aa64ba6be55df66908eba30ca071e6125bfbaaa6c07bb59d4714e",
+    "prepare-text-benchmark-corpus.py": "778f30490cf063c700a1883411b1cd4031fcd195bf4aee7d348bbf773aa4d9ab",
+    "prepare-quantization-corpus.py": "dcd70c705234e5201a630dde5893921eeab8241cb309c6bc9b97cd83b02e631e"
+  }
+}

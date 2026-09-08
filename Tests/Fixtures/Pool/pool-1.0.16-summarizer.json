@@ -1,0 +1,38 @@
+{
+  "messages": [
+    {
+      "content": [
+        {
+          "text": "hi",
+          "type": "text",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "text": "hi",
+          "type": "text",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": "hi",
+      "role": "assistant"
+    },
+    {
+      "content": "hi",
+      "role": "user"
+    }
+  ],
+  "model": "gpt-oss-moe-7.77b-recovered-step24",
+  "max_completion_tokens": 8192
+}

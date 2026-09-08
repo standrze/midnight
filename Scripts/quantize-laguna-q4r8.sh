@@ -1,42 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Q4R8: affine Q4 group-64 weights with affine Q8 group-64 MoE routers.
-
-PACKAGE_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-
-MODEL_RUNNER_BUILD_CONFIGURATION=release \
-MODEL_RUNNER_BUILD_PRODUCT=model-runner-laguna-quantize \
-  "$PACKAGE_ROOT/build.sh"
-
-case "$(uname -s)" in
-  Darwin)
-    BIN_DIR="$(
-      cd "$PACKAGE_ROOT"
-      swift build --configuration release --show-bin-path
-    )"
-    exec "$BIN_DIR/model-runner-laguna-quantize" "$@"
-    ;;
-  Linux)
-    # Resolve the same optional scratch directory used by build.sh, then launch
-    # through the verified CUDA environment when this is a CUDA build. `--cpu`
-    # controls conversion placement; it does not change how the binary links.
-    source "$PACKAGE_ROOT/Scripts/swiftpm-scratch-path.sh"
-    model_runner_configure_swiftpm_scratch "$PACKAGE_ROOT" Linux
-    BIN_DIR="$(
-      cd "$PACKAGE_ROOT"
-      swift build --configuration release \
-        "${MODEL_RUNNER_SWIFT_BUILD_SCRATCH_ARGS[@]}" --show-bin-path
-    )"
-    if [[ "${SPM_CUDA:-1}" == "1" ]]; then
-      exec bash "$PACKAGE_ROOT/Scripts/cuda-runtime-environment.sh" \
-        --package-root "$PACKAGE_ROOT" -- \
-        "$BIN_DIR/model-runner-laguna-quantize" "$@"
-    fi
-    exec "$BIN_DIR/model-runner-laguna-quantize" "$@"
-    ;;
-  *)
-    echo "Unsupported host: $(uname -s)" >&2
-    exit 1
-    ;;
-esac
+# Compatibility entrypoint; implementation and build outputs belong to the
+# separate Midnight Quantization project.
+RUNTIME_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+QUANTIZATION_ROOT="${MIDNIGHT_QUANTIZATION_ROOT:-$RUNTIME_ROOT/../midnight-quantization}"
+ENTRYPOINT="$QUANTIZATION_ROOT/Scripts/quantize-laguna-q4r8.sh"
+if [[ ! -f "$ENTRYPOINT" ]]; then
+  echo "This command moved to Midnight Quantization: $ENTRYPOINT" >&2
+  exit 2
+fi
+exec bash "$ENTRYPOINT" "$@"

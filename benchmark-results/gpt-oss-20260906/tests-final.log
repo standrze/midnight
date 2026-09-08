@@ -1,0 +1,287 @@
+warning: 'mlx-audio-swift': found 107 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/SopranoConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoDiT.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSFlowLM.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/TextProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/TTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSSpeakerEncoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/LinearNorm.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/TokenContext.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSTextUtils.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3/Qwen3.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/TextUtils.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Marvis/CSMLlamaModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/EnglishG2P.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriDiT.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoiceConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/Soprano.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSBigVGAN.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/ResidualBlocks.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/Utilities.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/SineGenerator.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTDecoderLayer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/FeedForward.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSTalker.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoText.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/MisakiTextProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTS.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/UpSample1d.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSFullSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTLayerNorm.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/G2PExtensions.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroMultilingualProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/Normalization.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/EnglishNum2Word.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/EnglishFallbackNetwork.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSSpeechTokenizer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTEncoderLayer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Marvis/MarvisTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/Lexicon/Lexicon.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoiceGenerateParameters.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSMLP.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSTransformer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/WeightNormedConv.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoiceSemantic.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroDecoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Llama/LlamaTTS.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechTokenizer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSQwen3.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossGPT2.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Albert.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/Lexicon/DataResourcesUtil.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/SharedConfigs.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/MToken.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSMimiAdapter.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSAudio.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechPrompt.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSText.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Marvis/CSMModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/MultiHeadAttention.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoice.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3/Config.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoError.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/SopranoDecoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSTextCleaner.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSText.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/BiLSTM.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSCodePredictor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Llama/LlamaTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSISTFTNet.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSTextEncoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/Lexicon/PennTagUtil.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSConditioners.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriDuration.swift
+[0/1] Planning build
+[1/1] Compiling plugin GenerateManual
+[2/2] Compiling plugin GenerateDoccReference
+Building for production...
+[2/22] Write sources
+[5/22] Write swift-version--58304C5D6DBC2206.txt
+[7/35] Compiling MLXHuggingFaceMacros HuggingFaceIntegrationMacros.swift
+[8/34] Compiling RealModule AlgebraicField.swift
+[9/35] Compiling _NIOBase64 Base64.swift
+[10/35] Compiling _NIODataStructures Heap.swift
+[11/35] Compiling ArgumentParserToolInfo ToolInfo.swift
+[12/35] Compiling Crypto AES-GCM.swift
+[13/35] Compiling InternalCollectionsUtilities Debugging.swift
+[14/35] Compiling ComplexModule Complex+AdditiveArithmetic.swift
+[15/35] Compiling NIOConcurrencyHelpers NIOAtomic.swift
+[16/39] Compiling Numerics Numerics.swift
+[17/39] Compiling EventSource AsyncEventsSequence.swift
+[18/41] Compiling ModelQualityCore ModelQualityCore.swift
+[19/41] Compiling ContainersPreview OutputSpan+Extras.swift
+[20/43] Compiling ScalePlanMLX ScalePlan.swift
+[21/44] Compiling ModelQualityCoreTests ModelQualityCoreTests.swift
+[22/44] Compiling Atomics OptionalRawRepresentable.swift
+[23/44] Compiling ScalePlanMLXTests ScalePlanTests.swift
+[24/44] Compiling DequeModule Deque+Codable.swift
+[25/45] Compiling OrderedCollections _HashTable+Bucket.swift
+[26/46] Compiling ModelRunnerProtocol AudioAPIRoute.swift
+[27/46] Compiling ArgumentParser BashCompletionsGenerator.swift
+[28/48] Compiling ScalePlanCLI main.swift
+[29/47] Compiling MLX ArrayAt.swift
+[30/50] Compiling MLXFast MLXFast.swift
+[31/50] Compiling HuggingFace AccessRequest.swift
+[32/50] Compiling NIOCore AddressedEnvelope.swift
+[33/52] Compiling LagunaQ4R8Verifier main.swift
+[34/51] Compiling MistralActivationScaleSearchCore ActivationWeightedScaleSearch.swift
+[35/53] Compiling NIOEmbedded AsyncTestingChannel.swift
+[36/53] Compiling Jinja AST.swift
+[37/54] Compiling MLXNN Activations.swift
+[38/57] Compiling MLXOptimizers Optimizers.swift
+[39/58] Compiling MistralActivationScaleSearchCoreTests ExpertActivationWeightedScaleSearchTests.swift
+[40/58] Compiling MistralActivationScaleSearchRescorer main.swift
+[41/57] Compiling MLXAudioG2P Attention.swift
+[42/57] Compiling Hub BinaryDistinct.swift
+[43/58] Compiling MLXAudioCore AudioPlayer.swift
+[44/58] Compiling NIOPosix BSDSocketAPICommon.swift
+[45/59] Compiling NIO Exports.swift
+[46/60] Compiling Tokenizers BPETokenizer.swift
+[47/61] Compiling Generation Decoders.swift
+[48/62] Compiling Models LanguageModel.swift
+[49/62] Compiling NIOHTTP1 ByteCollectionUtils.swift
+[50/62] Compiling MLXLMCommon DoRA+Layers.swift
+[51/67] Compiling Q4ScaleSearchAudit main.swift
+[52/66] Compiling MLXGuidedGeneration ClosingTokenBias.swift
+[53/67] Compiling MLXFoundationModels SchemaConverter.swift
+[54/68] Compiling MLXHuggingFace FoundationModelsMacros.swift
+[55/68] Compiling LagunaScaleSearchCore LagunaActivationStatistics.swift
+[56/69] Compiling LagunaScaleSearchRescorerCLI main.swift
+[57/68] Compiling MLXAudioCodecs AudioCodecModel.swift
+[58/68] Compiling MLXLLM LLMModel.swift
+[59/69] Compiling MLXAudioTTS Generation.swift
+[60/70] Compiling ModelRunnerCore ChatterboxAudioEncoding.swift
+[61/81] Compiling ModelQualityBenchmark main.swift
+[62/80] Compiling LagunaQuantizer main.swift
+[63/79] Compiling ModelQuantizer main.swift
+[64/78] Compiling ModelGenerationBenchmark Command.swift
+[65/77] Compiling ModelTeacherKLBenchmark main.swift
+[66/76] Compiling Midnight ModelHTTPServer.swift
+[67/75] Compiling RuntimeBenchmark main.swift
+[68/74] Compiling MetalQuantizationBenchmark FusedGatherSiluBenchmark.swift
+[69/73] Compiling MistralActivationStats main.swift
+[70/72] Compiling ModelQuantizerTests DFlashScaleSearchConversionTests.swift
+[71/72] Compiling ModelRunnerProtocolTests AudioAPIRouteTests.swift
+[72/73] Compiling MidnightPackageTests runner.swift
+Build complete! (73.58s)
+Test Suite 'Selected tests' started at 2026-09-06 10:52:00.982.
+Test Suite 'MidnightPackageTests.xctest' started at 2026-09-06 10:52:00.983.
+Test Suite 'MidnightPackageTests.xctest' passed at 2026-09-06 10:52:00.983.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-06 10:52:00.983.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "MLX tool-calling wiring" started.
+◇ Suite "GPT-OSS runtime capabilities" started.
+◇ Test "HTTP stream exposes tool-call deltas and the OpenAI finish reason" started.
+◇ Suite "GPT-OSS reasoning runtime" started.
+◇ Test "Core supplies tools to both prompt rendering and output parsing" started.
+◇ Suite "OpenAI tool-calling wire format" started.
+◇ Suite "Local model runner prompt cache" started.
+◇ Test "GPT-OSS retains all one-shot escape hatches" started.
+◇ Suite "Mistral runtime capabilities" started.
+◇ Suite "OpenAI reasoning effort" started.
+◇ Test "Hidden Harmony history cannot carry a continuation beyond the context limit" started.
+◇ Test "No request override leaves the template's own default intact" started.
+◇ Test "Changing or removing reasoning effort invalidates an otherwise reusable conversation" started.
+◇ Test "GPT-OSS metadata enables hot sessions without Mistral KV capabilities" started.
+◇ Test "An edited branch does not reuse a deeper incompatible checkpoint" started.
+◇ Test "The deepest reusable prefix wins across cached branches" started.
+◇ Test "OpenAI reasoning controls reach GPT-OSS prompt context only" started.
+◇ Test "Editing an earlier message invalidates the cached transcript" started.
+◇ Test "Retention admission reserves hot-session bytes before snapshot allocation" started.
+◇ Test "Audio, nested backbones, and unrelated model types do not enable GPT-OSS" started.
+◇ Test "Encodes standard OpenAI error details" started.
+◇ Test "A strict transcript extension starts after every committed message" started.
+◇ Test "Non-streaming defaults and modern generation controls decode" started.
+◇ Test "An identical transcript has no uncached continuation" started.
+◇ Test "Encodes usage in the final OpenAI streaming chunk" started.
+◇ Test "Laguna and non-Mistral checkpoints never inherit the Mistral capability" started.
+◇ Test "Unsupported effort values are rejected" started.
+◇ Test "A tool result continues directly after the committed tool call" started.
+◇ Test "Prefix cache limits are bounded and configurable" started.
+◇ Test "Encodes OpenAI streaming tool-call deltas and finish reason" started.
+◇ Test "Legacy requests remain valid when tools are absent" started.
+◇ Test "Mistral prompt caching preserves every one-shot escape hatch" started.
+◇ Test "Explicit low effort uses the standard OpenAI wire key" started.
+◇ Test "Architecture metadata is a fallback, not a folder-name heuristic" started.
+◇ Test "Every supported Mistral text architecture gets the shared runtime policy" started.
+◇ Test "Decodes tool declarations and a complete tool exchange" started.
+◇ Test "Nested text metadata supports converted Mistral 3 checkpoints" started.
+◇ Test "Omitted and null effort preserve the model default" started.
+◇ Test "Voxtral stays on its native audio route even with a Mistral text backbone" started.
+◇ Test "Tool schema changes cannot reuse a GPT-OSS reasoning session" started.
+✔ Test "Hidden Harmony history cannot carry a continuation beyond the context limit" passed after 0.001 seconds.
+◇ Test case passing 1 argument effort → "minimal" to "Unsupported effort values are rejected" started.
+◇ Test case passing 1 argument effort → "none" to "Unsupported effort values are rejected" started.
+◇ Test case passing 1 argument effort → "xhigh" to "Unsupported effort values are rejected" started.
+◇ Test case passing 1 argument effort → "LOW" to "Unsupported effort values are rejected" started.
+◇ Test "Encodes a complete non-streaming completion with usage" started.
+◇ Test case passing 1 argument effort → "" to "Unsupported effort values are rejected" started.
+◇ Test "The shared route preserves Mistral and rejects an unknown architecture" started.
+✔ Test "No request override leaves the template's own default intact" passed after 0.001 seconds.
+◇ Test case passing 1 argument optionalField → "" to "Omitted and null effort preserve the model default" started.
+◇ Test case passing 1 argument optionalField → ","reasoning_effort":null" to "Omitted and null effort preserve the model default" started.
+✔ Test "The deepest reusable prefix wins across cached branches" passed after 0.001 seconds.
+✔ Test "A strict transcript extension starts after every committed message" passed after 0.001 seconds.
+✔ Test "Changing or removing reasoning effort invalidates an otherwise reusable conversation" passed after 0.001 seconds.
+✔ Test "Retention admission reserves hot-session bytes before snapshot allocation" passed after 0.001 seconds.
+◇ Test "GPT-OSS accepts each supported reasoning effort" started.
+✔ Test "An edited branch does not reuse a deeper incompatible checkpoint" passed after 0.001 seconds.
+✔ Test "GPT-OSS retains all one-shot escape hatches" passed after 0.001 seconds.
+✔ Test "A tool result continues directly after the committed tool call" passed after 0.001 seconds.
+✔ Test "Prefix cache limits are bounded and configurable" passed after 0.001 seconds.
+✔ Test "Laguna and non-Mistral checkpoints never inherit the Mistral capability" passed after 0.001 seconds.
+✔ Test "GPT-OSS metadata enables hot sessions without Mistral KV capabilities" passed after 0.001 seconds.
+✔ Test "Architecture metadata is a fallback, not a folder-name heuristic" passed after 0.001 seconds.
+✔ Test "Mistral prompt caching preserves every one-shot escape hatch" passed after 0.001 seconds.
+✔ Test "Legacy requests remain valid when tools are absent" passed after 0.001 seconds.
+✔ Test "Nested text metadata supports converted Mistral 3 checkpoints" passed after 0.001 seconds.
+✔ Test "Every supported Mistral text architecture gets the shared runtime policy" passed after 0.001 seconds.
+✔ Test "Encodes standard OpenAI error details" passed after 0.001 seconds.
+✔ Test "Editing an earlier message invalidates the cached transcript" passed after 0.001 seconds.
+✔ Test "OpenAI reasoning controls reach GPT-OSS prompt context only" passed after 0.001 seconds.
+✔ Test "Encodes usage in the final OpenAI streaming chunk" passed after 0.001 seconds.
+✔ Test "Tool schema changes cannot reuse a GPT-OSS reasoning session" passed after 0.001 seconds.
+✔ Test "An identical transcript has no uncached continuation" passed after 0.001 seconds.
+✔ Test "Omitted and null effort preserve the model default" with 2 test cases passed after 0.001 seconds.
+◇ Test case passing 1 argument effort → "low" to "GPT-OSS accepts each supported reasoning effort" started.
+✔ Test "Explicit low effort uses the standard OpenAI wire key" passed after 0.001 seconds.
+✔ Test "Audio, nested backbones, and unrelated model types do not enable GPT-OSS" passed after 0.001 seconds.
+✔ Test "Non-streaming defaults and modern generation controls decode" passed after 0.001 seconds.
+◇ Test case passing 1 argument effort → "medium" to "GPT-OSS accepts each supported reasoning effort" started.
+✔ Test "Voxtral stays on its native audio route even with a Mistral text backbone" passed after 0.001 seconds.
+◇ Test case passing 1 argument effort → "high" to "GPT-OSS accepts each supported reasoning effort" started.
+✔ Test "Encodes OpenAI streaming tool-call deltas and finish reason" passed after 0.001 seconds.
+✔ Test "The shared route preserves Mistral and rejects an unknown architecture" passed after 0.001 seconds.
+✔ Suite "Mistral runtime capabilities" passed after 0.001 seconds.
+✔ Test "Encodes a complete non-streaming completion with usage" passed after 0.001 seconds.
+✔ Suite "GPT-OSS reasoning runtime" passed after 0.001 seconds.
+✔ Suite "Local model runner prompt cache" passed after 0.001 seconds.
+✔ Suite "GPT-OSS runtime capabilities" passed after 0.001 seconds.
+✔ Test "GPT-OSS accepts each supported reasoning effort" with 3 test cases passed after 0.001 seconds.
+✔ Test "Decodes tool declarations and a complete tool exchange" passed after 0.001 seconds.
+✔ Suite "OpenAI tool-calling wire format" passed after 0.001 seconds.
+✔ Test "Unsupported effort values are rejected" with 5 test cases passed after 0.001 seconds.
+✔ Suite "OpenAI reasoning effort" passed after 0.001 seconds.
+✔ Test "HTTP stream exposes tool-call deltas and the OpenAI finish reason" passed after 0.002 seconds.
+✔ Test "Core supplies tools to both prompt rendering and output parsing" passed after 0.004 seconds.
+✔ Suite "MLX tool-calling wiring" passed after 0.004 seconds.
+✔ Test run with 36 tests in 7 suites passed after 0.004 seconds.

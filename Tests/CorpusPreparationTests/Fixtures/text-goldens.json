@@ -1,0 +1,56 @@
+[
+  {
+    "name": "unicode-crlf",
+    "input": "\u001c  café é 👩‍💻 / 漢字\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\n tail　",
+    "json": false,
+    "samples": 3,
+    "target": 128,
+    "expected": "{\"id\":\"heldout-001\",\"category\":\"language-modeling\",\"text\":\"café é 👩‍💻 / 漢字\\n\\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}\n{\"id\":\"heldout-002\",\"category\":\"language-modeling\",\"text\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}\n{\"id\":\"heldout-003\",\"category\":\"language-modeling\",\"text\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\n\\ntail\"}\n",
+    "stdout": "samples=3 characters=234\nsource_sha256=3a78d1bad49b45efd26e89fbeb2fade8648cd704eeb28fc2826cd48cec33c57e\noutput_sha256=884ab5f8ef5ec3bd146f5a0307c0d28e7093f1970fbe751244f8cb69ee47eeca\n"
+  },
+  {
+    "name": "oversized-scalar-split",
+    "input": "é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻\n\nlast",
+    "json": false,
+    "samples": 4,
+    "target": 128,
+    "expected": "{\"id\":\"heldout-001\",\"category\":\"language-modeling\",\"text\":\"é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩\"}\n{\"id\":\"heldout-002\",\"category\":\"language-modeling\",\"text\":\"‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻e\"}\n{\"id\":\"heldout-003\",\"category\":\"language-modeling\",\"text\":\"́👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍💻é👩‍\"}\n{\"id\":\"heldout-004\",\"category\":\"language-modeling\",\"text\":\"last\"}\n",
+    "stdout": "samples=4 characters=388\nsource_sha256=402c215f7fe86c7266aef271133759c5b4f130032a90225dd1b3557b26860604\noutput_sha256=ddb2fb76f56ca79a2ec31a371ead010ec41ac3e5c2f28e5984ffdfac9fd1af1e\n"
+  },
+  {
+    "name": "flush-accounting",
+    "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n\nc\n\nddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\n\nend",
+    "json": false,
+    "samples": 3,
+    "target": 128,
+    "expected": "{\"id\":\"heldout-001\",\"category\":\"language-modeling\",\"text\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}\n{\"id\":\"heldout-002\",\"category\":\"language-modeling\",\"text\":\"c\"}\n{\"id\":\"heldout-003\",\"category\":\"language-modeling\",\"text\":\"end\"}\n",
+    "stdout": "samples=3 characters=130\nsource_sha256=2547fbaebc340521b1527e254048a79f19e723a85ad612b2ffcdd30fd7b09531\noutput_sha256=54d250adcc57b27e35a9fd20fe701485411bc533ced997c87f21227ef18c137c\n"
+  },
+  {
+    "name": "one-sample",
+    "input": " first\n\nsecond",
+    "json": false,
+    "samples": 1,
+    "target": 128,
+    "expected": "{\"id\":\"heldout-001\",\"category\":\"language-modeling\",\"text\":\"first\\n\\nsecond\"}\n",
+    "stdout": "samples=1 characters=13\nsource_sha256=16a9a5b610e7285d4cbd2f6d1d32fd45caf50fe60228104786afa3d958fd7296\noutput_sha256=9234fb469b3b46fa36932a13eaad9a73d584d34015289a0b6d49ec8d3f91a316\n"
+  },
+  {
+    "name": "json-list",
+    "input": "[{\"text\": \" \\u3000\"}, {\"text\": \" caf\\u00e9 / quote \\\" and slash \\\\ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {\"text\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}]",
+    "json": true,
+    "samples": 2,
+    "target": 128,
+    "expected": "{\"id\":\"heldout-001\",\"category\":\"language-modeling\",\"text\":\"café / quote \\\" and slash \\\\ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}\n{\"id\":\"heldout-002\",\"category\":\"language-modeling\",\"text\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}\n",
+    "stdout": "samples=2 characters=160\nsource_sha256=0ad6013b120f593f62272b0909ab19c963882bfb83538da96f788c02263d2096\noutput_sha256=67101ec6510d53d73bb3a43ad7c40474acc5a3e4a9ad175d39c1c89835d1f61e\n"
+  },
+  {
+    "name": "json-instances",
+    "input": "{\"instances\": [{\"text\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, {\"text\": \"e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301e\\u0301\"}, {\"text\": \"\\u001c last\\u001f\"}]}",
+    "json": true,
+    "samples": 3,
+    "target": 128,
+    "expected": "{\"id\":\"heldout-001\",\"category\":\"language-modeling\",\"text\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}\n{\"id\":\"heldout-002\",\"category\":\"language-modeling\",\"text\":\"éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé\"}\n{\"id\":\"heldout-003\",\"category\":\"language-modeling\",\"text\":\"last\"}\n",
+    "stdout": "samples=3 characters=260\nsource_sha256=27ccec099e24693decc19a6243c77549e4c6922f1fa39646cbf66d12a3234eba\noutput_sha256=0bf4101aa84a532c2f8cf55cdd7c0f872b66195207816bf871d0c6918c7be373\n"
+  }
+]

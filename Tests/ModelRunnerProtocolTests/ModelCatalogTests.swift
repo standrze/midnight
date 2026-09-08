@@ -4,12 +4,12 @@ import Testing
 
 @Suite("Runner model catalog")
 struct ModelCatalogTests {
-  @Test("The default catalog lives below .runner in the user's home")
+  @Test("The default catalog lives below .midnight in the user's home")
   func defaultCatalog() {
     let home = URL(fileURLWithPath: "/Users/tester", isDirectory: true)
     #expect(
       ModelCatalog.defaultDirectory(environment: [:], homeDirectory: home).path
-        == "/Users/tester/.runner/models"
+        == "/Users/tester/.midnight/models"
     )
     #expect(
       ModelCatalog.defaultDirectory(

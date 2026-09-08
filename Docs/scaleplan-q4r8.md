@@ -63,9 +63,9 @@ than only through a Laguna shell workflow:
 ```bash
 MODEL_RUNNER_BUILD_CONFIGURATION=release \
 MODEL_RUNNER_BUILD_PRODUCT=model-runner-quantize \
-./build.sh
+../midnight-quantization/build.sh
 
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/unquantized-mlx-compatible-safetensors \
   /absolute/path/q4r8-scale-search-candidate \
   --dry-run
@@ -75,7 +75,7 @@ For an ordinary-affine-Q4 control with matching storage geometry, run the same
 source through the generic converter with a separate destination:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/unquantized-mlx-compatible-safetensors \
   /absolute/path/q4-standard-control \
   --standard-q4
@@ -115,7 +115,7 @@ runtime. Each fresh artifact is deliberately labeled unbenchmarked at
 conversion time until that exact output is paired with a target and measured.
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4 \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4-MLX-Q4R8-ScaleSearch \
   --dry-run
@@ -216,7 +216,7 @@ The dedicated A/B uses the same affine-Q4 group-64 `quantizedMM`
 specialization for both arrays and warms them together before ABBA timing:
 
 ```bash
-swift run -c release model-runner-metal-quant-bench \
+swift run --package-path ../midnight-quantization -c release model-runner-metal-quant-bench \
   --scale-search-only \
   --warmup 8 \
   --iterations 25 \
@@ -322,7 +322,7 @@ default, planning stops unless that additive forecast passed a held-out
 full-model check. `--allow-unvalidated-proxy` exists only for plumbing work and
 does not remove the experimental label.
 
-[The illustrative ledger](../Examples/scaleplan-q4r8-ledger.example.json)
+[The illustrative ledger](../../midnight-quantization/Examples/scaleplan-q4r8-ledger.example.json)
 shows the complete format but contains fabricated costs and an intentionally
 unvalidated proxy. It is a schema example, not input for a deployable plan.
 
@@ -335,7 +335,7 @@ pretends the result is optimal.
 Generate both profiles:
 
 ```bash
-swift run model-runner-scale-plan \
+swift run --package-path ../midnight-quantization model-runner-scale-plan \
   /absolute/path/laguna-measured-ledger.json \
   /absolute/path/laguna-scale-plan.json \
   --max-stored-bytes 18821963264 \

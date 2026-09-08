@@ -85,6 +85,65 @@ public struct OpenAIToolDefinition: Codable, Equatable, Sendable {
     }
 }
 
+/// OpenAI-compatible tool selection for chat completions.
+///
+/// A named function choice is represented on the wire as
+/// `{ "type": "function", "function": { "name": "..." } }`.
+public enum OpenAIToolChoice: Codable, Equatable, Sendable {
+    case none
+    case auto
+    case required
+    case function(name: String)
+
+    private struct NamedChoice: Codable {
+        struct Function: Codable {
+            let name: String
+        }
+
+        let type: String
+        let function: Function
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let value = try? container.decode(String.self) {
+            switch value {
+            case "none": self = .none
+            case "auto": self = .auto
+            case "required": self = .required
+            default:
+                throw DecodingError.dataCorruptedError(
+                    in: container,
+                    debugDescription: "tool_choice must be 'none', 'auto', 'required', or a named function"
+                )
+            }
+            return
+        }
+
+        let choice = try container.decode(NamedChoice.self)
+        guard choice.type == "function" else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Named tool_choice type must be 'function'"
+            )
+        }
+        self = .function(name: choice.function.name)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .none: try container.encode("none")
+        case .auto: try container.encode("auto")
+        case .required: try container.encode("required")
+        case .function(let name):
+            try container.encode(
+                NamedChoice(type: "function", function: .init(name: name))
+            )
+        }
+    }
+}
+
 public struct OpenAIToolCall: Codable, Equatable, Sendable {
     public struct Function: Codable, Equatable, Sendable {
         public let name: String
@@ -157,6 +216,47 @@ public struct OpenAIMessage: Codable, Equatable, Sendable {
         self.toolCallID = toolCallID
     }
 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        role = try container.decode(String.self, forKey: .role)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        toolCalls = try container.decodeIfPresent([OpenAIToolCall].self, forKey: .toolCalls)
+        toolCallID = try container.decodeIfPresent(String.self, forKey: .toolCallID)
+
+        if try !container.contains(.content) || container.decodeNil(forKey: .content) {
+            content = nil
+        } else if let text = try? container.decode(String.self, forKey: .content) {
+            content = text
+        } else {
+            // Text-only OpenAI clients can send ordered content parts with optional
+            // metadata (for example Pool's cache_control). Normalize at the wire
+            // boundary so templates and response encoding keep their string format.
+            content = try container.decode([TextPart].self, forKey: .content)
+                .map(\.text).joined()
+        }
+    }
+
+    private struct TextPart: Decodable {
+        let text: String
+
+        enum CodingKeys: String, CodingKey {
+            case type, text
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let type = try container.decode(String.self, forKey: .type)
+            guard type == "text" else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .type,
+                    in: container,
+                    debugDescription: "Only text content parts are supported by chat completions."
+                )
+            }
+            text = try container.decode(String.self, forKey: .text)
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case role, content, name
         case toolCalls = "tool_calls"
@@ -165,6 +265,14 @@ public struct OpenAIMessage: Codable, Equatable, Sendable {
 }
 
 public struct ChatCompletionRequest: Codable, Equatable, Sendable {
+    /// GPT-OSS controls reasoning length through its chat template.
+    /// Leaving this unset preserves the loaded model's template default.
+    public enum ReasoningEffort: String, Codable, Equatable, Sendable {
+        case low
+        case medium
+        case high
+    }
+
     public struct StreamOptions: Codable, Equatable, Sendable {
         public let includeUsage: Bool
 
@@ -186,7 +294,9 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
     public let topP: Double?
     public let stop: OpenAIStop?
     public let tools: [OpenAIToolDefinition]?
+    public let toolChoice: OpenAIToolChoice?
     public let streamOptions: StreamOptions?
+    public let reasoningEffort: ReasoningEffort?
 
     public init(
         model: String,
@@ -198,7 +308,9 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
         topP: Double? = nil,
         stop: OpenAIStop? = nil,
         tools: [OpenAIToolDefinition]? = nil,
-        streamOptions: StreamOptions? = nil
+        toolChoice: OpenAIToolChoice? = nil,
+        streamOptions: StreamOptions? = nil,
+        reasoningEffort: ReasoningEffort? = nil
     ) {
         self.model = model
         self.messages = messages
@@ -209,15 +321,19 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
         self.topP = topP
         self.stop = stop
         self.tools = tools
+        self.toolChoice = toolChoice
         self.streamOptions = streamOptions
+        self.reasoningEffort = reasoningEffort
     }
 
     enum CodingKeys: String, CodingKey {
         case model, messages, stream, temperature, tools, stop
+        case toolChoice = "tool_choice"
         case maxTokens = "max_tokens"
         case maxCompletionTokens = "max_completion_tokens"
         case topP = "top_p"
         case streamOptions = "stream_options"
+        case reasoningEffort = "reasoning_effort"
     }
 }
 

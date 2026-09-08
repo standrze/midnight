@@ -12,6 +12,9 @@ public struct PreparedModelPrompt: Sendable {
   fileprivate let modelPath: String
   fileprivate let messages: [OpenAIMessage]
   fileprivate let tools: [OpenAIToolDefinition]?
+  fileprivate let toolChoice: ToolChoicePlan.Constraint
+  fileprivate let reasoningEffort: ChatCompletionRequest.ReasoningEffort?
+  fileprivate let forcedToolPrefixTokenIDs: [Int]
   fileprivate let tokenIDs: [Int]
   public var promptTokenCount: Int { tokenIDs.count }
   /// Exact rendered input, exposed read-only for reproducible benchmark comparisons.
@@ -61,6 +64,146 @@ public struct LocalModelRunnerMetrics: Equatable, Sendable {
   }
 }
 
+/// Validated request-time tool policy. `tools` is the exact allow-list supplied
+/// to both the chat template and MLX's output parser.
+public struct ToolChoicePlan: Equatable, Sendable {
+  public enum Constraint: Equatable, Sendable {
+    case automatic
+    case prohibited
+    case required
+    case named(String)
+
+    var requiresToolCall: Bool {
+      switch self {
+      case .required, .named: true
+      case .automatic, .prohibited: false
+      }
+    }
+  }
+
+  public let tools: [OpenAIToolDefinition]?
+  public let constraint: Constraint
+
+  public static func resolve(
+    choice: OpenAIToolChoice?,
+    tools: [OpenAIToolDefinition]?
+  ) throws -> Self {
+    switch choice {
+    case nil, .some(.auto):
+      // At the HTTP boundary, no declarations means no authorization. The
+      // underlying standard MLX parsers use nil as an unrestricted mode.
+      return Self(tools: tools?.isEmpty == false ? tools : [], constraint: .automatic)
+    case .some(.none):
+      // Preserve an explicit empty list: MLX treats nil as unrestricted parser
+      // authorization, while [] authorizes no generated function names.
+      return Self(tools: [], constraint: .prohibited)
+    case .some(.required):
+      guard tools?.isEmpty == false else {
+        throw ToolChoiceValidationError.requiredWithoutTools
+      }
+      return Self(tools: tools, constraint: .required)
+    case .some(.function(let name)):
+      guard isValidFunctionName(name) else {
+        throw ToolChoiceValidationError.invalidFunctionName(name)
+      }
+      guard let selected = tools?.first(where: {
+        $0.type == "function"
+          && $0.function.name.trimmingCharacters(in: .whitespacesAndNewlines) == name
+      }) else {
+        throw ToolChoiceValidationError.unknownFunction(name)
+      }
+      return Self(tools: [selected], constraint: .named(name))
+    }
+  }
+
+  private static func isValidFunctionName(_ name: String) -> Bool {
+    guard !name.isEmpty, name.utf8.count <= 64 else { return false }
+    return name.unicodeScalars.allSatisfy { scalar in
+      switch scalar.value {
+      case 45, 48 ... 57, 65 ... 90, 95, 97 ... 122: true
+      default: false
+      }
+    }
+  }
+
+  func forcedToolCallPrefix(for format: ToolCallFormat) throws -> String? {
+    guard constraint.requiresToolCall else { return nil }
+    guard format == .glm4 else {
+      throw LocalModelRunnerError.unsupportedForcedToolChoiceFormat(format.rawValue)
+    }
+    switch constraint {
+    case .required: return "<tool_call>"
+    case .named(let name): return "<tool_call>\(name)"
+    case .automatic, .prohibited: return nil
+    }
+  }
+}
+
+public enum ToolChoiceValidationError: LocalizedError, Equatable, Sendable {
+  case requiredWithoutTools
+  case invalidFunctionName(String)
+  case unknownFunction(String)
+
+  public var errorDescription: String? {
+    switch self {
+    case .requiredWithoutTools:
+      "tool_choice 'required' requires at least one declared tool."
+    case .invalidFunctionName(let name):
+      "Named tool_choice requires a 1-64 character function name containing only letters, digits, '_' or '-', not '\(name)'."
+    case .unknownFunction(let name):
+      "Named tool_choice references undeclared function '\(name)'."
+    }
+  }
+}
+
+/// Stateful completion check kept separate from MLX parsing so the public API
+/// stays fail-closed even if a backend parser regresses.
+final class ToolChoiceOutputValidator: @unchecked Sendable {
+  private let constraint: ToolChoicePlan.Constraint
+  private let allowedToolNames: Set<String>
+  private let lock = NSLock()
+  private var toolCallCount = 0
+
+  init(constraint: ToolChoicePlan.Constraint, tools: [OpenAIToolDefinition]?) {
+    self.constraint = constraint
+    self.allowedToolNames = Set(
+      tools?.compactMap { definition in
+        guard definition.type == "function" else { return nil }
+        return definition.function.name.trimmingCharacters(in: .whitespacesAndNewlines)
+      } ?? []
+    )
+  }
+
+  func observe(_ event: LocalModelRunnerEvent) throws {
+    guard case .toolCall(let call) = event else { return }
+    try lock.withLock {
+      switch constraint {
+      case .automatic:
+        break
+      case .prohibited:
+        throw LocalModelRunnerError.prohibitedToolCall(call.function.name)
+      case .required:
+        guard allowedToolNames.contains(call.function.name) else {
+          throw LocalModelRunnerError.undeclaredToolCall(call.function.name)
+        }
+      case .named(let expected):
+        guard call.function.name == expected else {
+          throw LocalModelRunnerError.wrongNamedToolCall(expected: expected, actual: call.function.name)
+        }
+      }
+      toolCallCount += 1
+    }
+  }
+
+  func validateCompletion() throws {
+    try lock.withLock {
+      guard !constraint.requiresToolCall || toolCallCount > 0 else {
+        throw LocalModelRunnerError.requiredToolCallMissing
+      }
+    }
+  }
+}
+
 struct LagunaDecodeFastPathSelection: Equatable {
   var useCompiledBlockTail: Bool
   var useFusedRouterTopK: Bool
@@ -106,10 +249,12 @@ private final class ChatSessionReference: @unchecked Sendable {
   func configure(
     parameters: GenerateParameters,
     components: GenerationComponents,
+    additionalContext: [String: any Sendable]?,
     tools: [ToolSpec]?
   ) {
     session.generateParameters = parameters
     session.components = components
+    session.additionalContext = additionalContext
     session.tools = tools
   }
 
@@ -124,6 +269,10 @@ private final class ChatSessionReference: @unchecked Sendable {
   }
 
   func cacheMemoryBytes() async -> Int { await session.cacheMemoryBytes() }
+
+  func processedTokenCount() async throws -> Int? {
+    try await session.cacheStatus().processedTokenCount
+  }
 
   func snapshot() async throws -> ChatSessionSnapshotReference {
     ChatSessionSnapshotReference(try await session.snapshot())
@@ -143,6 +292,7 @@ private final class ChatSessionSnapshotReference: @unchecked Sendable {
     container: ModelContainer,
     parameters: GenerateParameters,
     components: GenerationComponents,
+    additionalContext: [String: any Sendable]?,
     tools: [ToolSpec]?
   ) -> ChatSession {
     ChatSession(
@@ -150,6 +300,7 @@ private final class ChatSessionSnapshotReference: @unchecked Sendable {
       restoring: snapshot,
       generateParameters: parameters,
       components: components,
+      additionalContext: additionalContext,
       tools: tools
     )
   }
@@ -158,6 +309,8 @@ private final class ChatSessionSnapshotReference: @unchecked Sendable {
 private struct HotConversation: Sendable {
   let session: ChatSessionReference
   let committedMessages: [OpenAIMessage]
+  let tools: [OpenAIToolDefinition]?
+  let reasoningEffort: ChatCompletionRequest.ReasoningEffort?
 }
 
 struct ConversationPrefixCacheLimits: Equatable, Sendable {
@@ -243,6 +396,8 @@ public actor LocalModelRunner {
   public nonisolated let dflashModelPath: String?
   public nonisolated let dflashBlockSize: Int?
   public nonisolated let supportsMistralHotConversationCache: Bool
+  /// Supports the shared hot-session path without copying branch snapshots.
+  public nonisolated let supportsHotConversationCache: Bool
 
   public nonisolated let contextLength: Int
   public nonisolated let prefillStepSize: Int
@@ -535,6 +690,7 @@ public actor LocalModelRunner {
     self.runtimeCapabilities = runtimeCapabilities
     self.supportsMistralHotConversationCache =
       runtimeCapabilities.supportsMistralConversationPrefixCache
+    self.supportsHotConversationCache = runtimeCapabilities.supportsHotConversationCache
     self.supportsLagunaPromptCache = supportsLagunaPromptCache
     self.wiredMemoryPlan = wiredMemoryPlan
     let prefixCacheLimits = ConversationPrefixCacheLimits.resolve(environment: environment)
@@ -558,6 +714,11 @@ public actor LocalModelRunner {
         "Mistral hot conversation cache (\(family.rawValue)): "
           + "zero-copy linear reuse enabled; branch snapshots disabled"
       )
+    } else if runtimeCapabilities.supportsGPTOSSConversationPrefixCache {
+      print(
+        "GPT-OSS tool-continuation cache available: zero-copy reuse after tool calls; "
+          + "completed text replies release KV state"
+      )
     }
     if let loadedDFlash {
       print(
@@ -569,26 +730,67 @@ public actor LocalModelRunner {
 
   /// Validate exact rendered prompt tokens before HTTP response headers or GPU prefill.
   public func preparePrompt(messages: [OpenAIMessage], maximumTokens: Int?,
-                            tools: [OpenAIToolDefinition]? = nil) async throws -> PreparedModelPrompt {
+                            tools: [OpenAIToolDefinition]? = nil,
+                            toolChoice: ToolChoicePlan.Constraint = .automatic,
+                            reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil) async throws -> PreparedModelPrompt {
     guard !isGenerating else { throw LocalModelRunnerError.busy }
-    let prepared = try await renderPrompt(messages: messages, tools: tools)
+    let prepared = try await renderPrompt(messages: messages, tools: tools,
+      toolChoice: toolChoice, reasoningEffort: reasoningEffort)
     try validateAdmission(prompt: prepared.promptTokenCount,
       output: tokenLimit.resolve(requested: maximumTokens), resident: residentModelBytes)
     return prepared
   }
 
-  private func renderPrompt(messages: [OpenAIMessage], tools: [OpenAIToolDefinition]?) async throws -> PreparedModelPrompt {
+  private func renderPrompt(messages: [OpenAIMessage], tools: [OpenAIToolDefinition]?,
+                            toolChoice: ToolChoicePlan.Constraint = .automatic,
+                            reasoningEffort: ChatCompletionRequest.ReasoningEffort?) async throws -> PreparedModelPrompt {
     guard let last = messages.last, last.role == "user" || last.role == "tool" else {
       throw LocalModelRunnerError.lastMessageMustBeUserOrTool
     }
     let chatMessages = try messages.map(Self.chatMessage)
     let toolSpecs = try Self.toolSpecs(tools)
-    let input = try await container.prepare(input: UserInput(chat: chatMessages, tools: toolSpecs))
+    let effectiveReasoningEffort = Self.effectiveReasoningEffort(
+      reasoningEffort, capabilities: runtimeCapabilities)
+    let input = try await container.prepare(input: UserInput(
+      chat: chatMessages, tools: toolSpecs,
+      additionalContext: Self.promptAdditionalContext(reasoningEffort: effectiveReasoningEffort)))
+    let toolChoicePlan = ToolChoicePlan(tools: tools, constraint: toolChoice)
+    let forcedToolPrefixTokenIDs: [Int] = try await container.perform { context in
+      guard let prefix = try toolChoicePlan.forcedToolCallPrefix(
+        for: context.configuration.toolCallFormat ?? .json)
+      else { return [Int]() }
+      guard let laguna = context.model as? LagunaModel else {
+        throw LocalModelRunnerError.unsupportedForcedToolChoiceModel(
+          String(describing: type(of: context.model)))
+      }
+      let tokenIDs = context.tokenizer.encode(text: prefix, addSpecialTokens: false)
+      guard tokenIDs.allSatisfy({ $0 >= 0 && $0 < laguna.vocabularySize }) else {
+        throw LocalModelRunnerError.invalidForcedToolChoiceTokens
+      }
+      return tokenIDs
+    }
+    if toolChoice.requiresToolCall && forcedToolPrefixTokenIDs.isEmpty {
+      throw LocalModelRunnerError.emptyForcedToolChoicePrefix
+    }
     var tokens = input.text.tokens.asArray(Int.self)
     if normalizesGemma4Prompt, tokens.count >= 3, Array(tokens.prefix(3)) == [2, 107, 105] {
       tokens.remove(at: 1)
     }
-    return PreparedModelPrompt(modelPath: modelPath, messages: messages, tools: tools, tokenIDs: tokens)
+    return PreparedModelPrompt(modelPath: modelPath, messages: messages, tools: tools,
+      toolChoice: toolChoice, reasoningEffort: effectiveReasoningEffort,
+      forcedToolPrefixTokenIDs: forcedToolPrefixTokenIDs, tokenIDs: tokens)
+  }
+
+  static func effectiveReasoningEffort(
+    _ effort: ChatCompletionRequest.ReasoningEffort?, capabilities: ModelRuntimeCapabilities
+  ) -> ChatCompletionRequest.ReasoningEffort? {
+    capabilities.isGPTOSS ? effort : nil
+  }
+
+  static func promptAdditionalContext(
+    reasoningEffort: ChatCompletionRequest.ReasoningEffort?
+  ) -> [String: any Sendable]? {
+    reasoningEffort.map { ["reasoning_effort": $0.rawValue] }
   }
 
   private func validateAdmission(prompt: Int, output: Int, resident: Int) throws {
@@ -608,6 +810,76 @@ public actor LocalModelRunner {
     }
   }
 
+  /// Architecture metadata comes from the loaded module graph and tensor shapes.
+  public func inspectorModel() async throws -> InspectorModel {
+    guard !isGenerating else { throw LocalModelRunnerError.busy }
+    isGenerating = true
+    defer { isGenerating = false }
+    return await loadedInspectorDescriptor()
+  }
+
+  private func loadedInspectorDescriptor() async -> InspectorModel {
+    let metadata = ModelInspectionMetadata.load(modelPath: modelPath)
+    let id = servedModelName, contextLength = contextLength
+    return await container.perform { context in
+      ModelInspection.descriptor(model: context.model, id: id, metadata: metadata,
+                                 contextLength: contextLength)
+    }
+  }
+
+  /// Opt-in bounded inspection owns the runner for its complete lifetime. Its
+  /// fresh cache and temporary observers do not become a retained chat session.
+  public func inspectorTrace(request: InspectorTraceRequest) async throws -> InspectorTrace {
+    guard !isGenerating else { throw LocalModelRunnerError.busy }
+    let requestedMaximum = try ModelInspection.maximumTokens(request)
+    let maximumTokens = request.maxTokens == nil
+      ? min(requestedMaximum, tokenLimit.configuredMaximum) : requestedMaximum
+    guard maximumTokens <= tokenLimit.configuredMaximum else {
+      throw ModelInspectionError.invalidRequest("Inspector maxTokens exceeds this server's configured maximum of \(tokenLimit.configuredMaximum).")
+    }
+    isGenerating = true
+    defer { isGenerating = false }
+    let descriptor = await loadedInspectorDescriptor()
+    guard descriptor.traceSupported else {
+      throw ModelInspectionError.unsupported(descriptor.traceReason ?? "Activation capture is unavailable.")
+    }
+    let prepared = try await renderPrompt(messages: [OpenAIMessage(role: "user", content: request.question)],
+      tools: nil, reasoningEffort: runtimeCapabilities.isGPTOSS ? .low : nil)
+    guard prepared.promptTokenCount <= ModelInspection.promptTokenLimit else {
+      throw ModelInspectionError.invalidRequest("The rendered inspector prompt exceeds \(ModelInspection.promptTokenLimit) tokens. Shorten the question.")
+    }
+    // Account for retained chat caches and the observer's bounded chunk scratch
+    // in addition to the allocator guard already installed at model load.
+    let scratchBytes = max(8 * 1_048_576,
+      (descriptor.hiddenSize ?? 0) * descriptor.layerCount * ModelInspection.prefillChunkSize * 16)
+    try validateAdmission(prompt: prepared.promptTokenCount, output: maximumTokens,
+      resident: max(residentModelBytes, Memory.activeMemory) + scratchBytes)
+    #if os(macOS) && MODEL_RUNNER_PINNED_MLX
+      return try await withPinnedMLXRuntime(device: device, stream: mlxStream) {
+        try await self.runInspectorTrace(request: request, descriptor: descriptor,
+          prepared: prepared, maximumTokens: maximumTokens)
+      }
+    #else
+      return try await runInspectorTrace(request: request, descriptor: descriptor,
+        prepared: prepared, maximumTokens: maximumTokens)
+    #endif
+  }
+
+  private func runInspectorTrace(request: InspectorTraceRequest, descriptor: InspectorModel,
+                                 prepared: PreparedModelPrompt, maximumTokens: Int) async throws -> InspectorTrace {
+    let inspectionContainer = container
+    return try await withGenerationWiredResidency {
+      try await Device.withDefaultDevice(device) { @Sendable in
+        try await inspectionContainer.perform { context in
+          try LagunaRuntimeTuning.$useCompiledBlockTail.withValue(false) {
+            try ModelInspection.trace(context: context, descriptor: descriptor, question: request.question,
+              promptTokens: prepared.promptTokenIDs, maximumTokens: maximumTokens)
+          }
+        }
+      }
+    }
+  }
+
   public func stream(
     messages: [OpenAIMessage],
     maximumTokens: Int?,
@@ -615,6 +887,8 @@ public actor LocalModelRunner {
     topP: Double? = nil,
     stop: [String] = [],
     tools: [OpenAIToolDefinition]? = nil,
+    toolChoice: ToolChoicePlan.Constraint = .automatic,
+    reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil,
     enablePromptCache: Bool = true,
     enableSpeculativeDecoding: Bool = true,
     preparedPrompt: PreparedModelPrompt? = nil
@@ -642,6 +916,8 @@ public actor LocalModelRunner {
                   topP: topP,
                   stop: stop,
                   tools: tools,
+                  toolChoice: toolChoice,
+                  reasoningEffort: reasoningEffort,
                   enablePromptCache: enablePromptCache,
                   enableSpeculativeDecoding: enableSpeculativeDecoding,
                   preparedPrompt: preparedPrompt
@@ -667,6 +943,8 @@ public actor LocalModelRunner {
     topP: Double?,
     stop: [String],
     tools: [OpenAIToolDefinition]?,
+    toolChoice: ToolChoicePlan.Constraint,
+    reasoningEffort: ChatCompletionRequest.ReasoningEffort?,
     enablePromptCache: Bool,
     enableSpeculativeDecoding: Bool,
     preparedPrompt: PreparedModelPrompt?,
@@ -678,11 +956,42 @@ public actor LocalModelRunner {
     defer { isGenerating = false }
 
     let prepared: PreparedModelPrompt
+    let effectiveReasoningEffort = Self.effectiveReasoningEffort(
+      reasoningEffort, capabilities: runtimeCapabilities)
     if let preparedPrompt, preparedPrompt.modelPath == modelPath,
-      preparedPrompt.messages == messages, preparedPrompt.tools == tools {
+      preparedPrompt.messages == messages, preparedPrompt.tools == tools,
+      preparedPrompt.toolChoice == toolChoice,
+      preparedPrompt.reasoningEffort == effectiveReasoningEffort {
       prepared = preparedPrompt
     } else {
-      prepared = try await renderPrompt(messages: messages, tools: tools)
+      prepared = try await renderPrompt(messages: messages, tools: tools,
+        toolChoice: toolChoice,
+        reasoningEffort: effectiveReasoningEffort)
+    }
+    if !prepared.forcedToolPrefixTokenIDs.isEmpty {
+      // A forced prefix changes generation semantics independently of the
+      // rendered transcript. Keep it out of every retained ChatSession path:
+      // branch checkpoints are keyed by messages and cannot express that
+      // request-local constraint as part of their identity.
+      hotConversation = nil
+      hotCacheBytes = 0
+      conversationCache.removeAll()
+    }
+    if runtimeCapabilities.isGPTOSS, let hotConversation {
+      // Harmony tool continuations can retain private analysis omitted by a
+      // cold template render. Bound the actual live timeline plus the entire
+      // new render before permitting a suffix-only prefill. Rebuilding drops
+      // that unrendered history when the conservative bound cannot fit.
+      let processedTokens = try await hotConversation.session.processedTokenCount()
+      if !Self.hotConversationFitsContext(
+        processedTokenCount: processedTokens,
+        renderedPromptTokenCount: prepared.promptTokenCount,
+        maximumTokens: effectiveMaximumTokens,
+        contextLength: contextLength
+      ) {
+        self.hotConversation = nil
+        hotCacheBytes = 0
+      }
     }
     try validateAdmission(prompt: prepared.promptTokenCount, output: effectiveMaximumTokens,
       resident: residentModelBytes)
@@ -704,10 +1013,16 @@ public actor LocalModelRunner {
       maximumTokens: effectiveMaximumTokens,
       temperature: temperature,
       topP: topP,
-      normalizesGemma4Prompt: normalizesGemma4Prompt
+      normalizesGemma4Prompt: normalizesGemma4Prompt,
+      forcedTokenPrefix: prepared.forcedToolPrefixTokenIDs
     )
     try longContext.apply(to: &settings.parameters)
     let requestSettings = settings
+    let outputValidator = ToolChoiceOutputValidator(constraint: toolChoice, tools: tools)
+    let validatedOnEvent: @Sendable (LocalModelRunnerEvent) throws -> Void = { event in
+      try outputValidator.observe(event)
+      try onEvent(event)
+    }
     #if os(macOS) && MODEL_RUNNER_PINNED_MLX
       try await withPinnedMLXRuntime(device: device, stream: mlxStream) {
         try await self.withGenerationWiredResidency {
@@ -722,7 +1037,7 @@ public actor LocalModelRunner {
             enableSpeculativeDecoding: enableSpeculativeDecoding,
             settings: requestSettings,
             prepared: prepared,
-            onEvent: onEvent
+            onEvent: validatedOnEvent
           )
         }
       }
@@ -739,22 +1054,22 @@ public actor LocalModelRunner {
           enableSpeculativeDecoding: enableSpeculativeDecoding,
           settings: requestSettings,
           prepared: prepared,
-          onEvent: onEvent
+          onEvent: validatedOnEvent
         )
       }
     #endif
+    try outputValidator.validateCompletion()
   }
 
   /// Keep residency elevated until the request's producer has synchronized and
   /// learn from the completed request's real process-wide peak. Manual awaited
   /// teardown is intentional: the generic cancellation helper may end its ticket
   /// before this runner has cancelled and joined the GPU producer.
-  private func withGenerationWiredResidency(
-    _ operation: () async throws -> Void
-  ) async throws {
+  private func withGenerationWiredResidency<Result: Sendable>(
+    _ operation: () async throws -> Result
+  ) async throws -> Result {
     guard let plan = wiredMemoryPlan else {
-      try await operation()
-      return
+      return try await operation()
     }
 
     let ticket = plan.makeTicket()
@@ -765,16 +1080,16 @@ public actor LocalModelRunner {
         "MLX wired-memory request was not applied "
           + "(requested=\(plan.limitBytes), applied=\(appliedLimit)); continuing unwired"
       )
-      try await operation()
-      return
+      return try await operation()
     }
 
     Memory.peakMemory = 0
     do {
-      try await operation()
+      let result = try await operation()
       let observedPeak = Memory.peakMemory
       _ = await ticket.end()
       wiredMemoryPlan?.observe(peakActiveBytes: observedPeak)
+      return result
     } catch {
       let observedPeak = Memory.peakMemory
       _ = await ticket.end()
@@ -796,9 +1111,11 @@ public actor LocalModelRunner {
     prepared: PreparedModelPrompt,
     onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
   ) async throws {
-    let usesDFlash =
-      enableSpeculativeDecoding && dflash != nil && settings.temperature == 0
-    if supportsLagunaPromptCache && !normalizesGemma4Prompt && stop.isEmpty && !usesDFlash {
+    let hasForcedToolPrefix = !prepared.forcedToolPrefixTokenIDs.isEmpty
+    let usesDFlash = enableSpeculativeDecoding && dflash != nil && settings.temperature == 0
+      && !hasForcedToolPrefix
+    if supportsLagunaPromptCache && !normalizesGemma4Prompt && stop.isEmpty && !usesDFlash
+      && !hasForcedToolPrefix {
       try await generateWithLagunaPromptCache(
         messages: messages,
         settings: settings,
@@ -808,17 +1125,20 @@ public actor LocalModelRunner {
       )
       return
     }
-    if Self.shouldUseMistralPromptCache(
+    if Self.shouldUseHotConversationCache(
       capabilities: runtimeCapabilities,
       enablePromptCache: enablePromptCache,
       normalizesGemma4Prompt: normalizesGemma4Prompt,
       hasCustomStopStrings: !stop.isEmpty,
-      usesDFlash: usesDFlash
+      usesDFlash: usesDFlash,
+      hasTools: tools?.isEmpty == false,
+      hasForcedToolPrefix: hasForcedToolPrefix
     ) {
-      try await generateWithMistralPromptCache(
+      try await generateWithHotConversationCache(
         messages: messages,
         settings: settings,
         tools: tools,
+        reasoningEffort: prepared.reasoningEffort,
         allowsReuse: enablePromptCache,
         onEvent: onEvent
       )
@@ -841,8 +1161,10 @@ public actor LocalModelRunner {
       tools: tools,
       normalizesGemma4Prompt: normalizesGemma4Prompt,
       dflash: dflash,
-      enableSpeculativeDecoding: enableSpeculativeDecoding,
+      enableSpeculativeDecoding: enableSpeculativeDecoding
+        && prepared.forcedToolPrefixTokenIDs.isEmpty,
       preparedTokenIDs: prepared.tokenIDs,
+      forcedToolPrefixTokenIDs: prepared.forcedToolPrefixTokenIDs,
       longContext: longContext,
       onEvent: onEvent
     )
@@ -859,21 +1181,62 @@ public actor LocalModelRunner {
     hasCustomStopStrings: Bool,
     usesDFlash: Bool
   ) -> Bool {
+    capabilities.supportsMistralConversationPrefixCache
+      && shouldUseHotConversationCache(
+        capabilities: capabilities,
+        enablePromptCache: enablePromptCache,
+        normalizesGemma4Prompt: normalizesGemma4Prompt,
+        hasCustomStopStrings: hasCustomStopStrings,
+        usesDFlash: usesDFlash
+      )
+  }
+
+  /// The session validates actual rendered tokens before reusing KV state.
+  /// GPT-OSS Harmony tool restarts can retain generated analysis. Ordinary
+  /// GPT-OSS text follows the one-shot path because removing that analysis
+  /// from completed-turn history prevents useful rotating-cache reuse.
+  static func shouldUseHotConversationCache(
+    capabilities: ModelRuntimeCapabilities,
+    enablePromptCache: Bool,
+    normalizesGemma4Prompt: Bool,
+    hasCustomStopStrings: Bool,
+    usesDFlash: Bool,
+    hasTools: Bool = false,
+    hasForcedToolPrefix: Bool = false
+  ) -> Bool {
     enablePromptCache
-      && capabilities.supportsMistralConversationPrefixCache
+      && capabilities.supportsHotConversationCache
+      && (!capabilities.isGPTOSS || hasTools)
       && !normalizesGemma4Prompt
       && !hasCustomStopStrings
       && !usesDFlash
+      && !hasForcedToolPrefix
   }
 
   static func cachedConversationSuffixStart(
     committed: [OpenAIMessage],
-    incoming: [OpenAIMessage]
+    incoming: [OpenAIMessage],
+    committedTools: [OpenAIToolDefinition]? = nil,
+    tools: [OpenAIToolDefinition]? = nil,
+    committedReasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil,
+    reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil
   ) -> Int? {
-    guard incoming.count > committed.count, incoming.starts(with: committed) else {
+    guard committedTools == tools, committedReasoningEffort == reasoningEffort,
+      incoming.count > committed.count, incoming.starts(with: committed) else {
       return nil
     }
     return committed.count
+  }
+
+  static func hotConversationFitsContext(
+    processedTokenCount: Int?, renderedPromptTokenCount: Int,
+    maximumTokens: Int, contextLength: Int
+  ) -> Bool {
+    guard let processedTokenCount, processedTokenCount >= 0,
+      renderedPromptTokenCount > 0, maximumTokens > 0 else { return false }
+    let upperBound = ModelMemoryProfile.add(processedTokenCount,
+      ModelMemoryProfile.add(renderedPromptTokenCount, maximumTokens))
+    return upperBound <= contextLength
   }
 
   /// Select the deepest immutable conversation checkpoint that is a strict
@@ -910,10 +1273,11 @@ public actor LocalModelRunner {
     )
   }
 
-  private func generateWithMistralPromptCache(
+  private func generateWithHotConversationCache(
     messages: [OpenAIMessage],
     settings: GenerationRequestSettings,
     tools: [OpenAIToolDefinition]?,
+    reasoningEffort: ChatCompletionRequest.ReasoningEffort?,
     allowsReuse: Bool,
     onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
   ) async throws {
@@ -921,6 +1285,7 @@ public actor LocalModelRunner {
       messages: messages,
       settings: settings,
       tools: tools,
+      reasoningEffort: reasoningEffort,
       allowsReuse: allowsReuse,
       retainsBranchSnapshots: false,
       onEvent: onEvent
@@ -931,6 +1296,7 @@ public actor LocalModelRunner {
     messages: [OpenAIMessage],
     settings: GenerationRequestSettings,
     tools: [OpenAIToolDefinition]?,
+    reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil,
     allowsReuse: Bool,
     retainsBranchSnapshots: Bool,
     onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
@@ -941,19 +1307,25 @@ public actor LocalModelRunner {
 
     let chatMessages = try messages.map(Self.chatMessage)
     let toolSpecs = try Self.toolSpecs(tools)
+    let additionalContext = Self.promptAdditionalContext(reasoningEffort: reasoningEffort)
     let session: ChatSessionReference
     let pendingMessages: [Chat.Message]
     let reusedHotConversation: Bool
     if allowsReuse, let hotConversation,
       let suffixStart = Self.cachedConversationSuffixStart(
         committed: hotConversation.committedMessages,
-        incoming: messages)
+        incoming: messages,
+        committedTools: hotConversation.tools,
+        tools: tools,
+        committedReasoningEffort: hotConversation.reasoningEffort,
+        reasoningEffort: reasoningEffort)
     {
       session = hotConversation.session
       pendingMessages = Array(chatMessages.dropFirst(suffixStart))
       session.configure(
         parameters: settings.parameters,
         components: settings.components,
+        additionalContext: additionalContext,
         tools: toolSpecs
       )
       reusedHotConversation = true
@@ -965,6 +1337,7 @@ public actor LocalModelRunner {
           container: container,
           parameters: settings.parameters,
           components: settings.components,
+          additionalContext: additionalContext,
           tools: toolSpecs
         )
       )
@@ -977,6 +1350,7 @@ public actor LocalModelRunner {
           history: Array(chatMessages.dropLast()),
           generateParameters: settings.parameters,
           components: settings.components,
+          additionalContext: additionalContext,
           tools: toolSpecs
         )
       )
@@ -1030,6 +1404,14 @@ public actor LocalModelRunner {
       if reusedHotConversation { hotConversation = nil; hotCacheBytes = 0 }
       throw LocalModelRunnerError.emptyResponse
     }
+    if runtimeCapabilities.isGPTOSS && (generatedToolCalls.isEmpty || !canRetainSession) {
+      // Only a live tool restart can preserve Harmony's hidden analysis.
+      // Retaining a final text reply would keep KV allocations that the next
+      // ordinary turn must rebuild from its cold transcript anyway.
+      hotConversation = nil
+      hotCacheBytes = 0
+      return
+    }
     guard canRetainSession else {
       if reusedHotConversation { hotConversation = nil; hotCacheBytes = 0 }
       return
@@ -1042,11 +1424,13 @@ public actor LocalModelRunner {
     )
     hotConversation = HotConversation(
       session: session,
-      committedMessages: messages + [assistant]
+      committedMessages: messages + [assistant],
+      tools: tools,
+      reasoningEffort: reasoningEffort
     )
     // A snapshot deep-copies and evaluates every KV array. Keep Laguna's
-    // established branchable LRU unchanged, but make the Mistral-family fast
-    // path zero-copy: the hot session handles the common append-only chat case
+    // established branchable LRU unchanged, but make the shared text fast
+    // path zero-copy: the hot session handles compatible append-only chat
     // without adding a potentially GiB-scale copy after each response.
     hotCacheBytes = await session.cacheMemoryBytes()
     guard hotCacheBytes <= conversationCache.maximumBytes else {
@@ -1117,7 +1501,8 @@ public actor LocalModelRunner {
   fileprivate static func toolSpecs(
     _ definitions: [OpenAIToolDefinition]?
   ) throws -> [ToolSpec]? {
-    guard let definitions, !definitions.isEmpty else { return nil }
+    guard let definitions else { return nil }
+    guard !definitions.isEmpty else { return [] }
     var names = Set<String>()
     return try definitions.map { definition in
       guard definition.type == "function" else {
@@ -1245,14 +1630,15 @@ public actor LocalModelRunner {
 private struct GenerationRequestSettings: Sendable {
   let temperature: Double
   var parameters: GenerateParameters
-  let components: GenerationComponents
+  var components: GenerationComponents
 }
 
 private func generationRequestSettings(
   maximumTokens: Int,
   temperature requestedTemperature: Double?,
   topP requestedTopP: Double?,
-  normalizesGemma4Prompt: Bool
+  normalizesGemma4Prompt: Bool,
+  forcedTokenPrefix: [Int] = []
 ) throws -> GenerationRequestSettings {
   let temperature = requestedTemperature ?? 1.0
   guard temperature.isFinite, temperature >= 0 else {
@@ -1270,12 +1656,17 @@ private func generationRequestSettings(
     topP: Float(topP),
     topK: 64
   )
-  let components =
+  var components =
     normalizesGemma4Prompt
     ? GenerationComponents(
       logitProcessorFactory: { SuppressTokenLogitProcessor(tokenID: 0) }
     )
     : GenerationComponents()
+  if !forcedTokenPrefix.isEmpty {
+    components = components.appendingLogitProcessor {
+      ForcedTokenPrefixLogitProcessor(tokenIDs: forcedTokenPrefix)
+    }
+  }
   return GenerationRequestSettings(
     temperature: temperature,
     parameters: parameters,
@@ -1296,6 +1687,7 @@ private func generateOnDevice(
   dflash: LoadedDFlash?,
   enableSpeculativeDecoding: Bool,
   preparedTokenIDs: [Int],
+  forcedToolPrefixTokenIDs: [Int],
   longContext: LongContextOptions,
   onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
 ) async throws {
@@ -1316,7 +1708,8 @@ private func generateOnDevice(
       maximumTokens: maximumTokens,
       temperature: requestedTemperature,
       topP: requestedTopP,
-      normalizesGemma4Prompt: normalizesGemma4Prompt
+      normalizesGemma4Prompt: normalizesGemma4Prompt,
+      forcedTokenPrefix: forcedToolPrefixTokenIDs
     )
     try longContext.apply(to: &settings.parameters)
     let requestSettings = settings
@@ -1400,6 +1793,41 @@ private func generateOnDevice(
   }
 }
 
+struct ForcedTokenPrefixLogitProcessor: LogitProcessor {
+  let tokenIDs: [Int]
+  private var nextIndex = 0
+
+  init(tokenIDs: [Int]) {
+    self.tokenIDs = tokenIDs
+  }
+
+  mutating func prompt(_ prompt: MLXArray) {
+    nextIndex = 0
+  }
+
+  func process(logits: MLXArray) -> MLXArray {
+    guard nextIndex < tokenIDs.count else { return logits }
+    let vocabularyIDs = arange(logits.dim(-1), dtype: .int32)
+    let selectedTokenMask = broadcast(
+      vocabularyIDs .== Int32(tokenIDs[nextIndex]),
+      to: logits.shape
+    )
+    let suppressed = MLXArray(-Float.infinity).asType(logits.dtype)
+    // Keep the selected model logit in the result instead of replacing every
+    // element with constants. MLX evaluates lazily: if this mask has no data
+    // dependency on `logits`, TokenIterator's first forced token can advance
+    // while the prompt forward (and its KV-cache updates) is still unevaluated.
+    // The following one-token decode then observes inconsistent prompt/decode
+    // shapes. Retaining the selected logit forces the ordinary model and cache
+    // graph to complete while still making that token the only finite choice.
+    return which(selectedTokenMask, logits, suppressed)
+  }
+
+  mutating func didSample(token: MLXArray) {
+    if nextIndex < tokenIDs.count { nextIndex += 1 }
+  }
+}
+
 private struct SuppressTokenLogitProcessor: LogitProcessor {
   let tokenID: Int
   private let eosTokenID = 1
@@ -1437,6 +1865,14 @@ public enum LocalModelRunnerError: LocalizedError, Equatable {
   case duplicateToolName(String)
   case invalidToolParameters(String)
   case invalidToolCallArguments(String)
+  case unsupportedForcedToolChoiceFormat(String)
+  case unsupportedForcedToolChoiceModel(String)
+  case invalidForcedToolChoiceTokens
+  case emptyForcedToolChoicePrefix
+  case prohibitedToolCall(String)
+  case undeclaredToolCall(String)
+  case wrongNamedToolCall(expected: String, actual: String)
+  case requiredToolCallMissing
   case missingDirectory(String)
   case missingConfig(String)
   case missingWeights(String)
@@ -1464,6 +1900,22 @@ public enum LocalModelRunnerError: LocalizedError, Equatable {
       "Function tool '\(name)' requires an object JSON schema for parameters."
     case .invalidToolCallArguments(let id):
       "Tool call '\(id)' arguments must be a JSON object."
+    case .unsupportedForcedToolChoiceFormat(let format):
+      "The loaded model's '\(format)' tool-call format cannot enforce tool_choice."
+    case .unsupportedForcedToolChoiceModel(let model):
+      "The loaded model type '\(model)' does not support enforced tool_choice."
+    case .invalidForcedToolChoiceTokens:
+      "The tokenizer encoded a forced tool-call prefix outside the model vocabulary."
+    case .emptyForcedToolChoicePrefix:
+      "The loaded tokenizer cannot encode the required tool-call prefix."
+    case .prohibitedToolCall(let name):
+      "The model emitted prohibited tool call '\(name)' while tool_choice was 'none'."
+    case .undeclaredToolCall(let name):
+      "The model emitted undeclared tool call '\(name)'."
+    case .wrongNamedToolCall(let expected, let actual):
+      "The model emitted tool call '\(actual)' when tool_choice required '\(expected)'."
+    case .requiredToolCallMissing:
+      "The model completed without the tool call required by tool_choice."
     case .missingDirectory(let path): "Model folder does not exist: \(path)"
     case .missingConfig(let path): "Model folder is missing config.json: \(path)"
     case .missingWeights(let path): "Model folder contains no .safetensors weights: \(path)"

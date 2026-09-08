@@ -8,7 +8,9 @@ Linux, or MLX's CPU backend.
 > **Beta:** Midnight is a prerelease. CLI, API, and model-runtime behavior may
 > change before the first stable release.
 
-The separate `model-chat-swifttui` client connects to the runner over HTTP.
+The separate [Midnight Chat](../../model-chat-mlx/README.md) client connects to
+the runner over HTTP. Studio, the menu bar app, and quantization are also
+separate projects; see the [project layout](project-layout.md).
 
 ## Model-family priorities
 
@@ -49,14 +51,16 @@ five-layer block drafter, checkpoint pairing, and benchmark procedure.
 
 ### Standalone Swift ScaleSearch quantizer
 
-`model-runner-quantize` is the architecture-aware Swift quantization program;
-the shell files in `Scripts/` are optional build/launch conveniences, not the
-quantizer implementation. Build it with the MLX Metal library on macOS:
+`model-runner-quantize` is the architecture-aware Swift quantization program in
+the sibling [Midnight Quantization](../../midnight-quantization/README.md)
+project. The remaining quantization shell launchers in this repository forward
+to that project. From the Midnight directory, build it with the MLX Metal
+library on macOS:
 
 ```bash
 MODEL_RUNNER_BUILD_CONFIGURATION=release \
 MODEL_RUNNER_BUILD_PRODUCT=model-runner-quantize \
-./build.sh
+../midnight-quantization/build.sh
 ```
 
 Inspect a local Mixtral, Mistral, Llama, GPT-OSS, Qwen, Poolside Laguna
@@ -64,12 +68,12 @@ DFlash drafter, or other registered MLX Swift text model without writing
 output, then perform the conversion directly:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/unquantized-model \
   /absolute/path/model-q4r8-scalesearch \
   --dry-run
 
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/unquantized-model \
   /absolute/path/model-q4r8-scalesearch
 ```
@@ -78,7 +82,7 @@ Create a matched ordinary-affine-Q4 control from the same source by adding
 `--standard-q4` and choosing a separate destination:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/unquantized-model \
   /absolute/path/model-q4-standard-control \
   --standard-q4
@@ -143,7 +147,7 @@ DFlash is a separate checkpoint from the Laguna target. The official
 INT4 target, so quantize it with a second invocation:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4 \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4-MLX-Q4R8-ScaleSearch
 ```
@@ -190,7 +194,7 @@ For Laguna, retain the measured bounded-memory and fused-layout path by giving
 the same binary a standard Q4R8 template:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/Laguna-XS-2.1-BF16 \
   /absolute/path/Laguna-XS-2.1-Q4R8-ScaleSearch-LS2 \
   --template /absolute/path/Laguna-XS-2.1-Q4R8-standard \
@@ -224,7 +228,7 @@ For a compact deployment artifact with lower GPU residency, prepack the 39
 sparse MoE layers offline, then serve the destination directory normally:
 
 ```bash
-python3 Scripts/pack-laguna-gate-up.py \
+python3 ../midnight-quantization/Scripts/pack-laguna-gate-up.py \
   /absolute/path/Laguna-XS-2.1-4bit \
   /absolute/path/Laguna-XS-2.1-4bit-fused-gate-up-compact
 ```

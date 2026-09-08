@@ -47,6 +47,11 @@ if quality:
         scored_token_count=20, sample_count=2, device='cpu', add_special_tokens=True)
 else:
     tokens = int(option('--tokens', 256))
+    reasoning_effort = option('--reasoning-effort', None)
+    if reasoning_effort is not None and fingerprint is not None:
+        fingerprint += ':reasoning=' + reasoning_effort
+    if not config.get('omit_reasoning_effort'):
+        report['reasoning_effort'] = config.get('reported_reasoning_effort', reasoning_effort)
     repetition = int(re.search(r'-(\d{3})-', str(output)).group(1))
     rate = float(os.environ.get('MODEL_RUNNER_TEST_RATE', config.get('rate', 10)))
     if config.get('drift') and repetition >= 2:
@@ -225,6 +230,83 @@ class CampaignTests(unittest.TestCase):
         self.assertEqual(candidate["measurement"]["prefill_step_size"], 128)
         self.assertEqual(candidate["measurement"]["decode_tokens_per_second"], 15)
         self.assertEqual(candidate["environment"]["MODEL_RUNNER_TEST_RATE"], "15")
+
+    def test_runtime_reasoning_effort_reaches_native_process_and_measurement(self):
+        self.manifest["runtime"]["native_args"].extend(["--reasoning-effort", "low"])
+        code, output = self.run_campaign()
+        self.assertEqual(code, 0)
+        records = json.loads((output / "results.json").read_text())
+        for record in records:
+            self.assertEqual(record["measurement"]["reasoning_effort"], "low")
+            command = record["command"]
+            self.assertEqual(command[command.index("--reasoning-effort") + 1], "low")
+            report = json.loads((Path(record["directory"]) / "native.json").read_text())
+            self.assertEqual(report["reasoning_effort"], "low")
+        comparison = json.loads((output / "summary.json").read_text())["comparisons"][0]
+        self.assertTrue(comparison["comparable"])
+
+    def test_legacy_runtime_report_without_effort_remains_valid_when_unset(self):
+        self.set_config("standard", omit_reasoning_effort=True)
+        code, output = self.run_campaign()
+        self.assertEqual(code, 0)
+        records = json.loads((output / "results.json").read_text())
+        self.assertTrue(all(record["measurement"]["reasoning_effort"] is None for record in records))
+        legacy = next(record for record in records if record["model"] == "standard")
+        report = json.loads((Path(legacy["directory"]) / "native.json").read_text())
+        self.assertNotIn("reasoning_effort", report)
+
+    def test_old_runtime_binary_cannot_silently_ignore_requested_effort(self):
+        self.manifest["runtime"]["native_args"].extend(["--reasoning-effort", "low"])
+        self.set_config("candidate", omit_reasoning_effort=True)
+        code, output = self.run_campaign()
+        self.assertEqual(code, 1)
+        records = json.loads((output / "results.json").read_text())
+        failures = [record for record in records if record["status"] == "failed"]
+        self.assertEqual(len(failures), 4)
+        self.assertTrue(all("reasoning_effort" in record["error"] for record in failures))
+        comparison = json.loads((output / "summary.json").read_text())["comparisons"][0]
+        self.assertFalse(comparison["comparable"])
+
+    def test_runtime_report_must_confirm_requested_effort(self):
+        self.manifest["runtime"]["native_args"].extend(["--reasoning-effort", "high"])
+        self.set_config("candidate", reported_reasoning_effort="low")
+        code, output = self.run_campaign()
+        self.assertEqual(code, 1)
+        records = json.loads((output / "results.json").read_text())
+        self.assertEqual(sum(record["status"] == "failed" for record in records), 4)
+        self.assertTrue(all("reasoning_effort" in record.get("error", "")
+                            for record in records if record["status"] == "failed"))
+
+    def test_per_arm_reasoning_effort_overrides_are_not_compared_as_identical_prompts(self):
+        self.manifest["runtime"]["native_args"].extend(["--reasoning-effort", "high"])
+        self.models[1]["runtime_native_args"] = ["--reasoning-effort", "low"]
+        code, output = self.run_campaign()
+        self.assertEqual(code, 1)
+        records = json.loads((output / "results.json").read_text())
+        self.assertTrue(all(record["status"] == "measured" for record in records))
+        for record in records:
+            expected = "low" if record["model"] == "candidate" else "high"
+            self.assertEqual(record["measurement"]["reasoning_effort"], expected)
+            self.assertEqual(record["command"].count("--reasoning-effort"), 1)
+        comparison = json.loads((output / "summary.json").read_text())["comparisons"][0]
+        self.assertEqual(comparison["valid_pairs"], 0)
+        self.assertIn("prompt_token_id_fingerprint mismatch", comparison["rejected_pairs"][0]["reasons"])
+
+    def test_reasoning_effort_manifest_values_are_validated(self):
+        base_args = list(self.manifest["runtime"]["native_args"])
+        for effort in ("low", "medium", "high"):
+            with self.subTest(effort=effort):
+                self.manifest["runtime"]["native_args"] = base_args + ["--reasoning-effort", effort]
+                campaign.validate_manifest(self.manifest, "runtime")
+        for effort in ("", "LOW", "none", "minimal", "xhigh", " low "):
+            with self.subTest(effort=effort):
+                self.manifest["runtime"]["native_args"] = base_args + ["--reasoning-effort", effort]
+                with self.assertRaisesRegex(ValueError, "must be low, medium, or high"):
+                    campaign.validate_manifest(self.manifest, "runtime")
+        self.manifest["runtime"]["native_args"] = base_args
+        self.models[1]["runtime_native_args"] = ["--reasoning-effort", "invalid"]
+        with self.assertRaisesRegex(ValueError, "must be low, medium, or high"):
+            campaign.validate_manifest(self.manifest, "runtime")
 
     def test_dry_run_does_not_launch_and_default_weight_hash_is_labeled_sampled(self):
         code, output = self.run_campaign(extra=["--dry-run"])

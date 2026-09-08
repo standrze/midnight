@@ -6,6 +6,12 @@ Nothing in Midnight's license replaces those terms.
 
 ## MLX projects
 
+- [mlx-audio-swift](https://github.com/Blaizzy/mlx-audio-swift) — MIT License,
+  copyright (c) 2025 Prince Canuma. Midnight pins this dependency and carries
+  Chatterbox compatibility patches. Chatterbox checkpoints retain their own
+  model licenses. Optional FFmpeg is a separately installed executable and is
+  not bundled by Midnight.
+
 - [mlx-swift](https://github.com/ml-explore/mlx-swift) — MIT License,
   copyright (c) 2023 ml-explore.
 - [MLX](https://github.com/ml-explore/mlx) — MIT License,
@@ -18,8 +24,7 @@ Nothing in Midnight's license replaces those terms.
   copyright (c) 2024 ml-explore.
 
 The following MIT terms apply to those projects and to portions represented in
-the corresponding files under `Patches/`,
-`Diagnostics/revert-nonrotating-gemma4-cache.patch`, and
+the corresponding files under `Patches/` and
 `benchmark-results/vllm-metal-vs-native-20260830/mlx-lm-laguna-q4r8.patch`:
 
 > Permission is hereby granted, free of charge, to any person obtaining a copy

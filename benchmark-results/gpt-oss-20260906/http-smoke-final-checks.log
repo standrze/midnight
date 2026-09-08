@@ -1,0 +1,8 @@
+low-hello 309.5 {"created":1788706444,"model":"gpt-oss-20b","id":"chatcmpl-29CE1D1773BA4C538AF139D7ACAE9167","choices":[{"finish_reason":"stop","index":0,"message":{"content":"Hello","role":"assistant"}}],"object":"chat.completion","usage":{"total_tokens":94,"prompt
+medium-hello 356.79 {"id":"chatcmpl-A65900CA98A140209C9318DC2A173B1A","created":1788706444,"model":"gpt-oss-20b","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"Hello"},"finish_reason":"stop"}],"usage":{"prompt_tokens":76,"total
+low-stream 202.7 data: {"id":"chatcmpl-2DAC09A7CD09430D879ACAA28CE9DE44","object":"chat.completion.chunk","created":1788706444,"model":"gpt-oss-20b","choices":[{"delta":{"role":"assistant"},"index":0}]}
+
+data: {"model":"gpt-oss-20b","id":"chatcmpl-2DAC09A7CD09430D879
+tool-call 381.41 {"object":"chat.completion","usage":{"total_tokens":183,"prompt_tokens":146,"completion_tokens":37},"choices":[{"finish_reason":"tool_calls","index":0,"message":{"tool_calls":[{"id":"call_86e93bad3e0d4ffeacd67b65c1f18249","type":"function","function"
+tool-followup 263.08 {"id":"chatcmpl-73BF11E1AB614ADE8444E5ED36379B6B","choices":[{"message":{"role":"assistant","content":"The assigned code for **bluebird** is:\n\n**ZX‑482**"},"finish_reason":"stop","index":0}],"object":"chat.completion","model":"gpt-oss-20b","usage":
+All HTTP smoke assertions passed.

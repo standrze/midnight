@@ -1,0 +1,4 @@
+9120ba86ac9abf1ff8d4883b97513b90e7b9a21342a6ec5e15352f77ae5c8dad  .build/release/midnight
+39fe1bb0cface9712b8cbda7fb8d9f27ba4b51cbe3388543e3f371ced2e57897  .build/release/model-runner-runtime-bench
+729f01ff1bbc7bd6fb223365f2de1b42a17b57afbf0dffa1ebb0dd3994d4ef3c  .build/release/model-runner-metal-quant-bench
+903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c  .build/release/mlx.metallib

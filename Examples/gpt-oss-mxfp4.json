@@ -1,0 +1,13 @@
+{
+  "mlxRunner": {
+    "modelPath": "tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274",
+    "servedModelName": "gpt-oss-20b",
+    "engine": "metal",
+    "host": "127.0.0.1",
+    "port": 8080,
+    "maximumTokens": 2048,
+    "contextLength": 8192,
+    "prefillStepSize": 512,
+    "kvCompression": "none"
+  }
+}

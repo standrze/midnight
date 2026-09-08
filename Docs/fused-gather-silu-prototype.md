@@ -26,12 +26,12 @@ After building the Metal benchmark in release mode, run the two order controls
 in separate processes with other GPU work stopped:
 
 ```sh
-.build/release/model-runner-metal-quant-bench \
+../midnight-quantization/.build/release/model-runner-metal-quant-bench \
   --fused-gather-silu-ab --warmup 16 --iterations 20 \
   --queue-depth 32 --queue-rounds 9 \
   --fused-gather-silu-output /private/tmp/fused-gather-silu-ab.json
 
-.build/release/model-runner-metal-quant-bench \
+../midnight-quantization/.build/release/model-runner-metal-quant-bench \
   --fused-gather-silu-ab --fused-gather-silu-candidate-first \
   --warmup 16 --iterations 20 --queue-depth 32 --queue-rounds 9 \
   --fused-gather-silu-output /private/tmp/fused-gather-silu-ba.json

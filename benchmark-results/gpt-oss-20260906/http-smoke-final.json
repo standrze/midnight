@@ -1,0 +1,239 @@
+[
+  {
+    "label": "low-hello",
+    "request": {
+      "model": "gpt-oss-20b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Respond with exactly the word Hello."
+        }
+      ],
+      "max_tokens": 512,
+      "temperature": 0,
+      "reasoning_effort": "low",
+      "stream": false
+    },
+    "response": {
+      "created": 1788706444,
+      "model": "gpt-oss-20b",
+      "id": "chatcmpl-29CE1D1773BA4C538AF139D7ACAE9167",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "Hello",
+            "role": "assistant"
+          }
+        }
+      ],
+      "object": "chat.completion",
+      "usage": {
+        "total_tokens": 94,
+        "prompt_tokens": 76,
+        "completion_tokens": 18
+      }
+    },
+    "total_ms": 309.4976249849424
+  },
+  {
+    "label": "medium-hello",
+    "request": {
+      "model": "gpt-oss-20b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Respond with exactly the word Hello."
+        }
+      ],
+      "max_tokens": 512,
+      "temperature": 0,
+      "reasoning_effort": "medium",
+      "stream": false
+    },
+    "response": {
+      "id": "chatcmpl-A65900CA98A140209C9318DC2A173B1A",
+      "created": 1788706444,
+      "model": "gpt-oss-20b",
+      "object": "chat.completion",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "Hello"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 76,
+        "total_tokens": 117,
+        "completion_tokens": 41
+      }
+    },
+    "total_ms": 356.78641602862626
+  },
+  {
+    "label": "low-stream",
+    "request": {
+      "model": "gpt-oss-20b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Respond with exactly the word Hello."
+        }
+      ],
+      "max_tokens": 512,
+      "temperature": 0,
+      "reasoning_effort": "low",
+      "stream": true
+    },
+    "response": "data: {\"id\":\"chatcmpl-2DAC09A7CD09430D879ACAA28CE9DE44\",\"object\":\"chat.completion.chunk\",\"created\":1788706444,\"model\":\"gpt-oss-20b\",\"choices\":[{\"delta\":{\"role\":\"assistant\"},\"index\":0}]}\n\ndata: {\"model\":\"gpt-oss-20b\",\"id\":\"chatcmpl-2DAC09A7CD09430D879ACAA28CE9DE44\",\"created\":1788706444,\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Hello\"}}],\"object\":\"chat.completion.chunk\"}\n\ndata: {\"created\":1788706444,\"model\":\"gpt-oss-20b\",\"id\":\"chatcmpl-2DAC09A7CD09430D879ACAA28CE9DE44\",\"choices\":[{\"index\":0,\"finish_reason\":\"stop\",\"delta\":{}}],\"object\":\"chat.completion.chunk\"}\n\ndata: {\"id\":\"chatcmpl-2DAC09A7CD09430D879ACAA28CE9DE44\",\"object\":\"chat.completion.chunk\",\"created\":1788706444,\"choices\":[],\"model\":\"gpt-oss-20b\"}\n\ndata: [DONE]\n\n",
+    "total_ms": 202.70212495233864
+  },
+  {
+    "label": "tool-call",
+    "request": {
+      "model": "gpt-oss-20b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Use lookup_code to find the assigned code for the item bluebird. Do not guess the code."
+        }
+      ],
+      "max_tokens": 512,
+      "temperature": 0,
+      "reasoning_effort": "low",
+      "stream": false,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "lookup_code",
+            "description": "Look up the assigned code for a named item.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "item": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "item"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "response": {
+      "object": "chat.completion",
+      "usage": {
+        "total_tokens": 183,
+        "prompt_tokens": 146,
+        "completion_tokens": 37
+      },
+      "choices": [
+        {
+          "finish_reason": "tool_calls",
+          "index": 0,
+          "message": {
+            "tool_calls": [
+              {
+                "id": "call_86e93bad3e0d4ffeacd67b65c1f18249",
+                "type": "function",
+                "function": {
+                  "name": "lookup_code",
+                  "arguments": "{\"item\":\"bluebird\"}"
+                }
+              }
+            ],
+            "role": "assistant"
+          }
+        }
+      ],
+      "id": "chatcmpl-11C531C11C6849AB99D9BBD303B1F47B",
+      "created": 1788706445,
+      "model": "gpt-oss-20b"
+    },
+    "total_ms": 381.4112909603864
+  },
+  {
+    "label": "tool-followup",
+    "request": {
+      "model": "gpt-oss-20b",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Use lookup_code to find the assigned code for the item bluebird. Do not guess the code."
+        },
+        {
+          "tool_calls": [
+            {
+              "id": "call_86e93bad3e0d4ffeacd67b65c1f18249",
+              "type": "function",
+              "function": {
+                "name": "lookup_code",
+                "arguments": "{\"item\":\"bluebird\"}"
+              }
+            }
+          ],
+          "role": "assistant"
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_86e93bad3e0d4ffeacd67b65c1f18249",
+          "content": "{\"item\":\"bluebird\",\"code\":\"ZX-482\"}"
+        }
+      ],
+      "max_tokens": 512,
+      "temperature": 0,
+      "reasoning_effort": "low",
+      "stream": false,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "lookup_code",
+            "description": "Look up the assigned code for a named item.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "item": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "item"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "response": {
+      "id": "chatcmpl-73BF11E1AB614ADE8444E5ED36379B6B",
+      "choices": [
+        {
+          "message": {
+            "role": "assistant",
+            "content": "The assigned code for **bluebird** is:\n\n**ZX\u2011482**"
+          },
+          "finish_reason": "stop",
+          "index": 0
+        }
+      ],
+      "object": "chat.completion",
+      "model": "gpt-oss-20b",
+      "usage": {
+        "total_tokens": 209,
+        "prompt_tokens": 191,
+        "completion_tokens": 18
+      },
+      "created": 1788706445
+    },
+    "total_ms": 263.0837500328198
+  }
+]

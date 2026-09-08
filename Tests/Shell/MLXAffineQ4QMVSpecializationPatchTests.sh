@@ -5,7 +5,6 @@ PACKAGE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 MLX_PATCH="$PACKAGE_ROOT/Patches/mlx-affine-q4-qmv-specialization.patch"
 MLX_SWIFT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-affine-q4-qmv-jit.patch"
 PREPARE_SCRIPT="$PACKAGE_ROOT/prepare-dependencies.sh"
-BENCHMARK_SOURCE="$PACKAGE_ROOT/Benchmarks/MetalQuantization/main.swift"
 MLX_SWIFT_CHECKOUT="$PACKAGE_ROOT/.build/checkouts/mlx-swift"
 MLX_CHECKOUT="$MLX_SWIFT_CHECKOUT/Source/Cmlx/mlx"
 MLX_SWIFT_REVISION="72f3c3ad8aeee39bfc94f8fbeb446cac89e3a798"
@@ -98,13 +97,6 @@ grep -Fq \
 grep -Fq 'if [[ "$HOST_OS" == "Darwin" ]]; then' "$PREPARE_SCRIPT"
 grep -Fq '"mlx affine Q4 QMV specialization"' "$PREPARE_SCRIPT"
 grep -Fq '"mlx-swift affine Q4 QMV generated JIT"' "$PREPARE_SCRIPT"
-
-grep -Fq 'CommandLine.arguments.contains("--qmv-specialization")' "$BENCHMARK_SOURCE"
-grep -Fq 'MLX_METAL_AFFINE_QMV_RESULTS_PER_SIMDGROUP' "$BENCHMARK_SOURCE"
-grep -Fq 'dense-lm-head-2048x100352' "$BENCHMARK_SOURCE"
-grep -Fq 'gather-gate-up-2048x1024' "$BENCHMARK_SOURCE"
-grep -Fq 'gather-down-512x2048' "$BENCHMARK_SOURCE"
-grep -Fq 'outputHash &*= 1_099_511_628_211' "$BENCHMARK_SOURCE"
 
 TEST_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/model-runner-affine-q4-qmv.XXXXXX")"
 cleanup() {

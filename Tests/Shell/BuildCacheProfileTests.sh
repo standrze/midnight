@@ -15,7 +15,7 @@ grep -Fq 'PROFILE_MARKER="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/.model-runner-profi
   "$BUILD_SCRIPT"
 grep -Fq 'mv -f "$CACHE_PROFILE_TEMP" "$CACHE_PROFILE_MARKER"' "$BUILD_SCRIPT"
 grep -Fq 'IFS= read -r PREVIOUS_PROFILE < "$CACHE_PROFILE_MARKER"' "$BUILD_SCRIPT"
-grep -Fq 'source "$PACKAGE_ROOT/Scripts/optional-dependency-patch.sh"' "$BUILD_SCRIPT"
+grep -Fq 'source "$MIDNIGHT_RUNTIME_ROOT/Scripts/optional-dependency-patch.sh"' "$BUILD_SCRIPT"
 grep -Fq \
   ':mlx-cross-thread-stream-overlay=$MLX_SWIFT_CROSS_THREAD_STREAM_OVERLAY_MODE:' \
   "$BUILD_SCRIPT"

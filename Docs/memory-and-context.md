@@ -6,6 +6,35 @@ compression. These controls do not extend a model's trained context window.
 
 ## Configuration
 
+Each text model can have a `midnight.json` in its model directory:
+
+```json
+{
+  "contextLength": 32768,
+  "maximumTokens": 2048,
+  "prefillStepSize": 512,
+  "kvCompression": "none"
+}
+```
+
+All four fields are optional. Omit `contextLength` to use the stack setting or
+checkpoint metadata. Unknown keys and malformed files fail at startup.
+For a bundle containing `base-model/` and `adapter/`, put this file in the
+bundle root. Named models, explicit paths, and symlinked model directories
+use the same discovery. Launch normally with `--model`; no `--config` is needed
+for this file. See `Examples/midnight.json` for a template.
+
+Precedence is CLI > model-local `midnight.json` > selected stack settings >
+model metadata/defaults. When switching away from the stack file's `modelPath`,
+its context, output, prefill, compression, served name and DFlash settings are
+discarded; host, port and engine remain shared. Stack files without `modelPath`
+provide shared defaults. CLI flags can still override the model-local values.
+
+`maximumTokens` sets both the output default and hard request ceiling. With
+the example above, a request reserving 2,048 output tokens has room for 30,720
+rendered prompt tokens. These settings do not alter architectural `config.json`.
+Speech models continue to reject text context/cache settings.
+
 ```bash
 ./run.sh --model /absolute/path/to/model \
   --context-length 32768 --max-tokens 2048 --prefill-step-size 512
@@ -16,8 +45,8 @@ The macOS launcher now builds and launches release by default. Set
 building, run `.build/release/midnight` directly after `./build.sh`.
 
 The settings-file equivalents are `mlxRunner.contextLength`,
-`mlxRunner.prefillStepSize`, and `mlxRunner.kvCompression`. CLI values override
-settings. Context defaults to the model's declared maximum, or a conservative
+`mlxRunner.prefillStepSize`, and `mlxRunner.kvCompression`. CLI and model-local
+values override stack settings. Context defaults to the model's declared maximum, or a conservative
 4096 when no recognized context field exists. An explicit value cannot exceed
 a known model maximum. The limit covers **prompt plus requested output**; the
 runner never silently truncates a transcript. Prefill defaults to 512 and

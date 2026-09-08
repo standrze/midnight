@@ -2,10 +2,18 @@
 set -euo pipefail
 
 PACKAGE_ROOT="$(cd "$(dirname "$0")" && pwd)"
+# A sibling package may reuse the reviewed patches with its own dependency
+# graph and build directory. Patch ownership remains in Midnight.
+DEPENDENCY_PACKAGE_ROOT="${MODEL_RUNNER_DEPENDENCY_PACKAGE_ROOT:-$PACKAGE_ROOT}"
+if [[ ! -f "$DEPENDENCY_PACKAGE_ROOT/Package.swift" ]]; then
+  echo "Dependency package root must contain Package.swift: $DEPENDENCY_PACKAGE_ROOT" >&2
+  exit 2
+fi
+DEPENDENCY_PACKAGE_ROOT="$(cd "$DEPENDENCY_PACKAGE_ROOT" && pwd -P)"
 source "$PACKAGE_ROOT/Scripts/swiftpm-scratch-path.sh"
 source "$PACKAGE_ROOT/Scripts/optional-dependency-patch.sh"
 HOST_OS="$(uname -s)"
-model_runner_configure_swiftpm_scratch "$PACKAGE_ROOT" "$HOST_OS"
+model_runner_configure_swiftpm_scratch "$DEPENDENCY_PACKAGE_ROOT" "$HOST_OS"
 MLX_SWIFT_CHECKOUT="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-swift"
 MLX_SWIFT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-cuda-linux.patch"
 MLX_SWIFT_GENERATED_HEADER_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-cuda-generated-header.patch"
@@ -80,7 +88,7 @@ case "$HOST_OS" in
     ;;
 esac
 
-cd "$PACKAGE_ROOT"
+cd "$DEPENDENCY_PACKAGE_ROOT"
 # Bash 3.2 treats an empty array expansion as unbound under `set -u`; keep the
 # no-scratch path explicit so this preparation step also remains usable on the
 # Mac client.
@@ -257,6 +265,18 @@ if [[ "$APPLY_LINUX_DEPENDENCY_PATCHES" == "1" ]]; then
 fi
 
 if [[ "$HOST_OS" == "Darwin" ]]; then
+  verify_checkout_revision "mlx-audio-swift" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "bf14ae0c26e4e85553dd989571cae29d70fa6735"
+  apply_dependency_patch "mlx-audio Midnight platform" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "$PACKAGE_ROOT/Patches/mlx-audio-midnight-platform.patch"
+  apply_dependency_patch "mlx-audio Chatterbox controls" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "$PACKAGE_ROOT/Patches/mlx-audio-chatterbox-controls.patch"
+  apply_dependency_patch "mlx-audio Chatterbox cache dtype" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "$PACKAGE_ROOT/Patches/mlx-audio-chatterbox-cache-dtype.patch"
   # Upstream d73eb752: clamp large sorted expert-row counts before narrowing.
   # Keep compiled Metal headers and generated JIT shader sources synchronized.
   apply_dependency_patch \

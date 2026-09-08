@@ -13,8 +13,47 @@ subset for chat and speech over Metal on macOS, CUDA on Linux, or MLX's CPU
 backend. There is no Python inference server or hosted dependency in the
 serving path.
 
+The long-term target is a project with no Python dependency, including
+quantization helpers, evaluation, diagnostics, and tests. See the
+[Python removal roadmap](Docs/python-removal-roadmap.md) for the migration scope.
+
+Pruning, distillation, training datasets, and experiment checkpoints belong in
+the sibling **Training** project (`../training`). Midnight loads and serves the
+exported models. Training reuses the `ModelRunnerCore` and `ModelRunnerProtocol`
+libraries; Midnight has no dependency on the Training package. See the local
+[Training README](../training/README.md) for builds, experiments, and exports.
+
+Studio, the menu bar app, Chat, and Quantization have their own sibling projects:
+
+| Project | Responsibility |
+| --- | --- |
+| [Midnight Studio](../midnight-studio/README.md) | Web model controls, preparation, inspection, and its native adapter/shard worker |
+| [Midnight menu bar](../midnight-menubar/README.md) | Native macOS launcher for the installed Runner |
+| [Midnight Chat](../model-chat-mlx/README.md) | Terminal conversations and client-side session management |
+| [Midnight Quantization](../midnight-quantization/README.md) | Checkpoint conversion, calibration, packing, and quantization tests |
+
+Runner builds independently of these applications. See the
+[project layout](Docs/project-layout.md) for dependencies and launch commands.
+
 > **Beta:** Midnight is prerelease software. CLI, API, and runtime behavior may
 > change before the first stable release.
+
+## Install the current prerelease
+
+```sh
+curl -fsSL https://midnightrun.sh/install.sh | bash
+```
+
+The installer selects the newest published release, including prereleases,
+verifies its checksum, and asks whether to add Midnight to PATH. The prebuilt
+runner supports Apple silicon on macOS 26+ and is ad-hoc signed, not notarized.
+Linux/CUDA remains available through the source build below.
+
+Version **0.2.0-beta.4** separates the runner from the surrounding tools and adds
+Hugging Face downloads, an editable download catalog, native corpus preparation,
+and the current model/audio compatibility work. Use `midnight --list` for local
+models or `midnight download` for downloadable presets. Exact checkpoint
+compatibility and memory requirements still vary; see the model notes below.
 
 ## Quantization and reproducible benchmarks
 
@@ -37,8 +76,15 @@ and experimental-feature limits.
 
 ## What is included
 
+Liquid LFM2/LFM2.5 text architectures are available through the native MLX
+loaders, from dense 1.2B Base/Instruct models to 8B-A1B and 24B-A2B MoE models.
+See [Liquid model compatibility](Docs/liquid-models.md) for formats, usage,
+configuration checks, and the remaining checkpoint-level validation limits.
+
 - Native Mistral-family text inference with append-only conversation-prefix
   caching and hybrid-attention support.
+- Native GPT-OSS text inference with explicit reasoning-effort controls and
+  mixed MXFP4/affine checkpoints. See the [GPT-OSS setup and measurements](Docs/gpt-oss.md).
 - Native Voxtral text-to-speech with 24 kHz WAV/PCM output and checkpoint
   preset voices.
 - Native Poolside Laguna hybrid-attention/MoE execution, including the existing
@@ -46,11 +92,31 @@ and experimental-feature limits.
   opt-in greedy DFlash speculative decoding.
 - Model discovery, streaming and non-streaming chat, function-tool calls,
   speech, and voice discovery through a focused OpenAI-compatible HTTP surface.
-- Swift quantization and evaluation tools for ordinary affine Q4, ScaleSearch,
-  activation-weighted ScaleSearch (AWSS), teacher-KL, NLL, and runtime tests.
+- Native evaluation tools for teacher-KL, NLL, generated-task quality, and runtime
+  tests. Checkpoint conversion lives in [Midnight Quantization](../midnight-quantization/README.md).
 - One source tree for Apple-silicon Metal and Linux CUDA deployments.
 
 ## Quick start on Apple silicon
+
+The per-user installation lives in `~/.midnight`: `models/` holds checkpoints,
+`logs/` holds saved logs, and `bin/` contains the commands available on PATH.
+Build and install the current release with `./install.sh`, or install an already
+built runner with `./install.sh --binary .build/release/midnight`. The installer
+preserves models and logs and stages the executable with its runtime resources
+under `apps/.runner-versions/` before updating `bin/midnight`. Previous versions
+remain available to running processes.
+
+Add `export PATH="$HOME/.midnight/bin:$PATH"` to your shell configuration once.
+Then use `midnight --list` or `midnight --model MODEL_NAME` from any directory.
+
+Browse publisher checkpoints with `midnight download` or `midnight download --list`, and download with
+`midnight download liquid-1.2b`. Use `midnight auth login` for a local Hugging Face
+read token, and `--dry-run` to check a download before transferring weights.
+The default download limit is 30 GB. See [model downloads](Docs/model-downloads.md)
+for preset compatibility notes and custom `owner/model` repositories.
+Runtime output stays on stdout/stderr; save it when needed with
+`midnight --model MODEL_NAME > ~/.midnight/logs/runner.log 2>&1`.
+The separate Lowlight chat application uses `lowlight`; `midnight` is the model runner command.
 
 Requirements: macOS 15 or newer, Swift 6.3, and the Xcode command-line tools.
 The first build resolves pinned dependencies and compiles the MLX Metal library.
@@ -69,14 +135,32 @@ cd midnight
 ```
 
 The model directory must contain an MLX-compatible `config.json`, tokenizer,
-and `.safetensors` weights. Midnight also discovers named models under
-`~/.runner/models`:
+and `.safetensors` weights. Midnight discovers named models under
+`~/.midnight/models` and automatically loads user-level settings from
+`~/.midnight/model-stack.local.json` when no explicit or project-local config
+is supplied:
 
 ```bash
 ./run.sh --list-models
 ```
 
+Text models can store their own context and output limits in a `midnight.json`
+alongside `config.json` (at the root for adapter bundles). It is loaded automatically;
+CLI flags override it. See [memory and context configuration](Docs/memory-and-context.md)
+and [example model policy](Examples/midnight.json).
+
+Chatterbox Turbo and Multilingual speech models can use the same OpenAI speech
+endpoint, with model-specific controls in a model-local `chatterbox.json`.
+See [Chatterbox setup, configuration, and compatibility](Docs/chatterbox-integration.md).
+The native Chatterbox backend currently requires macOS Metal; compressed audio
+formats and speed changes use an optional FFmpeg executable.
+
 ## Chat with the model
+
+For a local visual layer explorer, use [Midnight Studio](../midnight-studio/README.md),
+a Hummingbird web app that shows loaded modules and tensor shapes, compares
+model structures, and captures bounded per-token residual activations on
+supported architectures.
 
 ```bash
 curl --fail-with-body --silent --show-error \
@@ -147,24 +231,26 @@ generation through that model.
 
 ## Quantization
 
-Build the architecture-aware Swift quantizer:
+The architecture-aware Swift quantizer belongs to the sibling
+[Midnight Quantization project](../midnight-quantization/README.md). From this
+directory, build it with:
 
 ```bash
 MODEL_RUNNER_BUILD_CONFIGURATION=release \
 MODEL_RUNNER_BUILD_PRODUCT=model-runner-quantize \
-./build.sh
+../midnight-quantization/build.sh
 ```
 
 Create a ScaleSearch affine-Q4 checkpoint without changing the standard MLX
 Q4 storage layout or generation kernels:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /absolute/path/to/bf16-model \
   /absolute/path/to/q4-scalesearch-model
 ```
 
-Midnight also includes an experimental activation-weighted second pass for
+Midnight Quantization also includes an experimental activation-weighted second pass for
 dense Mistral matrices. AWSS chooses affine grids using observed input-channel
 second moments and can veto calibration gains that fail on a separate dev set.
 It retains the same Q4 format, group size, tensor payload geometry, and runtime
@@ -226,8 +312,8 @@ before building. A CPU-only Linux build is available with `SPM_CUDA=0`.
 | --- | --- |
 | [`Sources/ModelRunner`](Sources/ModelRunner) | CLI and HTTP server |
 | [`Sources/ModelRunnerCore`](Sources/ModelRunnerCore) | Model loading, generation, Laguna, Voxtral, caches |
-| [`Sources/ModelQuantizer`](Sources/ModelQuantizer) | Architecture-aware ScaleSearch quantizer |
-| [`Sources/MistralActivationScaleSearchCore`](Sources/MistralActivationScaleSearchCore) | Activation-weighted affine-Q4 search |
+| [`Sources/CorpusPreparation`](Sources/CorpusPreparation) | Native text and pinned reference dataset preparation; [usage](Docs/dataset-preparation.md) |
+| [`Sources/ModelRunnerProtocol`](Sources/ModelRunnerProtocol) | Shared settings, model descriptors, and API contracts |
 | [`Benchmarks`](Benchmarks) | Authored corpora and benchmark programs |
 | [`benchmark-results`](benchmark-results) | Reproducible reports and raw measurements |
 | [`Docs`](Docs) | Designs, research, deployment notes, and full reference |

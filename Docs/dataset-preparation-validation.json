@@ -1,0 +1,148 @@
+{
+  "purpose": "Local warm-cache, fresh-output wall-clock comparison; includes process startup. Six counterbalanced pairs, two warmups per language. Not a universal performance claim.",
+  "system": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "binary_sha256": "9afee82f116f6b3a0b4e57ece60b9e5a3d9cf4a35ad724df93140493f714d24e",
+  "text_input_bytes": 7275000,
+  "text_input_sha256": "ab051468492e73c7be465f927906b3ac313a1d841f8091fab237c748f1ee0d4b",
+  "work_directory": "/var/folders/kf/sb5h0d5j0f95tsqhp6_zwchh0000gn/T/midnight-corpus-validation-s1yin1a1",
+  "cases": {
+    "reference": {
+      "byte_identical": true,
+      "output_hashes": {
+        "mbpp-64.jsonl": "51735211d10adccfb201b6bbb875701b45a60af63aa63b9b986a37d2c2c4b771",
+        "mbpp-source.jsonl": "ccf64ceae9c5403bf50a044cb6d505bfd2a2963ee58338ba268fd65beab92a9f",
+        "provenance.json": "066760008e1df156635d2dbc7b27344bbabb9deb14283f6c8af71afbc9154cea",
+        "gsm8k-64.jsonl": "d387a74772e4f3dc7329d6158f37ce8084a6f8a1e38a95f277461bb89e74bd8b",
+        "gsm8k-source.jsonl": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+        "code-math-128.jsonl": "5fc84a9794338a138e7284f415018323aa6bfec54227d09db8a95ad562e532f6"
+      },
+      "pairs": [
+        {
+          "order": [
+            "swift",
+            "python"
+          ],
+          "swift_seconds": 0.025190665968693793,
+          "python_seconds": 0.04370629205368459
+        },
+        {
+          "order": [
+            "python",
+            "swift"
+          ],
+          "python_seconds": 0.043214584002271295,
+          "swift_seconds": 0.025608957977965474
+        },
+        {
+          "order": [
+            "swift",
+            "python"
+          ],
+          "swift_seconds": 0.02571125002577901,
+          "python_seconds": 0.045337249990552664
+        },
+        {
+          "order": [
+            "python",
+            "swift"
+          ],
+          "python_seconds": 0.04321433394216001,
+          "swift_seconds": 0.026589083019644022
+        },
+        {
+          "order": [
+            "swift",
+            "python"
+          ],
+          "swift_seconds": 0.025840790942311287,
+          "python_seconds": 0.04341983306221664
+        },
+        {
+          "order": [
+            "python",
+            "swift"
+          ],
+          "python_seconds": 0.04327662498690188,
+          "swift_seconds": 0.02587708306964487
+        }
+      ],
+      "swift_median_seconds": 0.025776020484045148,
+      "python_median_seconds": 0.04334822902455926
+    },
+    "text": {
+      "byte_identical": true,
+      "output_hashes": {
+        "output": "15791bb9fab2c434f339eb4e2819f260ef102a3b03816c3858f3dc2b17270165"
+      },
+      "pairs": [
+        {
+          "order": [
+            "swift",
+            "python"
+          ],
+          "swift_seconds": 0.06102583301253617,
+          "python_seconds": 0.05843241699039936
+        },
+        {
+          "order": [
+            "python",
+            "swift"
+          ],
+          "python_seconds": 0.05966475000604987,
+          "swift_seconds": 0.0608576670056209
+        },
+        {
+          "order": [
+            "swift",
+            "python"
+          ],
+          "swift_seconds": 0.05993925000075251,
+          "python_seconds": 0.05925499997101724
+        },
+        {
+          "order": [
+            "python",
+            "swift"
+          ],
+          "python_seconds": 0.0578902920242399,
+          "swift_seconds": 0.05899366701487452
+        },
+        {
+          "order": [
+            "swift",
+            "python"
+          ],
+          "swift_seconds": 0.06114766595419496,
+          "python_seconds": 0.05704975000116974
+        },
+        {
+          "order": [
+            "python",
+            "swift"
+          ],
+          "python_seconds": 0.05666554102208465,
+          "swift_seconds": 0.059356417041271925
+        }
+      ],
+      "swift_median_seconds": 0.0603984585031867,
+      "python_median_seconds": 0.05816135450731963
+    }
+  },
+  "toolchains": {
+    "swift": "6.3.3",
+    "python": "3.14.6",
+    "swift_configuration": "release"
+  },
+  "source_sha256": {
+    "Sources/CorpusPreparationCore/CorpusPreparation.swift": "58c8cd4c1ba28b616e2652bb557b1c1161054f1bb5450ff208871ba5c30895d2",
+    "Sources/CorpusPreparationCore/SHA256.swift": "06ae51cd0c44bb597f5b90abe9e5d5f459cad11292e7eaa7d29755f9bbe006cd",
+    "Sources/CorpusPreparation/main.swift": "ee201cfafd27d63fd8a2f9fd10a6940c4635a785cec3e4e0d0170917ed29e90a",
+    "Sources/CorpusPreparationCore/Resources/pinned-sources.json": "a2f4e53f4280bc776e6a2107ba4c2b8b732bafd043278abe2585249090a61c3d"
+  },
+  "text_input_recipe": {
+    "utf8_paragraph": "  The project color is blue. café é 👩‍💻 / reference \"+\" xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n\r\n",
+    "repeat_count": 25000,
+    "output_samples": 64,
+    "target_characters": 2500
+  }
+}

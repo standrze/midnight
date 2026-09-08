@@ -14,7 +14,7 @@ Focused fixtures cover standard/LS2 conversion, exact preserved arrays, smaller 
 
 ## Bounded GPTQ-style experiment
 
-[The script](../Scripts/probe-laguna-affine-gptq.py) reads only selected source tensor rows. For Laguna layer 0, the input to `q_proj` is exactly RMSNorm of the BF16 token embedding. It samples 128 evenly distributed output rows from the 6144-row projection and retains all 2048 input columns. Calibration uses 4096 tokens from eight local MLX calibration records; development uses 4064 tokens from eight separate WikiText validation records. Token hashes reject exact duplicate full samples and selected prefixes; they do not establish absence of shared substrings or tokens. These are development comparisons; the existing AWSS reference already used this development corpus for its validation gate.
+[The script](../../midnight-quantization/Scripts/probe-laguna-affine-gptq.py) reads only selected source tensor rows. For Laguna layer 0, the input to `q_proj` is exactly RMSNorm of the BF16 token embedding. It samples 128 evenly distributed output rows from the 6144-row projection and retains all 2048 input columns. Calibration uses 4096 tokens from eight local MLX calibration records; development uses 4064 tokens from eight separate WikiText validation records. Token hashes reject exact duplicate full samples and selected prefixes; they do not establish absence of shared substrings or tokens. These are development comparisons; the existing AWSS reference already used this development corpus for its validation gate.
 
 The eight calibration records contain only 756 distinct token inputs, so the empirical 2048-dimensional covariance has rank at most 756 before damping. The 128 output rows follow the structured schedule 0,48,…; they are not a random sample of all model channels. The probe forms the full 2048×2048 Float32 covariance, with 1% diagonal damping, and performs blocked error compensation with 128-column blocks and contiguous G64/G128 groups. Scale/bias parameters are rounded to the source BF16 storage before selecting codes. No activation-order permutation or dynamic group map is introduced. The equations follow the [original GPTQ implementation](https://github.com/IST-DASLab/gptq/blob/2d65066eeb06a5c9ff5184d8cebdf33662c67faf/gptq.py); this is a native-affine adaptation, not a bit-exact reproduction of that quantizer.
 
@@ -51,7 +51,7 @@ The expanded proxy improved by 78.65% at G64 and 74.13% at G128 versus the respe
 Reproduce with existing local source/corpus paths:
 
 ```sh
-/opt/homebrew/bin/python3 Scripts/probe-laguna-affine-gptq.py \
+/opt/homebrew/bin/python3 ../midnight-quantization/Scripts/probe-laguna-affine-gptq.py \
   --source <Laguna-BF16-directory> \
   --calibration <mlx-lm-calibration-v5-awss.jsonl> \
   --development <wikitext-2-raw-dev.jsonl> \

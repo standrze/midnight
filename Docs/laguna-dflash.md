@@ -111,7 +111,7 @@ The unified Swift quantizer recognizes `DFlashLagunaForCausalLM` separately
 from the Laguna target and converts it directly:
 
 ```bash
-.build/release/model-runner-quantize \
+../midnight-quantization/.build/release/model-runner-quantize \
   /models/Laguna-XS-2.1-DFlash-INT4 \
   /models/Laguna-XS-2.1-DFlash-INT4-MLX-Q4R8-ScaleSearch
 ```

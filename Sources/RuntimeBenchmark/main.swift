@@ -236,6 +236,27 @@ private struct GenerationMode {
   var usePromptCache = true
 }
 
+private struct HotCacheModeLabels {
+  let cached: String
+  let cold: String
+  let seedBeforeCold: String
+  let seedBeforeCached: String
+
+  init(isMistral: Bool) {
+    if isMistral {
+      cached = "mistral_hot_cache_cached"
+      cold = "mistral_hot_cache_cold"
+      seedBeforeCold = "mistral_hot_cache_seed_before_cold"
+      seedBeforeCached = "mistral_hot_cache_seed_before_cached"
+    } else {
+      cached = "hot_cache_cached"
+      cold = "hot_cache_cold"
+      seedBeforeCold = "hot_cache_seed_before_cold"
+      seedBeforeCached = "hot_cache_seed_before_cached"
+    }
+  }
+}
+
 private struct RuntimeBenchmarkReport: Encodable {
   var format = 1
   var status = "measured"
@@ -250,6 +271,7 @@ private struct RuntimeBenchmarkReport: Encodable {
   var contextLength: Int
   var prefillStepSize: Int
   var kvCompression: String
+  var reasoningEffort: String?
   var memoryLimitBytes: Int
   var allowEarlyStop: Bool
   var requestedTokens: Int
@@ -266,6 +288,7 @@ private struct RuntimeBenchmarkReport: Encodable {
   var lagunaGatherSiluTraceCount: Int?
   var promptCacheComparison: PromptCacheComparison?
   var mistralHotCacheABComparison: MistralHotCacheABComparison?
+  var hotCacheABComparison: MistralHotCacheABComparison?
   var warmups: [RecordedTrial]
   var trials: [RecordedTrial]
 
@@ -296,6 +319,8 @@ private struct RuntimeBenchmarkReport: Encodable {
     case lagunaGatherSiluTraceCount = "laguna_gather_silu_trace_count"
     case promptCacheComparison = "prompt_cache_comparison"
     case mistralHotCacheABComparison = "mistral_hot_cache_ab_comparison"
+    case hotCacheABComparison = "hot_cache_ab_comparison"
+    case reasoningEffort = "reasoning_effort"
   }
 }
 
@@ -333,25 +358,25 @@ private enum BenchmarkError: Error, LocalizedError {
     case .coldPromptUnexpectedlyCached(let sequence, let count):
       "Cold prompt-cache replay \(sequence) unexpectedly reused \(count) prompt tokens."
     case .unsupportedMistralHotCacheModel:
-      "--mistral-hot-cache-ab requires a Mistral, Mistral 3/Ministral, or Mixtral text checkpoint."
+      "--hot-cache-ab requires a Mistral-family or GPT-OSS text checkpoint."
     case .mistralHotCacheSeedUnexpectedlyCached(let sequence, let count):
-      "Mistral hot-cache seed \(sequence) unexpectedly reused \(count) prompt tokens."
+      "Hot-cache seed \(sequence) unexpectedly reused \(count) prompt tokens."
     case .mistralHotCacheNotUsed(let sequence):
-      "Mistral hot-cache continuation \(sequence) reused no prompt tokens."
+      "Hot-cache continuation \(sequence) reused no prompt tokens."
     case .mistralHotCacheColdUnexpectedlyCached(let sequence, let count):
-      "Mistral cold continuation \(sequence) unexpectedly reused \(count) prompt tokens."
+      "Cold continuation \(sequence) unexpectedly reused \(count) prompt tokens."
     case .mistralHotCachePromptCountMismatch(let cachedSequence, let coldSequence, let delta):
-      "Mistral hot/cold continuations \(cachedSequence)/\(coldSequence) rendered different prompt lengths (delta \(delta))."
+      "Hot/cold continuations \(cachedSequence)/\(coldSequence) rendered different prompt lengths (delta \(delta))."
     case .mistralHotCacheDidNotReducePrefill(
       let cachedSequence, let coldSequence, let cachedCount, let coldCount):
-      "Mistral hot/cold continuations \(cachedSequence)/\(coldSequence) did not reduce prefill tokens (\(cachedCount) versus \(coldCount))."
+      "Hot/cold continuations \(cachedSequence)/\(coldSequence) did not reduce prefill tokens (\(cachedCount) versus \(coldCount))."
     case .mistralHotCachePartialReuse(let sequence, let actual, let expected):
       "Mistral hot-cache continuation \(sequence) reused \(actual)/\(expected) seed tokens; a full append-only reuse is required."
     case .mistralHotCachePrefillAccountingMismatch(
       let sequence, let actual, let total, let reused):
-      "Mistral hot-cache continuation \(sequence) reported \(actual) prefilled prompt tokens; expected \(total - reused) (\(total) total minus \(reused) reused)."
+      "Hot-cache continuation \(sequence) reported \(actual) prefilled prompt tokens; expected \(total - reused) (\(total) total minus \(reused) reused)."
     case .mistralHotCacheSeedOutputMismatch(let firstSequence, let secondSequence, let offset):
-      "Mistral hot-cache seeds \(firstSequence)/\(secondSequence) produced different greedy text"
+      "Hot-cache seeds \(firstSequence)/\(secondSequence) produced different greedy text"
         + (offset.map { " at UTF-8 byte \($0)." } ?? ".")
     }
   }
@@ -438,11 +463,14 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
   var promptCache = false
 
   @Flag(
-    name: .customLong("mistral-hot-cache-ab"),
+    name: [.customLong("hot-cache-ab"), .customLong("mistral-hot-cache-ab")],
     help:
-      "Alternate cached and forced-cold append-only continuations on one loaded Mistral-family model; reports TTFT and cache/prefill token counts."
+      "Alternate cached and forced-cold continuations on one loaded Mistral-family or GPT-OSS model; requires measured cache reuse and reports TTFT/prefill counts."
   )
   var mistralHotCacheAB = false
+
+  @Option(help: "GPT-OSS reasoning effort: low, medium, or high. Omission preserves the checkpoint template default.")
+  var reasoningEffort: String?
 
   @Option(help: "Warm-up generations excluded from the medians.")
   var warmups = 1
@@ -456,7 +484,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
 
   @Option(
     help:
-      "Second deterministic user turn used by --prompt-cache and --mistral-hot-cache-ab."
+      "Second deterministic user turn used by --prompt-cache and --hot-cache-ab."
   )
   var continuationPrompt =
     "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response."
@@ -483,6 +511,11 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     if dflashBlockSize != nil, dflashModel == nil {
       throw ValidationError("--dflash-block-size requires --dflash-model.")
     }
+    if let reasoningEffort,
+      ChatCompletionRequest.ReasoningEffort(rawValue: reasoningEffort) == nil
+    {
+      throw ValidationError("--reasoning-effort must be low, medium, or high.")
+    }
     if dflashAB, dflashModel == nil {
       throw ValidationError("--dflash-ab requires --dflash-model.")
     }
@@ -508,11 +541,11 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       throw ValidationError("--prompt-cache cannot be combined with --dflash-model.")
     }
     if mistralHotCacheAB, dflashModel != nil {
-      throw ValidationError("--mistral-hot-cache-ab cannot be combined with --dflash-model.")
+      throw ValidationError("--hot-cache-ab cannot be combined with --dflash-model.")
     }
     if mistralHotCacheAB, allowEarlyStop {
       throw ValidationError(
-        "--mistral-hot-cache-ab cannot be combined with --allow-early-stop."
+        "--hot-cache-ab cannot be combined with --allow-early-stop."
       )
     }
     let exclusiveModes = [
@@ -521,7 +554,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     ].filter { $0 }.count
     if exclusiveModes > 1 {
       throw ValidationError(
-        "--dflash-ab, --laguna-fusion-ab, --laguna-attention-gate-ab, --laguna-block-tail-ab, --laguna-router-topk-ab, --laguna-gather-silu-ab, --prompt-cache, and --mistral-hot-cache-ab are mutually exclusive."
+        "--dflash-ab, --laguna-fusion-ab, --laguna-attention-gate-ab, --laguna-block-tail-ab, --laguna-router-topk-ab, --laguna-gather-silu-ab, --prompt-cache, and --hot-cache-ab are mutually exclusive."
       )
     }
   }
@@ -560,7 +593,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       longContext: try LongContextOptions(contextLength: contextLength,
         prefillStepSize: prefillStepSize, kvCompression: kvCompression)
     )
-    if mistralHotCacheAB, !runner.supportsMistralHotConversationCache {
+    if mistralHotCacheAB, !runner.supportsHotConversationCache {
       throw BenchmarkError.unsupportedMistralHotCacheModel
     }
     if lagunaRouterTopKAB || lagunaGatherSiluAB, runner.engine != .metal {
@@ -796,11 +829,12 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     let promptCacheColdRecords = measuredRecords.filter {
       $0.mode == "prompt_cache_cold"
     }
+    let hotCacheLabels = HotCacheModeLabels(isMistral: runner.supportsMistralHotConversationCache)
     let mistralHotCacheCachedRecords = measuredRecords.filter {
-      $0.mode == "mistral_hot_cache_cached"
+      $0.mode == hotCacheLabels.cached
     }
     let mistralHotCacheColdRecords = measuredRecords.filter {
-      $0.mode == "mistral_hot_cache_cold"
+      $0.mode == hotCacheLabels.cold
     }
     let primaryRecords: [RecordedTrial]
     if dflashAB {
@@ -971,8 +1005,8 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
         mistralHotCacheCachedRecords.map(\.timeToFirstTokenMilliseconds))
       let coldTTFT = median(
         mistralHotCacheColdRecords.map(\.timeToFirstTokenMilliseconds))
-      let outputsMatch = mistralHotCacheOutputsMatchExactly(measuredRecords)
-      let firstDivergence = mistralHotCacheFirstOutputDivergence(measuredRecords)
+      let outputsMatch = mistralHotCacheOutputsMatchExactly(measuredRecords, labels: hotCacheLabels)
+      let firstDivergence = mistralHotCacheFirstOutputDivergence(measuredRecords, labels: hotCacheLabels)
       mistralHotCacheModeComparison = MistralHotCacheABComparison(
         trialsPerMode: trials,
         cachedMedianTimeToFirstTokenMilliseconds: cachedTTFT,
@@ -1009,6 +1043,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       contextLength: runner.contextLength,
       prefillStepSize: runner.prefillStepSize,
       kvCompression: runner.kvCompression,
+      reasoningEffort: reasoningEffort,
       memoryLimitBytes: runner.memoryLimitBytes,
       allowEarlyStop: allowEarlyStop,
       requestedTokens: tokens,
@@ -1026,7 +1061,8 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       lagunaGatherSiluABComparison: lagunaGatherSiluComparison,
       lagunaGatherSiluTraceCount: lagunaGatherSiluAB ? (await runner.lagunaFusedGateUpSiluCoverage()).traces : nil,
       promptCacheComparison: promptCacheModeComparison,
-      mistralHotCacheABComparison: mistralHotCacheModeComparison,
+      mistralHotCacheABComparison: runner.supportsMistralHotConversationCache ? mistralHotCacheModeComparison : nil,
+      hotCacheABComparison: mistralHotCacheModeComparison,
       warmups: warmupRecords,
       trials: measuredRecords
     )
@@ -1117,7 +1153,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
       print(
         String(
           format:
-            "Mistral hot-cache median TTFT: cached %.2f ms, cold %.2f ms (%+.2f%% reduction)",
+            "Hot-cache median TTFT: cached %.2f ms, cold %.2f ms (%+.2f%% reduction)",
           comparison.cachedMedianTimeToFirstTokenMilliseconds,
           comparison.coldMedianTimeToFirstTokenMilliseconds,
           comparison.cachedTTFTReductionPercent
@@ -1192,7 +1228,9 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     let clock = ContinuousClock()
     Memory.peakMemory = 0
     let startedAt = clock.now
-    let prepared = try await runner.preparePrompt(messages: messages, maximumTokens: tokens)
+    let effort = reasoningEffort.flatMap(ChatCompletionRequest.ReasoningEffort.init(rawValue:))
+    let prepared = try await runner.preparePrompt(messages: messages, maximumTokens: tokens,
+      reasoningEffort: effort)
     let promptFingerprint = ModelQualityCore.tokenIDFingerprint(prepared.promptTokenIDs)
     let events = await LagunaRuntimeTuning.$useCompiledMoEFusion.withValue(
       mode.useLagunaFusion
@@ -1212,6 +1250,7 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
                 maximumTokens: tokens,
                 temperature: 0,
                 topP: 1,
+                reasoningEffort: effort,
                 enablePromptCache: mode.usePromptCache,
                 enableSpeculativeDecoding: mode.useDFlash,
                 preparedPrompt: prepared
@@ -1315,10 +1354,11 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     mode: GenerationMode,
     coldFirst: Bool
   ) async throws -> [RecordedTrial] {
+    let labels = HotCacheModeLabels(isMistral: runner.supportsMistralHotConversationCache)
     var cachedMode = mode
-    cachedMode.label = "mistral_hot_cache_cached"
+    cachedMode.label = labels.cached
     var coldMode = mode
-    coldMode.label = "mistral_hot_cache_cold"
+    coldMode.label = labels.cold
     coldMode.usePromptCache = false
 
     let cachedSeed: RecordedTrial
@@ -1328,14 +1368,14 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     if coldFirst {
       coldSeed = try await runMistralHotCacheSeed(
         runner: runner, sequence: sequence, messages: seedMessages, mode: mode,
-        label: "mistral_hot_cache_seed_before_cold")
+        label: labels.seedBeforeCold)
       cold = try await runGeneration(
         runner: runner, messages: continuationMessages(seedMessages, coldSeed),
         sequence: sequence + 1,
         mode: coldMode)
       cachedSeed = try await runMistralHotCacheSeed(
         runner: runner, sequence: sequence + 2, messages: seedMessages, mode: mode,
-        label: "mistral_hot_cache_seed_before_cached")
+        label: labels.seedBeforeCached)
       cached = try await runGeneration(
         runner: runner, messages: continuationMessages(seedMessages, cachedSeed),
         sequence: sequence + 3,
@@ -1343,14 +1383,14 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     } else {
       cachedSeed = try await runMistralHotCacheSeed(
         runner: runner, sequence: sequence, messages: seedMessages, mode: mode,
-        label: "mistral_hot_cache_seed_before_cached")
+        label: labels.seedBeforeCached)
       cached = try await runGeneration(
         runner: runner, messages: continuationMessages(seedMessages, cachedSeed),
         sequence: sequence + 1,
         mode: cachedMode)
       coldSeed = try await runMistralHotCacheSeed(
         runner: runner, sequence: sequence + 2, messages: seedMessages, mode: mode,
-        label: "mistral_hot_cache_seed_before_cold")
+        label: labels.seedBeforeCold)
       cold = try await runGeneration(
         runner: runner, messages: continuationMessages(seedMessages, coldSeed),
         sequence: sequence + 3,
@@ -1369,7 +1409,12 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     }
     let expectedCachedPromptTokenCount =
       cachedSeed.metrics.promptTokenCount + cachedSeed.metrics.generationTokenCount
-    guard cached.metrics.cachedPromptTokenCount == expectedCachedPromptTokenCount else {
+    // Harmony can remove private analysis from a completed assistant turn.
+    // GPT-OSS may safely reuse a shorter prefix; require actual reuse and valid
+    // accounting below without assigning Mistral's full-prefix contract to it.
+    if runner.supportsMistralHotConversationCache,
+      cached.metrics.cachedPromptTokenCount != expectedCachedPromptTokenCount
+    {
       throw BenchmarkError.mistralHotCachePartialReuse(
         cached.sequence,
         cached.metrics.cachedPromptTokenCount,
@@ -1458,13 +1503,15 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
     return sorted[middle]
   }
 
-  private func mistralHotCacheOutputsMatchExactly(_ records: [RecordedTrial]) -> Bool {
+  private func mistralHotCacheOutputsMatchExactly(
+    _ records: [RecordedTrial], labels: HotCacheModeLabels
+  ) -> Bool {
     guard records.count.isMultiple(of: 4) else { return false }
     return stride(from: 0, to: records.count, by: 4).allSatisfy { start in
       let probe = records[start..<(start + 4)]
       guard
-        let cached = probe.first(where: { $0.mode == "mistral_hot_cache_cached" }),
-        let cold = probe.first(where: { $0.mode == "mistral_hot_cache_cold" })
+        let cached = probe.first(where: { $0.mode == labels.cached }),
+        let cold = probe.first(where: { $0.mode == labels.cold })
       else {
         return false
       }
@@ -1473,14 +1520,14 @@ private struct RuntimeBenchmark: AsyncParsableCommand {
   }
 
   private func mistralHotCacheFirstOutputDivergence(
-    _ records: [RecordedTrial]
+    _ records: [RecordedTrial], labels: HotCacheModeLabels
   ) -> Int? {
     guard records.count.isMultiple(of: 4) else { return nil }
     return stride(from: 0, to: records.count, by: 4).compactMap { start in
       let probe = records[start..<(start + 4)]
       guard
-        let cached = probe.first(where: { $0.mode == "mistral_hot_cache_cached" }),
-        let cold = probe.first(where: { $0.mode == "mistral_hot_cache_cold" })
+        let cached = probe.first(where: { $0.mode == labels.cached }),
+        let cold = probe.first(where: { $0.mode == labels.cold })
       else {
         return nil
       }

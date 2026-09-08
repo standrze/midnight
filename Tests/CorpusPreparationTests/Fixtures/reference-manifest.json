@@ -1,0 +1,22 @@
+{
+  "sources": [
+    {
+      "name": "mbpp",
+      "repo": "google-research/google-research",
+      "revision": "f82046ba5aabbbb427dbfd38a254d26bff08b533",
+      "path": "mbpp/mbpp.jsonl",
+      "source_sha256": "593b1733375091d522230acc6f81256586a06b792f3cf0bf13510f0d7725c7fc",
+      "corpus_sha256": "91327be6f1b4bec293e612842e2b1f1b37b4bd1e24142135ee8929cc91444856"
+    },
+    {
+      "name": "gsm8k",
+      "repo": "openai/grade-school-math",
+      "revision": "b0bb162abedc65e1fdd8e93ed090fd7598ee68bc",
+      "path": "grade_school_math/data/test.jsonl",
+      "source_sha256": "eae29087a517d40074fe301f6405f0c94748383c39e77fd12014e12ea09053e3",
+      "corpus_sha256": "ff1774b3cbd17fe693707805c7396fc337b393cca9144302ea33f55002fbc599"
+    }
+  ],
+  "combined_sha256": "1fd8f2cfc87be370d153c1e517015a2c55b8d9556889adc3071e43421ba563f2",
+  "purpose": "Teacher-forced reference likelihood; not generated-code pass@1 or math accuracy."
+}

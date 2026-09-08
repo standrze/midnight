@@ -1,0 +1,6 @@
+{
+  "contextLength": 32768,
+  "maximumTokens": 2048,
+  "prefillStepSize": 512,
+  "kvCompression": "none"
+}

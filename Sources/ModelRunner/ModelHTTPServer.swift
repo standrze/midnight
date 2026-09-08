@@ -85,6 +85,17 @@ final class ModelHTTPServer: @unchecked Sendable {
                 return
             }
             switch (head.method, head.uri) {
+            case (.GET, "/v1/inspector/runtime"):
+                try await sendJSON(
+                    InspectorRuntimeIdentity(
+                        instanceID: ProcessInfo.processInfo.environment["MIDNIGHT_CONTROL_INSTANCE"],
+                        processID: ProcessInfo.processInfo.processIdentifier
+                    ), on: channel
+                )
+            case (.GET, "/v1/inspector/model"):
+                try await handleInspector(body: nil, channel: channel)
+            case (.POST, "/v1/inspector/trace"):
+                try await handleInspector(body: body, channel: channel)
             case (.GET, "/v1/models"):
                 try await sendJSON(
                     ModelListResponse(models: [modelDescriptor()]),
@@ -169,6 +180,57 @@ final class ModelHTTPServer: @unchecked Sendable {
         ModelResponse(id: servedModelName, created: modelCreated,
             contextLength: runner?.contextLength, prefillStepSize: runner?.prefillStepSize,
             kvCompression: runner?.kvCompression, memoryLimitBytes: runner?.memoryLimitBytes)
+    }
+
+    private func handleInspector(body: Data?, channel: Channel) async throws {
+        guard let runner else {
+            throw ModelHTTPError(
+                status: .notImplemented,
+                message: "The loaded model does not provide layer inspection.",
+                type: "invalid_request_error",
+                code: "unsupported_model_feature"
+            )
+        }
+        do {
+            if let body {
+                guard body.count <= 32 * 1024 else {
+                    throw ModelHTTPError(
+                        status: .payloadTooLarge,
+                        message: "Inspector requests may not exceed 32 KiB.",
+                        code: "request_too_large"
+                    )
+                }
+                let request: InspectorTraceRequest
+                do {
+                    request = try JSONDecoder().decode(InspectorTraceRequest.self, from: body)
+                } catch {
+                    throw ModelHTTPError(
+                        status: .badRequest,
+                        message: "Invalid Inspector request: \(error.localizedDescription)",
+                        code: "invalid_json"
+                    )
+                }
+                try await sendJSON(try await runner.inspectorTrace(request: request), on: channel)
+            } else {
+                try await sendJSON(try await runner.inspectorModel(), on: channel)
+            }
+        } catch LocalModelRunnerError.busy {
+            throw ModelHTTPError(
+                status: .conflict,
+                message: LocalModelRunnerError.busy.localizedDescription,
+                type: "server_error",
+                code: "model_busy"
+            )
+        } catch let error as ModelInspectionError {
+            switch error {
+            case .invalidRequest(let message):
+                throw ModelHTTPError(status: .badRequest, message: message, code: "invalid_inspector_request")
+            case .unsupported(let message):
+                throw ModelHTTPError(status: .unprocessableEntity, message: message, code: "unsupported_model_feature")
+            case .invalidGraph(let message):
+                throw ModelHTTPError(status: .internalServerError, message: message, type: "server_error", code: "invalid_model_graph")
+            }
+        }
     }
 
     private func handleAudio(
@@ -848,6 +910,33 @@ final class ModelHTTPServer: @unchecked Sendable {
         }
     }
 
+    static func chatDecodingIssue(_ error: Error) -> (message: String, param: String?) {
+        let context: DecodingError.Context
+        let codingPath: [any CodingKey]
+        switch error {
+        case DecodingError.keyNotFound(let key, let errorContext):
+            context = errorContext
+            codingPath = context.codingPath + [key]
+        case DecodingError.valueNotFound(_, let errorContext),
+            DecodingError.typeMismatch(_, let errorContext),
+            DecodingError.dataCorrupted(let errorContext):
+            context = errorContext
+            codingPath = context.codingPath
+        default:
+            return (error.localizedDescription, nil)
+        }
+
+        let path = codingPath.reduce(into: "") { result, key in
+            if let index = key.intValue {
+                result += "[\(index)]"
+            } else {
+                result += (result.isEmpty ? "" : ".") + key.stringValue
+            }
+        }
+        guard !path.isEmpty else { return (context.debugDescription, nil) }
+        return ("\(path): \(context.debugDescription)", path)
+    }
+
     private func mistralValidation(
         _ message: String,
         param: String?,
@@ -909,9 +998,11 @@ final class ModelHTTPServer: @unchecked Sendable {
         do {
             completion = try JSONDecoder().decode(ChatCompletionRequest.self, from: body)
         } catch {
+            let issue = Self.chatDecodingIssue(error)
             throw ModelHTTPError(
                 status: .badRequest,
-                message: "Invalid JSON request: \(error.localizedDescription)",
+                message: "Invalid JSON request: \(issue.message)",
+                param: issue.param,
                 code: "invalid_json"
             )
         }
@@ -979,13 +1070,57 @@ final class ModelHTTPServer: @unchecked Sendable {
                 code: "invalid_parameter"
             )
         }
+        let toolChoicePlan: ToolChoicePlan
+        do {
+            toolChoicePlan = try ToolChoicePlan.resolve(
+                choice: completion.toolChoice,
+                tools: completion.tools
+            )
+        } catch let error as ToolChoiceValidationError {
+            throw ModelHTTPError(
+                status: .badRequest,
+                message: error.localizedDescription,
+                param: "tool_choice",
+                code: "invalid_parameter"
+            )
+        }
         let preparedPrompt: PreparedModelPrompt
         do {
             preparedPrompt = try await runner.preparePrompt(messages: completion.messages,
-                maximumTokens: requestedMaximumTokens, tools: completion.tools)
+                maximumTokens: requestedMaximumTokens, tools: toolChoicePlan.tools,
+                toolChoice: toolChoicePlan.constraint,
+                reasoningEffort: completion.reasoningEffort)
         } catch let error as RequestAdmissionError {
             throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
                 code: "request_exceeds_limits")
+        } catch LocalModelRunnerError.unsupportedForcedToolChoiceFormat(let format) {
+            throw ModelHTTPError(
+                status: .unprocessableEntity,
+                message: "The loaded model's '\(format)' tool-call format cannot enforce tool_choice.",
+                param: "tool_choice",
+                code: "unsupported_model_feature"
+            )
+        } catch LocalModelRunnerError.unsupportedForcedToolChoiceModel(let model) {
+            throw ModelHTTPError(
+                status: .unprocessableEntity,
+                message: "The loaded model type '\(model)' cannot enforce tool_choice.",
+                param: "tool_choice",
+                code: "unsupported_model_feature"
+            )
+        } catch LocalModelRunnerError.invalidForcedToolChoiceTokens {
+            throw ModelHTTPError(
+                status: .unprocessableEntity,
+                message: LocalModelRunnerError.invalidForcedToolChoiceTokens.localizedDescription,
+                param: "tool_choice",
+                code: "unsupported_model_feature"
+            )
+        } catch LocalModelRunnerError.emptyForcedToolChoicePrefix {
+            throw ModelHTTPError(
+                status: .unprocessableEntity,
+                message: LocalModelRunnerError.emptyForcedToolChoicePrefix.localizedDescription,
+                param: "tool_choice",
+                code: "unsupported_model_feature"
+            )
         } catch LocalModelRunnerError.busy {
             throw ModelHTTPError(status: .conflict, message: LocalModelRunnerError.busy.localizedDescription,
                 code: "model_busy")
@@ -1008,6 +1143,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         if completion.stream == true {
             try await handleStreamingChat(
                 completion,
+                toolChoicePlan: toolChoicePlan,
                 preparedPrompt: preparedPrompt,
                 runner: runner,
                 maximumTokens: requestedMaximumTokens,
@@ -1018,6 +1154,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         } else {
             try await handleNonStreamingChat(
                 completion,
+                toolChoicePlan: toolChoicePlan,
                 preparedPrompt: preparedPrompt,
                 runner: runner,
                 maximumTokens: requestedMaximumTokens,
@@ -1030,6 +1167,7 @@ final class ModelHTTPServer: @unchecked Sendable {
 
     private func handleStreamingChat(
         _ completion: ChatCompletionRequest,
+        toolChoicePlan: ToolChoicePlan,
         preparedPrompt: PreparedModelPrompt,
         runner: LocalModelRunner,
         maximumTokens: Int?,
@@ -1065,7 +1203,9 @@ final class ModelHTTPServer: @unchecked Sendable {
                 temperature: completion.temperature,
                 topP: completion.topP,
                 stop: stop,
-                tools: completion.tools,
+                tools: toolChoicePlan.tools,
+                toolChoice: toolChoicePlan.constraint,
+                reasoningEffort: completion.reasoningEffort,
                 preparedPrompt: preparedPrompt
             )
             var finishReason = "stop"
@@ -1168,6 +1308,7 @@ final class ModelHTTPServer: @unchecked Sendable {
 
     private func handleNonStreamingChat(
         _ completion: ChatCompletionRequest,
+        toolChoicePlan: ToolChoicePlan,
         preparedPrompt: PreparedModelPrompt,
         runner: LocalModelRunner,
         maximumTokens: Int?,
@@ -1185,7 +1326,9 @@ final class ModelHTTPServer: @unchecked Sendable {
             temperature: completion.temperature,
             topP: completion.topP,
             stop: stop,
-            tools: completion.tools,
+            tools: toolChoicePlan.tools,
+            toolChoice: toolChoicePlan.constraint,
+            reasoningEffort: completion.reasoningEffort,
             preparedPrompt: preparedPrompt
         )
         do {
@@ -1425,18 +1568,32 @@ final class ModelHTTPServer: @unchecked Sendable {
     }
 }
 
-private final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked Sendable {
+final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked Sendable {
     typealias InboundIn = HTTPServerRequestPart
+    typealias ResponseAction = @Sendable (
+        HTTPRequestHead, Data, Bool, Channel
+    ) async -> Void
 
-    private let server: ModelHTTPServer
+    private let responseAction: ResponseAction
     private let maximumRequestBodyBytes = 32 * 1_024 * 1_024
     private var requestHead: HTTPRequestHead?
     private var body = Data()
     private var bodyExceededLimit = false
     private var responseInFlight = false
+    private var responseTask: Task<Void, Never>?
 
     init(server: ModelHTTPServer) {
-        self.server = server
+        responseAction = { head, body, exceededLimit, channel in
+            if exceededLimit {
+                await server.rejectPayloadTooLarge(head: head, channel: channel)
+            } else {
+                await server.handle(head: head, body: body, channel: channel)
+            }
+        }
+    }
+
+    init(responseAction: @escaping ResponseAction) {
+        self.responseAction = responseAction
     }
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
@@ -1471,18 +1628,27 @@ private final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked S
             body.removeAll(keepingCapacity: false)
             bodyExceededLimit = false
             let channel = context.channel
-            Task {
-                if exceededLimit {
-                    await server.rejectPayloadTooLarge(head: head, channel: channel)
-                } else {
-                    await server.handle(head: head, body: requestBody, channel: channel)
-                }
+            let responseAction = responseAction
+            responseTask = Task {
+                guard !Task.isCancelled else { return }
+                await responseAction(head, requestBody, exceededLimit, channel)
             }
         }
     }
 
+    func channelInactive(context: ChannelHandlerContext) {
+        cancelResponse()
+        context.fireChannelInactive()
+    }
+
     func errorCaught(context: ChannelHandlerContext, error: Error) {
+        cancelResponse()
         context.close(promise: nil)
+    }
+
+    private func cancelResponse() {
+        responseTask?.cancel()
+        responseTask = nil
     }
 }
 
@@ -1493,6 +1659,11 @@ private struct ModelListResponse: Encodable {
     init(models: [ModelResponse]) {
         data = models
     }
+}
+
+private struct InspectorRuntimeIdentity: Encodable {
+    let instanceID: String?
+    let processID: Int32
 }
 
 private struct ModelResponse: Encodable {

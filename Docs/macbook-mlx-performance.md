@@ -262,7 +262,7 @@ compiled paths. This fragment is small, so these numbers must not be read as a
 Reproduce the fragment check with:
 
 ```bash
-swift run -c release model-runner-metal-quant-bench \
+swift run --package-path ../midnight-quantization -c release model-runner-metal-quant-bench \
   --laguna-graph-ab --warmup 20 --queue-depth 64 \
   --queue-rounds 15 --iterations 20
 ```

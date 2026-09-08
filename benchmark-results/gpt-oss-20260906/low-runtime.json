@@ -1,0 +1,115 @@
+{
+  "allow_early_stop" : false,
+  "context_length" : 8192,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-09-06T14:36:06Z",
+  "engine" : "metal",
+  "format" : 1,
+  "kv_compression" : "none",
+  "measured_trials" : 4,
+  "median_decode_tokens_per_second" : 135.6537990586038,
+  "median_prompt_tokens_per_second" : 1198.8459144580186,
+  "memory_limit_bytes" : 54975581389,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274",
+  "prefill_step_size" : 512,
+  "prompt" : "Write 300 numbered practical tips for organizing research notes. Begin the numbered list immediately and continue adding specific tips until the output limit.",
+  "reasoning_effort" : "low",
+  "requested_tokens" : 256,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "1. **Create a master folder** for each research project and keep all files inside it.  \n2. **Use subfolders** for different stages: literature, data, analysis, drafts.  \n3. **Name files consistently** – e.g., “2024‑05‑01‑article‑review.docx”.  \n4. **Add dates to filenames** to track revisions automatically.  \n5. **Use version control** (Git, Dropbox) for critical documents.  \n6. **Tag files** with keywords (e.g., “meta‑analysis”, “survey”).  \n7. **Keep a master index** (Excel or Google Sheet) listing every file and its purpose.  \n8. **Use cloud storage** for easy access from any device.  \n9. **Back up regularly** – at least once a week.  \n10. **Use a consistent naming convention** for all notes (e.g., “Topic‑Author‑Year”).  \n11. **Create a “read‑later” list** in a note-taking app.  \n12. **Use sticky notes** for quick reminders.  \n13",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 95,
+        "prompt_token_count" : 95,
+        "prompt_tokens_per_second" : 1218.8697448980372,
+        "stop_reason" : "length",
+        "tokens_per_second" : 137.11154426699866
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 11648583820,
+      "prompt_token_id_fingerprint" : "fnv1a64:22b2eeb16c0ee669",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 302.886459,
+      "total_milliseconds" : 1952.7714999999998
+    },
+    {
+      "content" : "1. **Create a master folder** for each research project and keep all files inside it.  \n2. **Use subfolders** for different stages: literature, data, analysis, drafts.  \n3. **Name files consistently** – e.g., “2024‑05‑01‑article‑review.docx”.  \n4. **Add dates to filenames** to track revisions automatically.  \n5. **Use version control** (Git, Dropbox) for critical documents.  \n6. **Tag files** with keywords (e.g., “meta‑analysis”, “survey”).  \n7. **Keep a master index** (Excel or Google Sheet) listing every file and its purpose.  \n8. **Use cloud storage** for easy access from any device.  \n9. **Back up regularly** – at least once a week.  \n10. **Use a consistent naming convention** for all notes (e.g., “Topic‑Author‑Year”).  \n11. **Create a “read‑later” list** in a note-taking app.  \n12. **Use sticky notes** for quick reminders.  \n13",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 95,
+        "prompt_token_count" : 95,
+        "prompt_tokens_per_second" : 1192.5532701329603,
+        "stop_reason" : "length",
+        "tokens_per_second" : 133.49944259284436
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 11648603388,
+      "prompt_token_id_fingerprint" : "fnv1a64:22b2eeb16c0ee669",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 304.344875,
+      "total_milliseconds" : 2004.238167
+    },
+    {
+      "content" : "1. **Create a master folder** for each research project and keep all files inside it.  \n2. **Use subfolders** for different stages: literature, data, analysis, drafts.  \n3. **Name files consistently** – e.g., “2024‑05‑01‑article‑review.docx”.  \n4. **Add dates to filenames** to track revisions automatically.  \n5. **Use version control** (Git, Dropbox) for critical documents.  \n6. **Tag files** with keywords (e.g., “meta‑analysis”, “survey”).  \n7. **Keep a master index** (Excel or Google Sheet) listing every file and its purpose.  \n8. **Use cloud storage** for easy access from any device.  \n9. **Back up regularly** – at least once a week.  \n10. **Use a consistent naming convention** for all notes (e.g., “Topic‑Author‑Year”).  \n11. **Create a “read‑later” list** in a note-taking app.  \n12. **Use sticky notes** for quick reminders.  \n13",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 95,
+        "prompt_token_count" : 95,
+        "prompt_tokens_per_second" : 1197.742180807094,
+        "stop_reason" : "length",
+        "tokens_per_second" : 135.61627935688534
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 11648616092,
+      "prompt_token_id_fingerprint" : "fnv1a64:22b2eeb16c0ee669",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 316.063375,
+      "total_milliseconds" : 1974.0881669999999
+    },
+    {
+      "content" : "1. **Create a master folder** for each research project and keep all files inside it.  \n2. **Use subfolders** for different stages: literature, data, analysis, drafts.  \n3. **Name files consistently** – e.g., “2024‑05‑01‑article‑review.docx”.  \n4. **Add dates to filenames** to track revisions automatically.  \n5. **Use version control** (Git, Dropbox) for critical documents.  \n6. **Tag files** with keywords (e.g., “meta‑analysis”, “survey”).  \n7. **Keep a master index** (Excel or Google Sheet) listing every file and its purpose.  \n8. **Use cloud storage** for easy access from any device.  \n9. **Back up regularly** – at least once a week.  \n10. **Use a consistent naming convention** for all notes (e.g., “Topic‑Author‑Year”).  \n11. **Create a “read‑later” list** in a note-taking app.  \n12. **Use sticky notes** for quick reminders.  \n13",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 95,
+        "prompt_token_count" : 95,
+        "prompt_tokens_per_second" : 1199.9496481089432,
+        "stop_reason" : "length",
+        "tokens_per_second" : 135.69131876032225
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 11648619788,
+      "prompt_token_id_fingerprint" : "fnv1a64:22b2eeb16c0ee669",
+      "sequence" : 4,
+      "time_to_first_token_milliseconds" : 305.872583,
+      "total_milliseconds" : 1973.612333
+    }
+  ],
+  "warmup_count" : 1,
+  "warmups" : [
+    {
+      "content" : "1. **Create a master folder** for each research project and keep all files inside it.  \n2. **Use subfolders** for different stages: literature, data, analysis, drafts.  \n3. **Name files consistently** – e.g., “2024‑05‑01‑article‑review.docx”.  \n4. **Add dates to filenames** to track revisions automatically.  \n5. **Use version control** (Git, Dropbox) for critical documents.  \n6. **Tag files** with keywords (e.g., “meta‑analysis”, “survey”).  \n7. **Keep a master index** (Excel or Google Sheet) listing every file and its purpose.  \n8. **Use cloud storage** for easy access from any device.  \n9. **Back up regularly** – at least once a week.  \n10. **Use a consistent naming convention** for all notes (e.g., “Topic‑Author‑Year”).  \n11. **Create a “read‑later” list** in a note-taking app.  \n12. **Use sticky notes** for quick reminders.  \n13",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 95,
+        "prompt_token_count" : 95,
+        "prompt_tokens_per_second" : 122.61799353181034,
+        "stop_reason" : "length",
+        "tokens_per_second" : 135.9904571017607
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 11617341570,
+      "prompt_token_id_fingerprint" : "fnv1a64:22b2eeb16c0ee669",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 1019.350708,
+      "total_milliseconds" : 2683.0975
+    }
+  ]
+}

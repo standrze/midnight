@@ -1,0 +1,308 @@
+{
+  "date": "2026-09-08",
+  "runtime": "/Users/stephen/Documents/ChatGPT/midnight",
+  "recoveryDirectory": "/private/tmp/midnight-project-separation.r2WFhb/originals",
+  "files": [
+    {
+      "source": "Sources/LagunaQuantizer/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/LagunaQuantizer/main.swift",
+      "originalSHA256": "ad0f67cc4fee70801cec708e37b62e36acc39c9ea991440e71efd0ddffd78829",
+      "extractedSHA256": "ad0f67cc4fee70801cec708e37b62e36acc39c9ea991440e71efd0ddffd78829",
+      "adapted": false
+    },
+    {
+      "source": "Sources/ScalePlanMLX/ScalePlan.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/ScalePlanMLX/ScalePlan.swift",
+      "originalSHA256": "6c50f4b593b0c1c98952a4ba2e2bb2efb55ac85979bc44fb33075690281a8af9",
+      "extractedSHA256": "6c50f4b593b0c1c98952a4ba2e2bb2efb55ac85979bc44fb33075690281a8af9",
+      "adapted": false
+    },
+    {
+      "source": "Sources/ScalePlanCLI/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/ScalePlanCLI/main.swift",
+      "originalSHA256": "06418010f9a12142963dc3b0cfabf79bd28b44eb6e318abd84c0113218536e80",
+      "extractedSHA256": "06418010f9a12142963dc3b0cfabf79bd28b44eb6e318abd84c0113218536e80",
+      "adapted": false
+    },
+    {
+      "source": "Sources/Q4ScaleSearchAudit/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/Q4ScaleSearchAudit/main.swift",
+      "originalSHA256": "5aad717c7c80265d9ec04760699914b14af7d655c68e4114b3d556ab76550618",
+      "extractedSHA256": "5aad717c7c80265d9ec04760699914b14af7d655c68e4114b3d556ab76550618",
+      "adapted": false
+    },
+    {
+      "source": "Sources/LagunaScaleSearchRescorer/LagunaActivationStatistics.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/LagunaScaleSearchRescorer/LagunaActivationStatistics.swift",
+      "originalSHA256": "1d368313de5bebc85bee7a6b8aefd0439fa1e1e983f852bc57555d065eff9a10",
+      "extractedSHA256": "1d368313de5bebc85bee7a6b8aefd0439fa1e1e983f852bc57555d065eff9a10",
+      "adapted": false
+    },
+    {
+      "source": "Sources/LagunaScaleSearchRescorer/LagunaGroupSizePolicy.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/LagunaScaleSearchRescorer/LagunaGroupSizePolicy.swift",
+      "originalSHA256": "7e0c82942daaf24cf605fb3b97195a37a1aa8c713fa33166f39e06ebe4648b6c",
+      "extractedSHA256": "7e0c82942daaf24cf605fb3b97195a37a1aa8c713fa33166f39e06ebe4648b6c",
+      "adapted": false
+    },
+    {
+      "source": "Sources/LagunaScaleSearchRescorer/LagunaScaleSearchRescorer.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/LagunaScaleSearchRescorer/LagunaScaleSearchRescorer.swift",
+      "originalSHA256": "340eb1ed2d55544cdc113310e996b661e24f6113d895247750d49a7f29f95f99",
+      "extractedSHA256": "340eb1ed2d55544cdc113310e996b661e24f6113d895247750d49a7f29f95f99",
+      "adapted": false
+    },
+    {
+      "source": "Sources/LagunaScaleSearchRescorerCLI/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/LagunaScaleSearchRescorerCLI/main.swift",
+      "originalSHA256": "af9e839b5898f6064c4e6e4457a40c077d26b2b60124839c5889e51363be9ccb",
+      "extractedSHA256": "af9e839b5898f6064c4e6e4457a40c077d26b2b60124839c5889e51363be9ccb",
+      "adapted": false
+    },
+    {
+      "source": "Sources/ModelQuantizer/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/ModelQuantizer/main.swift",
+      "originalSHA256": "4ae8b5fd19e04fe554b948536c8371b03bcde77072d6901fa1dc5c151ab5e8e8",
+      "extractedSHA256": "4ae8b5fd19e04fe554b948536c8371b03bcde77072d6901fa1dc5c151ab5e8e8",
+      "adapted": false
+    },
+    {
+      "source": "Sources/LagunaQ4R8Verifier/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/LagunaQ4R8Verifier/main.swift",
+      "originalSHA256": "2c19edb34395095a05ed379872fdf5d5c0d4eb5a17d99e7225194da3564170a2",
+      "extractedSHA256": "2c19edb34395095a05ed379872fdf5d5c0d4eb5a17d99e7225194da3564170a2",
+      "adapted": false
+    },
+    {
+      "source": "Sources/MistralActivationStats/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/MistralActivationStats/main.swift",
+      "originalSHA256": "5811f09635e72faf981a09cac01a45b601c6e7dd1d9a4167392a5c2ef8bb12cf",
+      "extractedSHA256": "5811f09635e72faf981a09cac01a45b601c6e7dd1d9a4167392a5c2ef8bb12cf",
+      "adapted": false
+    },
+    {
+      "source": "Sources/MistralActivationScaleSearchCore/ActivationWeightedScaleSearch.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/MistralActivationScaleSearchCore/ActivationWeightedScaleSearch.swift",
+      "originalSHA256": "66a11bcfbcfca59a3e325078c41007be67158b9dd9d251d6dfa3facbbbe593ba",
+      "extractedSHA256": "66a11bcfbcfca59a3e325078c41007be67158b9dd9d251d6dfa3facbbbe593ba",
+      "adapted": false
+    },
+    {
+      "source": "Sources/MistralActivationScaleSearchCore/ExpertActivationWeightedScaleSearch.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/MistralActivationScaleSearchCore/ExpertActivationWeightedScaleSearch.swift",
+      "originalSHA256": "a51b4edb42687453708d811c95b9059b451b5c66927233fa2756d1727c469d67",
+      "extractedSHA256": "a51b4edb42687453708d811c95b9059b451b5c66927233fa2756d1727c469d67",
+      "adapted": false
+    },
+    {
+      "source": "Sources/MistralActivationScaleSearchCore/IndexedSafetensorsFingerprint.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/MistralActivationScaleSearchCore/IndexedSafetensorsFingerprint.swift",
+      "originalSHA256": "73cd52f7022eda7c53cacf1bada77a36bf291204320be78ba2527ab2d048433a",
+      "extractedSHA256": "73cd52f7022eda7c53cacf1bada77a36bf291204320be78ba2527ab2d048433a",
+      "adapted": false
+    },
+    {
+      "source": "Sources/MistralActivationScaleSearchRescorer/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Sources/MistralActivationScaleSearchRescorer/main.swift",
+      "originalSHA256": "3b15dd88a4ab84c2d8a2410ef8bfd954a232097831b19d3d7f3603bd8ffec0e3",
+      "extractedSHA256": "3b15dd88a4ab84c2d8a2410ef8bfd954a232097831b19d3d7f3603bd8ffec0e3",
+      "adapted": false
+    },
+    {
+      "source": "Benchmarks/MetalQuantization/FusedGatherSiluBenchmark.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Benchmarks/MetalQuantization/FusedGatherSiluBenchmark.swift",
+      "originalSHA256": "1f04333e775652b7593504015954f2be89c49dd17f70a51c705a78719808a051",
+      "extractedSHA256": "1f04333e775652b7593504015954f2be89c49dd17f70a51c705a78719808a051",
+      "adapted": false
+    },
+    {
+      "source": "Benchmarks/MetalQuantization/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Benchmarks/MetalQuantization/main.swift",
+      "originalSHA256": "ad92150c634fc529968fdec63e12d86d9a7870baa3b007a9b9d9af27b9dd6cc1",
+      "extractedSHA256": "ad92150c634fc529968fdec63e12d86d9a7870baa3b007a9b9d9af27b9dd6cc1",
+      "adapted": false
+    },
+    {
+      "source": "Tests/ScalePlanMLXTests/ScalePlanTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/ScalePlanMLXTests/ScalePlanTests.swift",
+      "originalSHA256": "ea94e6b61b826a09d635aa98f6d9b38f519f32c4369e3180a329e92b1c7ed05a",
+      "extractedSHA256": "ea94e6b61b826a09d635aa98f6d9b38f519f32c4369e3180a329e92b1c7ed05a",
+      "adapted": false
+    },
+    {
+      "source": "Tests/ModelQuantizerTests/DFlashScaleSearchConversionTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/ModelQuantizerTests/DFlashScaleSearchConversionTests.swift",
+      "originalSHA256": "9ea3341bee635dc331a378cee848b15909c131920745cb080ddee1c43f8be128",
+      "extractedSHA256": "9ea3341bee635dc331a378cee848b15909c131920745cb080ddee1c43f8be128",
+      "adapted": false
+    },
+    {
+      "source": "Tests/ModelQuantizerTests/LagunaActivationRescoreTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/ModelQuantizerTests/LagunaActivationRescoreTests.swift",
+      "originalSHA256": "126ec2298d6ab802ed20ef24c9bc44bf5ba6330d483966ab30ef4bb40b4fd7e1",
+      "extractedSHA256": "126ec2298d6ab802ed20ef24c9bc44bf5ba6330d483966ab30ef4bb40b4fd7e1",
+      "adapted": false
+    },
+    {
+      "source": "Tests/ModelQuantizerTests/LagunaGroupSizePolicyTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/ModelQuantizerTests/LagunaGroupSizePolicyTests.swift",
+      "originalSHA256": "5b59b82c196f48b6a6e7f56d5b816e191c3569ac15aed1fafcec9e4a7b880a09",
+      "extractedSHA256": "5b59b82c196f48b6a6e7f56d5b816e191c3569ac15aed1fafcec9e4a7b880a09",
+      "adapted": false
+    },
+    {
+      "source": "Tests/ModelQuantizerTests/MixtralScaleSearchConversionTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/ModelQuantizerTests/MixtralScaleSearchConversionTests.swift",
+      "originalSHA256": "6f81a0b07149f5930694240c0ce53b9646cf230c345e97a4cf7c8998cdd519fa",
+      "extractedSHA256": "6f81a0b07149f5930694240c0ce53b9646cf230c345e97a4cf7c8998cdd519fa",
+      "adapted": false
+    },
+    {
+      "source": "Tests/MistralActivationScaleSearchCoreTests/ExpertActivationWeightedScaleSearchTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/MistralActivationScaleSearchCoreTests/ExpertActivationWeightedScaleSearchTests.swift",
+      "originalSHA256": "d6b8fcebd9ffd46591cb79f44a3857feddf8fba1f524a31a2ba6527e55941d30",
+      "extractedSHA256": "d6b8fcebd9ffd46591cb79f44a3857feddf8fba1f524a31a2ba6527e55941d30",
+      "adapted": false
+    },
+    {
+      "source": "Tests/MistralActivationScaleSearchCoreTests/IndexedSafetensorsFingerprintTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/MistralActivationScaleSearchCoreTests/IndexedSafetensorsFingerprintTests.swift",
+      "originalSHA256": "b35b420f3344f8766cfc836a926eba857bb5430bdda410ba0f79bb883a6c0d5e",
+      "extractedSHA256": "b35b420f3344f8766cfc836a926eba857bb5430bdda410ba0f79bb883a6c0d5e",
+      "adapted": false
+    },
+    {
+      "source": "Tests/MistralActivationScaleSearchCoreTests/MistralActivationScaleSearchCoreTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/MistralActivationScaleSearchCoreTests/MistralActivationScaleSearchCoreTests.swift",
+      "originalSHA256": "9ab2fcb45ee7a9140ba4750827d41bdedcc6f86a64640d3a1a865dc082d5700a",
+      "extractedSHA256": "9ab2fcb45ee7a9140ba4750827d41bdedcc6f86a64640d3a1a865dc082d5700a",
+      "adapted": false
+    },
+    {
+      "source": "Tests/Shell/GenericScaleSearchQuantizerTests.sh",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/Shell/GenericScaleSearchQuantizerTests.sh",
+      "originalSHA256": "b12a7cae5f86af022ee6f634eb2f079b09af51150e54fdea158d394e20b8c8c3",
+      "extractedSHA256": "25c551cd5d256d4fdfaf3a281ed4b1bf172a914fb8a6628d3c6da91f486c952e",
+      "adapted": true
+    },
+    {
+      "source": "Tests/Shell/LagunaQ4R8QuantizerTests.sh",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/Shell/LagunaQ4R8QuantizerTests.sh",
+      "originalSHA256": "05a50425d5ed5ad7eaf4f6e28b8980019302f6b0b1e196fbb58a3b633efa696f",
+      "extractedSHA256": "45848a4e3d3d2cf2d4376cf3c269eda8e9024e4a05350128abfb23bab9048c34",
+      "adapted": true
+    },
+    {
+      "source": "Tests/Shell/MetalQuantizationCLITests.sh",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/Shell/MetalQuantizationCLITests.sh",
+      "originalSHA256": "b9f28c68f3f71db786012e1a25f068cb1dfdac489c0553b8735272e6e092e88c",
+      "extractedSHA256": "b9f28c68f3f71db786012e1a25f068cb1dfdac489c0553b8735272e6e092e88c",
+      "adapted": false
+    },
+    {
+      "source": "Tests/Python/test_analyze_gptoss_metal_formats.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/Python/test_analyze_gptoss_metal_formats.py",
+      "originalSHA256": "4f7e73ee71cbe15caff85e444c3127487f489bb295f5c75386b2ee17a61a9e3b",
+      "extractedSHA256": "4f7e73ee71cbe15caff85e444c3127487f489bb295f5c75386b2ee17a61a9e3b",
+      "adapted": false
+    },
+    {
+      "source": "Tests/Python/test_affine_gptq_probe.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/Python/test_affine_gptq_probe.py",
+      "originalSHA256": "37c40ab894d02e56aa200463903dda21ed9db9cdce527f0aa9f43cdcd9b2406e",
+      "extractedSHA256": "37c40ab894d02e56aa200463903dda21ed9db9cdce527f0aa9f43cdcd9b2406e",
+      "adapted": false
+    },
+    {
+      "source": "Tests/Python/test_group_size_audit.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Tests/Python/test_group_size_audit.py",
+      "originalSHA256": "9cfed552a0b30e8f562ae656198328ab377412f4cd480f7fd4d4b2602cf9b159",
+      "extractedSHA256": "9cfed552a0b30e8f562ae656198328ab377412f4cd480f7fd4d4b2602cf9b159",
+      "adapted": false
+    },
+    {
+      "source": "Scripts/analyze-gptoss-metal-formats.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Scripts/analyze-gptoss-metal-formats.py",
+      "originalSHA256": "29e9a129d89fa0c384a67c9f439443c34be7d6d577fbfd0f393c70fe872694c0",
+      "extractedSHA256": "85be8b1fa89644340babac684495aac50954b8e93b80cb9d291f82763a8cff24",
+      "adapted": true
+    },
+    {
+      "source": "Scripts/audit-ollama-q4r8-compat.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Scripts/audit-ollama-q4r8-compat.py",
+      "originalSHA256": "144c2d199ce536c1033187a90529b301cac3850929f0ef41ddc53f7a8a3c2506",
+      "extractedSHA256": "144c2d199ce536c1033187a90529b301cac3850929f0ef41ddc53f7a8a3c2506",
+      "adapted": false
+    },
+    {
+      "source": "Scripts/build-ollama-q4r8-compat.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Scripts/build-ollama-q4r8-compat.py",
+      "originalSHA256": "ba783e3c8e078a39ca277a43e01abb3e7566205fb2916dffa0d9edcc29c720d8",
+      "extractedSHA256": "ba783e3c8e078a39ca277a43e01abb3e7566205fb2916dffa0d9edcc29c720d8",
+      "adapted": false
+    },
+    {
+      "source": "Scripts/pack-laguna-gate-up.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Scripts/pack-laguna-gate-up.py",
+      "originalSHA256": "afd4b7cce6e68310ef81bdd27f6526715c08e48be427dae9661cebc42ce50b09",
+      "extractedSHA256": "afd4b7cce6e68310ef81bdd27f6526715c08e48be427dae9661cebc42ce50b09",
+      "adapted": false
+    },
+    {
+      "source": "Scripts/probe-laguna-affine-gptq.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Scripts/probe-laguna-affine-gptq.py",
+      "originalSHA256": "832105c28c5cc87c2123d674a551ac4cf057f331c5a11a37c0d65ef2d84ee43e",
+      "extractedSHA256": "832105c28c5cc87c2123d674a551ac4cf057f331c5a11a37c0d65ef2d84ee43e",
+      "adapted": false
+    },
+    {
+      "source": "Scripts/verify-laguna-group-size.py",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Scripts/verify-laguna-group-size.py",
+      "originalSHA256": "5d23cd299e338630b796fc306acb1c84463d7928056f3f879c7f8b0fc463a023",
+      "extractedSHA256": "5d23cd299e338630b796fc306acb1c84463d7928056f3f879c7f8b0fc463a023",
+      "adapted": false
+    },
+    {
+      "source": "Examples/scaleplan-q4r8-ledger.example.json",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization/Examples/scaleplan-q4r8-ledger.example.json",
+      "originalSHA256": "c462076c22358190e253616825dbf1a7c3abb49f01337f08b0ab1748a12f7787",
+      "extractedSHA256": "c462076c22358190e253616825dbf1a7c3abb49f01337f08b0ab1748a12f7787",
+      "adapted": false
+    },
+    {
+      "source": "Sources/StudioWorker/main.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-studio/Workers/Sources/StudioWorker/main.swift",
+      "originalSHA256": "f071f0a8902a7c57da00ea3b24d1eabb672755ffb9f2c99e4cc8613e38e3cd1c",
+      "extractedSHA256": "f071f0a8902a7c57da00ea3b24d1eabb672755ffb9f2c99e4cc8613e38e3cd1c",
+      "adapted": false
+    },
+    {
+      "source": "Tests/StudioWorkerTests/StudioWorkerTests.swift",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-studio/Workers/Tests/StudioWorkerTests/StudioWorkerTests.swift",
+      "originalSHA256": "496b561c4fe2a4c8097b7891abd09f0a8028fbc9d2ea64e9788afd8c4b71365a",
+      "extractedSHA256": "496b561c4fe2a4c8097b7891abd09f0a8028fbc9d2ea64e9788afd8c4b71365a",
+      "adapted": false
+    }
+  ],
+  "projects": [
+    {
+      "original": "Apps/MidnightInspector",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-studio"
+    },
+    {
+      "original": "Apps/MidnightMenuBar",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-menubar"
+    },
+    {
+      "original": "quantization targets in Midnight",
+      "destination": "/Users/stephen/Documents/ChatGPT/midnight-quantization"
+    }
+  ],
+  "studioState": {
+    "original": "/Users/stephen/Documents/ChatGPT/midnight-studio/.local",
+    "active": "/Users/stephen/.midnight/studio",
+    "profilesSHA256": "989b9d9f5a27cd7be9bcfcee7d25195155000b813e29f79ed2be709c5b643774",
+    "existingJobs": 0,
+    "modelWeightsMoved": false
+  }
+}

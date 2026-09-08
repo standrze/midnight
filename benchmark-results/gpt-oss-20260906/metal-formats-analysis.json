@@ -1,0 +1,409 @@
+{
+  "format": 1,
+  "status": "synthetic_primitive_diagnostics",
+  "settings": {
+    "warmup": 8,
+    "iterations": 20,
+    "queue_depth": 16,
+    "queue_rounds": 8
+  },
+  "orders": {
+    "AB": 4,
+    "BA": 4
+  },
+  "thresholds": {
+    "maximum_drift_fraction": 0.1,
+    "seed": 20260906,
+    "bootstrap_draws": 2000
+  },
+  "known_confounder": "Concurrent Swift compilation reported by execution coordinator",
+  "comparisons": [
+    {
+      "workload": "gptoss-query-qmv",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 8,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.046903625,
+          "candidate_median": 0.035522125,
+          "diagnostic_paired_ratios": [
+            2.0436167605978923,
+            0.7768385460693153,
+            0.9130375220347519,
+            0.8762538484457245,
+            0.7269229508587501,
+            1.1833289548860715,
+            0.9630874822086248,
+            0.9084210061838515
+          ],
+          "diagnostic_paired_median_ratio": 0.9107292641093017,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7269229508587501,
+          "paired_ratio_max": 2.0436167605978923,
+          "paired_ratio_median_absolute_deviation": 0.09312446806965474,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8015883996522373,
+            1.1833289548860715
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.0007217043941412093,
+          "candidate_drift_fraction": 0.4831489844547827,
+          "order_effect_fraction": 0.05124191074725615,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.0464414375,
+          "candidate_median": 0.03522396875,
+          "diagnostic_paired_ratios": [
+            2.0530602059348366,
+            0.775208775304352,
+            0.9113388694461042,
+            0.8738090040014598,
+            0.7219331833038233,
+            1.1850825539776007,
+            0.9611251732101617,
+            0.907406348177383
+          ],
+          "diagnostic_paired_median_ratio": 0.9093726088117435,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7219331833038233,
+          "paired_ratio_max": 2.0530602059348366,
+          "paired_ratio_median_absolute_deviation": 0.09295819895290486,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.7978710936526415,
+            1.1850825539776007
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.003157295283911621,
+          "candidate_drift_fraction": 0.48865455238835587,
+          "order_effect_fraction": 0.0512283314680646,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-output-qmv",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 8,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.023947906249999998,
+          "candidate_median": 0.017647125,
+          "diagnostic_paired_ratios": [
+            0.8250105414370664,
+            0.9883721150998277,
+            1.7444579480405107,
+            0.8745588949087617,
+            0.9654314129749709,
+            0.9307622760718001,
+            0.9808245410247942,
+            4.583415415415415
+          ],
+          "diagnostic_paired_median_ratio": 0.9731279769998826,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.8250105414370664,
+          "paired_ratio_max": 4.583415415415415,
+          "paired_ratio_median_absolute_deviation": 0.07046739150960174,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8745588949087617,
+            1.7444579480405107
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.6487627052153867,
+          "candidate_drift_fraction": 0.5956128545893051,
+          "order_effect_fraction": 0.014132185298174837,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.023653624999999998,
+          "candidate_median": 0.01737371875,
+          "diagnostic_paired_ratios": [
+            0.823367827662573,
+            0.9899719910959762,
+            1.7552958965759413,
+            0.8709334714434163,
+            0.9644821670428894,
+            0.9287677980897049,
+            0.97976414082291,
+            4.623702457304038
+          ],
+          "diagnostic_paired_median_ratio": 0.9721231539328996,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.823367827662573,
+          "paired_ratio_max": 4.623702457304038,
+          "paired_ratio_median_absolute_deviation": 0.07227251916633903,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8709334714434163,
+            1.7552958965759413
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.6513027907308906,
+          "candidate_drift_fraction": 0.5982203776988022,
+          "order_effect_fraction": 0.013293370379807046,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-output-qmv",
+      "baseline": "affine-4bit-g64",
+      "candidate": "affine-4bit-g128",
+      "valid_pairs": 8,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.0184426875,
+          "candidate_median": 0.0172421875,
+          "diagnostic_paired_ratios": [
+            0.3286858219500706,
+            0.8841573784628651,
+            4.222131482237648,
+            1.166056517775752,
+            1.002019878285563,
+            0.9791760977818016,
+            1.0021730055312867,
+            0.9502657596371882
+          ],
+          "diagnostic_paired_median_ratio": 0.9905979880336823,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.3286858219500706,
+          "paired_ratio_max": 4.222131482237648,
+          "paired_ratio_median_absolute_deviation": 0.07338641898365561,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8841573784628651,
+            1.166056517775752
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.6320349578764705,
+          "candidate_drift_fraction": 0.6288876002046734,
+          "order_effect_fraction": 0.03874230576600746,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.01816796875,
+          "candidate_median": 0.01700128125,
+          "diagnostic_paired_ratios": [
+            0.3257084181759117,
+            0.8823495254512567,
+            4.539265521796565,
+            1.1643336869457865,
+            1.0034658635145974,
+            0.9781223722428056,
+            1.0020498003146558,
+            0.9493978830214789
+          ],
+          "diagnostic_paired_median_ratio": 0.9900860862787307,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.3257084181759117,
+          "paired_ratio_max": 4.539265521796565,
+          "paired_ratio_median_absolute_deviation": 0.07421238204236297,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8823495254512567,
+            1.1643336869457865
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.6339160991265763,
+          "candidate_drift_fraction": 0.6270981311921475,
+          "order_effect_fraction": 0.04046411878264533,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-separate-gate-up-bias-clamp",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 8,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.17384634375000002,
+          "candidate_median": 0.17609896875,
+          "diagnostic_paired_ratios": [
+            1.3575918861950367,
+            1.5227724394660662,
+            0.9661413913739687,
+            0.9950881898795605,
+            0.7227515836719061,
+            1.014354733810276,
+            0.9667179904219751,
+            1.2978154695280735
+          ],
+          "diagnostic_paired_median_ratio": 1.0047214618449183,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7227515836719061,
+          "paired_ratio_max": 1.5227724394660662,
+          "paired_ratio_median_absolute_deviation": 0.1602749743219809,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9661413913739687,
+            1.3575918861950367
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.1828954167345347,
+          "candidate_drift_fraction": 0.021252811559060447,
+          "order_effect_fraction": 0.16404969711777728,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "baseline drift exceeds threshold or is unavailable",
+            "AB/BA order effect exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.16923178125,
+          "candidate_median": 0.17178903125,
+          "diagnostic_paired_ratios": [
+            1.3720868329810092,
+            1.540553204869065,
+            0.9671209623852985,
+            0.9918890343478552,
+            0.7183551929082301,
+            1.0166321921405719,
+            0.9669421610276414,
+            1.3049722653382028
+          ],
+          "diagnostic_paired_median_ratio": 1.0042606132442136,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7183551929082301,
+          "paired_ratio_max": 1.540553204869065,
+          "paired_ratio_median_absolute_deviation": 0.1616119362762778,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9669421610276414,
+            1.3720868329810092
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.18483681024448106,
+          "candidate_drift_fraction": 0.019477595400605563,
+          "order_effect_fraction": 0.16692823483234454,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator",
+            "baseline drift exceeds threshold or is unavailable",
+            "AB/BA order effect exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-down-bias-weighted-reduction",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 8,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.08388671875,
+          "candidate_median": 0.08825390625,
+          "diagnostic_paired_ratios": [
+            1.0118391013463286,
+            0.9156359734409021,
+            0.7671252204585538,
+            0.9364569648511952,
+            2.105969086898787,
+            1.0206566008384867,
+            1.0082789453572794,
+            1.0507175168248253
+          ],
+          "diagnostic_paired_median_ratio": 1.010059023351804,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7671252204585538,
+          "paired_ratio_max": 2.105969086898787,
+          "paired_ratio_median_absolute_deviation": 0.05713027598681503,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9156359734409021,
+            1.0507175168248253
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.025300861466821978,
+          "candidate_drift_fraction": 0.07374567001409638,
+          "order_effect_fraction": 0.03219255239883001,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.0813294375,
+          "candidate_median": 0.08560024999999999,
+          "diagnostic_paired_ratios": [
+            1.0131590118006621,
+            0.9085593138643913,
+            0.7619481224047872,
+            0.9401737040811262,
+            2.1336812475720395,
+            1.0172760215525702,
+            1.0082396677872256,
+            1.045803104490051
+          ],
+          "diagnostic_paired_median_ratio": 1.0106993397939439,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7619481224047872,
+          "paired_ratio_max": 2.1336812475720395,
+          "paired_ratio_median_absolute_deviation": 0.05281470020446244,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9085593138643913,
+            1.045803104490051
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.021453256085780747,
+          "candidate_drift_fraction": 0.07663958405384952,
+          "order_effect_fraction": 0.03266952561629077,
+          "acceptance_reasons": [
+            "known concurrent workload or other confounder: Concurrent Swift compilation reported by execution coordinator"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Random BF16 source weights and synthetic inputs; this does not evaluate a model checkpoint, quantization quality, or tokens/s.",
+    "Even-indexed rounds are AB and odd-indexed rounds BA per the current native benchmark implementation; the text log has no per-arm timestamps.",
+    "Individual latency ratios are paired by round; reported intervals bootstrap pairs and do not account for temporal autocorrelation or multiple comparisons.",
+    "Passing drift/order gates only makes a primitive measurement eligible; it does not prove a model speedup or support changing deployment defaults.",
+    "The log lacks executable, Metal-library, hardware-state and source-array hashes; preserve external run provenance. Shape/finite checks are not numerical parity tests."
+  ],
+  "provenance": {
+    "native_log": "/Users/stephen/Documents/ChatGPT/midnight/benchmark-results/gpt-oss-20260906/metal-formats.log",
+    "native_log_sha256": "b014d855ff0dfea7db620d69b635cf2e9b1e2c416552907df94d530d79b0a0ea",
+    "analyzer_sha256": "29e9a129d89fa0c384a67c9f439443c34be7d6d577fbfd0f393c70fe872694c0",
+    "statistics_helper_sha256": "30f16c104e83eb43c927b52e69b56b2c40a1b698c5504d4112337d72370ab889"
+  }
+}

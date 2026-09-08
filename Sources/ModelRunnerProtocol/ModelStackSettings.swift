@@ -13,6 +13,33 @@ public struct ModelStackSettings: Decodable, Sendable {
         public let kvCompression: String?
         public let dflashModelPath: String?
         public let dflashBlockSize: Int?
+
+        /// Apply checkpoint-local limits. Settings tied to another checkpoint must
+        /// not follow a CLI model switch; host, port and engine remain shared.
+        public func resolving(for selection: ResolvedModelSelection) throws -> Self {
+            let local = try ModelLocalSettings.load(directory: selection.settingsDirectory)
+            let matches = modelPath.map {
+                let configured = ModelCatalog.resolveMLX(model: $0)
+                return URL(fileURLWithPath: configured.modelPath).resolvingSymlinksInPath()
+                    == URL(fileURLWithPath: selection.modelPath).resolvingSymlinksInPath()
+            } ?? true
+            return Self(
+                modelPath: selection.modelPath,
+                servedModelName: matches ? servedModelName : nil,
+                engine: engine, host: host, port: port,
+                maximumTokens: local?.maximumTokens ?? (matches ? maximumTokens : nil),
+                contextLength: local?.contextLength ?? (matches ? contextLength : nil),
+                prefillStepSize: local?.prefillStepSize ?? (matches ? prefillStepSize : nil),
+                kvCompression: local?.kvCompression ?? (matches ? kvCompression : nil),
+                dflashModelPath: matches ? dflashModelPath : nil,
+                dflashBlockSize: matches ? dflashBlockSize : nil)
+        }
+
+        public static var empty: Self {
+            Self(modelPath: nil, servedModelName: nil, engine: nil, host: nil, port: nil,
+                 maximumTokens: nil, contextLength: nil, prefillStepSize: nil,
+                 kvCompression: nil, dflashModelPath: nil, dflashBlockSize: nil)
+        }
     }
 
     public let mlxRunner: MLXRunner?
@@ -23,6 +50,34 @@ public struct ModelStackSettings: Decodable, Sendable {
         }
         do {
             return try JSONDecoder().decode(Self.self, from: Data(contentsOf: url))
+        } catch {
+            throw ModelStackSettingsError.invalidFile(url.path, error.localizedDescription)
+        }
+    }
+}
+
+/// Optional midnight.json alongside a checkpoint, or at an adapter bundle root.
+/// Keep runtime policy separate from the checkpoint's architectural config.json.
+public struct ModelLocalSettings: Decodable, Sendable {
+    public let contextLength: Int?
+    public let maximumTokens: Int?
+    public let prefillStepSize: Int?
+    public let kvCompression: String?
+
+    public static func load(directory: String) throws -> Self? {
+        let url = URL(fileURLWithPath: directory).appendingPathComponent("midnight.json")
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        do {
+            let data = try Data(contentsOf: url)
+            guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                throw RequestAdmissionError.configuration("midnight.json must be an object")
+            }
+            let known: Set<String> = ["contextLength", "maximumTokens", "prefillStepSize", "kvCompression"]
+            let unknown = Set(object.keys).subtracting(known)
+            guard unknown.isEmpty else {
+                throw RequestAdmissionError.configuration("unknown midnight.json keys: \(unknown.sorted().joined(separator: ", "))")
+            }
+            return try JSONDecoder().decode(Self.self, from: data)
         } catch {
             throw ModelStackSettingsError.invalidFile(url.path, error.localizedDescription)
         }
@@ -74,6 +129,9 @@ private enum SettingsFileLocator {
             workingDirectory.appendingPathComponent("model-stack.local.json"),
             workingDirectory
                 .deletingLastPathComponent()
+                .appendingPathComponent("model-stack.local.json"),
+            fileManager.homeDirectoryForCurrentUser
+                .appendingPathComponent(".midnight", isDirectory: true)
                 .appendingPathComponent("model-stack.local.json"),
         ]
         return candidates.first(where: { fileManager.fileExists(atPath: $0.path) })

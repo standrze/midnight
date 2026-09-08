@@ -2,6 +2,20 @@
 
 import PackageDescription
 
+// The optional native audio backend currently requires AVFoundation.
+#if os(macOS)
+let chatterboxPackages: [Package.Dependency] = [
+    .package(url: "https://github.com/Blaizzy/mlx-audio-swift", revision: "bf14ae0c26e4e85553dd989571cae29d70fa6735")
+]
+let chatterboxProducts: [Target.Dependency] = [
+    .product(name: "MLXAudioTTS", package: "mlx-audio-swift"),
+    .product(name: "MLXAudioCore", package: "mlx-audio-swift")
+]
+#else
+let chatterboxPackages: [Package.Dependency] = []
+let chatterboxProducts: [Target.Dependency] = []
+#endif
+
 #if os(macOS)
     let backendSwiftSettings: [SwiftSetting] = [
         .define("MLX_METAL_BACKEND")
@@ -38,35 +52,13 @@ let package = Package(
     name: "Midnight",
     platforms: [.macOS(.v15)],
     products: [
+        .executable(name: "model-runner-prepare-corpus", targets: ["CorpusPreparation"]),
+        // Sibling Training, Studio workers, and Quantization reuse this runtime.
+        // Midnight has no dependency on those application/tool packages.
+        .library(name: "ModelRunnerCore", targets: ["ModelRunnerCore"]),
+        .library(name: "ModelRunnerProtocol", targets: ["ModelRunnerProtocol"]),
+        .library(name: "ModelQualityCore", targets: ["ModelQualityCore"]),
         .executable(name: "midnight", targets: ["Midnight"]),
-        .executable(
-            name: "model-runner-metal-quant-bench",
-            targets: ["MetalQuantizationBenchmark"]
-        ),
-        .executable(
-            name: "model-runner-laguna-quantize",
-            targets: ["LagunaQuantizer"]
-        ),
-        .executable(
-            name: "model-runner-scale-plan",
-            targets: ["ScalePlanCLI"]
-        ),
-        .executable(
-            name: "model-runner-q4-scale-search-audit",
-            targets: ["Q4ScaleSearchAudit"]
-        ),
-        .executable(
-            name: "model-runner-laguna-q4r8-rescore",
-            targets: ["LagunaScaleSearchRescorerCLI"]
-        ),
-        .executable(
-            name: "model-runner-quantize",
-            targets: ["ModelQuantizer"]
-        ),
-        .executable(
-            name: "model-runner-laguna-q4r8-verify",
-            targets: ["LagunaQ4R8Verifier"]
-        ),
         .executable(
             name: "model-runner-runtime-bench",
             targets: ["RuntimeBenchmark"]
@@ -80,19 +72,11 @@ let package = Package(
             targets: ["ModelGenerationBenchmark"]
         ),
         .executable(
-            name: "model-runner-mistral-activation-stats",
-            targets: ["MistralActivationStats"]
-        ),
-        .executable(
             name: "model-runner-teacher-kl-bench",
             targets: ["ModelTeacherKLBenchmark"]
         ),
-        .executable(
-            name: "model-runner-mistral-awss-quantize",
-            targets: ["MistralActivationScaleSearchRescorer"]
-        ),
     ],
-    dependencies: [
+    dependencies: chatterboxPackages + [
         mlxSwiftDependency,
         .package(
             url: "https://github.com/ml-explore/mlx-swift-lm",
@@ -117,13 +101,18 @@ let package = Package(
         ),
     ],
     targets: [
+        .target(name: "CorpusPreparationCore", resources: [.copy("Resources/pinned-sources.json")]),
+        .executableTarget(name: "CorpusPreparation", dependencies: [
+            "CorpusPreparationCore", .product(name: "ArgumentParser", package: "swift-argument-parser")
+        ]),
+        .testTarget(name: "CorpusPreparationTests", dependencies: ["CorpusPreparationCore"], resources: [.copy("Fixtures")]),
         .target(
             name: "ModelRunnerProtocol",
             swiftSettings: backendSwiftSettings
         ),
         .target(
             name: "ModelRunnerCore",
-            dependencies: [
+            dependencies: chatterboxProducts + [
                 "ModelRunnerProtocol",
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "MLXNN", package: "mlx-swift"),
@@ -139,6 +128,7 @@ let package = Package(
             dependencies: [
                 "ModelRunnerCore",
                 "ModelRunnerProtocol",
+                .product(name: "HuggingFace", package: "swift-huggingface"),
                 .product(name: "NIOCore", package: "swift-nio"),
                 .product(name: "NIOHTTP1", package: "swift-nio"),
                 .product(name: "NIOPosix", package: "swift-nio"),
@@ -148,79 +138,6 @@ let package = Package(
             // The executable uses an @main AsyncParsableCommand and now has a
             // second source file for its POSIX signal relay.
             swiftSettings: [.unsafeFlags(["-parse-as-library"])]
-        ),
-        .executableTarget(
-            name: "MetalQuantizationBenchmark",
-            dependencies: [
-                "ModelRunnerCore",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
-            ],
-            path: "Benchmarks/MetalQuantization"
-        ),
-        .executableTarget(
-            name: "LagunaQuantizer",
-            dependencies: [
-                "ModelRunnerCore",
-                "ScalePlanMLX",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXNN", package: "mlx-swift"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
-        ),
-        .target(
-            name: "ScalePlanMLX"
-        ),
-        .executableTarget(
-            name: "ScalePlanCLI",
-            dependencies: [
-                "ScalePlanMLX",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
-        ),
-        .executableTarget(
-            name: "Q4ScaleSearchAudit",
-            dependencies: [
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
-        ),
-        .target(
-            name: "LagunaScaleSearchCore",
-            dependencies: [
-                "MistralActivationScaleSearchCore",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            path: "Sources/LagunaScaleSearchRescorer"
-        ),
-        .executableTarget(
-            name: "LagunaScaleSearchRescorerCLI",
-            dependencies: [
-                "LagunaScaleSearchCore",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
-        ),
-        .executableTarget(
-            name: "ModelQuantizer",
-            dependencies: [
-                "LagunaScaleSearchCore",
-                "ModelRunnerCore",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXNN", package: "mlx-swift"),
-                .product(name: "MLXLLM", package: "mlx-swift-lm"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
-        ),
-        .executableTarget(
-            name: "LagunaQ4R8Verifier",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
         ),
         .executableTarget(
             name: "RuntimeBenchmark",
@@ -263,24 +180,6 @@ let package = Package(
             swiftSettings: backendSwiftSettings
         ),
         .executableTarget(
-            name: "MistralActivationStats",
-            dependencies: [
-                "MistralActivationScaleSearchCore",
-                "ModelQualityCore",
-                "ModelRunnerCore",
-                "ModelRunnerProtocol",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXNN", package: "mlx-swift"),
-                .product(name: "MLXLLM", package: "mlx-swift-lm"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
-                .product(name: "MLXHuggingFace", package: "mlx-swift-lm"),
-                .product(name: "HuggingFace", package: "swift-huggingface"),
-                .product(name: "Tokenizers", package: "swift-transformers"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            swiftSettings: backendSwiftSettings
-        ),
-        .executableTarget(
             name: "ModelTeacherKLBenchmark",
             dependencies: [
                 "ModelQualityCore",
@@ -297,20 +196,6 @@ let package = Package(
             ],
             swiftSettings: backendSwiftSettings
         ),
-        .target(
-            name: "MistralActivationScaleSearchCore",
-            dependencies: [
-                .product(name: "MLX", package: "mlx-swift")
-            ]
-        ),
-        .executableTarget(
-            name: "MistralActivationScaleSearchRescorer",
-            dependencies: [
-                "MistralActivationScaleSearchCore",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]
-        ),
         .testTarget(
             name: "ModelRunnerProtocolTests",
             dependencies: [
@@ -323,31 +208,17 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "ScalePlanMLXTests",
-            dependencies: ["ScalePlanMLX"]
-        ),
-        .testTarget(
-            name: "ModelQuantizerTests",
+            name: "MidnightTests",
             dependencies: [
-                "MistralActivationScaleSearchCore",
-                "LagunaScaleSearchCore",
-                "ModelRunnerCore",
-                .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXNN", package: "mlx-swift"),
-                .product(name: "MLXLLM", package: "mlx-swift-lm"),
-                .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
+                "Midnight",
+                .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOEmbedded", package: "swift-nio"),
+                .product(name: "NIOHTTP1", package: "swift-nio"),
             ]
         ),
         .testTarget(
             name: "ModelQualityCoreTests",
             dependencies: ["ModelQualityCore"]
-        ),
-        .testTarget(
-            name: "MistralActivationScaleSearchCoreTests",
-            dependencies: [
-                "MistralActivationScaleSearchCore",
-                .product(name: "MLX", package: "mlx-swift"),
-            ]
         ),
     ],
     swiftLanguageModes: [.v6]

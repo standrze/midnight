@@ -93,7 +93,7 @@ shard, and writes an optimization manifest. Tensor bytes are replaced in place;
 the output does not retain the obsolete projections.
 
 ```bash
-python3 Scripts/pack-laguna-gate-up.py \
+python3 ../midnight-quantization/Scripts/pack-laguna-gate-up.py \
   /absolute/path/Laguna-XS-2.1-4bit \
   /absolute/path/Laguna-XS-2.1-4bit-fused-gate-up-compact
 ```

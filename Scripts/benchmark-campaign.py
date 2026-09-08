@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parent.parent
 LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
-RUNTIME_OPTIONS = {"--engine", "--tokens", "--warmups", "--context-length", "--prefill-step-size", "--kv-compression"}
+RUNTIME_OPTIONS = {"--engine", "--tokens", "--warmups", "--context-length", "--prefill-step-size", "--kv-compression", "--reasoning-effort"}
 QUALITY_OPTIONS = {"--max-tokens-per-sample", "--prefill-step-size"}
 LIMITATIONS = [
     "Runtime uses greedy natural generation: quantized models can follow different token trajectories. Ratios describe end-to-end native generation, not isolated kernel speed or equal-output quality.",
@@ -183,6 +183,8 @@ def native_args(section, mode):
             raise ValueError(f"{option} must be in {low}...{high}")
     if "--engine" in values and values["--engine"] not in {"auto", "metal", "cuda", "cpu"}:
         raise ValueError("Invalid --engine")
+    if "--reasoning-effort" in values and values["--reasoning-effort"] not in {"low", "medium", "high"}:
+        raise ValueError("--reasoning-effort must be low, medium, or high")
     return args, values
 
 
@@ -325,6 +327,9 @@ def extract_measurement(report, manifest, run):
         workload = next(p for p in manifest["runtime"]["prompts"] if p["label"] == run["workload"])
         if report.get("prompt") != workload["text"]:
             raise ValueError("Native report prompt differs from manifest")
+        reasoning_effort = report.get("reasoning_effort")
+        if reasoning_effort != values.get("--reasoning-effort"):
+            raise ValueError("Native report reasoning_effort differs from manifest")
         requested = int(values.get("--tokens", 256))
         if report.get("requested_tokens") != requested or report.get("measured_trials") != 1 or len(report.get("trials", [])) != 1:
             raise ValueError("Native report does not match requested token/trial settings")
@@ -345,6 +350,7 @@ def extract_measurement(report, manifest, run):
                 "context_length": report.get("context_length"),
                 "prefill_step_size": report.get("prefill_step_size"),
                 "kv_compression": report.get("kv_compression"),
+                "reasoning_effort": reasoning_effort,
                 "memory_limit_bytes": report.get("memory_limit_bytes")}
 
     expected_corpus = next(c["path"] for c in manifest["quality"]["corpora"] if c["label"] == run["workload"])

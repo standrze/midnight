@@ -4,11 +4,13 @@ public struct ResolvedModelSelection: Equatable, Sendable {
   public let modelPath: String
   public let adapterPath: String?
   public let servedModelName: String
+  public let settingsDirectory: String
 
-  public init(modelPath: String, adapterPath: String?, servedModelName: String) {
+  public init(modelPath: String, adapterPath: String?, servedModelName: String, settingsDirectory: String? = nil) {
     self.modelPath = modelPath
     self.adapterPath = adapterPath
     self.servedModelName = servedModelName
+    self.settingsDirectory = settingsDirectory ?? modelPath
   }
 }
 
@@ -26,7 +28,7 @@ public enum ModelCatalog {
       return normalizedURL(configured)
     }
     return homeDirectory
-      .appendingPathComponent(".runner", isDirectory: true)
+      .appendingPathComponent(".midnight", isDirectory: true)
       .appendingPathComponent("models", isDirectory: true)
       .standardizedFileURL
   }
@@ -50,7 +52,8 @@ public enum ModelCatalog {
     return ResolvedModelSelection(
       modelPath: isBundle ? bundleBase.path : entry.path,
       adapterPath: resolvedAdapter,
-      servedModelName: normalizedName(servedModelName) ?? entry.lastPathComponent
+      servedModelName: normalizedName(servedModelName) ?? entry.lastPathComponent,
+      settingsDirectory: entry.path
     )
   }
 

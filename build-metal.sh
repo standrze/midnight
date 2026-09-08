@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PACKAGE_ROOT="$(cd "$(dirname "$0")" && pwd)"
+MIDNIGHT_RUNTIME_ROOT="$(cd "$(dirname "$0")" && pwd)"
+# Sibling tools build their own package while reusing Midnight's reviewed MLX
+# patches and Metal runtime resource recipe.
+PACKAGE_ROOT="$(cd "${MODEL_RUNNER_BUILD_PACKAGE_ROOT:-$MIDNIGHT_RUNTIME_ROOT}" && pwd)"
 cd "$PACKAGE_ROOT"
 
-"$PACKAGE_ROOT/prepare-dependencies.sh"
+MODEL_RUNNER_DEPENDENCY_PACKAGE_ROOT="$PACKAGE_ROOT" "$MIDNIGHT_RUNTIME_ROOT/prepare-dependencies.sh"
 BUILD_CONFIGURATION="${MODEL_RUNNER_BUILD_CONFIGURATION:-release}"
 BUILD_PRODUCT="${MODEL_RUNNER_BUILD_PRODUCT:-midnight}"
+BUILD_JOBS="${MODEL_RUNNER_BUILD_JOBS:-2}"
 PINNED_MLX="${MODEL_RUNNER_PINNED_MLX:-0}"
+if ! [[ "$BUILD_JOBS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "MODEL_RUNNER_BUILD_JOBS must be a positive integer." >&2
+  exit 2
+fi
 case "$BUILD_CONFIGURATION" in
   debug|release) ;;
   *)
@@ -26,11 +34,11 @@ esac
 
 # Experimental only: the matched Q4R8 A/B did not show a repeatable speed win.
 if [[ "$PINNED_MLX" == "1" ]]; then
-  swift build --configuration "$BUILD_CONFIGURATION" \
+  swift build --configuration "$BUILD_CONFIGURATION" --jobs "$BUILD_JOBS" \
     -Xswiftc -DMODEL_RUNNER_PINNED_MLX \
     --product "$BUILD_PRODUCT"
 else
-  swift build --configuration "$BUILD_CONFIGURATION" --product "$BUILD_PRODUCT"
+  swift build --configuration "$BUILD_CONFIGURATION" --jobs "$BUILD_JOBS" --product "$BUILD_PRODUCT"
 fi
 
 BIN_DIR="$(swift build --configuration "$BUILD_CONFIGURATION" --show-bin-path)"

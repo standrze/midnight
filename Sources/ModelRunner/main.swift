@@ -8,10 +8,11 @@ struct MidnightCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "midnight",
         abstract: "Midnight Runner — serve a local MLX model through OpenAI-compatible chat and local audio APIs.",
-        version: "0.2.0-beta.3"
+        version: "0.2.0-beta.4",
+        subcommands: [DownloadCommand.self, AuthCommand.self]
     )
 
-    @Option(name: .shortAndLong, help: "Model name in ~/.runner/models or an MLX folder")
+    @Option(name: .shortAndLong, help: "Model name in ~/.midnight/models or an MLX folder")
     var model: String?
 
     @Option(name: .long, help: "Model name exposed by the endpoint")
@@ -59,13 +60,16 @@ struct MidnightCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Log incoming requests, generation settings, and request outcomes")
     var verbose = false
 
-    @Flag(name: .long, help: "List models available under ~/.runner/models and exit")
+    @Flag(name: .long, help: "List models available under ~/.midnight/models and exit")
     var listModels = false
+
+    @Flag(name: .long, help: "List models installed under ~/.midnight/models and exit")
+    var list = false
 
     mutating func run() async throws {
         defer { clearModelRunnerMLXStreams() }
 
-        if listModels {
+        if list || listModels {
             let directory = ModelCatalog.defaultDirectory()
             let models = ModelCatalog.availableModels(modelsDirectory: directory)
             print("Available models in \(directory.path):")
@@ -77,10 +81,12 @@ struct MidnightCommand: AsyncParsableCommand {
             return
         }
         let stackSettings = try ModelStackSettings.load(explicitPath: config)
-        let fileSettings = stackSettings?.mlxRunner
-        guard let requestedModel = model ?? fileSettings?.modelPath else {
+        guard let requestedModel = model ?? stackSettings?.mlxRunner?.modelPath else {
             throw ValidationError("Provide --model or set mlxRunner.modelPath in model-stack.local.json")
         }
+        let initialSelection = ModelCatalog.resolveMLX(model: requestedModel, adapter: adapter)
+        let fileSettings: ModelStackSettings.MLXRunner? = try (stackSettings?.mlxRunner ?? .empty)
+            .resolving(for: initialSelection)
         let selection = ModelCatalog.resolveMLX(
             model: requestedModel,
             adapter: adapter,
@@ -105,6 +111,34 @@ struct MidnightCommand: AsyncParsableCommand {
         let engine = try requestedEngine.resolve()
         if dflashBlockSize != nil, dflashModel == nil {
             throw ValidationError("--dflash-block-size requires --dflash-model")
+        }
+
+        if let chatterbox = try ChatterboxSettings.load(modelDirectory: selection.modelPath) {
+#if os(macOS)
+            guard engine == .metal else {
+                throw ValidationError("The native Chatterbox backend currently requires Metal on macOS")
+            }
+            guard selection.adapterPath == nil, adapterScale == nil, dflashModel == nil,
+                  contextLength == nil, prefillStepSize == nil, kvCompression == nil,
+                  fileSettings?.contextLength == nil, fileSettings?.prefillStepSize == nil,
+                  fileSettings?.kvCompression == nil else {
+                throw ValidationError("Chatterbox does not support chat context, KV, LoRA, or DFlash options")
+            }
+            guard self.maxTokens == nil, fileSettings?.maximumTokens == nil else {
+                throw ValidationError("Set max_tokens in chatterbox.json for Chatterbox's speech-token limit")
+            }
+            let synthesizer = try await ChatterboxSpeechSynthesizer(
+                modelPath: selection.modelPath, servedModelName: selection.servedModelName,
+                settings: chatterbox)
+            let server = ModelHTTPServer(
+                servedModelName: selection.servedModelName, tokenLimit: tokenLimit,
+                verbose: verbose, speechSynthesizer: synthesizer)
+            print("Ready: http://\(host):\(port)/v1  model=\(selection.servedModelName)  Chatterbox=\(chatterbox.variant.rawValue)")
+            try await server.run(host: host, port: port)
+            return
+#else
+            throw ValidationError("The native Chatterbox backend currently requires macOS")
+#endif
         }
 
         if (try? VoxtralVoiceCatalog(modelDirectory: selection.modelPath)) != nil {

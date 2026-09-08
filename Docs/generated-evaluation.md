@@ -8,7 +8,7 @@ universal model ranking or a runtime speed improvement.
 ## Prepare the public tasks and separate scoring key
 
 The offline builder reads the verified `mbpp-source.jsonl` and
-`gsm8k-source.jsonl` cache used by `prepare-quantization-corpus.py`. It downloads
+`gsm8k-source.jsonl` cache used by `model-runner-prepare-corpus reference`. It downloads
 nothing and refuses changed source bytes or differing existing outputs.
 
 ```sh

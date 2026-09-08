@@ -13,7 +13,7 @@ struct ToolCallingWiringTests {
             encoding: .utf8
         )
 
-        #expect(source.contains("UserInput(chat: chatMessages, tools: toolSpecs)"))
+        #expect(source.contains("container.prepare(input: UserInput("))
         #expect(source.contains("tools: toolSpecs"))
         #expect(source.contains("case .toolCall(let call):"))
         #expect(source.contains("case .rejectedToolCall(let rejection):"))
@@ -30,7 +30,9 @@ struct ToolCallingWiringTests {
             encoding: .utf8
         )
 
-        #expect(source.contains("tools: completion.tools"))
+        #expect(source.contains("ToolChoicePlan.resolve("))
+        #expect(source.contains("tools: toolChoicePlan.tools"))
+        #expect(source.contains("toolChoice: toolChoicePlan.constraint"))
         #expect(source.contains("case .toolCall(let call):"))
         #expect(source.contains("OpenAIToolCallDelta("))
         #expect(source.contains("finishReason = \"tool_calls\""))

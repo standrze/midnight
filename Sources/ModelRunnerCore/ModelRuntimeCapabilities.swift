@@ -8,15 +8,29 @@ enum MistralRuntimeFamily: String, Equatable, Sendable {
 
 /// Capabilities derived from checkpoint metadata rather than a repository or
 /// folder name. This keeps family-wide runtime policy independent from any one
-/// Mistral checkpoint while avoiding accidental activation for Voxtral audio
-/// models or unrelated architectures.
+/// checkpoint while avoiding accidental activation for Voxtral audio models or
+/// unrelated architectures.
 struct ModelRuntimeCapabilities: Equatable, Sendable {
   let mistralFamily: MistralRuntimeFamily?
+  let isGPTOSS: Bool
+
+  init(mistralFamily: MistralRuntimeFamily?, isGPTOSS: Bool = false) {
+    self.mistralFamily = mistralFamily
+    self.isGPTOSS = isGPTOSS
+  }
 
   static let none = Self(mistralFamily: nil)
 
   var supportsMistralConversationPrefixCache: Bool {
     mistralFamily != nil
+  }
+
+  var supportsGPTOSSConversationPrefixCache: Bool {
+    isGPTOSS
+  }
+
+  var supportsHotConversationCache: Bool {
+    supportsMistralConversationPrefixCache || supportsGPTOSSConversationPrefixCache
   }
 
   static func load(from modelDirectory: URL) throws -> Self {
@@ -38,6 +52,9 @@ struct ModelRuntimeCapabilities: Equatable, Sendable {
     if let family = family(for: rootType) {
       return Self(mistralFamily: family)
     }
+    if rootType == "gpt_oss" {
+      return Self(mistralFamily: nil, isGPTOSS: true)
+    }
 
     if let textConfiguration = root["text_config"] as? [String: Any] {
       let textType = normalized(textConfiguration["model_type"] as? String)
@@ -48,6 +65,9 @@ struct ModelRuntimeCapabilities: Equatable, Sendable {
 
     for architecture in architectures {
       let normalizedArchitecture = normalized(architecture)
+      if rootType.isEmpty, normalizedArchitecture == "gptossforcausallm" {
+        return Self(mistralFamily: nil, isGPTOSS: true)
+      }
       if normalizedArchitecture.contains("mixtral") {
         return Self(mistralFamily: .mixtral)
       }

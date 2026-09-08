@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PACKAGE_ROOT="$(cd "$(dirname "$0")" && pwd)"
+MIDNIGHT_RUNTIME_ROOT="$(cd "$(dirname "$0")" && pwd)"
+PACKAGE_ROOT="$(cd "${MODEL_RUNNER_BUILD_PACKAGE_ROOT:-$MIDNIGHT_RUNTIME_ROOT}" && pwd)"
 
 case "$(uname -s)" in
   Darwin)
-    exec "$PACKAGE_ROOT/build-metal.sh"
+    exec "$MIDNIGHT_RUNTIME_ROOT/build-metal.sh"
     ;;
   Linux)
     cd "$PACKAGE_ROOT"
-    source "$PACKAGE_ROOT/Scripts/swiftpm-scratch-path.sh"
-    source "$PACKAGE_ROOT/Scripts/optional-dependency-patch.sh"
-    source "$PACKAGE_ROOT/Scripts/release-publisher.sh"
-    source "$PACKAGE_ROOT/Scripts/cuda-runtime-environment.sh"
+    source "$MIDNIGHT_RUNTIME_ROOT/Scripts/swiftpm-scratch-path.sh"
+    source "$MIDNIGHT_RUNTIME_ROOT/Scripts/optional-dependency-patch.sh"
+    source "$MIDNIGHT_RUNTIME_ROOT/Scripts/release-publisher.sh"
+    source "$MIDNIGHT_RUNTIME_ROOT/Scripts/cuda-runtime-environment.sh"
     model_runner_configure_swiftpm_scratch "$PACKAGE_ROOT" Linux
-    SWIFT_BUILD_JOBS="${SWIFT_BUILD_JOBS:-2}"
+    SWIFT_BUILD_JOBS="${SWIFT_BUILD_JOBS:-${MODEL_RUNNER_BUILD_JOBS:-2}}"
     if [[ ! "$SWIFT_BUILD_JOBS" =~ ^[1-9][0-9]*$ ]]; then
       echo "SWIFT_BUILD_JOBS must be a positive integer." >&2
       exit 2
     fi
     BUILD_PRODUCT="${MODEL_RUNNER_BUILD_PRODUCT:-midnight}"
     case "$BUILD_PRODUCT" in
-      midnight|model-runner-quantize|model-runner-laguna-quantize|model-runner-laguna-q4r8-rescore|model-runner-laguna-q4r8-verify|model-runner-runtime-bench|model-runner-quality-bench|model-runner-q4-scale-search-audit|model-runner-scale-plan|model-runner-metal-quant-bench) ;;
+      midnight|midnight-studio-worker|model-runner-prepare-corpus|model-runner-quantize|model-runner-laguna-quantize|model-runner-laguna-q4r8-rescore|model-runner-laguna-q4r8-verify|model-runner-runtime-bench|model-runner-quality-bench|model-runner-generation-bench|model-runner-teacher-kl-bench|model-runner-q4-scale-search-audit|model-runner-scale-plan|model-runner-metal-quant-bench|model-runner-mistral-activation-stats|model-runner-mistral-awss-quantize) ;;
       *)
         echo "Unsupported MODEL_RUNNER_BUILD_PRODUCT: $BUILD_PRODUCT" >&2
         exit 2
@@ -71,7 +72,7 @@ case "$(uname -s)" in
       esac
       export CUDA_ARCH="${CUDA_ARCH:-$DEFAULT_CUDA_ARCH}"
 
-      source "$PACKAGE_ROOT/Scripts/cuda-toolkit.sh"
+      source "$MIDNIGHT_RUNTIME_ROOT/Scripts/cuda-toolkit.sh"
       model_runner_resolve_cuda_toolkit /usr/local/cuda
       if [[ ! -d /usr/local/cuda/include || ! -d /usr/local/cuda/lib64 ]]; then
         echo "MLX Swift expects CUDA headers and libraries under /usr/local/cuda." >&2
@@ -80,7 +81,7 @@ case "$(uname -s)" in
 
       # Fail closed on exact dependency releases. Header existence alone can
       # silently select Ubuntu's older cudnn-frontend or a stale CUTLASS tree.
-      source "$PACKAGE_ROOT/Scripts/cuda-dependency-checks.sh"
+      source "$MIDNIGHT_RUNTIME_ROOT/Scripts/cuda-dependency-checks.sh"
       model_runner_resolve_cuda_dependencies
       export CPATH="$CUTLASS_INCLUDE_DIR:$CUDNN_FRONTEND_INCLUDE_DIR${CPATH:+:$CPATH}"
       export MLX_CUDA_INCLUDE_PATHS="$CUTLASS_INCLUDE_DIR:$CUDNN_FRONTEND_INCLUDE_DIR"
@@ -90,7 +91,7 @@ case "$(uname -s)" in
       # absolute path to both encuda compile and link. Using GCC 13 here is
       # also invalid: its nvcc-generated host C++ contains glibc _FloatN types
       # which Swift Clang 21 cannot parse in the second compilation phase.
-      source "$PACKAGE_ROOT/Scripts/cuda-host-cxx.sh"
+      source "$MIDNIGHT_RUNTIME_ROOT/Scripts/cuda-host-cxx.sh"
       model_runner_resolve_cuda_host_cxx
 
       NVCC_VERSION_FINGERPRINT="$("$NVCC_PATH" --version | cksum | awk '{print $1 "-" $2}')"
@@ -113,7 +114,7 @@ case "$(uname -s)" in
       fi
     fi
 
-    "$PACKAGE_ROOT/prepare-dependencies.sh"
+    MODEL_RUNNER_DEPENDENCY_PACKAGE_ROOT="$PACKAGE_ROOT" "$MIDNIGHT_RUNTIME_ROOT/prepare-dependencies.sh"
 
     PROFILE_MARKER="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/.model-runner-profile"
     CACHE_PROFILE_MARKER="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/.model-runner-cache-profile"
