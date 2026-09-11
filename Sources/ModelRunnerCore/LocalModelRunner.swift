@@ -16,6 +16,8 @@ public struct PreparedModelPrompt: Sendable {
   fileprivate let reasoningEffort: ChatCompletionRequest.ReasoningEffort?
   fileprivate let forcedToolPrefixTokenIDs: [Int]
   fileprivate let tokenIDs: [Int]
+  fileprivate let responseFormat: OpenAIResponseFormat?
+  fileprivate let structuredOutput: StructuredOutputLogitProcessor?
   public var promptTokenCount: Int { tokenIDs.count }
   /// Exact rendered input, exposed read-only for reproducible benchmark comparisons.
   public var promptTokenIDs: [Int] { tokenIDs }
@@ -237,7 +239,7 @@ private struct LoadedDFlash: Sendable {
 }
 
 /// `ChatSession` is deliberately single-consumer rather than `Sendable`.
-/// LocalModelRunner's actor and `isGenerating` guard provide that serialization;
+/// LocalModelRunner's actor and execution admission queue provide that serialization;
 /// this reference keeps the assertion at one explicit boundary for Swift 6.
 private final class ChatSessionReference: @unchecked Sendable {
   let session: ChatSession
@@ -420,7 +422,9 @@ public actor LocalModelRunner {
   #endif
   private var conversationCache: CompletedMessagePrefixLRU<ChatSessionSnapshotReference>
   private var hotConversation: HotConversation?
-  private var isGenerating = false
+  private let generationAdmission = GenerationAdmission()
+  private let sharedPromptCache: SharedPromptCache
+  private let producerLifetime = StreamProducerLifetime()
 
   public init(
     modelPath: String,
@@ -694,6 +698,7 @@ public actor LocalModelRunner {
     self.supportsLagunaPromptCache = supportsLagunaPromptCache
     self.wiredMemoryPlan = wiredMemoryPlan
     let prefixCacheLimits = ConversationPrefixCacheLimits.resolve(environment: environment)
+    self.sharedPromptCache = SharedPromptCache(maximumBytes: prefixCacheLimits.maximumEntries > 0 ? min(prefixCacheLimits.maximumBytes, 64 * 1_048_576) : 0)
     self.conversationCache = CompletedMessagePrefixLRU(
       maximumEntries: prefixCacheLimits.maximumEntries,
       maximumBytes: prefixCacheLimits.maximumBytes
@@ -728,14 +733,35 @@ public actor LocalModelRunner {
     }
   }
 
+  /// Wait for stream producers, including cancelled producers, to finish their
+  /// cleanup. Call only after new operations have been stopped and direct calls
+  /// such as prompt preparation and inspection have returned.
+  public func waitUntilIdle() async {
+    await producerLifetime.waitUntilIdle()
+    #if os(macOS) && MODEL_RUNNER_PINNED_MLX
+      let stream = mlxStream
+      await MLXPinnedRuntime.shared.runCleanup { stream.synchronize() }
+    #else
+      StreamOrDevice.device(device).stream.synchronize()
+    #endif
+  }
+
+  private func acquireExecution() async throws {
+    do { try await generationAdmission.acquire() }
+    catch GenerationAdmission.Failure.full { throw LocalModelRunnerError.busy }
+  }
+
   /// Validate exact rendered prompt tokens before HTTP response headers or GPU prefill.
   public func preparePrompt(messages: [OpenAIMessage], maximumTokens: Int?,
                             tools: [OpenAIToolDefinition]? = nil,
                             toolChoice: ToolChoicePlan.Constraint = .automatic,
-                            reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil) async throws -> PreparedModelPrompt {
-    guard !isGenerating else { throw LocalModelRunnerError.busy }
+                            reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil,
+                            responseFormat: OpenAIResponseFormat? = nil) async throws -> PreparedModelPrompt {
+    try await acquireExecution()
+    defer { generationAdmission.release() }
+    try Task.checkCancellation()
     let prepared = try await renderPrompt(messages: messages, tools: tools,
-      toolChoice: toolChoice, reasoningEffort: reasoningEffort)
+      toolChoice: toolChoice, reasoningEffort: reasoningEffort, responseFormat: responseFormat)
     try validateAdmission(prompt: prepared.promptTokenCount,
       output: tokenLimit.resolve(requested: maximumTokens), resident: residentModelBytes)
     return prepared
@@ -743,11 +769,22 @@ public actor LocalModelRunner {
 
   private func renderPrompt(messages: [OpenAIMessage], tools: [OpenAIToolDefinition]?,
                             toolChoice: ToolChoicePlan.Constraint = .automatic,
-                            reasoningEffort: ChatCompletionRequest.ReasoningEffort?) async throws -> PreparedModelPrompt {
+                            reasoningEffort: ChatCompletionRequest.ReasoningEffort?,
+                            responseFormat: OpenAIResponseFormat? = nil) async throws -> PreparedModelPrompt {
     guard let last = messages.last, last.role == "user" || last.role == "tool" else {
       throw LocalModelRunnerError.lastMessageMustBeUserOrTool
     }
-    let chatMessages = try messages.map(Self.chatMessage)
+    try StructuredOutputRequest.validate(format: responseFormat, tools: tools, stop: [])
+    var promptMessages = messages
+    if StructuredOutputRequest.isStructured(responseFormat), let responseFormat {
+      let instruction = try StructuredOutputRequest.instruction(for: responseFormat)
+      if let first = promptMessages.first, first.role == "system" || first.role == "developer" {
+        promptMessages[0] = OpenAIMessage(role: first.role, content: (first.content ?? "") + "\n\n" + instruction)
+      } else {
+        promptMessages.insert(OpenAIMessage(role: "system", content: instruction), at: 0)
+      }
+    }
+    let chatMessages = try promptMessages.map(Self.chatMessage)
     let toolSpecs = try Self.toolSpecs(tools)
     let effectiveReasoningEffort = Self.effectiveReasoningEffort(
       reasoningEffort, capabilities: runtimeCapabilities)
@@ -776,9 +813,38 @@ public actor LocalModelRunner {
     if normalizesGemma4Prompt, tokens.count >= 3, Array(tokens.prefix(3)) == [2, 107, 105] {
       tokens.remove(at: 1)
     }
+    let structuredOutput: StructuredOutputLogitProcessor?
+    if StructuredOutputRequest.isStructured(responseFormat), let responseFormat {
+      let grammar = try StructuredOutputGrammar(responseFormat: responseFormat)
+      let directory = URL(fileURLWithPath: modelPath)
+      // Harmony's ordinary assistant prefix leaves the channel undecided. For
+      // structured replies prefill the final channel before enforcing JSON bytes.
+      if runtimeCapabilities.isGPTOSS {
+        let finalChannel = await container.perform { context in
+          context.tokenizer.encode(text: "<|channel|>final<|message|>", addSpecialTokens: false)
+        }
+        tokens.append(contentsOf: finalChannel)
+      }
+      do {
+        structuredOutput = try await container.perform { context in
+          var eos = context.configuration.eosTokenIds
+          if let token = context.tokenizer.eosTokenId { eos.insert(token) }
+          for token in context.configuration.extraEOSTokens {
+            if let id = context.tokenizer.convertTokenToId(token) { eos.insert(id) }
+          }
+          return try StructuredOutputLogitProcessor(grammar: grammar, modelDirectory: directory,
+            tokenizer: context.tokenizer, eosTokenIDs: eos)
+        }
+      } catch {
+        throw StructuredOutputRequestError.unsupportedTokenizer(error.localizedDescription)
+      }
+    } else {
+      structuredOutput = nil
+    }
     return PreparedModelPrompt(modelPath: modelPath, messages: messages, tools: tools,
       toolChoice: toolChoice, reasoningEffort: effectiveReasoningEffort,
-      forcedToolPrefixTokenIDs: forcedToolPrefixTokenIDs, tokenIDs: tokens)
+      forcedToolPrefixTokenIDs: forcedToolPrefixTokenIDs, tokenIDs: tokens,
+      responseFormat: responseFormat, structuredOutput: structuredOutput)
   }
 
   static func effectiveReasoningEffort(
@@ -812,9 +878,9 @@ public actor LocalModelRunner {
 
   /// Architecture metadata comes from the loaded module graph and tensor shapes.
   public func inspectorModel() async throws -> InspectorModel {
-    guard !isGenerating else { throw LocalModelRunnerError.busy }
-    isGenerating = true
-    defer { isGenerating = false }
+    try await acquireExecution()
+    defer { generationAdmission.release() }
+    try Task.checkCancellation()
     return await loadedInspectorDescriptor()
   }
 
@@ -830,15 +896,15 @@ public actor LocalModelRunner {
   /// Opt-in bounded inspection owns the runner for its complete lifetime. Its
   /// fresh cache and temporary observers do not become a retained chat session.
   public func inspectorTrace(request: InspectorTraceRequest) async throws -> InspectorTrace {
-    guard !isGenerating else { throw LocalModelRunnerError.busy }
+    try await acquireExecution()
+    defer { generationAdmission.release() }
+    try Task.checkCancellation()
     let requestedMaximum = try ModelInspection.maximumTokens(request)
     let maximumTokens = request.maxTokens == nil
       ? min(requestedMaximum, tokenLimit.configuredMaximum) : requestedMaximum
     guard maximumTokens <= tokenLimit.configuredMaximum else {
       throw ModelInspectionError.invalidRequest("Inspector maxTokens exceeds this server's configured maximum of \(tokenLimit.configuredMaximum).")
     }
-    isGenerating = true
-    defer { isGenerating = false }
     let descriptor = await loadedInspectorDescriptor()
     guard descriptor.traceSupported else {
       throw ModelInspectionError.unsupported(descriptor.traceReason ?? "Activation capture is unavailable.")
@@ -891,7 +957,8 @@ public actor LocalModelRunner {
     reasoningEffort: ChatCompletionRequest.ReasoningEffort? = nil,
     enablePromptCache: Bool = true,
     enableSpeculativeDecoding: Bool = true,
-    preparedPrompt: PreparedModelPrompt? = nil
+    preparedPrompt: PreparedModelPrompt? = nil,
+    responseFormat: OpenAIResponseFormat? = nil
   ) -> AsyncThrowingStream<LocalModelRunnerEvent, Error> {
     let lagunaFastPaths = LagunaDecodeFastPathSelection.resolve(
       engine: engine,
@@ -920,7 +987,8 @@ public actor LocalModelRunner {
                   reasoningEffort: reasoningEffort,
                   enablePromptCache: enablePromptCache,
                   enableSpeculativeDecoding: enableSpeculativeDecoding,
-                  preparedPrompt: preparedPrompt
+                  preparedPrompt: preparedPrompt,
+                  responseFormat: responseFormat
                 ) {
                   continuation.yield($0)
                 }
@@ -932,6 +1000,7 @@ public actor LocalModelRunner {
           }
         }
       }
+      producerLifetime.track(generationTask)
       continuation.onTermination = { _ in generationTask.cancel() }
     }
   }
@@ -948,12 +1017,14 @@ public actor LocalModelRunner {
     enablePromptCache: Bool,
     enableSpeculativeDecoding: Bool,
     preparedPrompt: PreparedModelPrompt?,
+    responseFormat: OpenAIResponseFormat?,
     onEvent: @escaping @Sendable (LocalModelRunnerEvent) throws -> Void
   ) async throws {
-    guard !isGenerating else { throw LocalModelRunnerError.busy }
+    try await acquireExecution()
+    defer { generationAdmission.release() }
+    try Task.checkCancellation()
+    try StructuredOutputRequest.validate(format: responseFormat, tools: tools, stop: stop)
     let effectiveMaximumTokens = try tokenLimit.resolve(requested: maximumTokens)
-    isGenerating = true
-    defer { isGenerating = false }
 
     let prepared: PreparedModelPrompt
     let effectiveReasoningEffort = Self.effectiveReasoningEffort(
@@ -961,14 +1032,15 @@ public actor LocalModelRunner {
     if let preparedPrompt, preparedPrompt.modelPath == modelPath,
       preparedPrompt.messages == messages, preparedPrompt.tools == tools,
       preparedPrompt.toolChoice == toolChoice,
-      preparedPrompt.reasoningEffort == effectiveReasoningEffort {
+      preparedPrompt.reasoningEffort == effectiveReasoningEffort,
+      preparedPrompt.responseFormat == responseFormat {
       prepared = preparedPrompt
     } else {
       prepared = try await renderPrompt(messages: messages, tools: tools,
         toolChoice: toolChoice,
-        reasoningEffort: effectiveReasoningEffort)
+        reasoningEffort: effectiveReasoningEffort, responseFormat: responseFormat)
     }
-    if !prepared.forcedToolPrefixTokenIDs.isEmpty {
+    if prepared.structuredOutput != nil || !prepared.forcedToolPrefixTokenIDs.isEmpty {
       // A forced prefix changes generation semantics independently of the
       // rendered transcript. Keep it out of every retained ChatSession path:
       // branch checkpoints are keyed by messages and cannot express that
@@ -1001,7 +1073,8 @@ public actor LocalModelRunner {
     // Reserve for both the requested cache and existing retained caches. Evict first;
     // never keep branch snapshots at the expense of admitting a fitting request.
     let spare = max(0, memoryLimitBytes - required)
-    conversationCache.trim(toBytes: max(0, spare - hotCacheBytes))
+    if sharedPromptCache.bytes > spare / 2 { sharedPromptCache.clear() }
+    conversationCache.trim(toBytes: max(0, spare - hotCacheBytes - sharedPromptCache.bytes))
     if hotCacheBytes > spare {
       hotConversation = nil
       hotCacheBytes = 0
@@ -1111,10 +1184,24 @@ public actor LocalModelRunner {
     prepared: PreparedModelPrompt,
     onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
   ) async throws {
+    if let structuredOutput = prepared.structuredOutput {
+      try await generateStructuredOnDevice(container: container, device: device,
+        settings: settings, preparedTokenIDs: prepared.tokenIDs,
+        processor: structuredOutput.copy(), onEvent: onEvent)
+      return
+    }
     let hasForcedToolPrefix = !prepared.forcedToolPrefixTokenIDs.isEmpty
     let usesDFlash = enableSpeculativeDecoding && dflash != nil && settings.temperature == 0
       && !hasForcedToolPrefix
-    if supportsLagunaPromptCache && !normalizesGemma4Prompt && stop.isEmpty && !usesDFlash
+    let usesSharedPrefix = enablePromptCache && !usesDFlash && !hasForcedToolPrefix
+      && !normalizesGemma4Prompt && kvCompression == "none"
+      && SharedPromptCache.prefixLength(prepared.tokenIDs) > 0
+      && (hotConversation.map {
+        Self.cachedConversationSuffixStart(committed: $0.committedMessages, incoming: messages,
+          committedTools: $0.tools, tools: tools,
+          committedReasoningEffort: $0.reasoningEffort, reasoningEffort: prepared.reasoningEffort) == nil
+      } ?? true)
+    if !usesSharedPrefix && supportsLagunaPromptCache && !normalizesGemma4Prompt && stop.isEmpty && !usesDFlash
       && !hasForcedToolPrefix {
       try await generateWithLagunaPromptCache(
         messages: messages,
@@ -1125,7 +1212,7 @@ public actor LocalModelRunner {
       )
       return
     }
-    if Self.shouldUseHotConversationCache(
+    if !usesSharedPrefix && Self.shouldUseHotConversationCache(
       capabilities: runtimeCapabilities,
       enablePromptCache: enablePromptCache,
       normalizesGemma4Prompt: normalizesGemma4Prompt,
@@ -1166,6 +1253,8 @@ public actor LocalModelRunner {
       preparedTokenIDs: prepared.tokenIDs,
       forcedToolPrefixTokenIDs: prepared.forcedToolPrefixTokenIDs,
       longContext: longContext,
+      sharedPromptCache: usesSharedPrefix ? sharedPromptCache : nil,
+      memoryLimitBytes: memoryLimitBytes,
       onEvent: onEvent
     )
   }
@@ -1633,6 +1722,71 @@ private struct GenerationRequestSettings: Sendable {
   var components: GenerationComponents
 }
 
+/// Raw-token delivery keeps JSON strings away from model-specific tool/reasoning
+/// parsers. The token mask's byte map is also used for output, so split UTF-8 and
+/// tokenizer whitespace cleanup cannot make the wire text differ from the grammar.
+private func generateStructuredOnDevice(
+  container: ModelContainer,
+  device: Device,
+  settings: GenerationRequestSettings,
+  preparedTokenIDs: [Int],
+  processor: StructuredOutputLogitProcessor,
+  onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
+) async throws {
+  try await Device.withDefaultDevice(device) {
+    let components = settings.components.appendingLogitProcessor { processor }
+    let (stream, producerTask) = try await container.perform(
+      nonSendable: LMInput(tokens: MLXArray(preparedTokenIDs))
+    ) { context, input in
+      try MLXLMCommon.generateTokensTask(input: input, parameters: settings.parameters,
+        context: context, components: components)
+    }
+    var pendingBytes: [UInt8] = []
+    var text = ""
+    var completionInfo: GenerateCompletionInfo?
+    do {
+      for await event in stream {
+        try Task.checkCancellation()
+        switch event {
+        case .token(let token):
+          guard let bytes = processor.bytes(for: token) else {
+            throw StructuredOutputRequestError.generation("No decoded bytes for token \(token).")
+          }
+          pendingBytes.append(contentsOf: bytes)
+          if let chunk = String(bytes: pendingBytes, encoding: .utf8) {
+            text += chunk
+            pendingBytes.removeAll(keepingCapacity: true)
+            if !chunk.isEmpty { try onEvent(.content(chunk)) }
+          }
+        case .info(let info):
+          completionInfo = info
+        }
+      }
+      await producerTask.value
+      try Task.checkCancellation()
+      try processor.throwIfFailed()
+      guard let completionInfo else {
+        throw StructuredOutputRequestError.generation("Missing completion status.")
+      }
+      // OpenAI permits incomplete JSON when the output budget is exhausted;
+      // preserve finish_reason=length, never report that as a completed object.
+      if completionInfo.stopReason != .length {
+        guard pendingBytes.isEmpty, processor.isComplete,
+          let format = try? JSONSerialization.jsonObject(with: Data(text.utf8)),
+          format is [String: Any]
+        else {
+          throw StructuredOutputRequestError.generation("The model stopped before completing its JSON object.")
+        }
+      }
+      try onEvent(.metrics(LocalModelRunner.metrics(completionInfo)))
+    } catch {
+      producerTask.cancel()
+      await producerTask.value
+      throw error
+    }
+  }
+}
+
 private func generationRequestSettings(
   maximumTokens: Int,
   temperature requestedTemperature: Double?,
@@ -1689,6 +1843,8 @@ private func generateOnDevice(
   preparedTokenIDs: [Int],
   forcedToolPrefixTokenIDs: [Int],
   longContext: LongContextOptions,
+  sharedPromptCache: SharedPromptCache?,
+  memoryLimitBytes: Int,
   onEvent: @Sendable (LocalModelRunnerEvent) throws -> Void
 ) async throws {
   try await Device.withDefaultDevice(device) {
@@ -1720,7 +1876,7 @@ private func generateOnDevice(
     let useDFlash =
       enableSpeculativeDecoding && dflash != nil && settings.temperature == 0
     let promptTokenCount = promptTokenIDs.count
-    let (stream, producerTask) = try await container.perform(
+    let (stream, producerTask, cachedCount, prefixTime) = try await container.perform(
       nonSendable: LMInput(tokens: MLXArray(promptTokenIDs))
     ) { context, input in
       var requestContext = context
@@ -1737,27 +1893,34 @@ private func generateOnDevice(
           blockSize: dflash.blockSize,
           components: requestSettings.components
         )
-        return MLXLMCommon.generateTask(
+        let result = MLXLMCommon.generateTask(
           promptTokenCount: promptTokenCount,
           modelConfiguration: requestContext.configuration,
           tokenizer: requestContext.tokenizer,
           iterator: iterator,
           tools: toolSpecs
         )
+        return (result.0, result.1, 0, 0.0)
       }
+      let prefixStarted = Date.timeIntervalSinceReferenceDate
+      let prefix = try sharedPromptCache?.prepare(tokens: promptTokenIDs, model: requestContext.model, parameters: requestSettings.parameters, memoryLimitBytes: memoryLimitBytes)
+      let prefixTime = Date.timeIntervalSinceReferenceDate - prefixStarted
+      let skipped = prefix?.count ?? 0
       let iterator = try TokenIterator(
-        input: input,
+        input: skipped > 0 ? LMInput(tokens: MLXArray(Array(promptTokenIDs.dropFirst(skipped)))) : input,
         model: requestContext.model,
+        cache: prefix?.cache,
         parameters: requestSettings.parameters,
         components: requestSettings.components
       )
-      return MLXLMCommon.generateTask(
+      let result = MLXLMCommon.generateTask(
         promptTokenCount: promptTokenCount,
         modelConfiguration: requestContext.configuration,
         tokenizer: requestContext.tokenizer,
         iterator: iterator,
         tools: toolSpecs
       )
+      return (result.0, result.1, prefix?.cachedCount ?? 0, prefixTime)
     }
 
     var producedOutput = false
@@ -1771,7 +1934,14 @@ private func generateOnDevice(
         case .info(let info):
           try onEvent(
             .metrics(
-              LocalModelRunner.metrics(info)
+              LocalModelRunnerMetrics(promptTokenCount: promptTokenCount,
+                prefilledPromptTokenCount: promptTokenCount - cachedCount,
+                cachedPromptTokenCount: cachedCount, generationTokenCount: info.generationTokenCount,
+                promptTokensPerSecond: Double(promptTokenCount - cachedCount) / max(0.000001, info.promptTime + prefixTime),
+                tokensPerSecond: info.tokensPerSecond,
+                stopReason: String(describing: info.stopReason),
+                proposedDraftTokens: info.proposedDraftTokens, acceptedDraftTokens: info.acceptedDraftTokens,
+                speculativePassthroughReason: info.passthroughReason)
             )
           )
         case .toolCall(let call):
@@ -1885,7 +2055,7 @@ public enum LocalModelRunnerError: LocalizedError, Equatable {
 
   public var errorDescription: String? {
     switch self {
-    case .busy: "Midnight Runner is already generating a response."
+    case .busy: "Midnight Runner request queue is full (64 waiting operations). Retry after current requests finish."
     case .emptyResponse: "The model ended the turn without producing text."
     case .lastMessageMustBeUserOrTool:
       "The final chat message must have role 'user' or 'tool'."

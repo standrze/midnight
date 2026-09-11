@@ -47,6 +47,15 @@
       }
     }
 
+    /// Teardown must still run after the requesting task has been cancelled.
+    /// This unstructured task intentionally does not forward cancellation.
+    func runCleanup<Result: Sendable>(
+      _ operation: @escaping @Sendable () -> Result
+    ) async -> Result {
+      let task = Task(executorPreference: taskExecutor) { operation() }
+      return await task.value
+    }
+
     /// Stable pthread identifier captured by the permanent worker at startup.
     /// Kept internal so focused tests can verify executor placement without
     /// exposing diagnostics through the runner's public API.

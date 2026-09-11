@@ -114,6 +114,16 @@
       #expect(!ranPastCancellationCheck.withLock { $0 })
       #expect(after == blockerThreadID)
     }
+
+    @Test("Cleanup executes on the permanent worker even for a cancelled caller")
+    func cleanupIgnoresCallerCancellation() async {
+      let runtime = MLXPinnedRuntime.shared
+      let task = Task {
+        withUnsafeCurrentTask { $0?.cancel() }
+        return await runtime.runCleanup { currentTestThreadID() }
+      }
+      #expect(await task.value == runtime.threadIDForTesting)
+    }
   }
 
   private actor PinnedThreadProbe {

@@ -378,6 +378,12 @@ messages, `max_tokens` or `max_completion_tokens`, `temperature`, `top_p`, and
 up to four `stop` strings. Invalid parameters use the standard OpenAI error
 shape with `message`, `type`, `param`, and `code` fields.
 
+The [OpenAI Responses API](responses-api.md) additionally exposes
+`POST /v1/responses`, retrieval/deletion, and paginated input history. It supports
+text, client function calls/results, `text.format` structured output, semantic
+streaming events, and `previous_response_id` continuation with bounded local
+history. The guide lists supported controls and explicit unsupported features.
+
 OpenAI chat and model responses contain only OpenAI-compatible fields. Local
 performance details, including prompt and generated tokens per second, are
 available through `--verbose` terminal logging and are not inserted into

@@ -29,6 +29,7 @@ public actor VoxtralTTSSynthesizer: LocalSpeechSynthesizing {
 
   private var cachedVoiceEmbeddings: [String: MLXArray] = [:]
   private var isGenerating = false
+  private let producerLifetime = StreamProducerLifetime()
 
   public init(
     modelPath: String,
@@ -108,6 +109,10 @@ public actor VoxtralTTSSynthesizer: LocalSpeechSynthesizing {
     self.verbose = verbose
   }
 
+  public func waitUntilIdle() async {
+    await producerLifetime.waitUntilIdle()
+  }
+
   public func stream(
     request: LocalSpeechSynthesisRequest
   ) async -> AsyncThrowingStream<LocalSpeechSynthesisEvent, Error> {
@@ -122,6 +127,7 @@ public actor VoxtralTTSSynthesizer: LocalSpeechSynthesizing {
           continuation.finish(throwing: error)
         }
       }
+      producerLifetime.track(generationTask)
       continuation.onTermination = { _ in generationTask.cancel() }
     }
   }
@@ -153,6 +159,7 @@ public actor VoxtralTTSSynthesizer: LocalSpeechSynthesizing {
     }
 
     return try Device.withDefaultDevice(device) {
+      defer { StreamOrDevice.default.stream.synchronize() }
       try Task.checkCancellation()
       MLXRandom.seed(randomSeed)
 

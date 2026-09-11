@@ -59,6 +59,119 @@ public enum OpenAIJSONValue: Codable, Equatable, Sendable {
     }
 }
 
+/// OpenAI-compatible output controls for Chat Completions.
+public enum OpenAIResponseFormat: Codable, Equatable, Sendable {
+    case text
+    case jsonObject
+    case jsonSchema(OpenAIJSONSchemaResponseFormat)
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        switch type {
+        case "text":
+            try rejectUnknownResponseFormatKeys(in: decoder, allowed: ["type"])
+            self = .text
+        case "json_object":
+            try rejectUnknownResponseFormatKeys(in: decoder, allowed: ["type"])
+            self = .jsonObject
+        case "json_schema":
+            try rejectUnknownResponseFormatKeys(in: decoder, allowed: ["type", "json_schema"])
+            self = .jsonSchema(try container.decode(OpenAIJSONSchemaResponseFormat.self, forKey: .jsonSchema))
+        default:
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "response_format.type must be 'text', 'json_object', or 'json_schema'"
+            )
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .text:
+            try container.encode("text", forKey: .type)
+        case .jsonObject:
+            try container.encode("json_object", forKey: .type)
+        case .jsonSchema(let format):
+            try container.encode("json_schema", forKey: .type)
+            try container.encode(format, forKey: .jsonSchema)
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case jsonSchema = "json_schema"
+    }
+}
+
+/// The schema wrapper in a `response_format` of type `json_schema`.
+/// The generation layer validates which JSON Schema features are supported.
+public struct OpenAIJSONSchemaResponseFormat: Codable, Equatable, Sendable {
+    public let name: String
+    public let description: String?
+    public let schema: OpenAIJSONValue
+    public let strict: Bool?
+
+    public init(
+        name: String,
+        description: String? = nil,
+        schema: OpenAIJSONValue,
+        strict: Bool? = nil
+    ) {
+        self.name = name
+        self.description = description
+        self.schema = schema
+        self.strict = strict
+    }
+
+    public init(from decoder: Decoder) throws {
+        try rejectUnknownResponseFormatKeys(in: decoder, allowed: ["name", "description", "schema", "strict"])
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        guard (1...64).contains(name.utf8.count), name.utf8.allSatisfy({ byte in
+            (65...90).contains(byte) || (97...122).contains(byte) || (48...57).contains(byte)
+                || byte == 95 || byte == 45
+        }) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .name,
+                in: container,
+                debugDescription: "response_format.json_schema.name must contain 1 to 64 letters, digits, underscores, or hyphens"
+            )
+        }
+        description = try container.decodeIfPresent(String.self, forKey: .description)
+        schema = try container.decode(OpenAIJSONValue.self, forKey: .schema)
+        strict = try container.decodeIfPresent(Bool.self, forKey: .strict)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case name, description, schema, strict
+    }
+}
+
+private struct ResponseFormatObjectKey: CodingKey {
+    let stringValue: String
+    var intValue: Int? { nil }
+
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+    }
+
+    init?(intValue: Int) { return nil }
+}
+
+private func rejectUnknownResponseFormatKeys(in decoder: Decoder, allowed: Set<String>) throws {
+    let container = try decoder.container(keyedBy: ResponseFormatObjectKey.self)
+    for key in container.allKeys where !allowed.contains(key.stringValue) {
+        throw DecodingError.dataCorruptedError(
+            forKey: key,
+            in: container,
+            debugDescription: "Unsupported response_format member '\(key.stringValue)'"
+        )
+    }
+}
+
 public struct OpenAIToolDefinition: Codable, Equatable, Sendable {
     public struct Function: Codable, Equatable, Sendable {
         public let name: String
@@ -297,6 +410,7 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
     public let toolChoice: OpenAIToolChoice?
     public let streamOptions: StreamOptions?
     public let reasoningEffort: ReasoningEffort?
+    public let responseFormat: OpenAIResponseFormat?
 
     public init(
         model: String,
@@ -310,7 +424,8 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
         tools: [OpenAIToolDefinition]? = nil,
         toolChoice: OpenAIToolChoice? = nil,
         streamOptions: StreamOptions? = nil,
-        reasoningEffort: ReasoningEffort? = nil
+        reasoningEffort: ReasoningEffort? = nil,
+        responseFormat: OpenAIResponseFormat? = nil
     ) {
         self.model = model
         self.messages = messages
@@ -324,6 +439,7 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
         self.toolChoice = toolChoice
         self.streamOptions = streamOptions
         self.reasoningEffort = reasoningEffort
+        self.responseFormat = responseFormat
     }
 
     enum CodingKeys: String, CodingKey {
@@ -334,6 +450,7 @@ public struct ChatCompletionRequest: Codable, Equatable, Sendable {
         case topP = "top_p"
         case streamOptions = "stream_options"
         case reasoningEffort = "reasoning_effort"
+        case responseFormat = "response_format"
     }
 }
 
@@ -367,17 +484,25 @@ public enum OpenAIStop: Codable, Equatable, Sendable {
 }
 
 public struct ChatCompletionUsage: Codable, Equatable, Sendable {
+    public struct PromptTokensDetails: Codable, Equatable, Sendable {
+        public let cachedTokens: Int
+        enum CodingKeys: String, CodingKey { case cachedTokens = "cached_tokens" }
+    }
+    public let promptTokensDetails: PromptTokensDetails?
+
     public let promptTokens: Int
     public let completionTokens: Int
     public let totalTokens: Int
 
-    public init(promptTokens: Int, completionTokens: Int) {
+    public init(promptTokens: Int, completionTokens: Int, cachedTokens: Int = 0) {
+        self.promptTokensDetails = .init(cachedTokens: min(promptTokens, max(0, cachedTokens)))
         self.promptTokens = promptTokens
         self.completionTokens = completionTokens
         self.totalTokens = promptTokens + completionTokens
     }
 
     enum CodingKeys: String, CodingKey {
+        case promptTokensDetails = "prompt_tokens_details"
         case promptTokens = "prompt_tokens"
         case completionTokens = "completion_tokens"
         case totalTokens = "total_tokens"

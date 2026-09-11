@@ -66,6 +66,10 @@ public protocol LocalSpeechSynthesizing: Sendable {
     func stream(
         request: LocalSpeechSynthesisRequest
     ) async -> AsyncThrowingStream<LocalSpeechSynthesisEvent, Error>
+
+    /// After admission is closed, wait for every producer to finish cleanup,
+    /// including producers whose consumers have already cancelled their streams.
+    func waitUntilIdle() async
 }
 
 public extension LocalSpeechSynthesizing {

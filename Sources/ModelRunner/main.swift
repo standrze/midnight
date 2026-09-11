@@ -8,7 +8,7 @@ struct MidnightCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "midnight",
         abstract: "Midnight Runner — serve a local MLX model through OpenAI-compatible chat and local audio APIs.",
-        version: "0.2.0-beta.4",
+        version: "0.2.0-beta.5",
         subcommands: [DownloadCommand.self, AuthCommand.self]
     )
 
@@ -60,6 +60,9 @@ struct MidnightCommand: AsyncParsableCommand {
     @Flag(name: .long, help: "Log incoming requests, generation settings, and request outcomes")
     var verbose = false
 
+    @Flag(name: .long, help: "Start the server with no model loaded")
+    var idle = false
+
     @Flag(name: .long, help: "List models available under ~/.midnight/models and exit")
     var listModels = false
 
@@ -81,138 +84,44 @@ struct MidnightCommand: AsyncParsableCommand {
             return
         }
         let stackSettings = try ModelStackSettings.load(explicitPath: config)
-        guard let requestedModel = model ?? stackSettings?.mlxRunner?.modelPath else {
-            throw ValidationError("Provide --model or set mlxRunner.modelPath in model-stack.local.json")
+        if idle, model != nil {
+            throw ValidationError("Use either --idle or --model")
         }
-        let initialSelection = ModelCatalog.resolveMLX(model: requestedModel, adapter: adapter)
-        let fileSettings: ModelStackSettings.MLXRunner? = try (stackSettings?.mlxRunner ?? .empty)
-            .resolving(for: initialSelection)
-        let selection = ModelCatalog.resolveMLX(
-            model: requestedModel,
-            adapter: adapter,
-            servedModelName: name ?? fileSettings?.servedModelName
-        )
-        let host = host ?? fileSettings?.host ?? "127.0.0.1"
-        let port = port ?? fileSettings?.port ?? 8080
-        let maxTokens = maxTokens ?? fileSettings?.maximumTokens ?? 512
-        let dflashModel = dflashModel ?? fileSettings?.dflashModelPath
-        let dflashBlockSize = dflashBlockSize ?? fileSettings?.dflashBlockSize
-        let longContext = try LongContextOptions(
-            contextLength: contextLength ?? fileSettings?.contextLength,
-            prefillStepSize: prefillStepSize ?? fileSettings?.prefillStepSize ?? 512,
-            kvCompression: kvCompression ?? fileSettings?.kvCompression ?? "none")
-        let tokenLimit: GenerationTokenLimit
-        do {
-            tokenLimit = try GenerationTokenLimit(configuredMaximum: maxTokens)
-        } catch {
-            throw ValidationError(error.localizedDescription)
+        let requestedModel = idle ? nil : (model ?? stackSettings?.mlxRunner?.modelPath)
+        if !idle, requestedModel == nil {
+            throw ValidationError("Provide --model, set mlxRunner.modelPath in model-stack.local.json, or use --idle")
         }
-        let requestedEngine = try ModelEngine(argument: engine ?? fileSettings?.engine ?? "auto")
-        let engine = try requestedEngine.resolve()
-        if dflashBlockSize != nil, dflashModel == nil {
-            throw ValidationError("--dflash-block-size requires --dflash-model")
+        // Only listener settings and the execution-engine default live for the
+        // whole process. Every later load resolves its own checkpoint settings.
+        let listenHost = host ?? stackSettings?.mlxRunner?.host ?? "127.0.0.1"
+        let listenPort = port ?? stackSettings?.mlxRunner?.port ?? 8080
+        let loader = ModelLoader(settings: stackSettings?.mlxRunner,
+                                 defaultEngine: engine, verbose: verbose)
+        let manager = ModelLifecycleManager(loader: loader)
+        let server = ModelHTTPServer(manager: manager, verbose: verbose)
+        let initialLoad = requestedModel.map {
+            ModelLoadRequest(model: $0, name: name, adapter: adapter, adapterScale: adapterScale,
+                             dflashModel: dflashModel, dflashBlockSize: dflashBlockSize,
+                             maxTokens: maxTokens, contextLength: contextLength,
+                             prefillStepSize: prefillStepSize, kvCompression: kvCompression,
+                             engine: engine)
         }
-
-        if let chatterbox = try ChatterboxSettings.load(modelDirectory: selection.modelPath) {
-#if os(macOS)
-            guard engine == .metal else {
-                throw ValidationError("The native Chatterbox backend currently requires Metal on macOS")
-            }
-            guard selection.adapterPath == nil, adapterScale == nil, dflashModel == nil,
-                  contextLength == nil, prefillStepSize == nil, kvCompression == nil,
-                  fileSettings?.contextLength == nil, fileSettings?.prefillStepSize == nil,
-                  fileSettings?.kvCompression == nil else {
-                throw ValidationError("Chatterbox does not support chat context, KV, LoRA, or DFlash options")
-            }
-            guard self.maxTokens == nil, fileSettings?.maximumTokens == nil else {
-                throw ValidationError("Set max_tokens in chatterbox.json for Chatterbox's speech-token limit")
-            }
-            let synthesizer = try await ChatterboxSpeechSynthesizer(
-                modelPath: selection.modelPath, servedModelName: selection.servedModelName,
-                settings: chatterbox)
-            let server = ModelHTTPServer(
-                servedModelName: selection.servedModelName, tokenLimit: tokenLimit,
-                verbose: verbose, speechSynthesizer: synthesizer)
-            print("Ready: http://\(host):\(port)/v1  model=\(selection.servedModelName)  Chatterbox=\(chatterbox.variant.rawValue)")
-            try await server.run(host: host, port: port)
-            return
-#else
-            throw ValidationError("The native Chatterbox backend currently requires macOS")
-#endif
-        }
-
-        if (try? VoxtralVoiceCatalog(modelDirectory: selection.modelPath)) != nil {
-            guard contextLength == nil, prefillStepSize == nil, kvCompression == nil,
-                fileSettings?.contextLength == nil, fileSettings?.prefillStepSize == nil,
-                fileSettings?.kvCompression == nil else {
-                throw ValidationError("Context and KV-cache options apply to text models only")
-            }
-            guard selection.adapterPath == nil else {
-                throw ValidationError("Voxtral TTS does not support a LoRA adapter")
-            }
-            guard adapterScale == nil else {
-                throw ValidationError("--adapter-scale requires a chat model with --adapter")
-            }
-            guard dflashModel == nil else {
-                throw ValidationError("--dflash-model requires a Laguna chat model")
-            }
-            guard dflashBlockSize == nil else {
-                throw ValidationError("--dflash-block-size requires --dflash-model")
-            }
-            print("Loading \(selection.modelPath)…  engine=\(engine.rawValue)")
-            let synthesizer = try await VoxtralTTSSynthesizer(
-                modelPath: selection.modelPath,
-                servedModelName: selection.servedModelName,
-                engine: engine,
-                maximumFrames: maxTokens,
-                verbose: verbose
-            )
-            let server = ModelHTTPServer(
-                servedModelName: selection.servedModelName,
-                tokenLimit: tokenLimit,
-                verbose: verbose,
-                speechSynthesizer: synthesizer
-            )
-            print(
-                "Ready: http://\(host):\(port)/v1  model=\(selection.servedModelName)  "
-                    + "engine=\(engine.rawValue)"
-            )
-            print(
-                "Native Voxtral speech generation is ready (24-kHz mono WAV or PCM; "
-                    + "preset voices only)."
-            )
-            if verbose {
-                print("Verbose request logging enabled (prompt and tool contents are redacted)")
-            }
-            try await server.run(host: host, port: port)
-            return
-        }
-
-        print("Loading \(selection.modelPath)…  engine=\(engine.rawValue)")
-        let runner = try await LocalModelRunner(
-            modelPath: selection.modelPath,
-            servedModelName: selection.servedModelName,
-            engine: engine,
-            maximumTokens: maxTokens,
-            adapterPath: selection.adapterPath,
-            adapterScale: adapterScale,
-            dflashModelPath: dflashModel,
-            dflashBlockSize: dflashBlockSize,
-            longContext: longContext
-        )
-        let server = ModelHTTPServer(
-            runner: runner,
-            servedModelName: runner.servedModelName,
-            tokenLimit: tokenLimit,
-            verbose: verbose
-        )
-        print(
-            "Ready: http://\(host):\(port)/v1  model=\(runner.servedModelName)  "
-                + "engine=\(runner.engine.rawValue)"
-        )
         if verbose {
             print("Verbose request logging enabled (prompt and tool contents are redacted)")
         }
-        try await server.run(host: host, port: port)
+        try await server.run(host: listenHost, port: listenPort) {
+            print("Listening: http://\(listenHost):\(listenPort)/v1")
+            guard let initialLoad else {
+                print("No model loaded. Load one through POST /v1/runtime/load.")
+                return
+            }
+            do {
+                _ = try await manager.load(initialLoad)
+            } catch {
+                // Keep status and lifecycle controls available after a bad
+                // startup selection so the client can recover in this process.
+                print("Initial model load failed: \(error.localizedDescription)")
+            }
+        }
     }
 }

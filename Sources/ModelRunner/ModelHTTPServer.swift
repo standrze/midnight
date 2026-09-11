@@ -6,9 +6,11 @@ import NIOHTTP1
 import NIOPosix
 
 final class ModelHTTPServer: @unchecked Sendable {
-    private let runner: LocalModelRunner?
-    private let tokenLimit: GenerationTokenLimit
-    private let servedModelName: String
+    private let manager: ModelLifecycleManager?
+    let runner: LocalModelRunner?
+    let tokenLimit: GenerationTokenLimit
+    let servedModelName: String
+    let responsesStore: ResponsesStore
     private let modelCreated: Int
     private let verbose: Bool
     private let speechSynthesizer: (any LocalSpeechSynthesizing)?
@@ -20,25 +22,39 @@ final class ModelHTTPServer: @unchecked Sendable {
         tokenLimit: GenerationTokenLimit,
         verbose: Bool = false,
         speechSynthesizer: (any LocalSpeechSynthesizing)? = nil,
-        voiceCatalog: VoxtralVoiceCatalog? = nil
+        voiceCatalog: VoxtralVoiceCatalog? = nil,
+        modelCreated: Int = Int(Date().timeIntervalSince1970),
+        manager: ModelLifecycleManager? = nil,
+        responsesStore: ResponsesStore = ResponsesStore()
     ) {
+        self.manager = manager
+        self.responsesStore = responsesStore
         self.runner = runner
         self.tokenLimit = tokenLimit
         self.servedModelName = servedModelName
-        self.modelCreated = Int(Date().timeIntervalSince1970)
+        self.modelCreated = modelCreated
         self.verbose = verbose
         self.speechSynthesizer = speechSynthesizer
         self.voiceCatalog = speechSynthesizer?.voiceCatalog ?? voiceCatalog
     }
 
-    func run(host: String, port: Int) async throws {
+    convenience init(manager: ModelLifecycleManager, verbose: Bool = false,
+                     responsesStore: ResponsesStore = ResponsesStore()) {
+        // Model handlers run on a request-scoped server with the selected
+        // model's real limits. This listener only handles admission and control.
+        self.init(servedModelName: "", tokenLimit: try! GenerationTokenLimit(configuredMaximum: 512),
+                  verbose: verbose, manager: manager, responsesStore: responsesStore)
+    }
+
+    func run(host: String, port: Int,
+             onListening: (@Sendable () async -> Void)? = nil) async throws {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
         do {
             let channel = try await ServerBootstrap(group: group)
                 .serverChannelOption(ChannelOptions.backlog, value: 256)
                 .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
                 .childChannelInitializer { channel in
-                    channel.pipeline.configureHTTPServerPipeline().flatMap {
+                    Self.configureHTTPPipeline(on: channel).flatMap {
                         channel.pipeline.addHandler(ModelHTTPRequestHandler(server: self))
                     }
                 }
@@ -46,6 +62,7 @@ final class ModelHTTPServer: @unchecked Sendable {
                 .bind(host: host, port: port)
                 .get()
 
+            await onListening?()
             try await channel.closeFuture.get()
             try await group.shutdownGracefully()
         } catch {
@@ -54,7 +71,18 @@ final class ModelHTTPServer: @unchecked Sendable {
         }
     }
 
+    static func configureHTTPPipeline(on channel: Channel) -> EventLoopFuture<Void> {
+        // Responses close the connection, and responseInFlight ignores extra requests.
+        // Keep socket reads active while streaming so a disconnect cancels work even
+        // during prefill or hidden reasoning, when no response chunks are written.
+        channel.pipeline.configureHTTPServerPipeline(withPipeliningAssistance: false)
+    }
+
     fileprivate func handle(head: HTTPRequestHead, body: Data, channel: Channel) async {
+        if let manager {
+            await handleManaged(head: head, body: body, channel: channel, manager: manager)
+            return
+        }
         let requestID = String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(12))
         let started = ContinuousClock.now
         log(
@@ -63,6 +91,11 @@ final class ModelHTTPServer: @unchecked Sendable {
                 + "client=\(channel.remoteAddress?.description ?? "unknown") bytes=\(body.count)"
         )
         do {
+            if let route = ResponsesAPIRoute.parse(uri: head.uri) {
+                try await handleResponses(route: route, head: head, body: body,
+                                          channel: channel, requestID: requestID)
+                return
+            }
             if let audioRoute = AudioAPIRoute.parse(uri: head.uri) {
                 guard audioRoute.allows(method: head.method.rawValue) else {
                     throw AudioHTTPError(
@@ -149,6 +182,113 @@ final class ModelHTTPServer: @unchecked Sendable {
             )
         }
         log(requestID, "request-finished elapsed=\(formatDuration(started.duration(to: .now)))")
+    }
+
+    private func handleManaged(head: HTTPRequestHead, body: Data, channel: Channel,
+                               manager: ModelLifecycleManager) async {
+        do {
+            // Stored responses belong to the listener, so retrieval and deletion
+            // continue to work while a model is unloaded or being replaced.
+            if let route = ResponsesAPIRoute.parse(uri: head.uri) {
+                guard route.allows(method: head.method.rawValue) else {
+                    throw ModelHTTPError(status: .methodNotAllowed,
+                        message: "Method is not allowed for this Responses route.", code: "method_not_allowed")
+                }
+                if route != .create {
+                    try await handleResponses(route: route, head: head, body: body,
+                                              channel: channel, requestID: "stored-response")
+                    return
+                }
+            }
+            switch (head.method, head.uri) {
+            case (.GET, "/v1/runtime"), (.GET, "/v1/inspector/runtime"):
+                try await sendJSON(await manager.state(), on: channel)
+            case (.POST, "/v1/runtime/load"), (.POST, "/v1/runtime/unload"):
+                try Self.validateControlRequest(head: head, remoteAddress: channel.remoteAddress)
+                guard body.count <= 32 * 1024 else {
+                    throw ModelHTTPError(status: .payloadTooLarge,
+                        message: "Model control requests may not exceed 32 KiB.", code: "request_too_large")
+                }
+                let state: ModelLifecycleState
+                do {
+                    if head.uri == "/v1/runtime/load" {
+                        let request = try JSONDecoder().decode(ModelLoadRequest.self, from: body)
+                        state = try await manager.load(request)
+                    } else {
+                        guard let object = try JSONSerialization.jsonObject(with: body) as? [String: Any],
+                              object.isEmpty else {
+                            throw ModelHTTPError(status: .badRequest,
+                                message: "Unload expects an empty JSON object.", code: "invalid_parameter")
+                        }
+                        state = try await manager.unload()
+                    }
+                } catch let error as ModelLifecycleError { throw error }
+                catch let error as ModelHTTPError { throw error }
+                catch {
+                    throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+                                         code: "invalid_model_selection")
+                }
+                try await sendJSON(state, status: .accepted, on: channel)
+            case (.GET, "/v1/models"):
+                struct Models: Encodable { let object = "list"; let data: [ModelLifecycleDescriptor] }
+                let state = await manager.state()
+                try await sendJSON(Models(data: state.loadedModel.map { [$0] } ?? []), on: channel)
+            case (.GET, let uri) where uri.hasPrefix("/v1/models/"):
+                let name = String(uri.dropFirst("/v1/models/".count)).removingPercentEncoding
+                guard let descriptor = await manager.state().loadedModel, descriptor.id == name else {
+                    throw ModelHTTPError(status: .notFound, message: "The requested model is not loaded.",
+                                         param: "model", code: "model_not_found")
+                }
+                try await sendJSON(descriptor, on: channel)
+            case (_, let uri) where uri == "/v1/runtime" || uri.hasPrefix("/v1/runtime/"):
+                throw ModelHTTPError(status: .notFound, message: "Route not found")
+            default:
+                let isModelRoute = AudioAPIRoute.parse(uri: head.uri) != nil
+                    || ResponsesAPIRoute.parse(uri: head.uri) == .create
+                    || (head.method == .GET && head.uri == "/v1/inspector/model")
+                    || (head.method == .POST && ["/v1/inspector/trace", "/v1/chat/completions"].contains(head.uri))
+                guard isModelRoute else {
+                    throw ModelHTTPError(status: .notFound, message: "Route not found")
+                }
+                // The lease spans decoding/preflight, generation, and response
+                // completion. Model metadata never changes inside a response.
+                let verbose = self.verbose
+                try await manager.withModel { model in
+                    let handler = ModelHTTPServer(runner: model.runner,
+                        servedModelName: model.servedModelName, tokenLimit: model.tokenLimit,
+                        verbose: verbose, speechSynthesizer: model.speechSynthesizer,
+                        modelCreated: model.created, responsesStore: self.responsesStore)
+                    await handler.handle(head: head, body: body, channel: channel)
+                }
+            }
+        } catch let error as ModelLifecycleError {
+            let busy = if case .busy = error { true } else { false }
+            try? await sendJSON(OpenAIErrorEnvelope(message: error.localizedDescription,
+                type: "server_error", code: busy ? "model_transition_in_progress" : "model_unavailable"),
+                status: busy ? .conflict : .serviceUnavailable, on: channel)
+        } catch let error as ModelHTTPError {
+            try? await sendJSON(OpenAIErrorEnvelope(message: error.message, type: error.type,
+                param: error.param, code: error.code), status: error.status, on: channel)
+        } catch {
+            try? await sendJSON(OpenAIErrorEnvelope(message: error.localizedDescription,
+                type: "server_error", code: "internal_error"), status: .internalServerError, on: channel)
+        }
+    }
+
+    static func validateControlRequest(head: HTTPRequestHead, remoteAddress: SocketAddress?) throws {
+        let address = remoteAddress?.ipAddress ?? ""
+        guard address == "127.0.0.1" || address == "::1" || address == "::ffff:127.0.0.1",
+              head.headers["origin"].isEmpty,
+              !head.headers["sec-fetch-site"].contains(where: { $0.lowercased() == "cross-site" }) else {
+            throw ModelHTTPError(status: .forbidden,
+                message: "Model control is available to local native clients only.", code: "control_forbidden")
+        }
+        guard head.headers["content-type"].count == 1,
+              head.headers.first(name: "content-type")?.split(separator: ";").first?
+                .trimmingCharacters(in: .whitespaces).lowercased() == "application/json" else {
+            throw ModelHTTPError(status: .unsupportedMediaType,
+                message: "Model control requires Content-Type: application/json.", code: "invalid_content_type")
+        }
     }
 
     fileprivate func rejectPayloadTooLarge(head: HTTPRequestHead, channel: Channel) async {
@@ -1084,12 +1224,23 @@ final class ModelHTTPServer: @unchecked Sendable {
                 code: "invalid_parameter"
             )
         }
+        do {
+            try StructuredOutputRequest.validate(format: completion.responseFormat,
+                tools: toolChoicePlan.tools, stop: stop)
+        } catch {
+            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+                param: "response_format", code: "invalid_parameter")
+        }
         let preparedPrompt: PreparedModelPrompt
         do {
             preparedPrompt = try await runner.preparePrompt(messages: completion.messages,
                 maximumTokens: requestedMaximumTokens, tools: toolChoicePlan.tools,
                 toolChoice: toolChoicePlan.constraint,
-                reasoningEffort: completion.reasoningEffort)
+                reasoningEffort: completion.reasoningEffort,
+                responseFormat: completion.responseFormat)
+        } catch let error as StructuredOutputRequestError {
+            throw ModelHTTPError(status: .unprocessableEntity, message: error.localizedDescription,
+                param: "response_format", code: "unsupported_model_feature")
         } catch let error as RequestAdmissionError {
             throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
                 code: "request_exceeds_limits")
@@ -1206,7 +1357,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                 tools: toolChoicePlan.tools,
                 toolChoice: toolChoicePlan.constraint,
                 reasoningEffort: completion.reasoningEffort,
-                preparedPrompt: preparedPrompt
+                preparedPrompt: preparedPrompt,
+                responseFormat: completion.responseFormat
             )
             var finishReason = "stop"
             var toolCallIndex = 0
@@ -1278,7 +1430,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                         usage: completion.streamOptions?.includeUsage == true
                             ? ChatCompletionUsage(
                                 promptTokens: generationMetrics.promptTokenCount,
-                                completionTokens: generationMetrics.generationTokenCount
+                                completionTokens: generationMetrics.generationTokenCount,
+                                cachedTokens: generationMetrics.cachedPromptTokenCount
                             )
                             : nil
                     ),
@@ -1329,7 +1482,8 @@ final class ModelHTTPServer: @unchecked Sendable {
             tools: toolChoicePlan.tools,
             toolChoice: toolChoicePlan.constraint,
             reasoningEffort: completion.reasoningEffort,
-            preparedPrompt: preparedPrompt
+            preparedPrompt: preparedPrompt,
+            responseFormat: completion.responseFormat
         )
         do {
             for try await event in events {
@@ -1379,7 +1533,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                 choices: [.init(message: message, finishReason: finishReason)],
                 usage: ChatCompletionUsage(
                     promptTokens: generationMetrics.promptTokenCount,
-                    completionTokens: generationMetrics.generationTokenCount
+                    completionTokens: generationMetrics.generationTokenCount,
+                                cachedTokens: generationMetrics.cachedPromptTokenCount
                 )
             ),
             on: channel
@@ -1395,7 +1550,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         metrics.stopReason == "length" ? "length" : "stop"
     }
 
-    private func logGeneration(_ metrics: LocalModelRunnerMetrics, requestID: String) {
+    func logGeneration(_ metrics: LocalModelRunnerMetrics, requestID: String) {
         log(
             requestID,
             "generation prompt_tokens=\(metrics.promptTokenCount) "
@@ -1427,7 +1582,7 @@ final class ModelHTTPServer: @unchecked Sendable {
             + "prompt_prefilled=\(metrics.prefilledPromptTokenCount) "
     }
 
-    private func sendJSON<Value: Encodable>(
+    func sendJSON<Value: Encodable>(
         _ value: Value,
         status: HTTPResponseStatus = .ok,
         on channel: Channel
@@ -1514,7 +1669,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         try await writeBody(event, on: channel)
     }
 
-    private func beginEventStream(on channel: Channel) async throws {
+    func beginEventStream(on channel: Channel) async throws {
         var headers = HTTPHeaders()
         headers.add(name: "content-type", value: "text/event-stream; charset=utf-8")
         headers.add(name: "cache-control", value: "no-cache")
@@ -1525,7 +1680,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         ).get()
     }
 
-    private func writeNamedEvent<Value: Encodable>(
+    func writeNamedEvent<Value: Encodable>(
         _ name: String,
         value: Value,
         on channel: Channel
@@ -1537,7 +1692,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         try await writeBody(event, on: channel)
     }
 
-    private func finishStream(on channel: Channel) async throws {
+    func finishStream(on channel: Channel) async throws {
         try await channel.writeAndFlush(HTTPServerResponsePart.end(nil)).get()
         try? await channel.close().get()
     }
@@ -1686,7 +1841,7 @@ private struct ModelResponse: Encodable {
     }
 }
 
-private struct ModelHTTPError: Error {
+struct ModelHTTPError: Error {
     let status: HTTPResponseStatus
     let message: String
     let type: String

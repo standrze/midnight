@@ -18,6 +18,7 @@ public actor ChatterboxSpeechSynthesizer: LocalSpeechSynthesizing {
     private let settings: ChatterboxSettings
     private let directory: URL
     private var busy = false
+    private let producerLifetime = StreamProducerLifetime()
 
     public init(modelPath: String, servedModelName: String, settings: ChatterboxSettings) async throws {
         self.servedModelName = servedModelName
@@ -58,6 +59,10 @@ public actor ChatterboxSpeechSynthesizer: LocalSpeechSynthesizing {
         voiceCatalog = VoxtralVoiceCatalog(chatterboxVoices: names, language: settings.language)
     }
 
+    public func waitUntilIdle() async {
+        await producerLifetime.waitUntilIdle()
+    }
+
     public func stream(request: LocalSpeechSynthesisRequest) async -> AsyncThrowingStream<LocalSpeechSynthesisEvent, Error> {
         let (stream, continuation) = AsyncThrowingStream<LocalSpeechSynthesisEvent, Error>.makeStream()
         let task = Task {
@@ -73,6 +78,7 @@ public actor ChatterboxSpeechSynthesizer: LocalSpeechSynthesizing {
                 let ffmpeg = self.ffmpeg
                 let reference = settings.voices[request.voiceID].map { Self.voiceURL($0, directory: directory) }
                 let data = try await MLXPinnedRuntime.shared.run {
+                    defer { StreamOrDevice.default.stream.synchronize() }
                     try Task.checkCancellation()
                     model.cfgWeightOverride = settings.cfgWeight
                     model.emotionAdvOverride = settings.exaggeration
@@ -96,6 +102,7 @@ public actor ChatterboxSpeechSynthesizer: LocalSpeechSynthesizing {
                 continuation.finish()
             } catch { continuation.finish(throwing: error) }
         }
+        producerLifetime.track(task)
         continuation.onTermination = { _ in task.cancel() }
         return stream
     }

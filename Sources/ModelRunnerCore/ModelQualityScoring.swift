@@ -42,7 +42,11 @@ public enum ModelQualityScoring {
       // The last input in this chunk predicts the next chunk's first input.
       let targets = MLXArray(Array(tokens[(start + 1)..<(end + 1)])).reshaped(1, count)
       let logits = model(inputs, cache: cache).asType(.float32)
+      #if os(Linux)
+      let lossSum = MLXNN.crossEntropy(logits: logits, targets: targets).sum()
+      #else
       let lossSum = MLXFast.crossEntropy(logits: logits, targets: targets).sum()
+      #endif
       MLX.eval(lossSum)
       if let cache { MLX.eval(cache) }
       total += Double(lossSum.item(Float.self))

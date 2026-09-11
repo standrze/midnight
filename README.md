@@ -47,7 +47,9 @@ curl -fsSL https://midnightrun.sh/install.sh | bash
 The installer selects the newest published release, including prereleases,
 verifies its checksum, and asks whether to add Midnight to PATH. The prebuilt
 runner supports Apple silicon on macOS 26+ and is ad-hoc signed, not notarized.
-Linux/CUDA remains available through the source build below.
+A separate Linux x86-64 archive targets CUDA 13 and RTX 4090 (sm_89) on Ubuntu 24.04; other Linux/GPU configurations can use the source build below.
+
+Version **0.2.0-beta.5** adds OpenAI Responses, structured output controls, safe queued requests, shared prompt caching and live model switching. Lowlight can use the Responses API and display cached input tokens. Embeddings and document retrieval are not included.
 
 Version **0.2.0-beta.4** separates the runner from the surrounding tools and adds
 Hugging Face downloads, an editable download catalog, native corpus preparation,
@@ -114,6 +116,9 @@ Browse publisher checkpoints with `midnight download` or `midnight download --li
 read token, and `--dry-run` to check a download before transferring weights.
 The default download limit is 30 GB. See [model downloads](Docs/model-downloads.md)
 for preset compatibility notes and custom `owner/model` repositories.
+Switch models without restarting the server using the local load/unload API,
+or start with `midnight --idle` and select a model later. See
+[live model switching](Docs/live-model-switching.md) for commands and lifecycle behavior.
 Runtime output stays on stdout/stderr; save it when needed with
 `midnight --model MODEL_NAME > ~/.midnight/logs/runner.log 2>&1`.
 The separate Lowlight chat application uses `lowlight`; `midnight` is the model runner command.
@@ -179,6 +184,15 @@ curl --fail-with-body --silent --show-error \
 Set `"stream": true` for data-only server-sent events ending in
 `data: [DONE]`. Midnight proposes function calls but never executes tools on
 the host; tool execution remains the client's responsibility.
+
+Use OpenAI's `response_format` with `json_object` or `json_schema` for constrained
+JSON generation. See [structured output](Docs/structured-output.md) for an example,
+supported schemas, streaming, and token-limit behavior.
+
+OpenAI SDK clients can also use `client.responses.create()` at `/v1/responses`,
+including `text.format`, semantic streaming events, function calls, and
+`previous_response_id` continuation. See the [Responses API guide](Docs/responses-api.md)
+for examples, local history retention, and supported features.
 
 ## Generate speech with Voxtral
 
@@ -279,6 +293,9 @@ or browse [`benchmark-results`](benchmark-results).
 | `GET` | `/v1/models` | Loaded model descriptor |
 | `GET` | `/v1/models/{model}` | Descriptor for the loaded model |
 | `POST` | `/v1/chat/completions` | Chat and client-executed tool calls |
+| `POST` | `/v1/responses` | OpenAI Responses with text, structured output, tools, and streaming |
+| `GET` / `DELETE` | `/v1/responses/{response_id}` | Retrieve or delete a locally stored response |
+| `GET` | `/v1/responses/{response_id}/input_items` | List and paginate the response's input history |
 | `POST` | `/v1/audio/speech` | OpenAI/Mistral speech requests |
 | `GET` | `/v1/audio/voices` | Preset voice discovery |
 | `GET` | `/v1/audio/voices/{voice_id}` | Preset voice metadata |
@@ -330,3 +347,5 @@ weights are not included here and remain subject to their own licenses.
 
 Midnight is licensed under the [Apache License 2.0](LICENSE). Dependency and
 patch attribution is collected in [third-party notices](THIRD_PARTY_NOTICES.md).
+
+See [concurrent clients and shared prompt caching](Docs/concurrent-requests-and-prompt-caching.md) for queue limits, cache behavior and Lowlight integration.

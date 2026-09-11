@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0-beta.5
+
+- Add OpenAI Responses, structured-output controls, and live model loading.
+- Queue overlapping text requests with cancellation and bounded admission.
+- Reuse bounded, exact shared prompt prefixes and report cached-token usage.
+- Publish a Linux x86-64 CUDA 13/sm_89 archive with runtime resources and an installer.
+- Keep embeddings and retrieval shelved; preserve existing OpenAI chat support.
+
 ## 0.2.0-beta.3
 
 - Add a native load-once generated evaluation tool with greedy independent
