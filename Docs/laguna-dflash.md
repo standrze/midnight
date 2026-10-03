@@ -47,68 +47,19 @@ the 10,240-wide target feature tensor. Without the bound, long prompts would
 retain roughly 20 KiB of auxiliary BF16 state per token even though those rows
 could never affect a proposal.
 
-## Current status (22 September 2026)
+## Current decoding boundary
 
-Laguna DFlash remains opt-in. When a drafter is explicitly loaded and no block
-size is supplied, Midnight now uses **3**, capped by the checkpoint maximum.
-An explicit `--dflash-block-size` / `dflashBlockSize` still overrides this.
-The old implicit maximum of 16 accepted only 7.8% of proposals on the installed
-Q4R8 target and ran 56.6% slower than target-only decoding in the fresh Metal
-screen. Block 3 accepted 60.1% and was within 0.9% of target-only median speed
-on a 512-token tutorial. These are shared-machine measurements, not a general
-speed guarantee. CUDA has not been revalidated with this new default.
-
-The output divergence is reproducible without a drafter or speculative cache
-rollback: replaying the same token prefixes through ordinary multi-row target
-forwards changes logits relative to one-token forwards. Enabling hidden-state
-capture alone produced exactly identical logits across 256 positions. For
-blocks 2 and 4, the first differing prediction was at a BF16 top-two tie:
-` structure` versus ` representation`, position 136 of the generated sequence.
-This explains the same divergence at byte 745 in the full DFlash run; it does
-not establish that every possible cache/verification issue is absent.
-
-An FP32 diagnostic that preserves packed quantized weights had no block-2 or
-block-4 token mismatches over its own 159 replayed positions (maximum logit
-error about 0.000019). Block 16 still differed. Widening parameters changes the
-reference computation and its trajectory, so this is evidence of numerical
-sensitivity, not a production fix or an exact-equivalence guarantee.
-
-Laguna DFlash now supports nonzero-temperature requests. The drafter proposes
-greedy tokens without consuming sampling RNG; the verifier samples each emitted
-position from the target using the requested temperature and `top_p`. Only
-matching draft prefixes are accepted. This replaces the earlier greedy-only
-fallback. Greedy behavior is unchanged. Higher sampling entropy can reduce
-acceptance, so support does not imply acceleration at every temperature. Structured-output and forced-tool
-requests retain the target-only path. Native protocol requests also use the
-target-only path. New DFlash A/B reports use `status: failed_output_parity`
-whenever exact output comparison fails, even if throughput improves.
-
-A separate 258 MiB Q4/Q8 drafter was created from the 882 MiB BF16 source. Its
-five-pair block-3 screen did not establish a speed benefit: median throughput
-was 3.1% below its target-only control, with the same first divergence. That
-run overlapped a CPU build and had timing drift; the artifact is experimental
-and was not installed or enabled automatically.
-
-See [fresh reports and reproducible diagnostics](../benchmark-results/laguna-dflash-20260922/README.md).
-The results below are historical and use different checkpoints/builds.
-
-## Follow-up: production controls and verification fusion
-
-The follow-up source review found no architecture mismatch with oMLX's Laguna
-adapter for the installed checkpoint. A compiled verification-tail experiment
-matched logits and captured features exactly across 130 real-model batches,
-but did not show a consistent speed benefit across tutorial, coding and
-reasoning prompts. It remains disabled by default; developers can reproduce
-it with `MODEL_RUNNER_LAGUNA_COMPILED_VERIFY_TAIL=1`.
-
-DFlash A/B now retains the ordinary target's production single-token
-optimizations. Earlier controls disabled those optimizations, understating
-DFlash's overhead. With the corrected control, block-3 DFlash ranged from
-about 13% slower to 3.5% faster across the small shared-machine screen; no
-general speed win or quality guarantee is established. Exact-output failure
-is reported separately from the question of algorithmic correctness.
-
-See [follow-up results and reference comparison](../benchmark-results/laguna-dflash-20260922/followup/README.md).
+DFlash is enabled only when the request has `temperature: 0`. The verifier is
+designed to preserve ordinary greedy generation, and tiny-model tests satisfy
+that contract. The iterator now batch-materializes greedy verifier rows once
+per round and uses the ordinary asynchronous Metal pipeline when speculation
+falls back to target-only decoding. The earlier real Laguna/Metal run produced
+a different 512-token continuation, and that A/B has not yet been repeated
+after these fixes. Greedy equivalence therefore remains a required deployment
+gate, not a claimed result. Nonzero-temperature requests use the existing
+target-only path. Exact sampled speculative decoding needs probability-ratio
+acceptance and residual sampling; equality of two independently sampled tokens
+is not distribution preserving.
 
 ## Running and measuring
 
@@ -160,7 +111,7 @@ The unified Swift quantizer recognizes `DFlashLagunaForCausalLM` separately
 from the Laguna target and converts it directly:
 
 ```bash
-../wick/.build/release/wick \
+../midnight-quantization/.build/release/model-runner-quantize \
   /models/Laguna-XS-2.1-DFlash-INT4 \
   /models/Laguna-XS-2.1-DFlash-INT4-MLX-Q4R8-ScaleSearch
 ```
@@ -173,8 +124,7 @@ and per-layer quantization metadata expected by `--dflash-model`.
 
 Do not discard the BF16 drafter after conversion. Quantizing the speculator can
 change its proposals and acceptance length even though target verification
-still checks every accepted token against the target. Batched target arithmetic
-can nevertheless differ from sequential target-only decoding. Benchmark BF16 versus Q4R8 with the same
+keeps greedy output token-identical. Benchmark BF16 versus Q4R8 with the same
 target, prompts, block size, and generation length, then keep Q4R8 only if its
 end-to-end tokens per second improve without pathological acceptance loss.
 
@@ -227,70 +177,3 @@ counterbalanced run passes the chosen output-quality gate.
 
 Raw post-fix reports are in
 [`benchmark-results/serving-optimizations-20260829`](../benchmark-results/serving-optimizations-20260829/README.md).
-
-## Sampled requests and workload effects
-
-Use the normal OpenAI-compatible `temperature` and `top_p` request fields.
-No new HTTP field or load setting is required. Laguna remains explicit opt-in;
-Muse's separate greedy-only restriction is unchanged. Structured-output,
-forced-tool and native-protocol routing restrictions still apply.
-
-The benchmark now accepts `--temperature` and `--top-p` and records both in
-its JSON report. Defaults remain 0 and 1. For stochastic runs, independent A/B
-outputs are not expected to match, and an exact-output comparison is not a
-sampling-distribution test. Prefer a single DFlash run to check participation
-and use seeded fixed-model tests for sampling correctness.
-
-Prompt content affects acceptance; higher-entropy continuations are usually
-harder to predict. Longer outputs amortize setup costs, while longer prompts
-increase prefill and context work. Sending concurrent requests does not by
-itself improve single-request draft acceptance. Shared GPU load and changing
-machine conditions can materially affect throughput measurements.
-
-## Poolside reference follow-up (22 September 2026)
-
-A review of Poolside's `llama.cpp` Laguna branch at
-`06f8cebd7fe728687be3d19f8bdedb70d75883af` agrees with the current greedy-draft,
-target-sampled verification approach. Its F16 feature-overflow workaround did
-not reproduce on this BF16 path: captured features were large but finite.
-The official INT4-specific assistant accepted 0/251 proposals against the
-custom Q4R8 target and was not adopted. A compiled drafter-tail experiment
-showed no established gain and was removed.
-
-An opt-in synchronized profile attributed 78% of measured decode-stage time
-to target verification, 18% to drafting and 4% to draft-context preparation.
-This identifies an optimization target, not a proven throughput fix.
-Use `MODEL_RUNNER_LAGUNA_DFLASH_STAGE_TIMING=1` for stage timings or
-`MODEL_RUNNER_LAGUNA_DFLASH_FEATURE_DIAGNOSTIC=1` for feature finiteness and
-magnitude. Both are developer diagnostics, default off, and add synchronization;
-do not compare their throughput directly with uninstrumented runs.
-
-[Reports and limitations](../benchmark-results/laguna-dflash-20260922/poolside-followup/README.md).
-
-## Official INT4 pairing comparison (22 September 2026)
-
-A three-prompt screen compared both targets with both assistants using identical
-prompt token IDs, temperature 0, block size 3, 128 output tokens, and two paired
-trials per prompt after warmup. The custom Q4R8 target with the BF16 assistant
-accepted 420/674 proposals (62.3%); the official INT4 weights with their matching
-assistant accepted 400/722 (55.4%). Both crossed pairings accepted 0/1,506.
-The official checkpoint uses rotated weights and a different mixed-precision
-layout. The assistants are not interchangeable merely because both targets
-are described as four-bit.
-
-The official pair was 5–32% faster than its own target-only control, but still
-ran at 101–125 tok/s versus 155–175 tok/s for custom target-only decoding.
-The custom pair remained 4–17% slower than its own control. Keep the installed
-model and explicit opt-in policy; this does not establish custom quantization
-as the cause of the remaining slowdown. Exact output parity still failed on
-two of three prompts with either matched pairing.
-
-The official weights used an experimental layout adapter preserving packed
-codes, scales and rotations; no requantization was applied. Both comparisons
-used BF16 KV cache, not the official FP8 cache. Full reference-backend parity
-and model-quality equivalence are untested. Loading also exposed a macOS
-MLX-Swift sparse module-update crash when layer 0 is unquantized; the pinned
-dependency patch now handles that layout. Direct compressed-tensors loading
-remains unsupported.
-
-[Full comparison and reproduction details](../benchmark-results/laguna-dflash-20260922/official-pair/README.md).

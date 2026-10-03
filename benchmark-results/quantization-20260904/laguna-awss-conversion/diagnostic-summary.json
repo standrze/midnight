@@ -1,0 +1,74 @@
+{
+  "format": 1,
+  "source_report_sha256": "2949f49bd3d5a9ce4b527ce5c5a4c2302e0a932615e357748d154fa2d7c693e1",
+  "source_report_bytes": 20846801,
+  "comparison_template": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269",
+  "minimum_expert_positions_per_corpus": 32,
+  "retention": {
+    "routed_projection_modules": 117,
+    "routed_expert_projection_entries": 29952,
+    "retained_expert_projection_entries": 4167,
+    "retained_unique_layer_expert_pairs": 1389,
+    "refined_expert_projection_entries": 25785
+  },
+  "diagnostic_entries": {
+    "total": 26106,
+    "routed": 25785,
+    "dense": 321
+  },
+  "diagnostic_group_counts": {
+    "group_count": 450735104,
+    "changed_group_count": 286493061,
+    "validation_rejected_group_count": 134110704
+  },
+  "diagnostic_element_count": 28847046656,
+  "per_matrix_reduction_percent_distribution": {
+    "raw_mse_reduction_percent": {
+      "minimum": -194.5912920752948,
+      "median": 1.7536546182559423,
+      "maximum": 3.442910034268986,
+      "negative_count": 4497,
+      "zero_count": 0
+    },
+    "calibration_weighted_mse_reduction_percent": {
+      "minimum": 2.6168914217202266,
+      "median": 3.702787615881502,
+      "maximum": 87.10159446152355,
+      "negative_count": 0,
+      "zero_count": 0
+    },
+    "validation_weighted_mse_reduction_percent": {
+      "minimum": 2.1472618020246927,
+      "median": 3.7217382941852746,
+      "maximum": 90.7351326022382,
+      "negative_count": 0,
+      "zero_count": 0
+    }
+  },
+  "element_weighted_local_objectives": {
+    "raw_mse": {
+      "template": 7.78384816528845e-06,
+      "candidate": 7.720500908620828e-06,
+      "reduction_percent": 0.8138295522016392
+    },
+    "calibration_weighted_mse": {
+      "template": 7.794124218325018e-06,
+      "candidate": 7.39138658967678e-06,
+      "reduction_percent": 5.1671954072960435
+    },
+    "validation_weighted_mse": {
+      "template": 7.794387654461e-06,
+      "candidate": 7.370532353815608e-06,
+      "reduction_percent": 5.437955095841362
+    }
+  },
+  "aggregation_formula": "sum(matrix_local_mse * matrix_element_count) / sum(matrix_element_count)",
+  "qualifications": [
+    "Only matrices/expert projections with diagnostics are included in objective aggregates; retained experts, Q8 routers and preserved embedding are excluded.",
+    "Retained entries use the LS2 template. Coverage and usable-moment guards run before per-expert refinement; these entries have no candidate objective record.",
+    "validation_rejected_group_count counts groups where at least one calibration-improving search candidate failed the development gate. It is accumulated across factors, not the number of groups finally retained; it can overlap changed_group_count.",
+    "Weighted objectives use local, group-normalized channel moments. Combining these matrix errors does not define full-model activation error or token-level loss.",
+    "Calibration and development corpora participate in fitting/selection; these are optimization diagnostics, not an independent model-quality comparison.",
+    "Counts of worsening raw-MSE matrices weight each diagnostic entry equally; the element-weighted aggregate has a different weighting."
+  ]
+}

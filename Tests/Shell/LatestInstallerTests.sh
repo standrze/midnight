@@ -49,13 +49,4 @@ if HOME="$FIXTURE/home" PATH="$FIXTURE/mock:$PATH" bash "$ROOT/Scripts/install-l
 fi
 test ! -e "$FIXTURE/home/.midnight"
 grep -q 'checksum verification failed' "$FIXTURE/failure"
-cat > "$FIXTURE/mock/uname" <<'MOCK'
-#!/bin/bash
-if [[ "$1" == -s ]]; then echo Linux; else echo x86_64; fi
-MOCK
-cp "$FIXTURE/midnight-v9.8.7-beta.6-macos-arm64.tar.gz" "$FIXTURE/midnight-v9.8.7-beta.6-linux-x86_64-cuda13-sm89.tar.gz"
-(cd "$FIXTURE" && shasum -a 256 midnight-v9.8.7-beta.6-linux-x86_64-cuda13-sm89.tar.gz > SHA256SUMS)
-HOME="$FIXTURE/home" PATH="$FIXTURE/mock:$PATH" bash "$ROOT/Scripts/install-latest.sh" > "$FIXTURE/linux-output"
-test -x "$FIXTURE/home/.midnight/bin/midnight"
-grep -q '9.8.7-beta.6' "$FIXTURE/linux-output"
-echo 'macOS/Linux prerelease selection and checksum rejection passed'
+echo 'Latest prerelease selection and checksum rejection passed'

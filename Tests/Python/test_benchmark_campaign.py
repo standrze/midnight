@@ -380,48 +380,6 @@ class CampaignTests(unittest.TestCase):
         self.assertEqual(len(results), 8)
         self.assertEqual(sum(r.get("error") == "timeout" for r in results), 4)
 
-    def test_memory_observation_never_substitutes_missing_or_invalid_values(self):
-        self.assertEqual(campaign.process_memory_summary([], 0)['status'], 'unavailable')
-        sample = {'event': 'sample', 'physical_footprint_bytes': 200,
-                  'resident_size_bytes': 90, 'wired_size_bytes': 30,
-                  'observed_lifetime_max_physical_footprint_bytes': 500}
-        result = campaign.process_memory_summary([sample], 0)
-        self.assertEqual(result['sampled_peak_physical_footprint_bytes'], 200)
-        self.assertEqual(result['observed_lifetime_max_physical_footprint_bytes'], 500)
-        self.assertEqual(campaign.process_memory_summary([sample], 1)['status'], 'unavailable')
-        with self.assertRaises(ValueError):
-            campaign.process_memory_summary([{**sample, 'physical_footprint_bytes': True}], 0)
-
-    def test_release_directory_guard_accepts_xcode_casing_and_rejects_debug(self):
-        release = self.root / 'Products' / 'Release'
-        release.mkdir(parents=True)
-        binary = release / 'benchmark'
-        binary.write_text(FAKE_BINARY)
-        binary.chmod(0o755)
-        self.manifest['binaries']['runtime'] = str(binary)
-        campaign.validate_manifest(self.manifest, 'runtime')
-        debug = release / 'Debug'
-        debug.mkdir()
-        bad = debug / 'benchmark'
-        bad.write_text(FAKE_BINARY)
-        bad.chmod(0o755)
-        self.manifest['binaries']['runtime'] = str(bad)
-        with self.assertRaisesRegex(ValueError, 'release directory'):
-            campaign.validate_manifest(self.manifest, 'runtime')
-
-    def test_failed_probe_preserves_runtime_evidence_and_reports_memory_unavailable(self):
-        probe = self.root / 'failed-probe'
-        probe.write_text('#!/bin/sh\nexit 1\n')
-        probe.chmod(0o755)
-        self.manifest['process_memory_probe'] = str(probe)
-        with mock.patch.object(campaign.sys, 'platform', 'darwin'):
-            code, output = self.run_campaign()
-        self.assertEqual(code, 0)
-        records = json.loads((output / 'results.json').read_text())
-        self.assertTrue(all(r['status'] == 'measured' for r in records))
-        self.assertTrue(all(r['process_memory']['status'] == 'unavailable' for r in records))
-        self.assertTrue(all(Path(r['directory'], 'process-memory.jsonl').exists() for r in records))
-
 
 if __name__ == "__main__":
     unittest.main()

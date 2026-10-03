@@ -1,0 +1,57 @@
+{
+  "attribution": "Reconstructed after completion from the coordinator command template and native reports; not a contemporaneous invocation manifest.",
+  "invocations": [
+    {
+      "label": "standard",
+      "cwd": "/private/tmp/midnight-memory-release.ccwHpH/repo",
+      "argv": [
+        "/usr/bin/time",
+        "-l",
+        ".build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-optimization-20260904/laguna-heldout-standard.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "stdout_and_stderr_log": "/private/tmp/midnight-optimization-20260904/laguna-heldout-standard.log"
+    },
+    {
+      "label": "ls2",
+      "cwd": "/private/tmp/midnight-memory-release.ccwHpH/repo",
+      "argv": [
+        "/usr/bin/time",
+        "-l",
+        ".build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-optimization-20260904/laguna-heldout-ls2.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "stdout_and_stderr_log": "/private/tmp/midnight-optimization-20260904/laguna-heldout-ls2.log"
+    },
+    {
+      "label": "awss",
+      "cwd": "/private/tmp/midnight-memory-release.ccwHpH/repo",
+      "argv": [
+        "/usr/bin/time",
+        "-l",
+        ".build/release/model-runner-quality-bench",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+        "/Users/stephen/Documents/ChatGPT/midnight/tmp/calibration/laguna-20260904/corpora/laguna-heldout-192.jsonl",
+        "/private/tmp/midnight-optimization-20260904/laguna-heldout-awss.json",
+        "--max-tokens-per-sample",
+        "2048",
+        "--prefill-step-size",
+        "512"
+      ],
+      "stdout_and_stderr_log": "/private/tmp/midnight-optimization-20260904/laguna-heldout-awss.log"
+    }
+  ],
+  "scope": "Matched teacher-forced reference NLL. Elapsed times and /usr/bin/time memory diagnostics are retained without a runtime-speed claim; release executable includes testability flags."
+}

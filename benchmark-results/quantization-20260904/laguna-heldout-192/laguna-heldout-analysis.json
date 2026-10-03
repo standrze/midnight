@@ -1,0 +1,307 @@
+{
+  "format": 1,
+  "status": "analyzed",
+  "shared_settings": {
+    "corpus_fingerprint": "fnv1a64:9b889aaee95ceb3c",
+    "token_id_fingerprint": "fnv1a64:ca4700fd73267568",
+    "backend": "metal",
+    "device": "gpu",
+    "model_type": "laguna",
+    "add_special_tokens": true,
+    "maximum_tokens_per_sample": 2048,
+    "prefill_step_size": 512
+  },
+  "all_sample_identities_lengths_and_categories_match": true,
+  "models": {
+    "standard": {
+      "model_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+      "sample_count": 192,
+      "scored_token_count": 50096,
+      "token_weighted_nll": 2.4359656083854158,
+      "truncated_samples": 0,
+      "categories": {
+        "code-reference": {
+          "sample_count": 64,
+          "scored_token_count": 5689,
+          "token_weighted_nll": 1.96272698930622
+        },
+        "math-reference": {
+          "sample_count": 64,
+          "scored_token_count": 11935,
+          "token_weighted_nll": 1.5585589430848574
+        },
+        "wikitext-2-raw-test": {
+          "sample_count": 64,
+          "scored_token_count": 32472,
+          "token_weighted_nll": 2.841364199611817
+        }
+      }
+    },
+    "ls2": {
+      "model_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269",
+      "sample_count": 192,
+      "scored_token_count": 50096,
+      "token_weighted_nll": 2.4522407878819688,
+      "truncated_samples": 0,
+      "categories": {
+        "code-reference": {
+          "sample_count": 64,
+          "scored_token_count": 5689,
+          "token_weighted_nll": 1.9297431775483835
+        },
+        "math-reference": {
+          "sample_count": 64,
+          "scored_token_count": 11935,
+          "token_weighted_nll": 1.5850234710476017
+        },
+        "wikitext-2-raw-test": {
+          "sample_count": 64,
+          "scored_token_count": 32472,
+          "token_weighted_nll": 2.862524342378333
+        }
+      }
+    },
+    "awss": {
+      "model_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+      "sample_count": 192,
+      "scored_token_count": 50096,
+      "token_weighted_nll": 2.4262634853858303,
+      "truncated_samples": 0,
+      "categories": {
+        "code-reference": {
+          "sample_count": 64,
+          "scored_token_count": 5689,
+          "token_weighted_nll": 1.9106308240885475
+        },
+        "math-reference": {
+          "sample_count": 64,
+          "scored_token_count": 11935,
+          "token_weighted_nll": 1.572413244674932
+        },
+        "wikitext-2-raw-test": {
+          "sample_count": 64,
+          "scored_token_count": 32472,
+          "token_weighted_nll": 2.8304312863529653
+        }
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "baseline": "standard",
+      "candidate": "ls2",
+      "overall": {
+        "sample_count": 192,
+        "scored_token_count": 50096,
+        "baseline_token_weighted_nll": 2.4359656083854158,
+        "candidate_token_weighted_nll": 2.4522407878819688,
+        "candidate_minus_baseline_nll": 0.016275179496552994,
+        "paired_bootstrap_95_percent_interval": [
+          0.00788566009696384,
+          0.024519131055698813
+        ],
+        "candidate_lower_nll_samples": 75,
+        "candidate_higher_nll_samples": 117,
+        "tied_samples": 0
+      },
+      "categories": {
+        "code-reference": {
+          "sample_count": 64,
+          "scored_token_count": 5689,
+          "baseline_token_weighted_nll": 1.96272698930622,
+          "candidate_token_weighted_nll": 1.9297431775483835,
+          "candidate_minus_baseline_nll": -0.03298381175783649,
+          "paired_bootstrap_95_percent_interval": [
+            -0.05734708716635331,
+            -0.008389095631187069
+          ],
+          "candidate_lower_nll_samples": 36,
+          "candidate_higher_nll_samples": 28,
+          "tied_samples": 0
+        },
+        "math-reference": {
+          "sample_count": 64,
+          "scored_token_count": 11935,
+          "baseline_token_weighted_nll": 1.5585589430848574,
+          "candidate_token_weighted_nll": 1.5850234710476017,
+          "candidate_minus_baseline_nll": 0.026464527962744233,
+          "paired_bootstrap_95_percent_interval": [
+            0.016280176633611285,
+            0.03659522620430828
+          ],
+          "candidate_lower_nll_samples": 15,
+          "candidate_higher_nll_samples": 49,
+          "tied_samples": 0
+        },
+        "wikitext-2-raw-test": {
+          "sample_count": 64,
+          "scored_token_count": 32472,
+          "baseline_token_weighted_nll": 2.841364199611817,
+          "candidate_token_weighted_nll": 2.862524342378333,
+          "candidate_minus_baseline_nll": 0.02116014276651601,
+          "paired_bootstrap_95_percent_interval": [
+            0.009991486978558464,
+            0.03246493267339237
+          ],
+          "candidate_lower_nll_samples": 24,
+          "candidate_higher_nll_samples": 40,
+          "tied_samples": 0
+        }
+      }
+    },
+    {
+      "baseline": "standard",
+      "candidate": "awss",
+      "overall": {
+        "sample_count": 192,
+        "scored_token_count": 50096,
+        "baseline_token_weighted_nll": 2.4359656083854158,
+        "candidate_token_weighted_nll": 2.4262634853858303,
+        "candidate_minus_baseline_nll": -0.009702122999585505,
+        "paired_bootstrap_95_percent_interval": [
+          -0.017679252977139112,
+          -0.00161485680442479
+        ],
+        "candidate_lower_nll_samples": 113,
+        "candidate_higher_nll_samples": 79,
+        "tied_samples": 0
+      },
+      "categories": {
+        "code-reference": {
+          "sample_count": 64,
+          "scored_token_count": 5689,
+          "baseline_token_weighted_nll": 1.96272698930622,
+          "candidate_token_weighted_nll": 1.9106308240885475,
+          "candidate_minus_baseline_nll": -0.052096165217672574,
+          "paired_bootstrap_95_percent_interval": [
+            -0.07384805658022944,
+            -0.029681579760333015
+          ],
+          "candidate_lower_nll_samples": 47,
+          "candidate_higher_nll_samples": 17,
+          "tied_samples": 0
+        },
+        "math-reference": {
+          "sample_count": 64,
+          "scored_token_count": 11935,
+          "baseline_token_weighted_nll": 1.5585589430848574,
+          "candidate_token_weighted_nll": 1.572413244674932,
+          "candidate_minus_baseline_nll": 0.013854301590074503,
+          "paired_bootstrap_95_percent_interval": [
+            0.0017416676925739068,
+            0.026316743495594704
+          ],
+          "candidate_lower_nll_samples": 25,
+          "candidate_higher_nll_samples": 39,
+          "tied_samples": 0
+        },
+        "wikitext-2-raw-test": {
+          "sample_count": 64,
+          "scored_token_count": 32472,
+          "baseline_token_weighted_nll": 2.841364199611817,
+          "candidate_token_weighted_nll": 2.8304312863529653,
+          "candidate_minus_baseline_nll": -0.010932913258851595,
+          "paired_bootstrap_95_percent_interval": [
+            -0.02167962856396101,
+            -2.3378103435002522e-05
+          ],
+          "candidate_lower_nll_samples": 41,
+          "candidate_higher_nll_samples": 23,
+          "tied_samples": 0
+        }
+      }
+    },
+    {
+      "baseline": "ls2",
+      "candidate": "awss",
+      "overall": {
+        "sample_count": 192,
+        "scored_token_count": 50096,
+        "baseline_token_weighted_nll": 2.4522407878819688,
+        "candidate_token_weighted_nll": 2.4262634853858303,
+        "candidate_minus_baseline_nll": -0.0259773024961385,
+        "paired_bootstrap_95_percent_interval": [
+          -0.03215052754937517,
+          -0.019790727200152604
+        ],
+        "candidate_lower_nll_samples": 130,
+        "candidate_higher_nll_samples": 62,
+        "tied_samples": 0
+      },
+      "categories": {
+        "code-reference": {
+          "sample_count": 64,
+          "scored_token_count": 5689,
+          "baseline_token_weighted_nll": 1.9297431775483835,
+          "candidate_token_weighted_nll": 1.9106308240885475,
+          "candidate_minus_baseline_nll": -0.019112353459836084,
+          "paired_bootstrap_95_percent_interval": [
+            -0.03913279314112659,
+            0.0005340004089004916
+          ],
+          "candidate_lower_nll_samples": 39,
+          "candidate_higher_nll_samples": 25,
+          "tied_samples": 0
+        },
+        "math-reference": {
+          "sample_count": 64,
+          "scored_token_count": 11935,
+          "baseline_token_weighted_nll": 1.5850234710476017,
+          "candidate_token_weighted_nll": 1.572413244674932,
+          "candidate_minus_baseline_nll": -0.01261022637266973,
+          "paired_bootstrap_95_percent_interval": [
+            -0.0219289794921875,
+            -0.003428558897120474
+          ],
+          "candidate_lower_nll_samples": 41,
+          "candidate_higher_nll_samples": 23,
+          "tied_samples": 0
+        },
+        "wikitext-2-raw-test": {
+          "sample_count": 64,
+          "scored_token_count": 32472,
+          "baseline_token_weighted_nll": 2.862524342378333,
+          "candidate_token_weighted_nll": 2.8304312863529653,
+          "candidate_minus_baseline_nll": -0.032093056025367606,
+          "paired_bootstrap_95_percent_interval": [
+            -0.040217105251089943,
+            -0.02444463075606228
+          ],
+          "candidate_lower_nll_samples": 50,
+          "candidate_higher_nll_samples": 14,
+          "tied_samples": 0
+        }
+      }
+    }
+  ],
+  "bootstrap": {
+    "draws": 10000,
+    "seed": 20260904,
+    "method": "Paired percentile bootstrap of records within category; overall preserves observed category sample counts and recomputes token-weighted NLL."
+  },
+  "interpretation": "Negative candidate-minus-baseline NLL favors the candidate on these references. A confidence interval spanning zero does not prove equivalence or noninferiority.",
+  "limitations": [
+    "Teacher-forced reference NLL is not generated-task accuracy, teacher KL, or exact greedy-output preservation.",
+    "Intervals describe the observed convenience corpus composition; they do not establish population representativeness or training-data exclusion.",
+    "Resampling records does not capture correlations within a source, numeric/run variation or measurement choices; multiple comparisons are not corrected.",
+    "No runtime or efficiency comparison is computed from quality report elapsed times. Native memory metrics are not process RSS.",
+    "Native model paths do not independently fingerprint all weights or attest executable/Metal-library build provenance; retain separate artifact provenance."
+  ],
+  "provenance": {
+    "native_reports": {
+      "standard": {
+        "path": "/private/tmp/midnight-optimization-20260904/laguna-heldout-standard.json",
+        "sha256": "d60662a7c128d61f420cd2e374a80ab15439e175cafbbfb822dbd5cfd99e0796"
+      },
+      "ls2": {
+        "path": "/private/tmp/midnight-optimization-20260904/laguna-heldout-ls2.json",
+        "sha256": "85cf58c0f0e14af3631f79353883d4600d236636db3658a05abda74756843560"
+      },
+      "awss": {
+        "path": "/private/tmp/midnight-optimization-20260904/laguna-heldout-awss.json",
+        "sha256": "5eab309d1d07d65aa615b15ec7c2161d026a4bf95ba46985019af1f4290fbcd1"
+      }
+    },
+    "analyzer_sha256": "89d44701fce90a0dd6f1eb2d9a3936a86b4e2b9b1510b893c8ec89446bc4b95f"
+  }
+}

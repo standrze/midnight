@@ -1,0 +1,92 @@
+{
+  "allow_early_stop" : false,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-08-30T14:52:12Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 4,
+  "mistral_hot_cache_ab_comparison" : {
+    "cached_median_prefilled_prompt_token_count" : 24,
+    "cached_median_reused_prompt_token_count" : 634,
+    "cached_median_time_to_first_token_milliseconds" : 517.815083,
+    "cached_median_total_prompt_token_count" : 658,
+    "cached_ttft_reduction_percent" : 31.81412325582945,
+    "cold_median_prefilled_prompt_token_count" : 658,
+    "cold_median_reused_prompt_token_count" : 0,
+    "cold_median_time_to_first_token_milliseconds" : 759.416917,
+    "cold_median_total_prompt_token_count" : 658,
+    "outputs_match_exactly" : true,
+    "trials_per_mode" : 1
+  },
+  "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 64,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maxim",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 64,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 598.3083918596135,
+        "stop_reason" : "length",
+        "tokens_per_second" : 23.52609041931426
+      },
+      "mode" : "mistral_hot_cache_seed_before_cold",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 1013.653958
+    },
+    {
+      "content" : "---\n\n## **4. Core Data Structures: The Work Queue and Deque**\n\nBefore diving into the lock-free implementation, we need to define the fundamental data structures that will enable work stealing. The two key components are:\n\n1. **The Work Queue (`WorkQueue`)** – A thread-local queue that holds tasks assigned",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 64,
+        "prefilled_prompt_token_count" : 658,
+        "prompt_token_count" : 658,
+        "prompt_tokens_per_second" : 889.4896592088951,
+        "stop_reason" : "length",
+        "tokens_per_second" : 24.300893315561503
+      },
+      "mode" : "mistral_hot_cache_cold",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 759.416917
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maxim",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 64,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 840.7167190308008,
+        "stop_reason" : "length",
+        "tokens_per_second" : 24.146278334734934
+      },
+      "mode" : "mistral_hot_cache_seed_before_cached",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 692.205
+    },
+    {
+      "content" : "---\n\n## **4. Core Data Structures: The Work Queue and Deque**\n\nBefore diving into the lock-free implementation, we need to define the fundamental data structures that will enable work stealing. The two key components are:\n\n1. **The Work Queue (`WorkQueue`)** – A thread-local queue that holds tasks assigned",
+      "metrics" : {
+        "cached_prompt_token_count" : 634,
+        "generation_token_count" : 64,
+        "prefilled_prompt_token_count" : 24,
+        "prompt_token_count" : 658,
+        "prompt_tokens_per_second" : 48.16491325360178,
+        "stop_reason" : "length",
+        "tokens_per_second" : 25.920795103239058
+      },
+      "mode" : "mistral_hot_cache_cached",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 517.815083
+    }
+  ],
+  "warmup_count" : 0,
+  "warmups" : [
+
+  ]
+}

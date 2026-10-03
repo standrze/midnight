@@ -1,9 +1,6 @@
 import Foundation
 
-/// Optional runner settings loaded from a model-stack configuration file.
-/// Token limits, context length, and prefill step count token positions.
 public struct ModelStackSettings: Decodable, Sendable {
-    /// MLX runtime and listener overrides from the model stack.
     public struct MLXRunner: Decodable, Sendable {
         public let modelPath: String?
         public let servedModelName: String?
@@ -16,21 +13,16 @@ public struct ModelStackSettings: Decodable, Sendable {
         public let kvCompression: String?
         public let dflashModelPath: String?
         public let dflashBlockSize: Int?
-        public let gemmaAssistantModelPath: String?
-        public let gemmaAssistantBlockSize: Int?
-        public let gemmaAssistantQuantizationBits: Int?
-        public let autoAssistant: Bool?
 
         /// Apply checkpoint-local limits. Settings tied to another checkpoint must
         /// not follow a CLI model switch; host, port and engine remain shared.
         public func resolving(for selection: ResolvedModelSelection) throws -> Self {
             let local = try ModelLocalSettings.load(directory: selection.settingsDirectory)
-            let matches =
-                modelPath.map {
-                    let configured = ModelCatalog.resolveMLX(model: $0)
-                    return URL(fileURLWithPath: configured.modelPath).resolvingSymlinksInPath()
-                        == URL(fileURLWithPath: selection.modelPath).resolvingSymlinksInPath()
-                } ?? true
+            let matches = modelPath.map {
+                let configured = ModelCatalog.resolveMLX(model: $0)
+                return URL(fileURLWithPath: configured.modelPath).resolvingSymlinksInPath()
+                    == URL(fileURLWithPath: selection.modelPath).resolvingSymlinksInPath()
+            } ?? true
             return Self(
                 modelPath: selection.modelPath,
                 servedModelName: matches ? servedModelName : nil,
@@ -40,27 +32,18 @@ public struct ModelStackSettings: Decodable, Sendable {
                 prefillStepSize: local?.prefillStepSize ?? (matches ? prefillStepSize : nil),
                 kvCompression: local?.kvCompression ?? (matches ? kvCompression : nil),
                 dflashModelPath: matches ? dflashModelPath : nil,
-                dflashBlockSize: matches ? dflashBlockSize : nil,
-                gemmaAssistantModelPath: matches ? gemmaAssistantModelPath : nil,
-                gemmaAssistantBlockSize: matches ? gemmaAssistantBlockSize : nil,
-                gemmaAssistantQuantizationBits: matches ? gemmaAssistantQuantizationBits : nil,
-                autoAssistant: matches ? autoAssistant : nil)
+                dflashBlockSize: matches ? dflashBlockSize : nil)
         }
 
-        /// An MLX runner configuration with no overrides.
         public static var empty: Self {
-            Self(
-                modelPath: nil, servedModelName: nil, engine: nil, host: nil, port: nil,
-                maximumTokens: nil, contextLength: nil, prefillStepSize: nil,
-                kvCompression: nil, dflashModelPath: nil, dflashBlockSize: nil,
-                gemmaAssistantModelPath: nil, gemmaAssistantBlockSize: nil,
-                gemmaAssistantQuantizationBits: nil, autoAssistant: nil)
+            Self(modelPath: nil, servedModelName: nil, engine: nil, host: nil, port: nil,
+                 maximumTokens: nil, contextLength: nil, prefillStepSize: nil,
+                 kvCompression: nil, dflashModelPath: nil, dflashBlockSize: nil)
         }
     }
 
     public let mlxRunner: MLXRunner?
 
-    /// Loads the selected model-stack file, or returns nil when none is found.
     public static func load(explicitPath: String?) throws -> Self? {
         guard let url = try SettingsFileLocator.find(explicitPath: explicitPath) else {
             return nil
@@ -75,19 +58,15 @@ public struct ModelStackSettings: Decodable, Sendable {
 
 /// Optional midnight.json alongside a checkpoint, or at an adapter bundle root.
 /// Keep runtime policy separate from the checkpoint's architectural config.json.
-/// Token limits, context length, and prefill step count token positions.
 public struct ModelLocalSettings: Decodable, Sendable {
     public let contextLength: Int?
     public let maximumTokens: Int?
     public let prefillStepSize: Int?
     public let kvCompression: String?
 
-    /// Loads and validates checkpoint-local `midnight.json`, if present.
     public static func load(directory: String) throws -> Self? {
         let url = URL(fileURLWithPath: directory).appendingPathComponent("midnight.json")
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            return nil
-        }
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
         do {
             let data = try Data(contentsOf: url)
             guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -96,8 +75,7 @@ public struct ModelLocalSettings: Decodable, Sendable {
             let known: Set<String> = ["contextLength", "maximumTokens", "prefillStepSize", "kvCompression"]
             let unknown = Set(object.keys).subtracting(known)
             guard unknown.isEmpty else {
-                throw RequestAdmissionError.configuration(
-                    "unknown midnight.json keys: \(unknown.sorted().joined(separator: ", "))")
+                throw RequestAdmissionError.configuration("unknown midnight.json keys: \(unknown.sorted().joined(separator: ", "))")
             }
             return try JSONDecoder().decode(Self.self, from: data)
         } catch {
@@ -106,12 +84,10 @@ public struct ModelLocalSettings: Decodable, Sendable {
     }
 }
 
-/// A model-stack or checkpoint-local settings file is missing or invalid.
 public enum ModelStackSettingsError: LocalizedError {
     case missingFile(String)
     case invalidFile(String, String)
 
-    /// User-facing explanation for this error.
     public var errorDescription: String? {
         switch self {
         case .missingFile(let path):
@@ -126,7 +102,7 @@ private enum SettingsFileLocator {
     static func find(explicitPath: String?) throws -> URL? {
         let fileManager = FileManager.default
         if let explicitPath = explicitPath?.trimmingCharacters(in: .whitespacesAndNewlines),
-            !explicitPath.isEmpty
+           !explicitPath.isEmpty
         {
             let url = normalizedURL(explicitPath)
             guard fileManager.fileExists(atPath: url.path) else {
@@ -136,7 +112,7 @@ private enum SettingsFileLocator {
         }
 
         if let environmentPath = ProcessInfo.processInfo.environment["MODEL_STACK_CONFIG"],
-            !environmentPath.isEmpty
+           !environmentPath.isEmpty
         {
             let url = normalizedURL(environmentPath)
             guard fileManager.fileExists(atPath: url.path) else {

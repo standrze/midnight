@@ -262,7 +262,7 @@ compiled paths. This fragment is small, so these numbers must not be read as a
 Reproduce the fragment check with:
 
 ```bash
-swift run --package-path ../wick -c release wick-metal-quant-bench \
+swift run --package-path ../midnight-quantization -c release model-runner-metal-quant-bench \
   --laguna-graph-ab --warmup 20 --queue-depth 64 \
   --queue-rounds 15 --iterations 20
 ```
@@ -322,7 +322,7 @@ The implementation order should be:
 Reproduce the checkpoint-free Mistral shape tests with:
 
 ```bash
-../wick/Scripts/benchmark-metal-quantization.sh \
+Scripts/benchmark-metal-quantization.sh \
   --mistral-graph-ab --warmup 32 --queue-depth 64 --queue-rounds 31
 ```
 

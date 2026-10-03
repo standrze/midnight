@@ -1,0 +1,94 @@
+[
+  {
+    "scheme": "none",
+    "model": "Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "descriptor": {
+      "created": 1788552630,
+      "owned_by": "midnight",
+      "kv_compression": "none",
+      "memory_limit_bytes": 54975581389,
+      "id": "memory-test",
+      "prefill_step_size": 256,
+      "object": "model",
+      "context_length": 4096
+    },
+    "usage": {
+      "completion_tokens": 1,
+      "prompt_tokens": 1624,
+      "total_tokens": 1625
+    },
+    "content": "Blue",
+    "request_seconds": 1.088436916936189,
+    "overflow_rejected_json_both_modes": true,
+    "cached_continuation_stream_passed": true
+  },
+  {
+    "scheme": "affine8",
+    "model": "Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "descriptor": {
+      "context_length": 4096,
+      "object": "model",
+      "prefill_step_size": 256,
+      "created": 1788552633,
+      "owned_by": "midnight",
+      "kv_compression": "affine8",
+      "id": "memory-test",
+      "memory_limit_bytes": 54975581389
+    },
+    "usage": {
+      "completion_tokens": 1,
+      "prompt_tokens": 1624,
+      "total_tokens": 1625
+    },
+    "content": "Blue",
+    "request_seconds": 1.2600395830813795,
+    "overflow_rejected_json_both_modes": true,
+    "cached_continuation_stream_passed": true
+  },
+  {
+    "scheme": "affine4",
+    "model": "Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "descriptor": {
+      "context_length": 4096,
+      "memory_limit_bytes": 54975581389,
+      "prefill_step_size": 256,
+      "id": "memory-test",
+      "kv_compression": "affine4",
+      "created": 1788552636,
+      "object": "model",
+      "owned_by": "midnight"
+    },
+    "usage": {
+      "prompt_tokens": 1624,
+      "total_tokens": 1625,
+      "completion_tokens": 1
+    },
+    "content": "Blue",
+    "request_seconds": 1.1913904999382794,
+    "overflow_rejected_json_both_modes": true,
+    "cached_continuation_stream_passed": true
+  },
+  {
+    "scheme": "turbo8v4",
+    "model": "Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "descriptor": {
+      "id": "memory-test",
+      "prefill_step_size": 256,
+      "owned_by": "midnight",
+      "created": 1788552639,
+      "memory_limit_bytes": 54975581389,
+      "kv_compression": "turbo8v4",
+      "context_length": 4096,
+      "object": "model"
+    },
+    "usage": {
+      "completion_tokens": 1,
+      "total_tokens": 1625,
+      "prompt_tokens": 1624
+    },
+    "content": "Blue",
+    "request_seconds": 1.4262603339739144,
+    "overflow_rejected_json_both_modes": true,
+    "cached_continuation_stream_passed": true
+  }
+]

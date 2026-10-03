@@ -1,0 +1,152 @@
+warning: 'mlx-audio-swift': found 107 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriDuration.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriDiT.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoiceGenerateParameters.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSBigVGAN.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoiceConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/UpSample1d.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossGPT2.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroMultilingualProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechTokenizer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSSpeakerEncoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/Utilities.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoDiT.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/EnglishFallbackNetwork.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/ResidualBlocks.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTEncoderLayer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSQwen3.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/SharedConfigs.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/WeightNormedConv.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/SopranoConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechPrompt.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Llama/LlamaTTS.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTDecoderLayer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Marvis/MarvisTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/TextProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSTransformer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/SopranoDecoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTLayerNorm.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSAudio.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/EnglishG2P.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSFullSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Marvis/CSMModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/SineGenerator.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSConditioners.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSTextEncoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSTalker.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoError.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSMimiAdapter.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3/Config.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSMLP.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/Normalization.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Marvis/CSMLlamaModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSFlowLM.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/LinearNorm.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/BARTModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/Lexicon/PennTagUtil.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/EnglishNum2Word.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/MisakiTextProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroDecoder.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/TTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTS.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSSpeechTokenizer.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSText.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoice.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3TTS/Qwen3TTSCodePredictor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/TextUtils.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSISTFTNet.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Qwen3/Qwen3.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTS/MossTTSProcessor.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSTextCleaner.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/IrodoriTTSSampling.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IrodoriTTS/README.md
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Blocks/BiLSTM.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/G2PExtensions.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/Lexicon/Lexicon.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/PocketTTS/PocketTTSTextUtils.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/KittenTTS/KittenTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/BreezeTTS/BreezeTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Kokoro/KokoroModules.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/OmniVoice/OmniVoiceSemantic.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Llama/LlamaTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/TokenContext.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/Soprano/Soprano.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSText.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/Lexicon/DataResourcesUtil.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/FeedForward.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/FishSpeech/FishSpeechModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/EchoTTS/EchoTTSModel.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/Albert.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/MToken.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/IndexTTS/IndexTTSConfig.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/MossTTSNano/MossTTSNanoText.swift
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioTTS/Models/StyleTTS2/G2P/FallbackNetwork/MultiHeadAttention.swift
+warning: 'mlx-audio-swift': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-audio-swift/Sources/MLXAudioSTS/Models/DeepFilterNet/README.md
+[0/1] Planning build
+Building for production...
+[0/2] Write swift-version--58304C5D6DBC2206.txt
+[2/3] Compiling InternalCollectionsUtilities Debugging.swift
+[2/8] Write sources
+[6/16] Compiling RealModule AlgebraicField.swift
+[7/16] Compiling MLXHuggingFaceMacros HuggingFaceIntegrationMacros.swift
+[7/17] Write Objects.LinkFileList
+[9/18] Compiling Crypto AES-GCM.swift
+[10/18] Compiling ArgumentParserToolInfo ToolInfo.swift
+[11/18] Compiling ComplexModule Complex+AdditiveArithmetic.swift
+[11/20] Linking MLXHuggingFaceMacros-tool
+[13/20] Compiling Numerics Numerics.swift
+[14/21] Compiling EventSource AsyncEventsSequence.swift
+[15/21] Compiling ModelQualityCore ModelQualityCore.swift
+[16/22] Compiling OrderedCollections _HashTable+Bucket.swift
+[17/23] Compiling ModelRunnerProtocol AudioAPIRoute.swift
+[18/23] Compiling ArgumentParser BashCompletionsGenerator.swift
+[19/23] Compiling MLX ArrayAt.swift
+[20/25] Compiling MLXFast MLXFast.swift
+[21/25] Compiling HuggingFace AccessRequest.swift
+[22/25] Compiling Jinja AST.swift
+[23/26] Compiling MLXNN Activations.swift
+[24/29] Compiling MLXOptimizers Optimizers.swift
+[25/30] Compiling MLXAudioG2P Attention.swift
+[26/30] Compiling Hub BinaryDistinct.swift
+[27/31] Compiling MLXAudioCore AudioPlayer.swift
+[28/31] Compiling Tokenizers BPETokenizer.swift
+[29/32] Compiling Generation Decoders.swift
+[30/33] Compiling Models LanguageModel.swift
+[31/33] Compiling MLXLMCommon DoRA+Layers.swift
+[32/36] Compiling MLXGuidedGeneration ClosingTokenBias.swift
+[33/37] Compiling MLXFoundationModels SchemaConverter.swift
+[34/38] Compiling MLXHuggingFace FoundationModelsMacros.swift
+[35/38] Compiling MLXAudioCodecs AudioCodecModel.swift
+[36/38] Compiling MLXLLM LLMModel.swift
+[37/39] Compiling MLXAudioTTS Generation.swift
+[38/40] Compiling ModelRunnerCore ChatterboxAudioEncoding.swift
+[39/41] Compiling RuntimeBenchmark main.swift
+[39/41] Write Objects.LinkFileList
+[40/41] Linking model-runner-runtime-bench
+Build of product 'model-runner-runtime-bench' complete! (69.89s)

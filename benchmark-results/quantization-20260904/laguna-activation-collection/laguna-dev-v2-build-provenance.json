@@ -1,0 +1,11 @@
+{
+  "captured_at": "2026-09-04T22:32:39.153512+00:00",
+  "build_mode": "release with -Xswiftc -enable-testing",
+  "includes_autorelease_lifetime_fix": true,
+  "files": {
+    ".build/release/model-runner-mistral-activation-stats": "51c5d3a10ca937d562fff4d01d2be24de91f64bb4e78710062e3fb8ec06e106a",
+    ".build/release/mlx.metallib": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+    "Sources/MistralActivationStats/main.swift": "5811f09635e72faf981a09cac01a45b601c6e7dd1d9a4167392a5c2ef8bb12cf",
+    "Sources/ModelRunnerCore/SelectiveSafetensorsReader.swift": "c35e55d6f0322c8616a836f790fdcf74d3cf43fc2f05f361426e86927e972f8b"
+  }
+}

@@ -1,0 +1,137 @@
+{"id":"mbpp-test-11","kind":"python-tests","setup":"","tests":["assert remove_Occ(\"hello\",\"l\") == \"heo\"","assert remove_Occ(\"abcda\",\"a\") == \"bcd\"","assert remove_Occ(\"PHP\",\"P\") == \"H\""]}
+{"id":"mbpp-test-12","kind":"python-tests","setup":"","tests":["assert sort_matrix([[1, 2, 3], [2, 4, 5], [1, 1, 1]])==[[1, 1, 1], [1, 2, 3], [2, 4, 5]]","assert sort_matrix([[1, 2, 3], [-2, 4, -5], [1, -1, 1]])==[[-2, 4, -5], [1, -1, 1], [1, 2, 3]]","assert sort_matrix([[5,8,9],[6,4,3],[2,1,4]])==[[2, 1, 4], [6, 4, 3], [5, 8, 9]]"]}
+{"id":"mbpp-test-13","kind":"python-tests","setup":"","tests":["assert count_common(['red','green','black','pink','black','white','black','eyes','white','black','orange','pink','pink','red','red','white','orange','white',\"black\",'pink','green','green','pink','green','pink','white','orange',\"orange\",'red']) == [('pink', 6), ('black', 5), ('white', 5), ('red', 4)]","assert count_common(['one', 'two', 'three', 'four', 'five', 'one', 'two', 'one', 'three', 'one']) == [('one', 4), ('two', 2), ('three', 2), ('four', 1)]","assert count_common(['Facebook', 'Apple', 'Amazon', 'Netflix', 'Google', 'Apple', 'Netflix', 'Amazon']) == [('Apple', 2), ('Amazon', 2), ('Netflix', 2), ('Facebook', 1)]"]}
+{"id":"mbpp-test-14","kind":"python-tests","setup":"","tests":["assert find_Volume(10,8,6) == 240","assert find_Volume(3,2,2) == 6","assert find_Volume(1,2,1) == 1"]}
+{"id":"mbpp-test-15","kind":"python-tests","setup":"","tests":["assert split_lowerstring(\"AbCd\")==['bC','d']","assert split_lowerstring(\"Python\")==['y', 't', 'h', 'o', 'n']","assert split_lowerstring(\"Programming\")==['r', 'o', 'g', 'r', 'a', 'm', 'm', 'i', 'n', 'g']"]}
+{"id":"mbpp-test-16","kind":"python-tests","setup":"","tests":["assert text_lowercase_underscore(\"aab_cbbbc\")==('Found a match!')","assert text_lowercase_underscore(\"aab_Abbbc\")==('Not matched!')","assert text_lowercase_underscore(\"Aaab_abbbc\")==('Not matched!')"]}
+{"id":"mbpp-test-17","kind":"python-tests","setup":"","tests":["assert square_perimeter(10)==40","assert square_perimeter(5)==20","assert square_perimeter(4)==16"]}
+{"id":"mbpp-test-18","kind":"python-tests","setup":"","tests":["assert remove_dirty_chars(\"probasscurve\", \"pros\") == 'bacuve'","assert remove_dirty_chars(\"digitalindia\", \"talent\") == 'digiidi'","assert remove_dirty_chars(\"exoticmiles\", \"toxic\") == 'emles' "]}
+{"id":"mbpp-test-19","kind":"python-tests","setup":"","tests":["assert test_duplicate(([1,2,3,4,5]))==False","assert test_duplicate(([1,2,3,4, 4]))==True","assert test_duplicate([1,1,2,2,3,3,4,4,5])==True"]}
+{"id":"mbpp-test-20","kind":"python-tests","setup":"","tests":["assert is_woodall(383) == True","assert is_woodall(254) == False","assert is_woodall(200) == False"]}
+{"id":"mbpp-test-21","kind":"python-tests","setup":"","tests":["assert multiples_of_num(4,3)== [3,6,9,12]","assert multiples_of_num(2,5)== [5,10]","assert multiples_of_num(9,2)== [2,4,6,8,10,12,14,16,18]"]}
+{"id":"mbpp-test-22","kind":"python-tests","setup":"","tests":["assert find_first_duplicate(([1, 2, 3, 4, 4, 5]))==4","assert find_first_duplicate([1, 2, 3, 4])==-1","assert find_first_duplicate([1, 1, 2, 3, 3, 2, 2])==1"]}
+{"id":"mbpp-test-23","kind":"python-tests","setup":"","tests":["assert maximum_Sum([[1,2,3],[4,5,6],[10,11,12],[7,8,9]]) == 33","assert maximum_Sum([[0,1,1],[1,1,2],[3,2,1]]) == 6","assert maximum_Sum([[0,1,3],[1,2,1],[9,8,2],[0,1,0],[6,4,8]]) == 19"]}
+{"id":"mbpp-test-24","kind":"python-tests","setup":"","tests":["assert binary_to_decimal(100) == 4","assert binary_to_decimal(1011) == 11","assert binary_to_decimal(1101101) == 109"]}
+{"id":"mbpp-test-25","kind":"python-tests","setup":"","tests":["assert find_Product([1,1,2,3],4) == 6","assert find_Product([1,2,3,1,1],5) == 6","assert find_Product([1,1,4,5,6],5) == 120"]}
+{"id":"mbpp-test-26","kind":"python-tests","setup":"","tests":["assert check_k_elements([(4, 4), (4, 4, 4), (4, 4), (4, 4, 4, 4), (4, )], 4) == True","assert check_k_elements([(7, 7, 7), (7, 7)], 7) == True","assert check_k_elements([(9, 9), (9, 9, 9, 9)], 7) == False"]}
+{"id":"mbpp-test-27","kind":"python-tests","setup":"","tests":["assert remove(['4words', '3letters', '4digits']) == ['words', 'letters', 'digits']","assert remove(['28Jan','12Jan','11Jan']) == ['Jan','Jan','Jan']","assert remove(['wonder1','wonder2','wonder3']) == ['wonder','wonder','wonder']"]}
+{"id":"mbpp-test-28","kind":"python-tests","setup":"","tests":["assert binomial_Coeff(5,2) == 10","assert binomial_Coeff(4,3) == 4","assert binomial_Coeff(3,2) == 3"]}
+{"id":"mbpp-test-29","kind":"python-tests","setup":"","tests":["assert get_Odd_Occurrence([1,2,3,1,2,3,1],7) == 1","assert get_Odd_Occurrence([1,2,3,2,3,1,3],7) == 3","assert get_Odd_Occurrence([2,3,5,4,5,2,4,3,5,2,4,4,2],13) == 5"]}
+{"id":"mbpp-test-30","kind":"python-tests","setup":"","tests":["assert count_Substring_With_Equal_Ends(\"abc\") == 3","assert count_Substring_With_Equal_Ends(\"abcda\") == 6","assert count_Substring_With_Equal_Ends(\"ab\") == 2"]}
+{"id":"mbpp-test-31","kind":"python-tests","setup":"","tests":["assert func([[1, 2, 6], [1, 3, 4, 5, 7, 8], [1, 3, 5, 6, 8, 9], [2, 5, 7, 11], [1, 4, 7, 8, 12]],3)==[5, 7, 1]","assert func([[1, 2, 6], [1, 3, 4, 5, 7, 8], [1, 3, 5, 6, 8, 9], [2, 5, 7, 11], [1, 4, 7, 8, 12]],1)==[1]","assert func([[1, 2, 6], [1, 3, 4, 5, 7, 8], [1, 3, 5, 6, 8, 9], [2, 5, 7, 11], [1, 4, 7, 8, 12]],5)==[6, 5, 7, 8, 1]"]}
+{"id":"mbpp-test-32","kind":"python-tests","setup":"","tests":["assert max_Prime_Factors(15) == 5","assert max_Prime_Factors(6) == 3","assert max_Prime_Factors(2) == 2"]}
+{"id":"mbpp-test-33","kind":"python-tests","setup":"","tests":["assert decimal_To_Binary(10) == 1010","assert decimal_To_Binary(1) == 1","assert decimal_To_Binary(20) == 10100"]}
+{"id":"mbpp-test-34","kind":"python-tests","setup":"","tests":["assert find_missing([1,2,3,5],4) == 4","assert find_missing([1,3,4,5],4) == 2","assert find_missing([1,2,3,5,6,7],5) == 4"]}
+{"id":"mbpp-test-35","kind":"python-tests","setup":"","tests":["assert find_rect_num(4) == 20","assert find_rect_num(5) == 30","assert find_rect_num(6) == 42"]}
+{"id":"mbpp-test-36","kind":"python-tests","setup":"","tests":["assert find_Nth_Digit(1,2,1) == 5","assert find_Nth_Digit(3,5,1) == 6","assert find_Nth_Digit(5,6,5) == 3"]}
+{"id":"mbpp-test-37","kind":"python-tests","setup":"","tests":["assert sort_mixed_list([19,'red',12,'green','blue', 10,'white','green',1])==[1, 10, 12, 19, 'blue', 'green', 'green', 'red', 'white']","assert sort_mixed_list([19,'red',12,'green','blue', 10,'white','green',1])==[1, 10, 12, 19, 'blue', 'green', 'green', 'red', 'white']","assert sort_mixed_list([19,'red',12,'green','blue', 10,'white','green',1])==[1, 10, 12, 19, 'blue', 'green', 'green', 'red', 'white']"]}
+{"id":"mbpp-test-38","kind":"python-tests","setup":"","tests":["assert div_even_odd([1,3,5,7,4,1,6,8])==4","assert div_even_odd([1,2,3,4,5,6,7,8,9,10])==2","assert div_even_odd([1,5,7,9,10])==10"]}
+{"id":"mbpp-test-39","kind":"python-tests","setup":"","tests":["assert rearange_string(\"aab\")==('aba')","assert rearange_string(\"aabb\")==('abab')","assert rearange_string(\"abccdd\")==('cdabcd')"]}
+{"id":"mbpp-test-40","kind":"python-tests","setup":"","tests":["assert freq_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]])==({2: 3, 1: 2, 5: 2, 3: 1, 4: 1, 6: 1, 7: 1, 9: 1})","assert freq_element([[1,2,3,4],[5,6,7,8],[9,10,11,12]])==({1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1, 11: 1, 12: 1})","assert freq_element([[15,20,30,40],[80,90,100,110],[30,30,80,90]])==({30: 3, 80: 2, 90: 2, 15: 1, 20: 1, 40: 1, 100: 1, 110: 1})"]}
+{"id":"mbpp-test-41","kind":"python-tests","setup":"","tests":["assert filter_evennumbers([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])==[2, 4, 6, 8, 10]","assert filter_evennumbers([10,20,45,67,84,93])==[10,20,84]","assert filter_evennumbers([5,7,9,8,6,4,3])==[8,6,4]"]}
+{"id":"mbpp-test-42","kind":"python-tests","setup":"","tests":["assert find_Sum([1,2,3,1,1,4,5,6],8) == 3","assert find_Sum([1,2,3,1,1],5) == 3","assert find_Sum([1,1,2],3) == 2"]}
+{"id":"mbpp-test-43","kind":"python-tests","setup":"","tests":["assert text_match(\"aab_cbbbc\") == 'Found a match!'","assert text_match(\"aab_Abbbc\") == 'Not matched!'","assert text_match(\"Aaab_abbbc\") == 'Not matched!'"]}
+{"id":"mbpp-test-44","kind":"python-tests","setup":"","tests":["assert text_match_string(\" python\")==('Not matched!')","assert text_match_string(\"python\")==('Found a match!')","assert text_match_string(\"  lang\")==('Not matched!')"]}
+{"id":"mbpp-test-45","kind":"python-tests","setup":"","tests":["assert get_gcd([2, 4, 6, 8, 16]) == 2","assert get_gcd([1, 2, 3]) == 1","assert get_gcd([2, 4, 6, 8]) == 2 "]}
+{"id":"mbpp-test-46","kind":"python-tests","setup":"","tests":["assert test_distinct([1,5,7,9]) == True","assert test_distinct([2,4,5,5,7,9]) == False","assert test_distinct([1,2,3]) == True"]}
+{"id":"mbpp-test-47","kind":"python-tests","setup":"","tests":["assert compute_Last_Digit(2,4) == 2","assert compute_Last_Digit(6,8) == 6","assert compute_Last_Digit(1,2) == 2"]}
+{"id":"mbpp-test-48","kind":"python-tests","setup":"","tests":["assert odd_bit_set_number(10) == 15","assert odd_bit_set_number(20) == 21","assert odd_bit_set_number(30) == 31"]}
+{"id":"mbpp-test-49","kind":"python-tests","setup":"","tests":["assert specified_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]],0)==[1, 4, 7]","assert specified_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]],2)==[3, 6, 9]","assert specified_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]],1)==[2,5,1]"]}
+{"id":"mbpp-test-50","kind":"python-tests","setup":"","tests":["assert min_length_list([[0], [1, 3], [5, 7], [9, 11], [13, 15, 17]])==(1, [0])","assert min_length_list([[1,2,3,4,5],[1,2,3,4],[1,2,3],[1,2],[1]])==(1,[1])","assert min_length_list([[3,4,5],[6,7,8,9],[10,11,12],[1,2]])==(2,[1,2])"]}
+{"id":"mbpp-test-51","kind":"python-tests","setup":"","tests":["assert check_equilateral(6,8,12)==False ","assert check_equilateral(6,6,12)==False","assert check_equilateral(6,6,6)==True"]}
+{"id":"mbpp-test-52","kind":"python-tests","setup":"","tests":["assert parallelogram_area(10,20)==200","assert parallelogram_area(15,20)==300","assert parallelogram_area(8,9)==72"]}
+{"id":"mbpp-test-53","kind":"python-tests","setup":"","tests":["assert check_Equality(\"abcda\") == \"Equal\"","assert check_Equality(\"ab\") == \"Not Equal\"","assert check_Equality(\"mad\") == \"Not Equal\""]}
+{"id":"mbpp-test-54","kind":"python-tests","setup":"","tests":["assert counting_sort([1,23,4,5,6,7,8]) == [1, 4, 5, 6, 7, 8, 23]","assert counting_sort([12, 9, 28, 33, 69, 45]) == [9, 12, 28, 33, 45, 69]","assert counting_sort([8, 4, 14, 3, 2, 1]) == [1, 2, 3, 4, 8, 14]"]}
+{"id":"mbpp-test-55","kind":"python-tests","setup":"","tests":["assert tn_gp(1,5,2)==16","assert tn_gp(1,5,4)==256","assert tn_gp(2,6,3)==486"]}
+{"id":"mbpp-test-56","kind":"python-tests","setup":"","tests":["assert check(70) == False","assert check(23) == False","assert check(73) == True"]}
+{"id":"mbpp-test-57","kind":"python-tests","setup":"","tests":["assert find_Max_Num([1,2,3],3) == 321","assert find_Max_Num([4,5,6,1],4) == 6541","assert find_Max_Num([1,2,3,9],4) == 9321"]}
+{"id":"mbpp-test-58","kind":"python-tests","setup":"","tests":["assert opposite_Signs(1,-2) == True","assert opposite_Signs(3,2) == False","assert opposite_Signs(-10,-10) == False"]}
+{"id":"mbpp-test-59","kind":"python-tests","setup":"","tests":["assert is_octagonal(5) == 65","assert is_octagonal(10) == 280","assert is_octagonal(15) == 645"]}
+{"id":"mbpp-test-60","kind":"python-tests","setup":"","tests":["assert max_len_sub([2, 5, 6, 3, 7, 6, 5, 8], 8) == 5","assert max_len_sub([-2, -1, 5, -1, 4, 0, 3], 7) == 4","assert max_len_sub([9, 11, 13, 15, 18], 5) == 1"]}
+{"id":"mbpp-test-61","kind":"python-tests","setup":"","tests":["assert count_Substrings('112112',6) == 6","assert count_Substrings('111',3) == 6","assert count_Substrings('1101112',7) == 12"]}
+{"id":"mbpp-test-62","kind":"python-tests","setup":"","tests":["assert smallest_num([10, 20, 1, 45, 99]) == 1","assert smallest_num([1, 2, 3]) == 1","assert smallest_num([45, 46, 50, 60]) == 45"]}
+{"id":"mbpp-test-63","kind":"python-tests","setup":"","tests":["assert max_difference([(3, 5), (1, 7), (10, 3), (1, 2)]) == 7","assert max_difference([(4, 6), (2, 17), (9, 13), (11, 12)]) == 15","assert max_difference([(12, 35), (21, 27), (13, 23), (41, 22)]) == 23"]}
+{"id":"mbpp-test-64","kind":"python-tests","setup":"","tests":["assert subject_marks([('English', 88), ('Science', 90), ('Maths', 97), ('Social sciences', 82)])==[('Social sciences', 82), ('English', 88), ('Science', 90), ('Maths', 97)]","assert subject_marks([('Telugu',49),('Hindhi',54),('Social',33)])==([('Social',33),('Telugu',49),('Hindhi',54)])","assert subject_marks([('Physics',96),('Chemistry',97),('Biology',45)])==([('Biology',45),('Physics',96),('Chemistry',97)])"]}
+{"id":"mbpp-test-65","kind":"python-tests","setup":"","tests":["assert recursive_list_sum(([1, 2, [3,4],[5,6]]))==21","assert recursive_list_sum(([7, 10, [15,14],[19,41]]))==106","assert recursive_list_sum(([10, 20, [30,40],[50,60]]))==210"]}
+{"id":"mbpp-test-66","kind":"python-tests","setup":"","tests":["assert pos_count([1,-2,3,-4]) == 2","assert pos_count([3,4,5,-1]) == 3","assert pos_count([1,2,3,4]) == 4"]}
+{"id":"mbpp-test-67","kind":"python-tests","setup":"","tests":["assert bell_number(2)==2","assert bell_number(10)==115975","assert bell_number(56)==6775685320645824322581483068371419745979053216268760300"]}
+{"id":"mbpp-test-68","kind":"python-tests","setup":"","tests":["assert is_Monotonic([6, 5, 4, 4]) == True","assert is_Monotonic([1, 2, 2, 3]) == True","assert is_Monotonic([1, 3, 2]) == False"]}
+{"id":"mbpp-test-69","kind":"python-tests","setup":"","tests":["assert is_sublist([2,4,3,5,7],[3,7])==False","assert is_sublist([2,4,3,5,7],[4,3])==True","assert is_sublist([2,4,3,5,7],[1,6])==False"]}
+{"id":"mbpp-test-70","kind":"python-tests","setup":"","tests":["assert get_equal([(11, 22, 33), (44, 55, 66)], 3) == 'All tuples have same length'","assert get_equal([(1, 2, 3), (4, 5, 6, 7)], 3) == 'All tuples do not have same length'","assert get_equal([(1, 2), (3, 4)], 2) == 'All tuples have same length'"]}
+{"id":"mbpp-test-71","kind":"python-tests","setup":"","tests":["assert comb_sort([5, 15, 37, 25, 79]) == [5, 15, 25, 37, 79]","assert comb_sort([41, 32, 15, 19, 22]) == [15, 19, 22, 32, 41]","assert comb_sort([99, 15, 13, 47]) == [13, 15, 47, 99]"]}
+{"id":"mbpp-test-72","kind":"python-tests","setup":"","tests":["assert dif_Square(5) == True","assert dif_Square(10) == False","assert dif_Square(15) == True"]}
+{"id":"mbpp-test-73","kind":"python-tests","setup":"","tests":["assert multiple_split('Forces of the \\ndarkness*are coming into the play.') == ['Forces of the ', 'darkness', 'are coming into the play.']","assert multiple_split('Mi Box runs on the \\n Latest android*which has google assistance and chromecast.') == ['Mi Box runs on the ', ' Latest android', 'which has google assistance and chromecast.']","assert multiple_split('Certain services\\nare subjected to change*over the seperate subscriptions.') == ['Certain services', 'are subjected to change', 'over the seperate subscriptions.']"]}
+{"id":"mbpp-test-74","kind":"python-tests","setup":"","tests":["assert is_samepatterns([\"red\",\"green\",\"green\"], [\"a\", \"b\", \"b\"])==True ","assert is_samepatterns([\"red\",\"green\",\"greenn\"], [\"a\",\"b\",\"b\"])==False ","assert is_samepatterns([\"red\",\"green\",\"greenn\"], [\"a\",\"b\"])==False "]}
+{"id":"gsm8k-test-0","kind":"numeric","answer":"18"}
+{"id":"gsm8k-test-1","kind":"numeric","answer":"3"}
+{"id":"gsm8k-test-2","kind":"numeric","answer":"70000"}
+{"id":"gsm8k-test-3","kind":"numeric","answer":"540"}
+{"id":"gsm8k-test-4","kind":"numeric","answer":"20"}
+{"id":"gsm8k-test-5","kind":"numeric","answer":"64"}
+{"id":"gsm8k-test-6","kind":"numeric","answer":"260"}
+{"id":"gsm8k-test-7","kind":"numeric","answer":"160"}
+{"id":"gsm8k-test-8","kind":"numeric","answer":"45"}
+{"id":"gsm8k-test-9","kind":"numeric","answer":"460"}
+{"id":"gsm8k-test-10","kind":"numeric","answer":"366"}
+{"id":"gsm8k-test-11","kind":"numeric","answer":"694"}
+{"id":"gsm8k-test-12","kind":"numeric","answer":"13"}
+{"id":"gsm8k-test-13","kind":"numeric","answer":"18"}
+{"id":"gsm8k-test-14","kind":"numeric","answer":"60"}
+{"id":"gsm8k-test-15","kind":"numeric","answer":"125"}
+{"id":"gsm8k-test-16","kind":"numeric","answer":"230"}
+{"id":"gsm8k-test-17","kind":"numeric","answer":"57500"}
+{"id":"gsm8k-test-18","kind":"numeric","answer":"7"}
+{"id":"gsm8k-test-19","kind":"numeric","answer":"6"}
+{"id":"gsm8k-test-20","kind":"numeric","answer":"15"}
+{"id":"gsm8k-test-21","kind":"numeric","answer":"14"}
+{"id":"gsm8k-test-22","kind":"numeric","answer":"7"}
+{"id":"gsm8k-test-23","kind":"numeric","answer":"8"}
+{"id":"gsm8k-test-24","kind":"numeric","answer":"26"}
+{"id":"gsm8k-test-25","kind":"numeric","answer":"2"}
+{"id":"gsm8k-test-26","kind":"numeric","answer":"243"}
+{"id":"gsm8k-test-27","kind":"numeric","answer":"16"}
+{"id":"gsm8k-test-28","kind":"numeric","answer":"25"}
+{"id":"gsm8k-test-29","kind":"numeric","answer":"104"}
+{"id":"gsm8k-test-30","kind":"numeric","answer":"109"}
+{"id":"gsm8k-test-31","kind":"numeric","answer":"80"}
+{"id":"gsm8k-test-32","kind":"numeric","answer":"35"}
+{"id":"gsm8k-test-33","kind":"numeric","answer":"70"}
+{"id":"gsm8k-test-34","kind":"numeric","answer":"23"}
+{"id":"gsm8k-test-35","kind":"numeric","answer":"9"}
+{"id":"gsm8k-test-36","kind":"numeric","answer":"75"}
+{"id":"gsm8k-test-37","kind":"numeric","answer":"2"}
+{"id":"gsm8k-test-38","kind":"numeric","answer":"10"}
+{"id":"gsm8k-test-39","kind":"numeric","answer":"18"}
+{"id":"gsm8k-test-40","kind":"numeric","answer":"8"}
+{"id":"gsm8k-test-41","kind":"numeric","answer":"200"}
+{"id":"gsm8k-test-42","kind":"numeric","answer":"26"}
+{"id":"gsm8k-test-43","kind":"numeric","answer":"48"}
+{"id":"gsm8k-test-44","kind":"numeric","answer":"20"}
+{"id":"gsm8k-test-45","kind":"numeric","answer":"104"}
+{"id":"gsm8k-test-46","kind":"numeric","answer":"163"}
+{"id":"gsm8k-test-47","kind":"numeric","answer":"800"}
+{"id":"gsm8k-test-48","kind":"numeric","answer":"8"}
+{"id":"gsm8k-test-49","kind":"numeric","answer":"30"}
+{"id":"gsm8k-test-50","kind":"numeric","answer":"294"}
+{"id":"gsm8k-test-51","kind":"numeric","answer":"5"}
+{"id":"gsm8k-test-52","kind":"numeric","answer":"15"}
+{"id":"gsm8k-test-53","kind":"numeric","answer":"40"}
+{"id":"gsm8k-test-54","kind":"numeric","answer":"40"}
+{"id":"gsm8k-test-55","kind":"numeric","answer":"14"}
+{"id":"gsm8k-test-56","kind":"numeric","answer":"3"}
+{"id":"gsm8k-test-57","kind":"numeric","answer":"83"}
+{"id":"gsm8k-test-58","kind":"numeric","answer":"57"}
+{"id":"gsm8k-test-59","kind":"numeric","answer":"187"}
+{"id":"gsm8k-test-60","kind":"numeric","answer":"17"}
+{"id":"gsm8k-test-61","kind":"numeric","answer":"1430"}
+{"id":"gsm8k-test-62","kind":"numeric","answer":"25000"}
+{"id":"gsm8k-test-63","kind":"numeric","answer":"1596"}
+{"id":"retrieval-est4096-pos10","kind":"exact","answer":"V8df5207d17ff"}
+{"id":"retrieval-est4096-pos50","kind":"exact","answer":"V11f0e09862de"}
+{"id":"retrieval-est4096-pos90","kind":"exact","answer":"Vba2951d8449b"}
+{"id":"retrieval-est16384-pos10","kind":"exact","answer":"V191b70e985e1"}
+{"id":"retrieval-est16384-pos50","kind":"exact","answer":"Vda378bbd026a"}
+{"id":"retrieval-est16384-pos90","kind":"exact","answer":"Vc0224154c63a"}
+{"id":"retrieval-est32768-pos10","kind":"exact","answer":"V9bb7022568a4"}
+{"id":"retrieval-est32768-pos50","kind":"exact","answer":"V667ed4e32a92"}
+{"id":"retrieval-est32768-pos90","kind":"exact","answer":"Ve46fc9d6adb2"}

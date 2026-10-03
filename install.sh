@@ -12,7 +12,7 @@ while [[ $# -gt 0 ]]; do
       shift 2 ;;
     --help|-h)
       echo 'Usage: ./install.sh [--prefix PATH] [--binary PATH]'
-      echo 'Install the packaged runner, or build from source, into ~/.midnight/bin.'
+      echo 'Build and install the release runner into ~/.midnight/bin.'
       echo '--binary installs an existing build with its adjacent runtime resources.'
       exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
@@ -20,15 +20,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$BINARY" ]]; then
-  if [[ -x "$PACKAGE_ROOT/bin/midnight" && ! -f "$PACKAGE_ROOT/build.sh" ]]; then
-    BINARY="$PACKAGE_ROOT/bin/midnight"
-  else
-    MODEL_RUNNER_BUILD_CONFIGURATION=release MODEL_RUNNER_BUILD_PRODUCT=midnight "$PACKAGE_ROOT/build.sh"
-    cd "$PACKAGE_ROOT"
-    source "$PACKAGE_ROOT/Scripts/swiftpm-scratch-path.sh"
-    model_runner_configure_swiftpm_scratch "$PACKAGE_ROOT" "$(uname -s)"
-    BINARY="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/release/midnight"
-  fi
+  MODEL_RUNNER_BUILD_CONFIGURATION=release MODEL_RUNNER_BUILD_PRODUCT=midnight "$PACKAGE_ROOT/build.sh"
+  cd "$PACKAGE_ROOT"
+  source "$PACKAGE_ROOT/Scripts/swiftpm-scratch-path.sh"
+  model_runner_configure_swiftpm_scratch "$PACKAGE_ROOT" "$(uname -s)"
+  BINARY="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/release/midnight"
 fi
 [[ -f "$BINARY" && -x "$BINARY" ]] || { echo "Missing executable: $BINARY" >&2; exit 1; }
 SOURCE_DIR="$(cd "$(dirname "$BINARY")" && pwd -P)"
@@ -62,9 +58,6 @@ for RESOURCE in "$SOURCE_DIR"/*.bundle "$SOURCE_DIR"/*.metallib "$SOURCE_DIR"/*.
   [[ -e "$RESOURCE" ]] || continue
   cp -R "$RESOURCE" "$STAGE/bin/"
 done
-if [[ "$(uname -s)" == Linux && -d "$SOURCE_DIR/../lib" ]]; then
-  cp -R "$SOURCE_DIR/../lib" "$STAGE/lib"
-fi
 # CUDA JIT discovers these header trees relative to the executable.
 for RESOURCE in "$SOURCE_DIR/../include" "$PACKAGE_ROOT/include"; do
   [[ -d "$RESOURCE" ]] || continue
@@ -73,15 +66,7 @@ for RESOURCE in "$SOURCE_DIR/../include" "$PACKAGE_ROOT/include"; do
 done
 printf '%s\n' "$BINARY" > "$STAGE/source-binary.txt"
 LAUNCHER="$(mktemp "$PREFIX/bin/.midnight.XXXXXXXX")"
-if [[ "$(uname -s)" == Linux ]]; then
-  {
-    printf '#!/usr/bin/env bash\n'
-    printf 'export LD_LIBRARY_PATH=%q${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}\n' "$STAGE/lib:$STAGE/bin:/usr/local/cuda/lib64"
-    printf 'exec %q "$@"\n' "$STAGE/bin/midnight"
-  } > "$LAUNCHER"
-else
-  printf '#!/usr/bin/env bash\nexec %q "$@"\n' "$STAGE/bin/midnight" > "$LAUNCHER"
-fi
+printf '#!/usr/bin/env bash\nexec %q "$@"\n' "$STAGE/bin/midnight" > "$LAUNCHER"
 chmod 755 "$LAUNCHER"
 # Keep prior versions available to already-running processes.
 PUBLISHED=1

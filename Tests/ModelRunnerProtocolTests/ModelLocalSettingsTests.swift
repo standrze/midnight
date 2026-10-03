@@ -15,13 +15,10 @@ struct ModelLocalSettingsTests {
     @Test("Local policy overrides matching stack settings and preserves other defaults")
     func overlay() throws {
         try withModel { directory in
-            let stack = try JSONDecoder().decode(
-                ModelStackSettings.self,
-                from: Data(
-                    """
-                    {"mlxRunner":{"modelPath":"\(directory.path)","contextLength":8192,
-                    "maximumTokens":512,"prefillStepSize":256,"port":8088}}
-                    """.utf8))
+            let stack = try JSONDecoder().decode(ModelStackSettings.self, from: Data("""
+                {"mlxRunner":{"modelPath":"\(directory.path)","contextLength":8192,
+                "maximumTokens":512,"prefillStepSize":256,"port":8088}}
+                """.utf8))
             try Data(#"{"contextLength":32768,"maximumTokens":2048}"#.utf8)
                 .write(to: directory.appendingPathComponent("midnight.json"))
             let resolved = try #require(stack.mlxRunner).resolving(
@@ -30,15 +27,13 @@ struct ModelLocalSettingsTests {
             #expect(resolved.maximumTokens == 2048)
             #expect(resolved.prefillStepSize == 256)
             #expect(resolved.port == 8088)
-            let profile = try ModelMemoryProfile(
-                configuration: Data(#"{"max_position_embeddings":16384}"#.utf8),
+            let profile = try ModelMemoryProfile(configuration: Data(#"{"max_position_embeddings":16384}"#.utf8),
                 options: LongContextOptions(contextLength: 16384))
             #expect(throws: RequestAdmissionError.self) {
                 try profile.validateContext(prompt: 16000, output: resolved.maximumTokens!)
             }
             #expect(throws: RequestAdmissionError.self) {
-                try ModelMemoryProfile(
-                    configuration: Data(#"{"max_position_embeddings":16384}"#.utf8),
+                try ModelMemoryProfile(configuration: Data(#"{"max_position_embeddings":16384}"#.utf8),
                     options: LongContextOptions(contextLength: resolved.contextLength))
             }
         }
@@ -47,11 +42,7 @@ struct ModelLocalSettingsTests {
     @Test("Changing checkpoints drops the previous model policy, including output and drafter")
     func switching() throws {
         try withModel { directory in
-            let stack = try JSONDecoder().decode(
-                ModelStackSettings.self,
-                from: Data(
-                    #"{"mlxRunner":{"modelPath":"/different/checkpoint","contextLength":32768,"maximumTokens":4096,"servedModelName":"old","dflashModelPath":"/old/draft","port":8088}}"#
-                        .utf8))
+            let stack = try JSONDecoder().decode(ModelStackSettings.self, from: Data(#"{"mlxRunner":{"modelPath":"/different/checkpoint","contextLength":32768,"maximumTokens":4096,"servedModelName":"old","dflashModelPath":"/old/draft","port":8088}}"#.utf8))
             let selection = ModelCatalog.resolveMLX(model: directory.path)
             let resolved = try #require(stack.mlxRunner).resolving(for: selection)
             #expect(resolved.contextLength == nil)
@@ -67,8 +58,7 @@ struct ModelLocalSettingsTests {
     func bundlesAndErrors() throws {
         try withModel { directory in
             for child in ["base-model", "adapter"] {
-                try FileManager.default.createDirectory(
-                    at: directory.appendingPathComponent(child), withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(at: directory.appendingPathComponent(child), withIntermediateDirectories: true)
             }
             let selection = ModelCatalog.resolveMLX(model: directory.path)
             #expect(selection.settingsDirectory == directory.path)

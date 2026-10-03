@@ -1,0 +1,242 @@
+[
+  {
+    "baseline_first": false,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill2048",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill256",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill1024",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill2048",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill1024",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill256",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill1024",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill2048",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill256",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill256",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill256",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill256-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "prefill2048",
+    "mode": "runtime",
+    "model": "prefill2048",
+    "pair_id": "runtime-long-scheduler-notes-prefill2048-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill1024",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "long-scheduler-notes"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "prefill1024",
+    "mode": "runtime",
+    "model": "prefill512",
+    "pair_id": "runtime-long-scheduler-notes-prefill1024-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "long-scheduler-notes"
+  }
+]

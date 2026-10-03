@@ -4,30 +4,9 @@
 /tmp/
 __pycache__/
 *.pyc
-/Models/.huggingface-cache/
-/Models/VibeVoice-1.5B-hf/
-/Models/VibeVoice-7B-hf/
-/Optional/vibevoice-1.5b-env/
 bin/model-runner-rtx4090
 bin/model-runner-rtx4090.manifest
 bin/midnight-rtx4090
 bin/midnight-rtx4090.manifest
 include/
 .cuda-runtime-include.stage.*
-
-# Local data and generated output are not part of Midnight's source distribution.
-/Models/
-/Samples/
-/artifacts/
-# Preserve only the historical evaluation source needed by tests.
-/benchmark-results/*
-!/benchmark-results/quantization-20260904/
-/benchmark-results/quantization-20260904/*
-!/benchmark-results/quantization-20260904/prepare-laguna-heldout-corpus.py
-!/benchmark-results/gemma-performance-20260929/
-/benchmark-results/gemma-performance-20260929/*
-!/benchmark-results/gemma-performance-20260929/run_generated_task22.py
-/.wrangler/
-/model-stack.local.json
-**/.build/
-/Optional/Vision/Artifacts/

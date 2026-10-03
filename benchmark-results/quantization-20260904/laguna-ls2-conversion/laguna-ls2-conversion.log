@@ -1,0 +1,2351 @@
+Laguna Q4R8 LS2 rescore preflight: 438 Q4 modules, 39 Q8 routers preserved, 1 standard Q4 embedding(s) preserved
+source tensors=30513 template tensors=1634 experts=256 device=Device(gpu, 0)
+[source 1/14] indexed model-00001-of-00014.safetensors
+[source 2/14] indexed model-00002-of-00014.safetensors
+[source 3/14] indexed model-00003-of-00014.safetensors
+[source 4/14] indexed model-00004-of-00014.safetensors
+[source 5/14] indexed model-00005-of-00014.safetensors
+[source 6/14] indexed model-00006-of-00014.safetensors
+[source 7/14] indexed model-00007-of-00014.safetensors
+[source 8/14] indexed model-00008-of-00014.safetensors
+[source 9/14] indexed model-00009-of-00014.safetensors
+[source 10/14] indexed model-00010-of-00014.safetensors
+[source 11/14] indexed model-00011-of-00014.safetensors
+[source 12/14] indexed model-00012-of-00014.safetensors
+[source 13/14] indexed model-00013-of-00014.safetensors
+[source 14/14] indexed model-00014-of-00014.safetensors
+Template identity checks passed for dense Q4, routed gate/up/down Q4, and router Q8.
+Preflight peak MLX memory: 144900240 bytes.
+[shard 1/4] model-00001-of-00004.safetensors: 125 Q4 module(s)
+  [1/438] language_model.model.layers.0.mlp.down_proj source_tensors_remaining=30272 mlx_active_bytes=17825792
+  [2/438] language_model.model.layers.0.mlp.gate_proj source_tensors_remaining=30271 mlx_active_bytes=27262976
+  [3/438] language_model.model.layers.0.mlp.up_proj source_tensors_remaining=30270 mlx_active_bytes=36700160
+  [4/438] language_model.model.layers.0.self_attn.g_proj source_tensors_remaining=30269 mlx_active_bytes=36755456
+  [5/438] language_model.model.layers.0.self_attn.k_proj source_tensors_remaining=30268 mlx_active_bytes=37935104
+  [6/438] language_model.model.layers.0.self_attn.o_proj source_tensors_remaining=30267 mlx_active_bytes=45012992
+  [7/438] language_model.model.layers.0.self_attn.q_proj source_tensors_remaining=30266 mlx_active_bytes=52090880
+  [8/438] language_model.model.layers.0.self_attn.v_proj source_tensors_remaining=30265 mlx_active_bytes=53270528
+  [9/438] language_model.model.layers.1.mlp.shared_expert.down_proj source_tensors_remaining=30264 mlx_active_bytes=51763200
+  [10/438] language_model.model.layers.1.mlp.shared_expert.gate_proj source_tensors_remaining=30263 mlx_active_bytes=52353024
+  [11/438] language_model.model.layers.1.mlp.shared_expert.up_proj source_tensors_remaining=30262 mlx_active_bytes=52942848
+    layer 1 down_proj: experts 0...15
+    layer 1 down_proj: experts 16...31
+    layer 1 down_proj: experts 32...47
+    layer 1 down_proj: experts 48...63
+    layer 1 down_proj: experts 64...79
+    layer 1 down_proj: experts 80...95
+    layer 1 down_proj: experts 96...111
+    layer 1 down_proj: experts 112...127
+    layer 1 down_proj: experts 128...143
+    layer 1 down_proj: experts 144...159
+    layer 1 down_proj: experts 160...175
+    layer 1 down_proj: experts 176...191
+    layer 1 down_proj: experts 192...207
+    layer 1 down_proj: experts 208...223
+    layer 1 down_proj: experts 224...239
+    layer 1 down_proj: experts 240...255
+  [12/438] language_model.model.layers.1.mlp.switch_mlp.down_proj source_tensors_remaining=30006 mlx_active_bytes=201840640
+    layer 1 gate_proj: experts 0...15
+    layer 1 gate_proj: experts 16...31
+    layer 1 gate_proj: experts 32...47
+    layer 1 gate_proj: experts 48...63
+    layer 1 gate_proj: experts 64...79
+    layer 1 gate_proj: experts 80...95
+    layer 1 gate_proj: experts 96...111
+    layer 1 gate_proj: experts 112...127
+    layer 1 gate_proj: experts 128...143
+    layer 1 gate_proj: experts 144...159
+    layer 1 gate_proj: experts 160...175
+    layer 1 gate_proj: experts 176...191
+    layer 1 gate_proj: experts 192...207
+    layer 1 gate_proj: experts 208...223
+    layer 1 gate_proj: experts 224...239
+    layer 1 gate_proj: experts 240...255
+  [13/438] language_model.model.layers.1.mlp.switch_mlp.gate_proj source_tensors_remaining=29750 mlx_active_bytes=350738432
+    layer 1 up_proj: experts 0...15
+    layer 1 up_proj: experts 16...31
+    layer 1 up_proj: experts 32...47
+    layer 1 up_proj: experts 48...63
+    layer 1 up_proj: experts 64...79
+    layer 1 up_proj: experts 80...95
+    layer 1 up_proj: experts 96...111
+    layer 1 up_proj: experts 112...127
+    layer 1 up_proj: experts 128...143
+    layer 1 up_proj: experts 144...159
+    layer 1 up_proj: experts 160...175
+    layer 1 up_proj: experts 176...191
+    layer 1 up_proj: experts 192...207
+    layer 1 up_proj: experts 208...223
+    layer 1 up_proj: experts 224...239
+    layer 1 up_proj: experts 240...255
+  [14/438] language_model.model.layers.1.mlp.switch_mlp.up_proj source_tensors_remaining=29494 mlx_active_bytes=499636224
+  [15/438] language_model.model.layers.1.self_attn.g_proj source_tensors_remaining=29493 mlx_active_bytes=499709952
+  [16/438] language_model.model.layers.1.self_attn.k_proj source_tensors_remaining=29492 mlx_active_bytes=500889600
+  [17/438] language_model.model.layers.1.self_attn.o_proj source_tensors_remaining=29491 mlx_active_bytes=510326784
+  [18/438] language_model.model.layers.1.self_attn.q_proj source_tensors_remaining=29490 mlx_active_bytes=519763968
+  [19/438] language_model.model.layers.1.self_attn.v_proj source_tensors_remaining=29489 mlx_active_bytes=520943616
+  [20/438] language_model.model.layers.10.mlp.shared_expert.down_proj source_tensors_remaining=29488 mlx_active_bytes=521533440
+  [21/438] language_model.model.layers.10.mlp.shared_expert.gate_proj source_tensors_remaining=29487 mlx_active_bytes=522123264
+  [22/438] language_model.model.layers.10.mlp.shared_expert.up_proj source_tensors_remaining=29486 mlx_active_bytes=522713088
+    layer 10 down_proj: experts 0...15
+    layer 10 down_proj: experts 16...31
+    layer 10 down_proj: experts 32...47
+    layer 10 down_proj: experts 48...63
+    layer 10 down_proj: experts 64...79
+    layer 10 down_proj: experts 80...95
+    layer 10 down_proj: experts 96...111
+    layer 10 down_proj: experts 112...127
+    layer 10 down_proj: experts 128...143
+    layer 10 down_proj: experts 144...159
+    layer 10 down_proj: experts 160...175
+    layer 10 down_proj: experts 176...191
+    layer 10 down_proj: experts 192...207
+    layer 10 down_proj: experts 208...223
+    layer 10 down_proj: experts 224...239
+    layer 10 down_proj: experts 240...255
+  [23/438] language_model.model.layers.10.mlp.switch_mlp.down_proj source_tensors_remaining=29230 mlx_active_bytes=673708032
+    layer 10 gate_proj: experts 0...15
+    layer 10 gate_proj: experts 16...31
+    layer 10 gate_proj: experts 32...47
+    layer 10 gate_proj: experts 48...63
+    layer 10 gate_proj: experts 64...79
+    layer 10 gate_proj: experts 80...95
+    layer 10 gate_proj: experts 96...111
+    layer 10 gate_proj: experts 112...127
+    layer 10 gate_proj: experts 128...143
+    layer 10 gate_proj: experts 144...159
+    layer 10 gate_proj: experts 160...175
+    layer 10 gate_proj: experts 176...191
+    layer 10 gate_proj: experts 192...207
+    layer 10 gate_proj: experts 208...223
+    layer 10 gate_proj: experts 224...239
+    layer 10 gate_proj: experts 240...255
+  [24/438] language_model.model.layers.10.mlp.switch_mlp.gate_proj source_tensors_remaining=28974 mlx_active_bytes=824702976
+    layer 10 up_proj: experts 0...15
+    layer 10 up_proj: experts 16...31
+    layer 10 up_proj: experts 32...47
+    layer 10 up_proj: experts 48...63
+    layer 10 up_proj: experts 64...79
+    layer 10 up_proj: experts 80...95
+    layer 10 up_proj: experts 96...111
+    layer 10 up_proj: experts 112...127
+    layer 10 up_proj: experts 128...143
+    layer 10 up_proj: experts 144...159
+    layer 10 up_proj: experts 160...175
+    layer 10 up_proj: experts 176...191
+    layer 10 up_proj: experts 192...207
+    layer 10 up_proj: experts 208...223
+    layer 10 up_proj: experts 224...239
+    layer 10 up_proj: experts 240...255
+  [25/438] language_model.model.layers.10.mlp.switch_mlp.up_proj source_tensors_remaining=28718 mlx_active_bytes=975697920
+  [26/438] language_model.model.layers.10.self_attn.g_proj source_tensors_remaining=28717 mlx_active_bytes=975771648
+  [27/438] language_model.model.layers.10.self_attn.k_proj source_tensors_remaining=28716 mlx_active_bytes=976951296
+  [28/438] language_model.model.layers.10.self_attn.o_proj source_tensors_remaining=28715 mlx_active_bytes=986388480
+  [29/438] language_model.model.layers.10.self_attn.q_proj source_tensors_remaining=28714 mlx_active_bytes=995825664
+  [30/438] language_model.model.layers.10.self_attn.v_proj source_tensors_remaining=28713 mlx_active_bytes=997005312
+    layer 11 gate_proj: experts 0...15
+    layer 11 gate_proj: experts 16...31
+    layer 11 gate_proj: experts 32...47
+    layer 11 gate_proj: experts 48...63
+    layer 11 gate_proj: experts 64...79
+    layer 11 gate_proj: experts 80...95
+    layer 11 gate_proj: experts 96...111
+    layer 11 gate_proj: experts 112...127
+    layer 11 gate_proj: experts 128...143
+    layer 11 gate_proj: experts 144...159
+    layer 11 gate_proj: experts 160...175
+    layer 11 gate_proj: experts 176...191
+    layer 11 gate_proj: experts 192...207
+    layer 11 gate_proj: experts 208...223
+    layer 11 gate_proj: experts 224...239
+    layer 11 gate_proj: experts 240...255
+  [31/438] language_model.model.layers.11.mlp.switch_mlp.gate_proj source_tensors_remaining=28457 mlx_active_bytes=1148000256
+    layer 11 up_proj: experts 0...15
+    layer 11 up_proj: experts 16...31
+    layer 11 up_proj: experts 32...47
+    layer 11 up_proj: experts 48...63
+    layer 11 up_proj: experts 64...79
+    layer 11 up_proj: experts 80...95
+    layer 11 up_proj: experts 96...111
+    layer 11 up_proj: experts 112...127
+    layer 11 up_proj: experts 128...143
+    layer 11 up_proj: experts 144...159
+    layer 11 up_proj: experts 160...175
+    layer 11 up_proj: experts 176...191
+    layer 11 up_proj: experts 192...207
+    layer 11 up_proj: experts 208...223
+    layer 11 up_proj: experts 224...239
+    layer 11 up_proj: experts 240...255
+  [32/438] language_model.model.layers.11.mlp.switch_mlp.up_proj source_tensors_remaining=28201 mlx_active_bytes=1298995200
+  [33/438] language_model.model.layers.11.self_attn.g_proj source_tensors_remaining=28200 mlx_active_bytes=1299068928
+  [34/438] language_model.model.layers.11.self_attn.k_proj source_tensors_remaining=28199 mlx_active_bytes=1300248576
+  [35/438] language_model.model.layers.11.self_attn.o_proj source_tensors_remaining=28198 mlx_active_bytes=1309685760
+  [36/438] language_model.model.layers.11.self_attn.q_proj source_tensors_remaining=28197 mlx_active_bytes=1319122944
+  [37/438] language_model.model.layers.11.self_attn.v_proj source_tensors_remaining=28196 mlx_active_bytes=1320302592
+  [38/438] language_model.model.layers.2.mlp.shared_expert.down_proj source_tensors_remaining=28195 mlx_active_bytes=1320892416
+  [39/438] language_model.model.layers.2.mlp.shared_expert.gate_proj source_tensors_remaining=28194 mlx_active_bytes=1321482240
+  [40/438] language_model.model.layers.2.mlp.shared_expert.up_proj source_tensors_remaining=28193 mlx_active_bytes=1322072064
+    layer 2 down_proj: experts 0...15
+    layer 2 down_proj: experts 16...31
+    layer 2 down_proj: experts 32...47
+    layer 2 down_proj: experts 48...63
+    layer 2 down_proj: experts 64...79
+    layer 2 down_proj: experts 80...95
+    layer 2 down_proj: experts 96...111
+    layer 2 down_proj: experts 112...127
+    layer 2 down_proj: experts 128...143
+    layer 2 down_proj: experts 144...159
+    layer 2 down_proj: experts 160...175
+    layer 2 down_proj: experts 176...191
+    layer 2 down_proj: experts 192...207
+    layer 2 down_proj: experts 208...223
+    layer 2 down_proj: experts 224...239
+    layer 2 down_proj: experts 240...255
+  [41/438] language_model.model.layers.2.mlp.switch_mlp.down_proj source_tensors_remaining=27937 mlx_active_bytes=1473067008
+    layer 2 gate_proj: experts 0...15
+    layer 2 gate_proj: experts 16...31
+    layer 2 gate_proj: experts 32...47
+    layer 2 gate_proj: experts 48...63
+    layer 2 gate_proj: experts 64...79
+    layer 2 gate_proj: experts 80...95
+    layer 2 gate_proj: experts 96...111
+    layer 2 gate_proj: experts 112...127
+    layer 2 gate_proj: experts 128...143
+    layer 2 gate_proj: experts 144...159
+    layer 2 gate_proj: experts 160...175
+    layer 2 gate_proj: experts 176...191
+    layer 2 gate_proj: experts 192...207
+    layer 2 gate_proj: experts 208...223
+    layer 2 gate_proj: experts 224...239
+    layer 2 gate_proj: experts 240...255
+  [42/438] language_model.model.layers.2.mlp.switch_mlp.gate_proj source_tensors_remaining=27681 mlx_active_bytes=1624061952
+    layer 2 up_proj: experts 0...15
+    layer 2 up_proj: experts 16...31
+    layer 2 up_proj: experts 32...47
+    layer 2 up_proj: experts 48...63
+    layer 2 up_proj: experts 64...79
+    layer 2 up_proj: experts 80...95
+    layer 2 up_proj: experts 96...111
+    layer 2 up_proj: experts 112...127
+    layer 2 up_proj: experts 128...143
+    layer 2 up_proj: experts 144...159
+    layer 2 up_proj: experts 160...175
+    layer 2 up_proj: experts 176...191
+    layer 2 up_proj: experts 192...207
+    layer 2 up_proj: experts 208...223
+    layer 2 up_proj: experts 224...239
+    layer 2 up_proj: experts 240...255
+  [43/438] language_model.model.layers.2.mlp.switch_mlp.up_proj source_tensors_remaining=27425 mlx_active_bytes=1775056896
+  [44/438] language_model.model.layers.2.self_attn.g_proj source_tensors_remaining=27424 mlx_active_bytes=1775130624
+  [45/438] language_model.model.layers.2.self_attn.k_proj source_tensors_remaining=27423 mlx_active_bytes=1776310272
+  [46/438] language_model.model.layers.2.self_attn.o_proj source_tensors_remaining=27422 mlx_active_bytes=1785747456
+  [47/438] language_model.model.layers.2.self_attn.q_proj source_tensors_remaining=27421 mlx_active_bytes=1795184640
+  [48/438] language_model.model.layers.2.self_attn.v_proj source_tensors_remaining=27420 mlx_active_bytes=1796364288
+  [49/438] language_model.model.layers.3.mlp.shared_expert.down_proj source_tensors_remaining=27419 mlx_active_bytes=1796954112
+  [50/438] language_model.model.layers.3.mlp.shared_expert.gate_proj source_tensors_remaining=27418 mlx_active_bytes=1797543936
+  [51/438] language_model.model.layers.3.mlp.shared_expert.up_proj source_tensors_remaining=27417 mlx_active_bytes=1798133760
+    layer 3 down_proj: experts 0...15
+    layer 3 down_proj: experts 16...31
+    layer 3 down_proj: experts 32...47
+    layer 3 down_proj: experts 48...63
+    layer 3 down_proj: experts 64...79
+    layer 3 down_proj: experts 80...95
+    layer 3 down_proj: experts 96...111
+    layer 3 down_proj: experts 112...127
+    layer 3 down_proj: experts 128...143
+    layer 3 down_proj: experts 144...159
+    layer 3 down_proj: experts 160...175
+    layer 3 down_proj: experts 176...191
+    layer 3 down_proj: experts 192...207
+    layer 3 down_proj: experts 208...223
+    layer 3 down_proj: experts 224...239
+    layer 3 down_proj: experts 240...255
+  [52/438] language_model.model.layers.3.mlp.switch_mlp.down_proj source_tensors_remaining=27161 mlx_active_bytes=1949128704
+    layer 3 gate_proj: experts 0...15
+    layer 3 gate_proj: experts 16...31
+    layer 3 gate_proj: experts 32...47
+    layer 3 gate_proj: experts 48...63
+    layer 3 gate_proj: experts 64...79
+    layer 3 gate_proj: experts 80...95
+    layer 3 gate_proj: experts 96...111
+    layer 3 gate_proj: experts 112...127
+    layer 3 gate_proj: experts 128...143
+    layer 3 gate_proj: experts 144...159
+    layer 3 gate_proj: experts 160...175
+    layer 3 gate_proj: experts 176...191
+    layer 3 gate_proj: experts 192...207
+    layer 3 gate_proj: experts 208...223
+    layer 3 gate_proj: experts 224...239
+    layer 3 gate_proj: experts 240...255
+  [53/438] language_model.model.layers.3.mlp.switch_mlp.gate_proj source_tensors_remaining=26905 mlx_active_bytes=2100123648
+    layer 3 up_proj: experts 0...15
+    layer 3 up_proj: experts 16...31
+    layer 3 up_proj: experts 32...47
+    layer 3 up_proj: experts 48...63
+    layer 3 up_proj: experts 64...79
+    layer 3 up_proj: experts 80...95
+    layer 3 up_proj: experts 96...111
+    layer 3 up_proj: experts 112...127
+    layer 3 up_proj: experts 128...143
+    layer 3 up_proj: experts 144...159
+    layer 3 up_proj: experts 160...175
+    layer 3 up_proj: experts 176...191
+    layer 3 up_proj: experts 192...207
+    layer 3 up_proj: experts 208...223
+    layer 3 up_proj: experts 224...239
+    layer 3 up_proj: experts 240...255
+  [54/438] language_model.model.layers.3.mlp.switch_mlp.up_proj source_tensors_remaining=26649 mlx_active_bytes=2251118592
+  [55/438] language_model.model.layers.3.self_attn.g_proj source_tensors_remaining=26648 mlx_active_bytes=2251192320
+  [56/438] language_model.model.layers.3.self_attn.k_proj source_tensors_remaining=26647 mlx_active_bytes=2252371968
+  [57/438] language_model.model.layers.3.self_attn.o_proj source_tensors_remaining=26646 mlx_active_bytes=2261809152
+  [58/438] language_model.model.layers.3.self_attn.q_proj source_tensors_remaining=26645 mlx_active_bytes=2271246336
+  [59/438] language_model.model.layers.3.self_attn.v_proj source_tensors_remaining=26644 mlx_active_bytes=2272425984
+  [60/438] language_model.model.layers.4.mlp.shared_expert.down_proj source_tensors_remaining=26643 mlx_active_bytes=2273015808
+  [61/438] language_model.model.layers.4.mlp.shared_expert.gate_proj source_tensors_remaining=26642 mlx_active_bytes=2273605632
+  [62/438] language_model.model.layers.4.mlp.shared_expert.up_proj source_tensors_remaining=26641 mlx_active_bytes=2274195456
+    layer 4 down_proj: experts 0...15
+    layer 4 down_proj: experts 16...31
+    layer 4 down_proj: experts 32...47
+    layer 4 down_proj: experts 48...63
+    layer 4 down_proj: experts 64...79
+    layer 4 down_proj: experts 80...95
+    layer 4 down_proj: experts 96...111
+    layer 4 down_proj: experts 112...127
+    layer 4 down_proj: experts 128...143
+    layer 4 down_proj: experts 144...159
+    layer 4 down_proj: experts 160...175
+    layer 4 down_proj: experts 176...191
+    layer 4 down_proj: experts 192...207
+    layer 4 down_proj: experts 208...223
+    layer 4 down_proj: experts 224...239
+    layer 4 down_proj: experts 240...255
+  [63/438] language_model.model.layers.4.mlp.switch_mlp.down_proj source_tensors_remaining=26385 mlx_active_bytes=2425190400
+    layer 4 gate_proj: experts 0...15
+    layer 4 gate_proj: experts 16...31
+    layer 4 gate_proj: experts 32...47
+    layer 4 gate_proj: experts 48...63
+    layer 4 gate_proj: experts 64...79
+    layer 4 gate_proj: experts 80...95
+    layer 4 gate_proj: experts 96...111
+    layer 4 gate_proj: experts 112...127
+    layer 4 gate_proj: experts 128...143
+    layer 4 gate_proj: experts 144...159
+    layer 4 gate_proj: experts 160...175
+    layer 4 gate_proj: experts 176...191
+    layer 4 gate_proj: experts 192...207
+    layer 4 gate_proj: experts 208...223
+    layer 4 gate_proj: experts 224...239
+    layer 4 gate_proj: experts 240...255
+  [64/438] language_model.model.layers.4.mlp.switch_mlp.gate_proj source_tensors_remaining=26129 mlx_active_bytes=2576185344
+    layer 4 up_proj: experts 0...15
+    layer 4 up_proj: experts 16...31
+    layer 4 up_proj: experts 32...47
+    layer 4 up_proj: experts 48...63
+    layer 4 up_proj: experts 64...79
+    layer 4 up_proj: experts 80...95
+    layer 4 up_proj: experts 96...111
+    layer 4 up_proj: experts 112...127
+    layer 4 up_proj: experts 128...143
+    layer 4 up_proj: experts 144...159
+    layer 4 up_proj: experts 160...175
+    layer 4 up_proj: experts 176...191
+    layer 4 up_proj: experts 192...207
+    layer 4 up_proj: experts 208...223
+    layer 4 up_proj: experts 224...239
+    layer 4 up_proj: experts 240...255
+  [65/438] language_model.model.layers.4.mlp.switch_mlp.up_proj source_tensors_remaining=25873 mlx_active_bytes=2727180288
+  [66/438] language_model.model.layers.4.self_attn.g_proj source_tensors_remaining=25872 mlx_active_bytes=2727235584
+  [67/438] language_model.model.layers.4.self_attn.k_proj source_tensors_remaining=25871 mlx_active_bytes=2728415232
+  [68/438] language_model.model.layers.4.self_attn.o_proj source_tensors_remaining=25870 mlx_active_bytes=2735493120
+  [69/438] language_model.model.layers.4.self_attn.q_proj source_tensors_remaining=25869 mlx_active_bytes=2742571008
+  [70/438] language_model.model.layers.4.self_attn.v_proj source_tensors_remaining=25868 mlx_active_bytes=2743750656
+  [71/438] language_model.model.layers.5.mlp.shared_expert.down_proj source_tensors_remaining=25867 mlx_active_bytes=2744340480
+  [72/438] language_model.model.layers.5.mlp.shared_expert.gate_proj source_tensors_remaining=25866 mlx_active_bytes=2744930304
+  [73/438] language_model.model.layers.5.mlp.shared_expert.up_proj source_tensors_remaining=25865 mlx_active_bytes=2745520128
+    layer 5 down_proj: experts 0...15
+    layer 5 down_proj: experts 16...31
+    layer 5 down_proj: experts 32...47
+    layer 5 down_proj: experts 48...63
+    layer 5 down_proj: experts 64...79
+    layer 5 down_proj: experts 80...95
+    layer 5 down_proj: experts 96...111
+    layer 5 down_proj: experts 112...127
+    layer 5 down_proj: experts 128...143
+    layer 5 down_proj: experts 144...159
+    layer 5 down_proj: experts 160...175
+    layer 5 down_proj: experts 176...191
+    layer 5 down_proj: experts 192...207
+    layer 5 down_proj: experts 208...223
+    layer 5 down_proj: experts 224...239
+    layer 5 down_proj: experts 240...255
+  [74/438] language_model.model.layers.5.mlp.switch_mlp.down_proj source_tensors_remaining=25609 mlx_active_bytes=2896515072
+    layer 5 gate_proj: experts 0...15
+    layer 5 gate_proj: experts 16...31
+    layer 5 gate_proj: experts 32...47
+    layer 5 gate_proj: experts 48...63
+    layer 5 gate_proj: experts 64...79
+    layer 5 gate_proj: experts 80...95
+    layer 5 gate_proj: experts 96...111
+    layer 5 gate_proj: experts 112...127
+    layer 5 gate_proj: experts 128...143
+    layer 5 gate_proj: experts 144...159
+    layer 5 gate_proj: experts 160...175
+    layer 5 gate_proj: experts 176...191
+    layer 5 gate_proj: experts 192...207
+    layer 5 gate_proj: experts 208...223
+    layer 5 gate_proj: experts 224...239
+    layer 5 gate_proj: experts 240...255
+  [75/438] language_model.model.layers.5.mlp.switch_mlp.gate_proj source_tensors_remaining=25353 mlx_active_bytes=3047510016
+    layer 5 up_proj: experts 0...15
+    layer 5 up_proj: experts 16...31
+    layer 5 up_proj: experts 32...47
+    layer 5 up_proj: experts 48...63
+    layer 5 up_proj: experts 64...79
+    layer 5 up_proj: experts 80...95
+    layer 5 up_proj: experts 96...111
+    layer 5 up_proj: experts 112...127
+    layer 5 up_proj: experts 128...143
+    layer 5 up_proj: experts 144...159
+    layer 5 up_proj: experts 160...175
+    layer 5 up_proj: experts 176...191
+    layer 5 up_proj: experts 192...207
+    layer 5 up_proj: experts 208...223
+    layer 5 up_proj: experts 224...239
+    layer 5 up_proj: experts 240...255
+  [76/438] language_model.model.layers.5.mlp.switch_mlp.up_proj source_tensors_remaining=25097 mlx_active_bytes=3198504960
+  [77/438] language_model.model.layers.5.self_attn.g_proj source_tensors_remaining=25096 mlx_active_bytes=3198578688
+  [78/438] language_model.model.layers.5.self_attn.k_proj source_tensors_remaining=25095 mlx_active_bytes=3199758336
+  [79/438] language_model.model.layers.5.self_attn.o_proj source_tensors_remaining=25094 mlx_active_bytes=3209195520
+  [80/438] language_model.model.layers.5.self_attn.q_proj source_tensors_remaining=25093 mlx_active_bytes=3218632704
+  [81/438] language_model.model.layers.5.self_attn.v_proj source_tensors_remaining=25092 mlx_active_bytes=3219812352
+  [82/438] language_model.model.layers.6.mlp.shared_expert.down_proj source_tensors_remaining=25091 mlx_active_bytes=3220402176
+  [83/438] language_model.model.layers.6.mlp.shared_expert.gate_proj source_tensors_remaining=25090 mlx_active_bytes=3220992000
+  [84/438] language_model.model.layers.6.mlp.shared_expert.up_proj source_tensors_remaining=25089 mlx_active_bytes=3221581824
+    layer 6 down_proj: experts 0...15
+    layer 6 down_proj: experts 16...31
+    layer 6 down_proj: experts 32...47
+    layer 6 down_proj: experts 48...63
+    layer 6 down_proj: experts 64...79
+    layer 6 down_proj: experts 80...95
+    layer 6 down_proj: experts 96...111
+    layer 6 down_proj: experts 112...127
+    layer 6 down_proj: experts 128...143
+    layer 6 down_proj: experts 144...159
+    layer 6 down_proj: experts 160...175
+    layer 6 down_proj: experts 176...191
+    layer 6 down_proj: experts 192...207
+    layer 6 down_proj: experts 208...223
+    layer 6 down_proj: experts 224...239
+    layer 6 down_proj: experts 240...255
+  [85/438] language_model.model.layers.6.mlp.switch_mlp.down_proj source_tensors_remaining=24833 mlx_active_bytes=3372576768
+    layer 6 gate_proj: experts 0...15
+    layer 6 gate_proj: experts 16...31
+    layer 6 gate_proj: experts 32...47
+    layer 6 gate_proj: experts 48...63
+    layer 6 gate_proj: experts 64...79
+    layer 6 gate_proj: experts 80...95
+    layer 6 gate_proj: experts 96...111
+    layer 6 gate_proj: experts 112...127
+    layer 6 gate_proj: experts 128...143
+    layer 6 gate_proj: experts 144...159
+    layer 6 gate_proj: experts 160...175
+    layer 6 gate_proj: experts 176...191
+    layer 6 gate_proj: experts 192...207
+    layer 6 gate_proj: experts 208...223
+    layer 6 gate_proj: experts 224...239
+    layer 6 gate_proj: experts 240...255
+  [86/438] language_model.model.layers.6.mlp.switch_mlp.gate_proj source_tensors_remaining=24577 mlx_active_bytes=3523571712
+    layer 6 up_proj: experts 0...15
+    layer 6 up_proj: experts 16...31
+    layer 6 up_proj: experts 32...47
+    layer 6 up_proj: experts 48...63
+    layer 6 up_proj: experts 64...79
+    layer 6 up_proj: experts 80...95
+    layer 6 up_proj: experts 96...111
+    layer 6 up_proj: experts 112...127
+    layer 6 up_proj: experts 128...143
+    layer 6 up_proj: experts 144...159
+    layer 6 up_proj: experts 160...175
+    layer 6 up_proj: experts 176...191
+    layer 6 up_proj: experts 192...207
+    layer 6 up_proj: experts 208...223
+    layer 6 up_proj: experts 224...239
+    layer 6 up_proj: experts 240...255
+  [87/438] language_model.model.layers.6.mlp.switch_mlp.up_proj source_tensors_remaining=24321 mlx_active_bytes=3674566656
+  [88/438] language_model.model.layers.6.self_attn.g_proj source_tensors_remaining=24320 mlx_active_bytes=3674640384
+  [89/438] language_model.model.layers.6.self_attn.k_proj source_tensors_remaining=24319 mlx_active_bytes=3675820032
+  [90/438] language_model.model.layers.6.self_attn.o_proj source_tensors_remaining=24318 mlx_active_bytes=3685257216
+  [91/438] language_model.model.layers.6.self_attn.q_proj source_tensors_remaining=24317 mlx_active_bytes=3694694400
+  [92/438] language_model.model.layers.6.self_attn.v_proj source_tensors_remaining=24316 mlx_active_bytes=3695874048
+  [93/438] language_model.model.layers.7.mlp.shared_expert.down_proj source_tensors_remaining=24315 mlx_active_bytes=3696463872
+  [94/438] language_model.model.layers.7.mlp.shared_expert.gate_proj source_tensors_remaining=24314 mlx_active_bytes=3697053696
+  [95/438] language_model.model.layers.7.mlp.shared_expert.up_proj source_tensors_remaining=24313 mlx_active_bytes=3697643520
+    layer 7 down_proj: experts 0...15
+    layer 7 down_proj: experts 16...31
+    layer 7 down_proj: experts 32...47
+    layer 7 down_proj: experts 48...63
+    layer 7 down_proj: experts 64...79
+    layer 7 down_proj: experts 80...95
+    layer 7 down_proj: experts 96...111
+    layer 7 down_proj: experts 112...127
+    layer 7 down_proj: experts 128...143
+    layer 7 down_proj: experts 144...159
+    layer 7 down_proj: experts 160...175
+    layer 7 down_proj: experts 176...191
+    layer 7 down_proj: experts 192...207
+    layer 7 down_proj: experts 208...223
+    layer 7 down_proj: experts 224...239
+    layer 7 down_proj: experts 240...255
+  [96/438] language_model.model.layers.7.mlp.switch_mlp.down_proj source_tensors_remaining=24057 mlx_active_bytes=3848638464
+    layer 7 gate_proj: experts 0...15
+    layer 7 gate_proj: experts 16...31
+    layer 7 gate_proj: experts 32...47
+    layer 7 gate_proj: experts 48...63
+    layer 7 gate_proj: experts 64...79
+    layer 7 gate_proj: experts 80...95
+    layer 7 gate_proj: experts 96...111
+    layer 7 gate_proj: experts 112...127
+    layer 7 gate_proj: experts 128...143
+    layer 7 gate_proj: experts 144...159
+    layer 7 gate_proj: experts 160...175
+    layer 7 gate_proj: experts 176...191
+    layer 7 gate_proj: experts 192...207
+    layer 7 gate_proj: experts 208...223
+    layer 7 gate_proj: experts 224...239
+    layer 7 gate_proj: experts 240...255
+  [97/438] language_model.model.layers.7.mlp.switch_mlp.gate_proj source_tensors_remaining=23801 mlx_active_bytes=3999633408
+    layer 7 up_proj: experts 0...15
+    layer 7 up_proj: experts 16...31
+    layer 7 up_proj: experts 32...47
+    layer 7 up_proj: experts 48...63
+    layer 7 up_proj: experts 64...79
+    layer 7 up_proj: experts 80...95
+    layer 7 up_proj: experts 96...111
+    layer 7 up_proj: experts 112...127
+    layer 7 up_proj: experts 128...143
+    layer 7 up_proj: experts 144...159
+    layer 7 up_proj: experts 160...175
+    layer 7 up_proj: experts 176...191
+    layer 7 up_proj: experts 192...207
+    layer 7 up_proj: experts 208...223
+    layer 7 up_proj: experts 224...239
+    layer 7 up_proj: experts 240...255
+  [98/438] language_model.model.layers.7.mlp.switch_mlp.up_proj source_tensors_remaining=23545 mlx_active_bytes=4150628352
+  [99/438] language_model.model.layers.7.self_attn.g_proj source_tensors_remaining=23544 mlx_active_bytes=4150702080
+  [100/438] language_model.model.layers.7.self_attn.k_proj source_tensors_remaining=23543 mlx_active_bytes=4151881728
+  [101/438] language_model.model.layers.7.self_attn.o_proj source_tensors_remaining=23542 mlx_active_bytes=4161318912
+  [102/438] language_model.model.layers.7.self_attn.q_proj source_tensors_remaining=23541 mlx_active_bytes=4170756096
+  [103/438] language_model.model.layers.7.self_attn.v_proj source_tensors_remaining=23540 mlx_active_bytes=4171935744
+  [104/438] language_model.model.layers.8.mlp.shared_expert.down_proj source_tensors_remaining=23539 mlx_active_bytes=4172525568
+  [105/438] language_model.model.layers.8.mlp.shared_expert.gate_proj source_tensors_remaining=23538 mlx_active_bytes=4173115392
+  [106/438] language_model.model.layers.8.mlp.shared_expert.up_proj source_tensors_remaining=23537 mlx_active_bytes=4173705216
+    layer 8 down_proj: experts 0...15
+    layer 8 down_proj: experts 16...31
+    layer 8 down_proj: experts 32...47
+    layer 8 down_proj: experts 48...63
+    layer 8 down_proj: experts 64...79
+    layer 8 down_proj: experts 80...95
+    layer 8 down_proj: experts 96...111
+    layer 8 down_proj: experts 112...127
+    layer 8 down_proj: experts 128...143
+    layer 8 down_proj: experts 144...159
+    layer 8 down_proj: experts 160...175
+    layer 8 down_proj: experts 176...191
+    layer 8 down_proj: experts 192...207
+    layer 8 down_proj: experts 208...223
+    layer 8 down_proj: experts 224...239
+    layer 8 down_proj: experts 240...255
+  [107/438] language_model.model.layers.8.mlp.switch_mlp.down_proj source_tensors_remaining=23281 mlx_active_bytes=4324700160
+    layer 8 gate_proj: experts 0...15
+    layer 8 gate_proj: experts 16...31
+    layer 8 gate_proj: experts 32...47
+    layer 8 gate_proj: experts 48...63
+    layer 8 gate_proj: experts 64...79
+    layer 8 gate_proj: experts 80...95
+    layer 8 gate_proj: experts 96...111
+    layer 8 gate_proj: experts 112...127
+    layer 8 gate_proj: experts 128...143
+    layer 8 gate_proj: experts 144...159
+    layer 8 gate_proj: experts 160...175
+    layer 8 gate_proj: experts 176...191
+    layer 8 gate_proj: experts 192...207
+    layer 8 gate_proj: experts 208...223
+    layer 8 gate_proj: experts 224...239
+    layer 8 gate_proj: experts 240...255
+  [108/438] language_model.model.layers.8.mlp.switch_mlp.gate_proj source_tensors_remaining=23025 mlx_active_bytes=4475695104
+    layer 8 up_proj: experts 0...15
+    layer 8 up_proj: experts 16...31
+    layer 8 up_proj: experts 32...47
+    layer 8 up_proj: experts 48...63
+    layer 8 up_proj: experts 64...79
+    layer 8 up_proj: experts 80...95
+    layer 8 up_proj: experts 96...111
+    layer 8 up_proj: experts 112...127
+    layer 8 up_proj: experts 128...143
+    layer 8 up_proj: experts 144...159
+    layer 8 up_proj: experts 160...175
+    layer 8 up_proj: experts 176...191
+    layer 8 up_proj: experts 192...207
+    layer 8 up_proj: experts 208...223
+    layer 8 up_proj: experts 224...239
+    layer 8 up_proj: experts 240...255
+  [109/438] language_model.model.layers.8.mlp.switch_mlp.up_proj source_tensors_remaining=22769 mlx_active_bytes=4626690048
+  [110/438] language_model.model.layers.8.self_attn.g_proj source_tensors_remaining=22768 mlx_active_bytes=4626745344
+  [111/438] language_model.model.layers.8.self_attn.k_proj source_tensors_remaining=22767 mlx_active_bytes=4627924992
+  [112/438] language_model.model.layers.8.self_attn.o_proj source_tensors_remaining=22766 mlx_active_bytes=4635002880
+  [113/438] language_model.model.layers.8.self_attn.q_proj source_tensors_remaining=22765 mlx_active_bytes=4642080768
+  [114/438] language_model.model.layers.8.self_attn.v_proj source_tensors_remaining=22764 mlx_active_bytes=4643260416
+  [115/438] language_model.model.layers.9.mlp.shared_expert.down_proj source_tensors_remaining=22763 mlx_active_bytes=4643850240
+  [116/438] language_model.model.layers.9.mlp.shared_expert.gate_proj source_tensors_remaining=22762 mlx_active_bytes=4644440064
+  [117/438] language_model.model.layers.9.mlp.shared_expert.up_proj source_tensors_remaining=22761 mlx_active_bytes=4645029888
+    layer 9 down_proj: experts 0...15
+    layer 9 down_proj: experts 16...31
+    layer 9 down_proj: experts 32...47
+    layer 9 down_proj: experts 48...63
+    layer 9 down_proj: experts 64...79
+    layer 9 down_proj: experts 80...95
+    layer 9 down_proj: experts 96...111
+    layer 9 down_proj: experts 112...127
+    layer 9 down_proj: experts 128...143
+    layer 9 down_proj: experts 144...159
+    layer 9 down_proj: experts 160...175
+    layer 9 down_proj: experts 176...191
+    layer 9 down_proj: experts 192...207
+    layer 9 down_proj: experts 208...223
+    layer 9 down_proj: experts 224...239
+    layer 9 down_proj: experts 240...255
+  [118/438] language_model.model.layers.9.mlp.switch_mlp.down_proj source_tensors_remaining=22505 mlx_active_bytes=4796024832
+    layer 9 gate_proj: experts 0...15
+    layer 9 gate_proj: experts 16...31
+    layer 9 gate_proj: experts 32...47
+    layer 9 gate_proj: experts 48...63
+    layer 9 gate_proj: experts 64...79
+    layer 9 gate_proj: experts 80...95
+    layer 9 gate_proj: experts 96...111
+    layer 9 gate_proj: experts 112...127
+    layer 9 gate_proj: experts 128...143
+    layer 9 gate_proj: experts 144...159
+    layer 9 gate_proj: experts 160...175
+    layer 9 gate_proj: experts 176...191
+    layer 9 gate_proj: experts 192...207
+    layer 9 gate_proj: experts 208...223
+    layer 9 gate_proj: experts 224...239
+    layer 9 gate_proj: experts 240...255
+  [119/438] language_model.model.layers.9.mlp.switch_mlp.gate_proj source_tensors_remaining=22249 mlx_active_bytes=4947019776
+    layer 9 up_proj: experts 0...15
+    layer 9 up_proj: experts 16...31
+    layer 9 up_proj: experts 32...47
+    layer 9 up_proj: experts 48...63
+    layer 9 up_proj: experts 64...79
+    layer 9 up_proj: experts 80...95
+    layer 9 up_proj: experts 96...111
+    layer 9 up_proj: experts 112...127
+    layer 9 up_proj: experts 128...143
+    layer 9 up_proj: experts 144...159
+    layer 9 up_proj: experts 160...175
+    layer 9 up_proj: experts 176...191
+    layer 9 up_proj: experts 192...207
+    layer 9 up_proj: experts 208...223
+    layer 9 up_proj: experts 224...239
+    layer 9 up_proj: experts 240...255
+  [120/438] language_model.model.layers.9.mlp.switch_mlp.up_proj source_tensors_remaining=21993 mlx_active_bytes=5098014720
+  [121/438] language_model.model.layers.9.self_attn.g_proj source_tensors_remaining=21992 mlx_active_bytes=5098088448
+  [122/438] language_model.model.layers.9.self_attn.k_proj source_tensors_remaining=21991 mlx_active_bytes=5099268096
+  [123/438] language_model.model.layers.9.self_attn.o_proj source_tensors_remaining=21990 mlx_active_bytes=5108705280
+  [124/438] language_model.model.layers.9.self_attn.q_proj source_tensors_remaining=21989 mlx_active_bytes=5118142464
+  [125/438] language_model.model.layers.9.self_attn.v_proj source_tensors_remaining=21988 mlx_active_bytes=5119322112
+[shard 2/4] model-00002-of-00004.safetensors: 122 Q4 module(s)
+  [126/438] language_model.model.layers.11.mlp.shared_expert.down_proj source_tensors_remaining=21987 mlx_active_bytes=589824
+  [127/438] language_model.model.layers.11.mlp.shared_expert.gate_proj source_tensors_remaining=21986 mlx_active_bytes=1179648
+  [128/438] language_model.model.layers.11.mlp.shared_expert.up_proj source_tensors_remaining=21985 mlx_active_bytes=1769472
+    layer 11 down_proj: experts 0...15
+    layer 11 down_proj: experts 16...31
+    layer 11 down_proj: experts 32...47
+    layer 11 down_proj: experts 48...63
+    layer 11 down_proj: experts 64...79
+    layer 11 down_proj: experts 80...95
+    layer 11 down_proj: experts 96...111
+    layer 11 down_proj: experts 112...127
+    layer 11 down_proj: experts 128...143
+    layer 11 down_proj: experts 144...159
+    layer 11 down_proj: experts 160...175
+    layer 11 down_proj: experts 176...191
+    layer 11 down_proj: experts 192...207
+    layer 11 down_proj: experts 208...223
+    layer 11 down_proj: experts 224...239
+    layer 11 down_proj: experts 240...255
+  [129/438] language_model.model.layers.11.mlp.switch_mlp.down_proj source_tensors_remaining=21729 mlx_active_bytes=152764416
+  [130/438] language_model.model.layers.12.mlp.shared_expert.down_proj source_tensors_remaining=21728 mlx_active_bytes=153354240
+  [131/438] language_model.model.layers.12.mlp.shared_expert.gate_proj source_tensors_remaining=21727 mlx_active_bytes=153944064
+  [132/438] language_model.model.layers.12.mlp.shared_expert.up_proj source_tensors_remaining=21726 mlx_active_bytes=154533888
+    layer 12 down_proj: experts 0...15
+    layer 12 down_proj: experts 16...31
+    layer 12 down_proj: experts 32...47
+    layer 12 down_proj: experts 48...63
+    layer 12 down_proj: experts 64...79
+    layer 12 down_proj: experts 80...95
+    layer 12 down_proj: experts 96...111
+    layer 12 down_proj: experts 112...127
+    layer 12 down_proj: experts 128...143
+    layer 12 down_proj: experts 144...159
+    layer 12 down_proj: experts 160...175
+    layer 12 down_proj: experts 176...191
+    layer 12 down_proj: experts 192...207
+    layer 12 down_proj: experts 208...223
+    layer 12 down_proj: experts 224...239
+    layer 12 down_proj: experts 240...255
+  [133/438] language_model.model.layers.12.mlp.switch_mlp.down_proj source_tensors_remaining=21470 mlx_active_bytes=305528832
+    layer 12 gate_proj: experts 0...15
+    layer 12 gate_proj: experts 16...31
+    layer 12 gate_proj: experts 32...47
+    layer 12 gate_proj: experts 48...63
+    layer 12 gate_proj: experts 64...79
+    layer 12 gate_proj: experts 80...95
+    layer 12 gate_proj: experts 96...111
+    layer 12 gate_proj: experts 112...127
+    layer 12 gate_proj: experts 128...143
+    layer 12 gate_proj: experts 144...159
+    layer 12 gate_proj: experts 160...175
+    layer 12 gate_proj: experts 176...191
+    layer 12 gate_proj: experts 192...207
+    layer 12 gate_proj: experts 208...223
+    layer 12 gate_proj: experts 224...239
+    layer 12 gate_proj: experts 240...255
+  [134/438] language_model.model.layers.12.mlp.switch_mlp.gate_proj source_tensors_remaining=21214 mlx_active_bytes=456523776
+    layer 12 up_proj: experts 0...15
+    layer 12 up_proj: experts 16...31
+    layer 12 up_proj: experts 32...47
+    layer 12 up_proj: experts 48...63
+    layer 12 up_proj: experts 64...79
+    layer 12 up_proj: experts 80...95
+    layer 12 up_proj: experts 96...111
+    layer 12 up_proj: experts 112...127
+    layer 12 up_proj: experts 128...143
+    layer 12 up_proj: experts 144...159
+    layer 12 up_proj: experts 160...175
+    layer 12 up_proj: experts 176...191
+    layer 12 up_proj: experts 192...207
+    layer 12 up_proj: experts 208...223
+    layer 12 up_proj: experts 224...239
+    layer 12 up_proj: experts 240...255
+  [135/438] language_model.model.layers.12.mlp.switch_mlp.up_proj source_tensors_remaining=20958 mlx_active_bytes=607518720
+  [136/438] language_model.model.layers.12.self_attn.g_proj source_tensors_remaining=20957 mlx_active_bytes=607574016
+  [137/438] language_model.model.layers.12.self_attn.k_proj source_tensors_remaining=20956 mlx_active_bytes=608753664
+  [138/438] language_model.model.layers.12.self_attn.o_proj source_tensors_remaining=20955 mlx_active_bytes=615831552
+  [139/438] language_model.model.layers.12.self_attn.q_proj source_tensors_remaining=20954 mlx_active_bytes=622909440
+  [140/438] language_model.model.layers.12.self_attn.v_proj source_tensors_remaining=20953 mlx_active_bytes=624089088
+  [141/438] language_model.model.layers.13.mlp.shared_expert.down_proj source_tensors_remaining=20952 mlx_active_bytes=624678912
+  [142/438] language_model.model.layers.13.mlp.shared_expert.gate_proj source_tensors_remaining=20951 mlx_active_bytes=625268736
+  [143/438] language_model.model.layers.13.mlp.shared_expert.up_proj source_tensors_remaining=20950 mlx_active_bytes=625858560
+    layer 13 down_proj: experts 0...15
+    layer 13 down_proj: experts 16...31
+    layer 13 down_proj: experts 32...47
+    layer 13 down_proj: experts 48...63
+    layer 13 down_proj: experts 64...79
+    layer 13 down_proj: experts 80...95
+    layer 13 down_proj: experts 96...111
+    layer 13 down_proj: experts 112...127
+    layer 13 down_proj: experts 128...143
+    layer 13 down_proj: experts 144...159
+    layer 13 down_proj: experts 160...175
+    layer 13 down_proj: experts 176...191
+    layer 13 down_proj: experts 192...207
+    layer 13 down_proj: experts 208...223
+    layer 13 down_proj: experts 224...239
+    layer 13 down_proj: experts 240...255
+  [144/438] language_model.model.layers.13.mlp.switch_mlp.down_proj source_tensors_remaining=20694 mlx_active_bytes=776853504
+    layer 13 gate_proj: experts 0...15
+    layer 13 gate_proj: experts 16...31
+    layer 13 gate_proj: experts 32...47
+    layer 13 gate_proj: experts 48...63
+    layer 13 gate_proj: experts 64...79
+    layer 13 gate_proj: experts 80...95
+    layer 13 gate_proj: experts 96...111
+    layer 13 gate_proj: experts 112...127
+    layer 13 gate_proj: experts 128...143
+    layer 13 gate_proj: experts 144...159
+    layer 13 gate_proj: experts 160...175
+    layer 13 gate_proj: experts 176...191
+    layer 13 gate_proj: experts 192...207
+    layer 13 gate_proj: experts 208...223
+    layer 13 gate_proj: experts 224...239
+    layer 13 gate_proj: experts 240...255
+  [145/438] language_model.model.layers.13.mlp.switch_mlp.gate_proj source_tensors_remaining=20438 mlx_active_bytes=927848448
+    layer 13 up_proj: experts 0...15
+    layer 13 up_proj: experts 16...31
+    layer 13 up_proj: experts 32...47
+    layer 13 up_proj: experts 48...63
+    layer 13 up_proj: experts 64...79
+    layer 13 up_proj: experts 80...95
+    layer 13 up_proj: experts 96...111
+    layer 13 up_proj: experts 112...127
+    layer 13 up_proj: experts 128...143
+    layer 13 up_proj: experts 144...159
+    layer 13 up_proj: experts 160...175
+    layer 13 up_proj: experts 176...191
+    layer 13 up_proj: experts 192...207
+    layer 13 up_proj: experts 208...223
+    layer 13 up_proj: experts 224...239
+    layer 13 up_proj: experts 240...255
+  [146/438] language_model.model.layers.13.mlp.switch_mlp.up_proj source_tensors_remaining=20182 mlx_active_bytes=1078843392
+  [147/438] language_model.model.layers.13.self_attn.g_proj source_tensors_remaining=20181 mlx_active_bytes=1078917120
+  [148/438] language_model.model.layers.13.self_attn.k_proj source_tensors_remaining=20180 mlx_active_bytes=1080096768
+  [149/438] language_model.model.layers.13.self_attn.o_proj source_tensors_remaining=20179 mlx_active_bytes=1089533952
+  [150/438] language_model.model.layers.13.self_attn.q_proj source_tensors_remaining=20178 mlx_active_bytes=1098971136
+  [151/438] language_model.model.layers.13.self_attn.v_proj source_tensors_remaining=20177 mlx_active_bytes=1100150784
+  [152/438] language_model.model.layers.14.mlp.shared_expert.down_proj source_tensors_remaining=20176 mlx_active_bytes=1100740608
+  [153/438] language_model.model.layers.14.mlp.shared_expert.gate_proj source_tensors_remaining=20175 mlx_active_bytes=1101330432
+  [154/438] language_model.model.layers.14.mlp.shared_expert.up_proj source_tensors_remaining=20174 mlx_active_bytes=1101920256
+    layer 14 down_proj: experts 0...15
+    layer 14 down_proj: experts 16...31
+    layer 14 down_proj: experts 32...47
+    layer 14 down_proj: experts 48...63
+    layer 14 down_proj: experts 64...79
+    layer 14 down_proj: experts 80...95
+    layer 14 down_proj: experts 96...111
+    layer 14 down_proj: experts 112...127
+    layer 14 down_proj: experts 128...143
+    layer 14 down_proj: experts 144...159
+    layer 14 down_proj: experts 160...175
+    layer 14 down_proj: experts 176...191
+    layer 14 down_proj: experts 192...207
+    layer 14 down_proj: experts 208...223
+    layer 14 down_proj: experts 224...239
+    layer 14 down_proj: experts 240...255
+  [155/438] language_model.model.layers.14.mlp.switch_mlp.down_proj source_tensors_remaining=19918 mlx_active_bytes=1252915200
+    layer 14 gate_proj: experts 0...15
+    layer 14 gate_proj: experts 16...31
+    layer 14 gate_proj: experts 32...47
+    layer 14 gate_proj: experts 48...63
+    layer 14 gate_proj: experts 64...79
+    layer 14 gate_proj: experts 80...95
+    layer 14 gate_proj: experts 96...111
+    layer 14 gate_proj: experts 112...127
+    layer 14 gate_proj: experts 128...143
+    layer 14 gate_proj: experts 144...159
+    layer 14 gate_proj: experts 160...175
+    layer 14 gate_proj: experts 176...191
+    layer 14 gate_proj: experts 192...207
+    layer 14 gate_proj: experts 208...223
+    layer 14 gate_proj: experts 224...239
+    layer 14 gate_proj: experts 240...255
+  [156/438] language_model.model.layers.14.mlp.switch_mlp.gate_proj source_tensors_remaining=19662 mlx_active_bytes=1403910144
+    layer 14 up_proj: experts 0...15
+    layer 14 up_proj: experts 16...31
+    layer 14 up_proj: experts 32...47
+    layer 14 up_proj: experts 48...63
+    layer 14 up_proj: experts 64...79
+    layer 14 up_proj: experts 80...95
+    layer 14 up_proj: experts 96...111
+    layer 14 up_proj: experts 112...127
+    layer 14 up_proj: experts 128...143
+    layer 14 up_proj: experts 144...159
+    layer 14 up_proj: experts 160...175
+    layer 14 up_proj: experts 176...191
+    layer 14 up_proj: experts 192...207
+    layer 14 up_proj: experts 208...223
+    layer 14 up_proj: experts 224...239
+    layer 14 up_proj: experts 240...255
+  [157/438] language_model.model.layers.14.mlp.switch_mlp.up_proj source_tensors_remaining=19406 mlx_active_bytes=1554905088
+  [158/438] language_model.model.layers.14.self_attn.g_proj source_tensors_remaining=19405 mlx_active_bytes=1554978816
+  [159/438] language_model.model.layers.14.self_attn.k_proj source_tensors_remaining=19404 mlx_active_bytes=1556158464
+  [160/438] language_model.model.layers.14.self_attn.o_proj source_tensors_remaining=19403 mlx_active_bytes=1565595648
+  [161/438] language_model.model.layers.14.self_attn.q_proj source_tensors_remaining=19402 mlx_active_bytes=1575032832
+  [162/438] language_model.model.layers.14.self_attn.v_proj source_tensors_remaining=19401 mlx_active_bytes=1576212480
+  [163/438] language_model.model.layers.15.mlp.shared_expert.down_proj source_tensors_remaining=19400 mlx_active_bytes=1576802304
+  [164/438] language_model.model.layers.15.mlp.shared_expert.gate_proj source_tensors_remaining=19399 mlx_active_bytes=1577392128
+  [165/438] language_model.model.layers.15.mlp.shared_expert.up_proj source_tensors_remaining=19398 mlx_active_bytes=1577981952
+    layer 15 down_proj: experts 0...15
+    layer 15 down_proj: experts 16...31
+    layer 15 down_proj: experts 32...47
+    layer 15 down_proj: experts 48...63
+    layer 15 down_proj: experts 64...79
+    layer 15 down_proj: experts 80...95
+    layer 15 down_proj: experts 96...111
+    layer 15 down_proj: experts 112...127
+    layer 15 down_proj: experts 128...143
+    layer 15 down_proj: experts 144...159
+    layer 15 down_proj: experts 160...175
+    layer 15 down_proj: experts 176...191
+    layer 15 down_proj: experts 192...207
+    layer 15 down_proj: experts 208...223
+    layer 15 down_proj: experts 224...239
+    layer 15 down_proj: experts 240...255
+  [166/438] language_model.model.layers.15.mlp.switch_mlp.down_proj source_tensors_remaining=19142 mlx_active_bytes=1728976896
+    layer 15 gate_proj: experts 0...15
+    layer 15 gate_proj: experts 16...31
+    layer 15 gate_proj: experts 32...47
+    layer 15 gate_proj: experts 48...63
+    layer 15 gate_proj: experts 64...79
+    layer 15 gate_proj: experts 80...95
+    layer 15 gate_proj: experts 96...111
+    layer 15 gate_proj: experts 112...127
+    layer 15 gate_proj: experts 128...143
+    layer 15 gate_proj: experts 144...159
+    layer 15 gate_proj: experts 160...175
+    layer 15 gate_proj: experts 176...191
+    layer 15 gate_proj: experts 192...207
+    layer 15 gate_proj: experts 208...223
+    layer 15 gate_proj: experts 224...239
+    layer 15 gate_proj: experts 240...255
+  [167/438] language_model.model.layers.15.mlp.switch_mlp.gate_proj source_tensors_remaining=18886 mlx_active_bytes=1879971840
+    layer 15 up_proj: experts 0...15
+    layer 15 up_proj: experts 16...31
+    layer 15 up_proj: experts 32...47
+    layer 15 up_proj: experts 48...63
+    layer 15 up_proj: experts 64...79
+    layer 15 up_proj: experts 80...95
+    layer 15 up_proj: experts 96...111
+    layer 15 up_proj: experts 112...127
+    layer 15 up_proj: experts 128...143
+    layer 15 up_proj: experts 144...159
+    layer 15 up_proj: experts 160...175
+    layer 15 up_proj: experts 176...191
+    layer 15 up_proj: experts 192...207
+    layer 15 up_proj: experts 208...223
+    layer 15 up_proj: experts 224...239
+    layer 15 up_proj: experts 240...255
+  [168/438] language_model.model.layers.15.mlp.switch_mlp.up_proj source_tensors_remaining=18630 mlx_active_bytes=2030966784
+  [169/438] language_model.model.layers.15.self_attn.g_proj source_tensors_remaining=18629 mlx_active_bytes=2031040512
+  [170/438] language_model.model.layers.15.self_attn.k_proj source_tensors_remaining=18628 mlx_active_bytes=2032220160
+  [171/438] language_model.model.layers.15.self_attn.o_proj source_tensors_remaining=18627 mlx_active_bytes=2041657344
+  [172/438] language_model.model.layers.15.self_attn.q_proj source_tensors_remaining=18626 mlx_active_bytes=2051094528
+  [173/438] language_model.model.layers.15.self_attn.v_proj source_tensors_remaining=18625 mlx_active_bytes=2052274176
+  [174/438] language_model.model.layers.16.mlp.shared_expert.down_proj source_tensors_remaining=18624 mlx_active_bytes=2052864000
+  [175/438] language_model.model.layers.16.mlp.shared_expert.gate_proj source_tensors_remaining=18623 mlx_active_bytes=2053453824
+  [176/438] language_model.model.layers.16.mlp.shared_expert.up_proj source_tensors_remaining=18622 mlx_active_bytes=2054043648
+    layer 16 down_proj: experts 0...15
+    layer 16 down_proj: experts 16...31
+    layer 16 down_proj: experts 32...47
+    layer 16 down_proj: experts 48...63
+    layer 16 down_proj: experts 64...79
+    layer 16 down_proj: experts 80...95
+    layer 16 down_proj: experts 96...111
+    layer 16 down_proj: experts 112...127
+    layer 16 down_proj: experts 128...143
+    layer 16 down_proj: experts 144...159
+    layer 16 down_proj: experts 160...175
+    layer 16 down_proj: experts 176...191
+    layer 16 down_proj: experts 192...207
+    layer 16 down_proj: experts 208...223
+    layer 16 down_proj: experts 224...239
+    layer 16 down_proj: experts 240...255
+  [177/438] language_model.model.layers.16.mlp.switch_mlp.down_proj source_tensors_remaining=18366 mlx_active_bytes=2205038592
+    layer 16 gate_proj: experts 0...15
+    layer 16 gate_proj: experts 16...31
+    layer 16 gate_proj: experts 32...47
+    layer 16 gate_proj: experts 48...63
+    layer 16 gate_proj: experts 64...79
+    layer 16 gate_proj: experts 80...95
+    layer 16 gate_proj: experts 96...111
+    layer 16 gate_proj: experts 112...127
+    layer 16 gate_proj: experts 128...143
+    layer 16 gate_proj: experts 144...159
+    layer 16 gate_proj: experts 160...175
+    layer 16 gate_proj: experts 176...191
+    layer 16 gate_proj: experts 192...207
+    layer 16 gate_proj: experts 208...223
+    layer 16 gate_proj: experts 224...239
+    layer 16 gate_proj: experts 240...255
+  [178/438] language_model.model.layers.16.mlp.switch_mlp.gate_proj source_tensors_remaining=18110 mlx_active_bytes=2356033536
+    layer 16 up_proj: experts 0...15
+    layer 16 up_proj: experts 16...31
+    layer 16 up_proj: experts 32...47
+    layer 16 up_proj: experts 48...63
+    layer 16 up_proj: experts 64...79
+    layer 16 up_proj: experts 80...95
+    layer 16 up_proj: experts 96...111
+    layer 16 up_proj: experts 112...127
+    layer 16 up_proj: experts 128...143
+    layer 16 up_proj: experts 144...159
+    layer 16 up_proj: experts 160...175
+    layer 16 up_proj: experts 176...191
+    layer 16 up_proj: experts 192...207
+    layer 16 up_proj: experts 208...223
+    layer 16 up_proj: experts 224...239
+    layer 16 up_proj: experts 240...255
+  [179/438] language_model.model.layers.16.mlp.switch_mlp.up_proj source_tensors_remaining=17854 mlx_active_bytes=2507028480
+  [180/438] language_model.model.layers.16.self_attn.g_proj source_tensors_remaining=17853 mlx_active_bytes=2507083776
+  [181/438] language_model.model.layers.16.self_attn.k_proj source_tensors_remaining=17852 mlx_active_bytes=2508263424
+  [182/438] language_model.model.layers.16.self_attn.o_proj source_tensors_remaining=17851 mlx_active_bytes=2515341312
+  [183/438] language_model.model.layers.16.self_attn.q_proj source_tensors_remaining=17850 mlx_active_bytes=2522419200
+  [184/438] language_model.model.layers.16.self_attn.v_proj source_tensors_remaining=17849 mlx_active_bytes=2523598848
+  [185/438] language_model.model.layers.17.mlp.shared_expert.down_proj source_tensors_remaining=17848 mlx_active_bytes=2524188672
+  [186/438] language_model.model.layers.17.mlp.shared_expert.gate_proj source_tensors_remaining=17847 mlx_active_bytes=2524778496
+  [187/438] language_model.model.layers.17.mlp.shared_expert.up_proj source_tensors_remaining=17846 mlx_active_bytes=2525368320
+    layer 17 down_proj: experts 0...15
+    layer 17 down_proj: experts 16...31
+    layer 17 down_proj: experts 32...47
+    layer 17 down_proj: experts 48...63
+    layer 17 down_proj: experts 64...79
+    layer 17 down_proj: experts 80...95
+    layer 17 down_proj: experts 96...111
+    layer 17 down_proj: experts 112...127
+    layer 17 down_proj: experts 128...143
+    layer 17 down_proj: experts 144...159
+    layer 17 down_proj: experts 160...175
+    layer 17 down_proj: experts 176...191
+    layer 17 down_proj: experts 192...207
+    layer 17 down_proj: experts 208...223
+    layer 17 down_proj: experts 224...239
+    layer 17 down_proj: experts 240...255
+  [188/438] language_model.model.layers.17.mlp.switch_mlp.down_proj source_tensors_remaining=17590 mlx_active_bytes=2676363264
+    layer 17 gate_proj: experts 0...15
+    layer 17 gate_proj: experts 16...31
+    layer 17 gate_proj: experts 32...47
+    layer 17 gate_proj: experts 48...63
+    layer 17 gate_proj: experts 64...79
+    layer 17 gate_proj: experts 80...95
+    layer 17 gate_proj: experts 96...111
+    layer 17 gate_proj: experts 112...127
+    layer 17 gate_proj: experts 128...143
+    layer 17 gate_proj: experts 144...159
+    layer 17 gate_proj: experts 160...175
+    layer 17 gate_proj: experts 176...191
+    layer 17 gate_proj: experts 192...207
+    layer 17 gate_proj: experts 208...223
+    layer 17 gate_proj: experts 224...239
+    layer 17 gate_proj: experts 240...255
+  [189/438] language_model.model.layers.17.mlp.switch_mlp.gate_proj source_tensors_remaining=17334 mlx_active_bytes=2827358208
+    layer 17 up_proj: experts 0...15
+    layer 17 up_proj: experts 16...31
+    layer 17 up_proj: experts 32...47
+    layer 17 up_proj: experts 48...63
+    layer 17 up_proj: experts 64...79
+    layer 17 up_proj: experts 80...95
+    layer 17 up_proj: experts 96...111
+    layer 17 up_proj: experts 112...127
+    layer 17 up_proj: experts 128...143
+    layer 17 up_proj: experts 144...159
+    layer 17 up_proj: experts 160...175
+    layer 17 up_proj: experts 176...191
+    layer 17 up_proj: experts 192...207
+    layer 17 up_proj: experts 208...223
+    layer 17 up_proj: experts 224...239
+    layer 17 up_proj: experts 240...255
+  [190/438] language_model.model.layers.17.mlp.switch_mlp.up_proj source_tensors_remaining=17078 mlx_active_bytes=2978353152
+  [191/438] language_model.model.layers.17.self_attn.g_proj source_tensors_remaining=17077 mlx_active_bytes=2978426880
+  [192/438] language_model.model.layers.17.self_attn.k_proj source_tensors_remaining=17076 mlx_active_bytes=2979606528
+  [193/438] language_model.model.layers.17.self_attn.o_proj source_tensors_remaining=17075 mlx_active_bytes=2989043712
+  [194/438] language_model.model.layers.17.self_attn.q_proj source_tensors_remaining=17074 mlx_active_bytes=2998480896
+  [195/438] language_model.model.layers.17.self_attn.v_proj source_tensors_remaining=17073 mlx_active_bytes=2999660544
+  [196/438] language_model.model.layers.18.mlp.shared_expert.down_proj source_tensors_remaining=17072 mlx_active_bytes=3000250368
+  [197/438] language_model.model.layers.18.mlp.shared_expert.gate_proj source_tensors_remaining=17071 mlx_active_bytes=3000840192
+  [198/438] language_model.model.layers.18.mlp.shared_expert.up_proj source_tensors_remaining=17070 mlx_active_bytes=3001430016
+    layer 18 down_proj: experts 0...15
+    layer 18 down_proj: experts 16...31
+    layer 18 down_proj: experts 32...47
+    layer 18 down_proj: experts 48...63
+    layer 18 down_proj: experts 64...79
+    layer 18 down_proj: experts 80...95
+    layer 18 down_proj: experts 96...111
+    layer 18 down_proj: experts 112...127
+    layer 18 down_proj: experts 128...143
+    layer 18 down_proj: experts 144...159
+    layer 18 down_proj: experts 160...175
+    layer 18 down_proj: experts 176...191
+    layer 18 down_proj: experts 192...207
+    layer 18 down_proj: experts 208...223
+    layer 18 down_proj: experts 224...239
+    layer 18 down_proj: experts 240...255
+  [199/438] language_model.model.layers.18.mlp.switch_mlp.down_proj source_tensors_remaining=16814 mlx_active_bytes=3152424960
+    layer 18 gate_proj: experts 0...15
+    layer 18 gate_proj: experts 16...31
+    layer 18 gate_proj: experts 32...47
+    layer 18 gate_proj: experts 48...63
+    layer 18 gate_proj: experts 64...79
+    layer 18 gate_proj: experts 80...95
+    layer 18 gate_proj: experts 96...111
+    layer 18 gate_proj: experts 112...127
+    layer 18 gate_proj: experts 128...143
+    layer 18 gate_proj: experts 144...159
+    layer 18 gate_proj: experts 160...175
+    layer 18 gate_proj: experts 176...191
+    layer 18 gate_proj: experts 192...207
+    layer 18 gate_proj: experts 208...223
+    layer 18 gate_proj: experts 224...239
+    layer 18 gate_proj: experts 240...255
+  [200/438] language_model.model.layers.18.mlp.switch_mlp.gate_proj source_tensors_remaining=16558 mlx_active_bytes=3303419904
+    layer 18 up_proj: experts 0...15
+    layer 18 up_proj: experts 16...31
+    layer 18 up_proj: experts 32...47
+    layer 18 up_proj: experts 48...63
+    layer 18 up_proj: experts 64...79
+    layer 18 up_proj: experts 80...95
+    layer 18 up_proj: experts 96...111
+    layer 18 up_proj: experts 112...127
+    layer 18 up_proj: experts 128...143
+    layer 18 up_proj: experts 144...159
+    layer 18 up_proj: experts 160...175
+    layer 18 up_proj: experts 176...191
+    layer 18 up_proj: experts 192...207
+    layer 18 up_proj: experts 208...223
+    layer 18 up_proj: experts 224...239
+    layer 18 up_proj: experts 240...255
+  [201/438] language_model.model.layers.18.mlp.switch_mlp.up_proj source_tensors_remaining=16302 mlx_active_bytes=3454414848
+  [202/438] language_model.model.layers.18.self_attn.g_proj source_tensors_remaining=16301 mlx_active_bytes=3454488576
+  [203/438] language_model.model.layers.18.self_attn.k_proj source_tensors_remaining=16300 mlx_active_bytes=3455668224
+  [204/438] language_model.model.layers.18.self_attn.o_proj source_tensors_remaining=16299 mlx_active_bytes=3465105408
+  [205/438] language_model.model.layers.18.self_attn.q_proj source_tensors_remaining=16298 mlx_active_bytes=3474542592
+  [206/438] language_model.model.layers.18.self_attn.v_proj source_tensors_remaining=16297 mlx_active_bytes=3475722240
+  [207/438] language_model.model.layers.19.mlp.shared_expert.down_proj source_tensors_remaining=16296 mlx_active_bytes=3476312064
+  [208/438] language_model.model.layers.19.mlp.shared_expert.gate_proj source_tensors_remaining=16295 mlx_active_bytes=3476901888
+  [209/438] language_model.model.layers.19.mlp.shared_expert.up_proj source_tensors_remaining=16294 mlx_active_bytes=3477491712
+    layer 19 down_proj: experts 0...15
+    layer 19 down_proj: experts 16...31
+    layer 19 down_proj: experts 32...47
+    layer 19 down_proj: experts 48...63
+    layer 19 down_proj: experts 64...79
+    layer 19 down_proj: experts 80...95
+    layer 19 down_proj: experts 96...111
+    layer 19 down_proj: experts 112...127
+    layer 19 down_proj: experts 128...143
+    layer 19 down_proj: experts 144...159
+    layer 19 down_proj: experts 160...175
+    layer 19 down_proj: experts 176...191
+    layer 19 down_proj: experts 192...207
+    layer 19 down_proj: experts 208...223
+    layer 19 down_proj: experts 224...239
+    layer 19 down_proj: experts 240...255
+  [210/438] language_model.model.layers.19.mlp.switch_mlp.down_proj source_tensors_remaining=16038 mlx_active_bytes=3628486656
+    layer 19 gate_proj: experts 0...15
+    layer 19 gate_proj: experts 16...31
+    layer 19 gate_proj: experts 32...47
+    layer 19 gate_proj: experts 48...63
+    layer 19 gate_proj: experts 64...79
+    layer 19 gate_proj: experts 80...95
+    layer 19 gate_proj: experts 96...111
+    layer 19 gate_proj: experts 112...127
+    layer 19 gate_proj: experts 128...143
+    layer 19 gate_proj: experts 144...159
+    layer 19 gate_proj: experts 160...175
+    layer 19 gate_proj: experts 176...191
+    layer 19 gate_proj: experts 192...207
+    layer 19 gate_proj: experts 208...223
+    layer 19 gate_proj: experts 224...239
+    layer 19 gate_proj: experts 240...255
+  [211/438] language_model.model.layers.19.mlp.switch_mlp.gate_proj source_tensors_remaining=15782 mlx_active_bytes=3779481600
+    layer 19 up_proj: experts 0...15
+    layer 19 up_proj: experts 16...31
+    layer 19 up_proj: experts 32...47
+    layer 19 up_proj: experts 48...63
+    layer 19 up_proj: experts 64...79
+    layer 19 up_proj: experts 80...95
+    layer 19 up_proj: experts 96...111
+    layer 19 up_proj: experts 112...127
+    layer 19 up_proj: experts 128...143
+    layer 19 up_proj: experts 144...159
+    layer 19 up_proj: experts 160...175
+    layer 19 up_proj: experts 176...191
+    layer 19 up_proj: experts 192...207
+    layer 19 up_proj: experts 208...223
+    layer 19 up_proj: experts 224...239
+    layer 19 up_proj: experts 240...255
+  [212/438] language_model.model.layers.19.mlp.switch_mlp.up_proj source_tensors_remaining=15526 mlx_active_bytes=3930476544
+  [213/438] language_model.model.layers.19.self_attn.g_proj source_tensors_remaining=15525 mlx_active_bytes=3930550272
+  [214/438] language_model.model.layers.19.self_attn.k_proj source_tensors_remaining=15524 mlx_active_bytes=3931729920
+  [215/438] language_model.model.layers.19.self_attn.o_proj source_tensors_remaining=15523 mlx_active_bytes=3941167104
+  [216/438] language_model.model.layers.19.self_attn.q_proj source_tensors_remaining=15522 mlx_active_bytes=3950604288
+  [217/438] language_model.model.layers.19.self_attn.v_proj source_tensors_remaining=15521 mlx_active_bytes=3951783936
+  [218/438] language_model.model.layers.20.mlp.shared_expert.down_proj source_tensors_remaining=15520 mlx_active_bytes=3952373760
+  [219/438] language_model.model.layers.20.mlp.shared_expert.gate_proj source_tensors_remaining=15519 mlx_active_bytes=3952963584
+  [220/438] language_model.model.layers.20.mlp.shared_expert.up_proj source_tensors_remaining=15518 mlx_active_bytes=3953553408
+    layer 20 down_proj: experts 0...15
+    layer 20 down_proj: experts 16...31
+    layer 20 down_proj: experts 32...47
+    layer 20 down_proj: experts 48...63
+    layer 20 down_proj: experts 64...79
+    layer 20 down_proj: experts 80...95
+    layer 20 down_proj: experts 96...111
+    layer 20 down_proj: experts 112...127
+    layer 20 down_proj: experts 128...143
+    layer 20 down_proj: experts 144...159
+    layer 20 down_proj: experts 160...175
+    layer 20 down_proj: experts 176...191
+    layer 20 down_proj: experts 192...207
+    layer 20 down_proj: experts 208...223
+    layer 20 down_proj: experts 224...239
+    layer 20 down_proj: experts 240...255
+  [221/438] language_model.model.layers.20.mlp.switch_mlp.down_proj source_tensors_remaining=15262 mlx_active_bytes=4104548352
+    layer 20 gate_proj: experts 0...15
+    layer 20 gate_proj: experts 16...31
+    layer 20 gate_proj: experts 32...47
+    layer 20 gate_proj: experts 48...63
+    layer 20 gate_proj: experts 64...79
+    layer 20 gate_proj: experts 80...95
+    layer 20 gate_proj: experts 96...111
+    layer 20 gate_proj: experts 112...127
+    layer 20 gate_proj: experts 128...143
+    layer 20 gate_proj: experts 144...159
+    layer 20 gate_proj: experts 160...175
+    layer 20 gate_proj: experts 176...191
+    layer 20 gate_proj: experts 192...207
+    layer 20 gate_proj: experts 208...223
+    layer 20 gate_proj: experts 224...239
+    layer 20 gate_proj: experts 240...255
+  [222/438] language_model.model.layers.20.mlp.switch_mlp.gate_proj source_tensors_remaining=15006 mlx_active_bytes=4255543296
+    layer 20 up_proj: experts 0...15
+    layer 20 up_proj: experts 16...31
+    layer 20 up_proj: experts 32...47
+    layer 20 up_proj: experts 48...63
+    layer 20 up_proj: experts 64...79
+    layer 20 up_proj: experts 80...95
+    layer 20 up_proj: experts 96...111
+    layer 20 up_proj: experts 112...127
+    layer 20 up_proj: experts 128...143
+    layer 20 up_proj: experts 144...159
+    layer 20 up_proj: experts 160...175
+    layer 20 up_proj: experts 176...191
+    layer 20 up_proj: experts 192...207
+    layer 20 up_proj: experts 208...223
+    layer 20 up_proj: experts 224...239
+    layer 20 up_proj: experts 240...255
+  [223/438] language_model.model.layers.20.mlp.switch_mlp.up_proj source_tensors_remaining=14750 mlx_active_bytes=4406538240
+  [224/438] language_model.model.layers.20.self_attn.g_proj source_tensors_remaining=14749 mlx_active_bytes=4406593536
+  [225/438] language_model.model.layers.20.self_attn.k_proj source_tensors_remaining=14748 mlx_active_bytes=4407773184
+  [226/438] language_model.model.layers.20.self_attn.o_proj source_tensors_remaining=14747 mlx_active_bytes=4414851072
+  [227/438] language_model.model.layers.20.self_attn.q_proj source_tensors_remaining=14746 mlx_active_bytes=4421928960
+  [228/438] language_model.model.layers.20.self_attn.v_proj source_tensors_remaining=14745 mlx_active_bytes=4423108608
+  [229/438] language_model.model.layers.21.mlp.shared_expert.down_proj source_tensors_remaining=14744 mlx_active_bytes=4423698432
+  [230/438] language_model.model.layers.21.mlp.shared_expert.gate_proj source_tensors_remaining=14743 mlx_active_bytes=4424288256
+  [231/438] language_model.model.layers.21.mlp.shared_expert.up_proj source_tensors_remaining=14742 mlx_active_bytes=4424878080
+    layer 21 down_proj: experts 0...15
+    layer 21 down_proj: experts 16...31
+    layer 21 down_proj: experts 32...47
+    layer 21 down_proj: experts 48...63
+    layer 21 down_proj: experts 64...79
+    layer 21 down_proj: experts 80...95
+    layer 21 down_proj: experts 96...111
+    layer 21 down_proj: experts 112...127
+    layer 21 down_proj: experts 128...143
+    layer 21 down_proj: experts 144...159
+    layer 21 down_proj: experts 160...175
+    layer 21 down_proj: experts 176...191
+    layer 21 down_proj: experts 192...207
+    layer 21 down_proj: experts 208...223
+    layer 21 down_proj: experts 224...239
+    layer 21 down_proj: experts 240...255
+  [232/438] language_model.model.layers.21.mlp.switch_mlp.down_proj source_tensors_remaining=14486 mlx_active_bytes=4575873024
+    layer 21 gate_proj: experts 0...15
+    layer 21 gate_proj: experts 16...31
+    layer 21 gate_proj: experts 32...47
+    layer 21 gate_proj: experts 48...63
+    layer 21 gate_proj: experts 64...79
+    layer 21 gate_proj: experts 80...95
+    layer 21 gate_proj: experts 96...111
+    layer 21 gate_proj: experts 112...127
+    layer 21 gate_proj: experts 128...143
+    layer 21 gate_proj: experts 144...159
+    layer 21 gate_proj: experts 160...175
+    layer 21 gate_proj: experts 176...191
+    layer 21 gate_proj: experts 192...207
+    layer 21 gate_proj: experts 208...223
+    layer 21 gate_proj: experts 224...239
+    layer 21 gate_proj: experts 240...255
+  [233/438] language_model.model.layers.21.mlp.switch_mlp.gate_proj source_tensors_remaining=14230 mlx_active_bytes=4726867968
+    layer 21 up_proj: experts 0...15
+    layer 21 up_proj: experts 16...31
+    layer 21 up_proj: experts 32...47
+    layer 21 up_proj: experts 48...63
+    layer 21 up_proj: experts 64...79
+    layer 21 up_proj: experts 80...95
+    layer 21 up_proj: experts 96...111
+    layer 21 up_proj: experts 112...127
+    layer 21 up_proj: experts 128...143
+    layer 21 up_proj: experts 144...159
+    layer 21 up_proj: experts 160...175
+    layer 21 up_proj: experts 176...191
+    layer 21 up_proj: experts 192...207
+    layer 21 up_proj: experts 208...223
+    layer 21 up_proj: experts 224...239
+    layer 21 up_proj: experts 240...255
+  [234/438] language_model.model.layers.21.mlp.switch_mlp.up_proj source_tensors_remaining=13974 mlx_active_bytes=4877862912
+  [235/438] language_model.model.layers.21.self_attn.g_proj source_tensors_remaining=13973 mlx_active_bytes=4877936640
+  [236/438] language_model.model.layers.21.self_attn.k_proj source_tensors_remaining=13972 mlx_active_bytes=4879116288
+  [237/438] language_model.model.layers.21.self_attn.o_proj source_tensors_remaining=13971 mlx_active_bytes=4888553472
+  [238/438] language_model.model.layers.21.self_attn.q_proj source_tensors_remaining=13970 mlx_active_bytes=4897990656
+  [239/438] language_model.model.layers.21.self_attn.v_proj source_tensors_remaining=13969 mlx_active_bytes=4899170304
+    layer 22 down_proj: experts 0...15
+    layer 22 down_proj: experts 16...31
+    layer 22 down_proj: experts 32...47
+    layer 22 down_proj: experts 48...63
+    layer 22 down_proj: experts 64...79
+    layer 22 down_proj: experts 80...95
+    layer 22 down_proj: experts 96...111
+    layer 22 down_proj: experts 112...127
+    layer 22 down_proj: experts 128...143
+    layer 22 down_proj: experts 144...159
+    layer 22 down_proj: experts 160...175
+    layer 22 down_proj: experts 176...191
+    layer 22 down_proj: experts 192...207
+    layer 22 down_proj: experts 208...223
+    layer 22 down_proj: experts 224...239
+    layer 22 down_proj: experts 240...255
+  [240/438] language_model.model.layers.22.mlp.switch_mlp.down_proj source_tensors_remaining=13713 mlx_active_bytes=5050165248
+    layer 22 gate_proj: experts 0...15
+    layer 22 gate_proj: experts 16...31
+    layer 22 gate_proj: experts 32...47
+    layer 22 gate_proj: experts 48...63
+    layer 22 gate_proj: experts 64...79
+    layer 22 gate_proj: experts 80...95
+    layer 22 gate_proj: experts 96...111
+    layer 22 gate_proj: experts 112...127
+    layer 22 gate_proj: experts 128...143
+    layer 22 gate_proj: experts 144...159
+    layer 22 gate_proj: experts 160...175
+    layer 22 gate_proj: experts 176...191
+    layer 22 gate_proj: experts 192...207
+    layer 22 gate_proj: experts 208...223
+    layer 22 gate_proj: experts 224...239
+    layer 22 gate_proj: experts 240...255
+  [241/438] language_model.model.layers.22.mlp.switch_mlp.gate_proj source_tensors_remaining=13457 mlx_active_bytes=5201160192
+    layer 22 up_proj: experts 0...15
+    layer 22 up_proj: experts 16...31
+    layer 22 up_proj: experts 32...47
+    layer 22 up_proj: experts 48...63
+    layer 22 up_proj: experts 64...79
+    layer 22 up_proj: experts 80...95
+    layer 22 up_proj: experts 96...111
+    layer 22 up_proj: experts 112...127
+    layer 22 up_proj: experts 128...143
+    layer 22 up_proj: experts 144...159
+    layer 22 up_proj: experts 160...175
+    layer 22 up_proj: experts 176...191
+    layer 22 up_proj: experts 192...207
+    layer 22 up_proj: experts 208...223
+    layer 22 up_proj: experts 224...239
+    layer 22 up_proj: experts 240...255
+  [242/438] language_model.model.layers.22.mlp.switch_mlp.up_proj source_tensors_remaining=13201 mlx_active_bytes=5352155136
+  [243/438] language_model.model.layers.22.self_attn.g_proj source_tensors_remaining=13200 mlx_active_bytes=5352228864
+  [244/438] language_model.model.layers.22.self_attn.k_proj source_tensors_remaining=13199 mlx_active_bytes=5353408512
+  [245/438] language_model.model.layers.22.self_attn.o_proj source_tensors_remaining=13198 mlx_active_bytes=5362845696
+  [246/438] language_model.model.layers.22.self_attn.q_proj source_tensors_remaining=13197 mlx_active_bytes=5372282880
+  [247/438] language_model.model.layers.22.self_attn.v_proj source_tensors_remaining=13196 mlx_active_bytes=5373462528
+[shard 3/4] model-00003-of-00004.safetensors: 129 Q4 module(s)
+  [248/438] language_model.model.layers.22.mlp.shared_expert.down_proj source_tensors_remaining=13195 mlx_active_bytes=17367040
+  [249/438] language_model.model.layers.22.mlp.shared_expert.gate_proj source_tensors_remaining=13194 mlx_active_bytes=17956864
+  [250/438] language_model.model.layers.22.mlp.shared_expert.up_proj source_tensors_remaining=13193 mlx_active_bytes=18546688
+  [251/438] language_model.model.layers.23.mlp.shared_expert.down_proj source_tensors_remaining=13192 mlx_active_bytes=19136512
+  [252/438] language_model.model.layers.23.mlp.shared_expert.gate_proj source_tensors_remaining=13191 mlx_active_bytes=19726336
+  [253/438] language_model.model.layers.23.mlp.shared_expert.up_proj source_tensors_remaining=13190 mlx_active_bytes=20316160
+    layer 23 down_proj: experts 0...15
+    layer 23 down_proj: experts 16...31
+    layer 23 down_proj: experts 32...47
+    layer 23 down_proj: experts 48...63
+    layer 23 down_proj: experts 64...79
+    layer 23 down_proj: experts 80...95
+    layer 23 down_proj: experts 96...111
+    layer 23 down_proj: experts 112...127
+    layer 23 down_proj: experts 128...143
+    layer 23 down_proj: experts 144...159
+    layer 23 down_proj: experts 160...175
+    layer 23 down_proj: experts 176...191
+    layer 23 down_proj: experts 192...207
+    layer 23 down_proj: experts 208...223
+    layer 23 down_proj: experts 224...239
+    layer 23 down_proj: experts 240...255
+  [254/438] language_model.model.layers.23.mlp.switch_mlp.down_proj source_tensors_remaining=12934 mlx_active_bytes=171311104
+    layer 23 gate_proj: experts 0...15
+    layer 23 gate_proj: experts 16...31
+    layer 23 gate_proj: experts 32...47
+    layer 23 gate_proj: experts 48...63
+    layer 23 gate_proj: experts 64...79
+    layer 23 gate_proj: experts 80...95
+    layer 23 gate_proj: experts 96...111
+    layer 23 gate_proj: experts 112...127
+    layer 23 gate_proj: experts 128...143
+    layer 23 gate_proj: experts 144...159
+    layer 23 gate_proj: experts 160...175
+    layer 23 gate_proj: experts 176...191
+    layer 23 gate_proj: experts 192...207
+    layer 23 gate_proj: experts 208...223
+    layer 23 gate_proj: experts 224...239
+    layer 23 gate_proj: experts 240...255
+  [255/438] language_model.model.layers.23.mlp.switch_mlp.gate_proj source_tensors_remaining=12678 mlx_active_bytes=322306048
+    layer 23 up_proj: experts 0...15
+    layer 23 up_proj: experts 16...31
+    layer 23 up_proj: experts 32...47
+    layer 23 up_proj: experts 48...63
+    layer 23 up_proj: experts 64...79
+    layer 23 up_proj: experts 80...95
+    layer 23 up_proj: experts 96...111
+    layer 23 up_proj: experts 112...127
+    layer 23 up_proj: experts 128...143
+    layer 23 up_proj: experts 144...159
+    layer 23 up_proj: experts 160...175
+    layer 23 up_proj: experts 176...191
+    layer 23 up_proj: experts 192...207
+    layer 23 up_proj: experts 208...223
+    layer 23 up_proj: experts 224...239
+    layer 23 up_proj: experts 240...255
+  [256/438] language_model.model.layers.23.mlp.switch_mlp.up_proj source_tensors_remaining=12422 mlx_active_bytes=473300992
+  [257/438] language_model.model.layers.23.self_attn.g_proj source_tensors_remaining=12421 mlx_active_bytes=473374720
+  [258/438] language_model.model.layers.23.self_attn.k_proj source_tensors_remaining=12420 mlx_active_bytes=474554368
+  [259/438] language_model.model.layers.23.self_attn.o_proj source_tensors_remaining=12419 mlx_active_bytes=483991552
+  [260/438] language_model.model.layers.23.self_attn.q_proj source_tensors_remaining=12418 mlx_active_bytes=493428736
+  [261/438] language_model.model.layers.23.self_attn.v_proj source_tensors_remaining=12417 mlx_active_bytes=494608384
+  [262/438] language_model.model.layers.24.mlp.shared_expert.down_proj source_tensors_remaining=12416 mlx_active_bytes=495198208
+  [263/438] language_model.model.layers.24.mlp.shared_expert.gate_proj source_tensors_remaining=12415 mlx_active_bytes=495788032
+  [264/438] language_model.model.layers.24.mlp.shared_expert.up_proj source_tensors_remaining=12414 mlx_active_bytes=496377856
+    layer 24 down_proj: experts 0...15
+    layer 24 down_proj: experts 16...31
+    layer 24 down_proj: experts 32...47
+    layer 24 down_proj: experts 48...63
+    layer 24 down_proj: experts 64...79
+    layer 24 down_proj: experts 80...95
+    layer 24 down_proj: experts 96...111
+    layer 24 down_proj: experts 112...127
+    layer 24 down_proj: experts 128...143
+    layer 24 down_proj: experts 144...159
+    layer 24 down_proj: experts 160...175
+    layer 24 down_proj: experts 176...191
+    layer 24 down_proj: experts 192...207
+    layer 24 down_proj: experts 208...223
+    layer 24 down_proj: experts 224...239
+    layer 24 down_proj: experts 240...255
+  [265/438] language_model.model.layers.24.mlp.switch_mlp.down_proj source_tensors_remaining=12158 mlx_active_bytes=647372800
+    layer 24 gate_proj: experts 0...15
+    layer 24 gate_proj: experts 16...31
+    layer 24 gate_proj: experts 32...47
+    layer 24 gate_proj: experts 48...63
+    layer 24 gate_proj: experts 64...79
+    layer 24 gate_proj: experts 80...95
+    layer 24 gate_proj: experts 96...111
+    layer 24 gate_proj: experts 112...127
+    layer 24 gate_proj: experts 128...143
+    layer 24 gate_proj: experts 144...159
+    layer 24 gate_proj: experts 160...175
+    layer 24 gate_proj: experts 176...191
+    layer 24 gate_proj: experts 192...207
+    layer 24 gate_proj: experts 208...223
+    layer 24 gate_proj: experts 224...239
+    layer 24 gate_proj: experts 240...255
+  [266/438] language_model.model.layers.24.mlp.switch_mlp.gate_proj source_tensors_remaining=11902 mlx_active_bytes=798367744
+    layer 24 up_proj: experts 0...15
+    layer 24 up_proj: experts 16...31
+    layer 24 up_proj: experts 32...47
+    layer 24 up_proj: experts 48...63
+    layer 24 up_proj: experts 64...79
+    layer 24 up_proj: experts 80...95
+    layer 24 up_proj: experts 96...111
+    layer 24 up_proj: experts 112...127
+    layer 24 up_proj: experts 128...143
+    layer 24 up_proj: experts 144...159
+    layer 24 up_proj: experts 160...175
+    layer 24 up_proj: experts 176...191
+    layer 24 up_proj: experts 192...207
+    layer 24 up_proj: experts 208...223
+    layer 24 up_proj: experts 224...239
+    layer 24 up_proj: experts 240...255
+  [267/438] language_model.model.layers.24.mlp.switch_mlp.up_proj source_tensors_remaining=11646 mlx_active_bytes=949362688
+  [268/438] language_model.model.layers.24.self_attn.g_proj source_tensors_remaining=11645 mlx_active_bytes=949417984
+  [269/438] language_model.model.layers.24.self_attn.k_proj source_tensors_remaining=11644 mlx_active_bytes=950597632
+  [270/438] language_model.model.layers.24.self_attn.o_proj source_tensors_remaining=11643 mlx_active_bytes=957675520
+  [271/438] language_model.model.layers.24.self_attn.q_proj source_tensors_remaining=11642 mlx_active_bytes=964753408
+  [272/438] language_model.model.layers.24.self_attn.v_proj source_tensors_remaining=11641 mlx_active_bytes=965933056
+  [273/438] language_model.model.layers.25.mlp.shared_expert.down_proj source_tensors_remaining=11640 mlx_active_bytes=966522880
+  [274/438] language_model.model.layers.25.mlp.shared_expert.gate_proj source_tensors_remaining=11639 mlx_active_bytes=967112704
+  [275/438] language_model.model.layers.25.mlp.shared_expert.up_proj source_tensors_remaining=11638 mlx_active_bytes=967702528
+    layer 25 down_proj: experts 0...15
+    layer 25 down_proj: experts 16...31
+    layer 25 down_proj: experts 32...47
+    layer 25 down_proj: experts 48...63
+    layer 25 down_proj: experts 64...79
+    layer 25 down_proj: experts 80...95
+    layer 25 down_proj: experts 96...111
+    layer 25 down_proj: experts 112...127
+    layer 25 down_proj: experts 128...143
+    layer 25 down_proj: experts 144...159
+    layer 25 down_proj: experts 160...175
+    layer 25 down_proj: experts 176...191
+    layer 25 down_proj: experts 192...207
+    layer 25 down_proj: experts 208...223
+    layer 25 down_proj: experts 224...239
+    layer 25 down_proj: experts 240...255
+  [276/438] language_model.model.layers.25.mlp.switch_mlp.down_proj source_tensors_remaining=11382 mlx_active_bytes=1118697472
+    layer 25 gate_proj: experts 0...15
+    layer 25 gate_proj: experts 16...31
+    layer 25 gate_proj: experts 32...47
+    layer 25 gate_proj: experts 48...63
+    layer 25 gate_proj: experts 64...79
+    layer 25 gate_proj: experts 80...95
+    layer 25 gate_proj: experts 96...111
+    layer 25 gate_proj: experts 112...127
+    layer 25 gate_proj: experts 128...143
+    layer 25 gate_proj: experts 144...159
+    layer 25 gate_proj: experts 160...175
+    layer 25 gate_proj: experts 176...191
+    layer 25 gate_proj: experts 192...207
+    layer 25 gate_proj: experts 208...223
+    layer 25 gate_proj: experts 224...239
+    layer 25 gate_proj: experts 240...255
+  [277/438] language_model.model.layers.25.mlp.switch_mlp.gate_proj source_tensors_remaining=11126 mlx_active_bytes=1269692416
+    layer 25 up_proj: experts 0...15
+    layer 25 up_proj: experts 16...31
+    layer 25 up_proj: experts 32...47
+    layer 25 up_proj: experts 48...63
+    layer 25 up_proj: experts 64...79
+    layer 25 up_proj: experts 80...95
+    layer 25 up_proj: experts 96...111
+    layer 25 up_proj: experts 112...127
+    layer 25 up_proj: experts 128...143
+    layer 25 up_proj: experts 144...159
+    layer 25 up_proj: experts 160...175
+    layer 25 up_proj: experts 176...191
+    layer 25 up_proj: experts 192...207
+    layer 25 up_proj: experts 208...223
+    layer 25 up_proj: experts 224...239
+    layer 25 up_proj: experts 240...255
+  [278/438] language_model.model.layers.25.mlp.switch_mlp.up_proj source_tensors_remaining=10870 mlx_active_bytes=1420687360
+  [279/438] language_model.model.layers.25.self_attn.g_proj source_tensors_remaining=10869 mlx_active_bytes=1420761088
+  [280/438] language_model.model.layers.25.self_attn.k_proj source_tensors_remaining=10868 mlx_active_bytes=1421940736
+  [281/438] language_model.model.layers.25.self_attn.o_proj source_tensors_remaining=10867 mlx_active_bytes=1431377920
+  [282/438] language_model.model.layers.25.self_attn.q_proj source_tensors_remaining=10866 mlx_active_bytes=1440815104
+  [283/438] language_model.model.layers.25.self_attn.v_proj source_tensors_remaining=10865 mlx_active_bytes=1441994752
+  [284/438] language_model.model.layers.26.mlp.shared_expert.down_proj source_tensors_remaining=10864 mlx_active_bytes=1442584576
+  [285/438] language_model.model.layers.26.mlp.shared_expert.gate_proj source_tensors_remaining=10863 mlx_active_bytes=1443174400
+  [286/438] language_model.model.layers.26.mlp.shared_expert.up_proj source_tensors_remaining=10862 mlx_active_bytes=1443764224
+    layer 26 down_proj: experts 0...15
+    layer 26 down_proj: experts 16...31
+    layer 26 down_proj: experts 32...47
+    layer 26 down_proj: experts 48...63
+    layer 26 down_proj: experts 64...79
+    layer 26 down_proj: experts 80...95
+    layer 26 down_proj: experts 96...111
+    layer 26 down_proj: experts 112...127
+    layer 26 down_proj: experts 128...143
+    layer 26 down_proj: experts 144...159
+    layer 26 down_proj: experts 160...175
+    layer 26 down_proj: experts 176...191
+    layer 26 down_proj: experts 192...207
+    layer 26 down_proj: experts 208...223
+    layer 26 down_proj: experts 224...239
+    layer 26 down_proj: experts 240...255
+  [287/438] language_model.model.layers.26.mlp.switch_mlp.down_proj source_tensors_remaining=10606 mlx_active_bytes=1594759168
+    layer 26 gate_proj: experts 0...15
+    layer 26 gate_proj: experts 16...31
+    layer 26 gate_proj: experts 32...47
+    layer 26 gate_proj: experts 48...63
+    layer 26 gate_proj: experts 64...79
+    layer 26 gate_proj: experts 80...95
+    layer 26 gate_proj: experts 96...111
+    layer 26 gate_proj: experts 112...127
+    layer 26 gate_proj: experts 128...143
+    layer 26 gate_proj: experts 144...159
+    layer 26 gate_proj: experts 160...175
+    layer 26 gate_proj: experts 176...191
+    layer 26 gate_proj: experts 192...207
+    layer 26 gate_proj: experts 208...223
+    layer 26 gate_proj: experts 224...239
+    layer 26 gate_proj: experts 240...255
+  [288/438] language_model.model.layers.26.mlp.switch_mlp.gate_proj source_tensors_remaining=10350 mlx_active_bytes=1745754112
+    layer 26 up_proj: experts 0...15
+    layer 26 up_proj: experts 16...31
+    layer 26 up_proj: experts 32...47
+    layer 26 up_proj: experts 48...63
+    layer 26 up_proj: experts 64...79
+    layer 26 up_proj: experts 80...95
+    layer 26 up_proj: experts 96...111
+    layer 26 up_proj: experts 112...127
+    layer 26 up_proj: experts 128...143
+    layer 26 up_proj: experts 144...159
+    layer 26 up_proj: experts 160...175
+    layer 26 up_proj: experts 176...191
+    layer 26 up_proj: experts 192...207
+    layer 26 up_proj: experts 208...223
+    layer 26 up_proj: experts 224...239
+    layer 26 up_proj: experts 240...255
+  [289/438] language_model.model.layers.26.mlp.switch_mlp.up_proj source_tensors_remaining=10094 mlx_active_bytes=1896749056
+  [290/438] language_model.model.layers.26.self_attn.g_proj source_tensors_remaining=10093 mlx_active_bytes=1896822784
+  [291/438] language_model.model.layers.26.self_attn.k_proj source_tensors_remaining=10092 mlx_active_bytes=1898002432
+  [292/438] language_model.model.layers.26.self_attn.o_proj source_tensors_remaining=10091 mlx_active_bytes=1907439616
+  [293/438] language_model.model.layers.26.self_attn.q_proj source_tensors_remaining=10090 mlx_active_bytes=1916876800
+  [294/438] language_model.model.layers.26.self_attn.v_proj source_tensors_remaining=10089 mlx_active_bytes=1918056448
+  [295/438] language_model.model.layers.27.mlp.shared_expert.down_proj source_tensors_remaining=10088 mlx_active_bytes=1918646272
+  [296/438] language_model.model.layers.27.mlp.shared_expert.gate_proj source_tensors_remaining=10087 mlx_active_bytes=1919236096
+  [297/438] language_model.model.layers.27.mlp.shared_expert.up_proj source_tensors_remaining=10086 mlx_active_bytes=1919825920
+    layer 27 down_proj: experts 0...15
+    layer 27 down_proj: experts 16...31
+    layer 27 down_proj: experts 32...47
+    layer 27 down_proj: experts 48...63
+    layer 27 down_proj: experts 64...79
+    layer 27 down_proj: experts 80...95
+    layer 27 down_proj: experts 96...111
+    layer 27 down_proj: experts 112...127
+    layer 27 down_proj: experts 128...143
+    layer 27 down_proj: experts 144...159
+    layer 27 down_proj: experts 160...175
+    layer 27 down_proj: experts 176...191
+    layer 27 down_proj: experts 192...207
+    layer 27 down_proj: experts 208...223
+    layer 27 down_proj: experts 224...239
+    layer 27 down_proj: experts 240...255
+  [298/438] language_model.model.layers.27.mlp.switch_mlp.down_proj source_tensors_remaining=9830 mlx_active_bytes=2070820864
+    layer 27 gate_proj: experts 0...15
+    layer 27 gate_proj: experts 16...31
+    layer 27 gate_proj: experts 32...47
+    layer 27 gate_proj: experts 48...63
+    layer 27 gate_proj: experts 64...79
+    layer 27 gate_proj: experts 80...95
+    layer 27 gate_proj: experts 96...111
+    layer 27 gate_proj: experts 112...127
+    layer 27 gate_proj: experts 128...143
+    layer 27 gate_proj: experts 144...159
+    layer 27 gate_proj: experts 160...175
+    layer 27 gate_proj: experts 176...191
+    layer 27 gate_proj: experts 192...207
+    layer 27 gate_proj: experts 208...223
+    layer 27 gate_proj: experts 224...239
+    layer 27 gate_proj: experts 240...255
+  [299/438] language_model.model.layers.27.mlp.switch_mlp.gate_proj source_tensors_remaining=9574 mlx_active_bytes=2221815808
+    layer 27 up_proj: experts 0...15
+    layer 27 up_proj: experts 16...31
+    layer 27 up_proj: experts 32...47
+    layer 27 up_proj: experts 48...63
+    layer 27 up_proj: experts 64...79
+    layer 27 up_proj: experts 80...95
+    layer 27 up_proj: experts 96...111
+    layer 27 up_proj: experts 112...127
+    layer 27 up_proj: experts 128...143
+    layer 27 up_proj: experts 144...159
+    layer 27 up_proj: experts 160...175
+    layer 27 up_proj: experts 176...191
+    layer 27 up_proj: experts 192...207
+    layer 27 up_proj: experts 208...223
+    layer 27 up_proj: experts 224...239
+    layer 27 up_proj: experts 240...255
+  [300/438] language_model.model.layers.27.mlp.switch_mlp.up_proj source_tensors_remaining=9318 mlx_active_bytes=2372810752
+  [301/438] language_model.model.layers.27.self_attn.g_proj source_tensors_remaining=9317 mlx_active_bytes=2372884480
+  [302/438] language_model.model.layers.27.self_attn.k_proj source_tensors_remaining=9316 mlx_active_bytes=2374064128
+  [303/438] language_model.model.layers.27.self_attn.o_proj source_tensors_remaining=9315 mlx_active_bytes=2383501312
+  [304/438] language_model.model.layers.27.self_attn.q_proj source_tensors_remaining=9314 mlx_active_bytes=2392938496
+  [305/438] language_model.model.layers.27.self_attn.v_proj source_tensors_remaining=9313 mlx_active_bytes=2394118144
+  [306/438] language_model.model.layers.28.mlp.shared_expert.down_proj source_tensors_remaining=9312 mlx_active_bytes=2394707968
+  [307/438] language_model.model.layers.28.mlp.shared_expert.gate_proj source_tensors_remaining=9311 mlx_active_bytes=2395297792
+  [308/438] language_model.model.layers.28.mlp.shared_expert.up_proj source_tensors_remaining=9310 mlx_active_bytes=2395887616
+    layer 28 down_proj: experts 0...15
+    layer 28 down_proj: experts 16...31
+    layer 28 down_proj: experts 32...47
+    layer 28 down_proj: experts 48...63
+    layer 28 down_proj: experts 64...79
+    layer 28 down_proj: experts 80...95
+    layer 28 down_proj: experts 96...111
+    layer 28 down_proj: experts 112...127
+    layer 28 down_proj: experts 128...143
+    layer 28 down_proj: experts 144...159
+    layer 28 down_proj: experts 160...175
+    layer 28 down_proj: experts 176...191
+    layer 28 down_proj: experts 192...207
+    layer 28 down_proj: experts 208...223
+    layer 28 down_proj: experts 224...239
+    layer 28 down_proj: experts 240...255
+  [309/438] language_model.model.layers.28.mlp.switch_mlp.down_proj source_tensors_remaining=9054 mlx_active_bytes=2546882560
+    layer 28 gate_proj: experts 0...15
+    layer 28 gate_proj: experts 16...31
+    layer 28 gate_proj: experts 32...47
+    layer 28 gate_proj: experts 48...63
+    layer 28 gate_proj: experts 64...79
+    layer 28 gate_proj: experts 80...95
+    layer 28 gate_proj: experts 96...111
+    layer 28 gate_proj: experts 112...127
+    layer 28 gate_proj: experts 128...143
+    layer 28 gate_proj: experts 144...159
+    layer 28 gate_proj: experts 160...175
+    layer 28 gate_proj: experts 176...191
+    layer 28 gate_proj: experts 192...207
+    layer 28 gate_proj: experts 208...223
+    layer 28 gate_proj: experts 224...239
+    layer 28 gate_proj: experts 240...255
+  [310/438] language_model.model.layers.28.mlp.switch_mlp.gate_proj source_tensors_remaining=8798 mlx_active_bytes=2697877504
+    layer 28 up_proj: experts 0...15
+    layer 28 up_proj: experts 16...31
+    layer 28 up_proj: experts 32...47
+    layer 28 up_proj: experts 48...63
+    layer 28 up_proj: experts 64...79
+    layer 28 up_proj: experts 80...95
+    layer 28 up_proj: experts 96...111
+    layer 28 up_proj: experts 112...127
+    layer 28 up_proj: experts 128...143
+    layer 28 up_proj: experts 144...159
+    layer 28 up_proj: experts 160...175
+    layer 28 up_proj: experts 176...191
+    layer 28 up_proj: experts 192...207
+    layer 28 up_proj: experts 208...223
+    layer 28 up_proj: experts 224...239
+    layer 28 up_proj: experts 240...255
+  [311/438] language_model.model.layers.28.mlp.switch_mlp.up_proj source_tensors_remaining=8542 mlx_active_bytes=2848872448
+  [312/438] language_model.model.layers.28.self_attn.g_proj source_tensors_remaining=8541 mlx_active_bytes=2848927744
+  [313/438] language_model.model.layers.28.self_attn.k_proj source_tensors_remaining=8540 mlx_active_bytes=2850107392
+  [314/438] language_model.model.layers.28.self_attn.o_proj source_tensors_remaining=8539 mlx_active_bytes=2857185280
+  [315/438] language_model.model.layers.28.self_attn.q_proj source_tensors_remaining=8538 mlx_active_bytes=2864263168
+  [316/438] language_model.model.layers.28.self_attn.v_proj source_tensors_remaining=8537 mlx_active_bytes=2865442816
+  [317/438] language_model.model.layers.29.mlp.shared_expert.down_proj source_tensors_remaining=8536 mlx_active_bytes=2866032640
+  [318/438] language_model.model.layers.29.mlp.shared_expert.gate_proj source_tensors_remaining=8535 mlx_active_bytes=2866622464
+  [319/438] language_model.model.layers.29.mlp.shared_expert.up_proj source_tensors_remaining=8534 mlx_active_bytes=2867212288
+    layer 29 down_proj: experts 0...15
+    layer 29 down_proj: experts 16...31
+    layer 29 down_proj: experts 32...47
+    layer 29 down_proj: experts 48...63
+    layer 29 down_proj: experts 64...79
+    layer 29 down_proj: experts 80...95
+    layer 29 down_proj: experts 96...111
+    layer 29 down_proj: experts 112...127
+    layer 29 down_proj: experts 128...143
+    layer 29 down_proj: experts 144...159
+    layer 29 down_proj: experts 160...175
+    layer 29 down_proj: experts 176...191
+    layer 29 down_proj: experts 192...207
+    layer 29 down_proj: experts 208...223
+    layer 29 down_proj: experts 224...239
+    layer 29 down_proj: experts 240...255
+  [320/438] language_model.model.layers.29.mlp.switch_mlp.down_proj source_tensors_remaining=8278 mlx_active_bytes=3018207232
+    layer 29 gate_proj: experts 0...15
+    layer 29 gate_proj: experts 16...31
+    layer 29 gate_proj: experts 32...47
+    layer 29 gate_proj: experts 48...63
+    layer 29 gate_proj: experts 64...79
+    layer 29 gate_proj: experts 80...95
+    layer 29 gate_proj: experts 96...111
+    layer 29 gate_proj: experts 112...127
+    layer 29 gate_proj: experts 128...143
+    layer 29 gate_proj: experts 144...159
+    layer 29 gate_proj: experts 160...175
+    layer 29 gate_proj: experts 176...191
+    layer 29 gate_proj: experts 192...207
+    layer 29 gate_proj: experts 208...223
+    layer 29 gate_proj: experts 224...239
+    layer 29 gate_proj: experts 240...255
+  [321/438] language_model.model.layers.29.mlp.switch_mlp.gate_proj source_tensors_remaining=8022 mlx_active_bytes=3169202176
+    layer 29 up_proj: experts 0...15
+    layer 29 up_proj: experts 16...31
+    layer 29 up_proj: experts 32...47
+    layer 29 up_proj: experts 48...63
+    layer 29 up_proj: experts 64...79
+    layer 29 up_proj: experts 80...95
+    layer 29 up_proj: experts 96...111
+    layer 29 up_proj: experts 112...127
+    layer 29 up_proj: experts 128...143
+    layer 29 up_proj: experts 144...159
+    layer 29 up_proj: experts 160...175
+    layer 29 up_proj: experts 176...191
+    layer 29 up_proj: experts 192...207
+    layer 29 up_proj: experts 208...223
+    layer 29 up_proj: experts 224...239
+    layer 29 up_proj: experts 240...255
+  [322/438] language_model.model.layers.29.mlp.switch_mlp.up_proj source_tensors_remaining=7766 mlx_active_bytes=3320197120
+  [323/438] language_model.model.layers.29.self_attn.g_proj source_tensors_remaining=7765 mlx_active_bytes=3320270848
+  [324/438] language_model.model.layers.29.self_attn.k_proj source_tensors_remaining=7764 mlx_active_bytes=3321450496
+  [325/438] language_model.model.layers.29.self_attn.o_proj source_tensors_remaining=7763 mlx_active_bytes=3330887680
+  [326/438] language_model.model.layers.29.self_attn.q_proj source_tensors_remaining=7762 mlx_active_bytes=3340324864
+  [327/438] language_model.model.layers.29.self_attn.v_proj source_tensors_remaining=7761 mlx_active_bytes=3341504512
+  [328/438] language_model.model.layers.30.mlp.shared_expert.down_proj source_tensors_remaining=7760 mlx_active_bytes=3342094336
+  [329/438] language_model.model.layers.30.mlp.shared_expert.gate_proj source_tensors_remaining=7759 mlx_active_bytes=3342684160
+  [330/438] language_model.model.layers.30.mlp.shared_expert.up_proj source_tensors_remaining=7758 mlx_active_bytes=3343273984
+    layer 30 down_proj: experts 0...15
+    layer 30 down_proj: experts 16...31
+    layer 30 down_proj: experts 32...47
+    layer 30 down_proj: experts 48...63
+    layer 30 down_proj: experts 64...79
+    layer 30 down_proj: experts 80...95
+    layer 30 down_proj: experts 96...111
+    layer 30 down_proj: experts 112...127
+    layer 30 down_proj: experts 128...143
+    layer 30 down_proj: experts 144...159
+    layer 30 down_proj: experts 160...175
+    layer 30 down_proj: experts 176...191
+    layer 30 down_proj: experts 192...207
+    layer 30 down_proj: experts 208...223
+    layer 30 down_proj: experts 224...239
+    layer 30 down_proj: experts 240...255
+  [331/438] language_model.model.layers.30.mlp.switch_mlp.down_proj source_tensors_remaining=7502 mlx_active_bytes=3494268928
+    layer 30 gate_proj: experts 0...15
+    layer 30 gate_proj: experts 16...31
+    layer 30 gate_proj: experts 32...47
+    layer 30 gate_proj: experts 48...63
+    layer 30 gate_proj: experts 64...79
+    layer 30 gate_proj: experts 80...95
+    layer 30 gate_proj: experts 96...111
+    layer 30 gate_proj: experts 112...127
+    layer 30 gate_proj: experts 128...143
+    layer 30 gate_proj: experts 144...159
+    layer 30 gate_proj: experts 160...175
+    layer 30 gate_proj: experts 176...191
+    layer 30 gate_proj: experts 192...207
+    layer 30 gate_proj: experts 208...223
+    layer 30 gate_proj: experts 224...239
+    layer 30 gate_proj: experts 240...255
+  [332/438] language_model.model.layers.30.mlp.switch_mlp.gate_proj source_tensors_remaining=7246 mlx_active_bytes=3645263872
+    layer 30 up_proj: experts 0...15
+    layer 30 up_proj: experts 16...31
+    layer 30 up_proj: experts 32...47
+    layer 30 up_proj: experts 48...63
+    layer 30 up_proj: experts 64...79
+    layer 30 up_proj: experts 80...95
+    layer 30 up_proj: experts 96...111
+    layer 30 up_proj: experts 112...127
+    layer 30 up_proj: experts 128...143
+    layer 30 up_proj: experts 144...159
+    layer 30 up_proj: experts 160...175
+    layer 30 up_proj: experts 176...191
+    layer 30 up_proj: experts 192...207
+    layer 30 up_proj: experts 208...223
+    layer 30 up_proj: experts 224...239
+    layer 30 up_proj: experts 240...255
+  [333/438] language_model.model.layers.30.mlp.switch_mlp.up_proj source_tensors_remaining=6990 mlx_active_bytes=3796258816
+  [334/438] language_model.model.layers.30.self_attn.g_proj source_tensors_remaining=6989 mlx_active_bytes=3796332544
+  [335/438] language_model.model.layers.30.self_attn.k_proj source_tensors_remaining=6988 mlx_active_bytes=3797512192
+  [336/438] language_model.model.layers.30.self_attn.o_proj source_tensors_remaining=6987 mlx_active_bytes=3806949376
+  [337/438] language_model.model.layers.30.self_attn.q_proj source_tensors_remaining=6986 mlx_active_bytes=3816386560
+  [338/438] language_model.model.layers.30.self_attn.v_proj source_tensors_remaining=6985 mlx_active_bytes=3817566208
+  [339/438] language_model.model.layers.31.mlp.shared_expert.down_proj source_tensors_remaining=6984 mlx_active_bytes=3818156032
+  [340/438] language_model.model.layers.31.mlp.shared_expert.gate_proj source_tensors_remaining=6983 mlx_active_bytes=3818745856
+  [341/438] language_model.model.layers.31.mlp.shared_expert.up_proj source_tensors_remaining=6982 mlx_active_bytes=3819335680
+    layer 31 down_proj: experts 0...15
+    layer 31 down_proj: experts 16...31
+    layer 31 down_proj: experts 32...47
+    layer 31 down_proj: experts 48...63
+    layer 31 down_proj: experts 64...79
+    layer 31 down_proj: experts 80...95
+    layer 31 down_proj: experts 96...111
+    layer 31 down_proj: experts 112...127
+    layer 31 down_proj: experts 128...143
+    layer 31 down_proj: experts 144...159
+    layer 31 down_proj: experts 160...175
+    layer 31 down_proj: experts 176...191
+    layer 31 down_proj: experts 192...207
+    layer 31 down_proj: experts 208...223
+    layer 31 down_proj: experts 224...239
+    layer 31 down_proj: experts 240...255
+  [342/438] language_model.model.layers.31.mlp.switch_mlp.down_proj source_tensors_remaining=6726 mlx_active_bytes=3970330624
+    layer 31 gate_proj: experts 0...15
+    layer 31 gate_proj: experts 16...31
+    layer 31 gate_proj: experts 32...47
+    layer 31 gate_proj: experts 48...63
+    layer 31 gate_proj: experts 64...79
+    layer 31 gate_proj: experts 80...95
+    layer 31 gate_proj: experts 96...111
+    layer 31 gate_proj: experts 112...127
+    layer 31 gate_proj: experts 128...143
+    layer 31 gate_proj: experts 144...159
+    layer 31 gate_proj: experts 160...175
+    layer 31 gate_proj: experts 176...191
+    layer 31 gate_proj: experts 192...207
+    layer 31 gate_proj: experts 208...223
+    layer 31 gate_proj: experts 224...239
+    layer 31 gate_proj: experts 240...255
+  [343/438] language_model.model.layers.31.mlp.switch_mlp.gate_proj source_tensors_remaining=6470 mlx_active_bytes=4121325568
+    layer 31 up_proj: experts 0...15
+    layer 31 up_proj: experts 16...31
+    layer 31 up_proj: experts 32...47
+    layer 31 up_proj: experts 48...63
+    layer 31 up_proj: experts 64...79
+    layer 31 up_proj: experts 80...95
+    layer 31 up_proj: experts 96...111
+    layer 31 up_proj: experts 112...127
+    layer 31 up_proj: experts 128...143
+    layer 31 up_proj: experts 144...159
+    layer 31 up_proj: experts 160...175
+    layer 31 up_proj: experts 176...191
+    layer 31 up_proj: experts 192...207
+    layer 31 up_proj: experts 208...223
+    layer 31 up_proj: experts 224...239
+    layer 31 up_proj: experts 240...255
+  [344/438] language_model.model.layers.31.mlp.switch_mlp.up_proj source_tensors_remaining=6214 mlx_active_bytes=4272320512
+  [345/438] language_model.model.layers.31.self_attn.g_proj source_tensors_remaining=6213 mlx_active_bytes=4272394240
+  [346/438] language_model.model.layers.31.self_attn.k_proj source_tensors_remaining=6212 mlx_active_bytes=4273573888
+  [347/438] language_model.model.layers.31.self_attn.o_proj source_tensors_remaining=6211 mlx_active_bytes=4283011072
+  [348/438] language_model.model.layers.31.self_attn.q_proj source_tensors_remaining=6210 mlx_active_bytes=4292448256
+  [349/438] language_model.model.layers.31.self_attn.v_proj source_tensors_remaining=6209 mlx_active_bytes=4293627904
+  [350/438] language_model.model.layers.32.mlp.shared_expert.down_proj source_tensors_remaining=6208 mlx_active_bytes=4294217728
+  [351/438] language_model.model.layers.32.mlp.shared_expert.gate_proj source_tensors_remaining=6207 mlx_active_bytes=4294807552
+  [352/438] language_model.model.layers.32.mlp.shared_expert.up_proj source_tensors_remaining=6206 mlx_active_bytes=4295397376
+    layer 32 down_proj: experts 0...15
+    layer 32 down_proj: experts 16...31
+    layer 32 down_proj: experts 32...47
+    layer 32 down_proj: experts 48...63
+    layer 32 down_proj: experts 64...79
+    layer 32 down_proj: experts 80...95
+    layer 32 down_proj: experts 96...111
+    layer 32 down_proj: experts 112...127
+    layer 32 down_proj: experts 128...143
+    layer 32 down_proj: experts 144...159
+    layer 32 down_proj: experts 160...175
+    layer 32 down_proj: experts 176...191
+    layer 32 down_proj: experts 192...207
+    layer 32 down_proj: experts 208...223
+    layer 32 down_proj: experts 224...239
+    layer 32 down_proj: experts 240...255
+  [353/438] language_model.model.layers.32.mlp.switch_mlp.down_proj source_tensors_remaining=5950 mlx_active_bytes=4446392320
+    layer 32 gate_proj: experts 0...15
+    layer 32 gate_proj: experts 16...31
+    layer 32 gate_proj: experts 32...47
+    layer 32 gate_proj: experts 48...63
+    layer 32 gate_proj: experts 64...79
+    layer 32 gate_proj: experts 80...95
+    layer 32 gate_proj: experts 96...111
+    layer 32 gate_proj: experts 112...127
+    layer 32 gate_proj: experts 128...143
+    layer 32 gate_proj: experts 144...159
+    layer 32 gate_proj: experts 160...175
+    layer 32 gate_proj: experts 176...191
+    layer 32 gate_proj: experts 192...207
+    layer 32 gate_proj: experts 208...223
+    layer 32 gate_proj: experts 224...239
+    layer 32 gate_proj: experts 240...255
+  [354/438] language_model.model.layers.32.mlp.switch_mlp.gate_proj source_tensors_remaining=5694 mlx_active_bytes=4597387264
+    layer 32 up_proj: experts 0...15
+    layer 32 up_proj: experts 16...31
+    layer 32 up_proj: experts 32...47
+    layer 32 up_proj: experts 48...63
+    layer 32 up_proj: experts 64...79
+    layer 32 up_proj: experts 80...95
+    layer 32 up_proj: experts 96...111
+    layer 32 up_proj: experts 112...127
+    layer 32 up_proj: experts 128...143
+    layer 32 up_proj: experts 144...159
+    layer 32 up_proj: experts 160...175
+    layer 32 up_proj: experts 176...191
+    layer 32 up_proj: experts 192...207
+    layer 32 up_proj: experts 208...223
+    layer 32 up_proj: experts 224...239
+    layer 32 up_proj: experts 240...255
+  [355/438] language_model.model.layers.32.mlp.switch_mlp.up_proj source_tensors_remaining=5438 mlx_active_bytes=4748382208
+  [356/438] language_model.model.layers.32.self_attn.g_proj source_tensors_remaining=5437 mlx_active_bytes=4748437504
+  [357/438] language_model.model.layers.32.self_attn.k_proj source_tensors_remaining=5436 mlx_active_bytes=4749617152
+  [358/438] language_model.model.layers.32.self_attn.o_proj source_tensors_remaining=5435 mlx_active_bytes=4756695040
+  [359/438] language_model.model.layers.32.self_attn.q_proj source_tensors_remaining=5434 mlx_active_bytes=4763772928
+  [360/438] language_model.model.layers.32.self_attn.v_proj source_tensors_remaining=5433 mlx_active_bytes=4764952576
+  [361/438] language_model.model.layers.33.mlp.shared_expert.down_proj source_tensors_remaining=5432 mlx_active_bytes=4765542400
+  [362/438] language_model.model.layers.33.mlp.shared_expert.gate_proj source_tensors_remaining=5431 mlx_active_bytes=4766132224
+  [363/438] language_model.model.layers.33.mlp.shared_expert.up_proj source_tensors_remaining=5430 mlx_active_bytes=4766722048
+    layer 33 down_proj: experts 0...15
+    layer 33 down_proj: experts 16...31
+    layer 33 down_proj: experts 32...47
+    layer 33 down_proj: experts 48...63
+    layer 33 down_proj: experts 64...79
+    layer 33 down_proj: experts 80...95
+    layer 33 down_proj: experts 96...111
+    layer 33 down_proj: experts 112...127
+    layer 33 down_proj: experts 128...143
+    layer 33 down_proj: experts 144...159
+    layer 33 down_proj: experts 160...175
+    layer 33 down_proj: experts 176...191
+    layer 33 down_proj: experts 192...207
+    layer 33 down_proj: experts 208...223
+    layer 33 down_proj: experts 224...239
+    layer 33 down_proj: experts 240...255
+  [364/438] language_model.model.layers.33.mlp.switch_mlp.down_proj source_tensors_remaining=5174 mlx_active_bytes=4917716992
+    layer 33 gate_proj: experts 0...15
+    layer 33 gate_proj: experts 16...31
+    layer 33 gate_proj: experts 32...47
+    layer 33 gate_proj: experts 48...63
+    layer 33 gate_proj: experts 64...79
+    layer 33 gate_proj: experts 80...95
+    layer 33 gate_proj: experts 96...111
+    layer 33 gate_proj: experts 112...127
+    layer 33 gate_proj: experts 128...143
+    layer 33 gate_proj: experts 144...159
+    layer 33 gate_proj: experts 160...175
+    layer 33 gate_proj: experts 176...191
+    layer 33 gate_proj: experts 192...207
+    layer 33 gate_proj: experts 208...223
+    layer 33 gate_proj: experts 224...239
+    layer 33 gate_proj: experts 240...255
+  [365/438] language_model.model.layers.33.mlp.switch_mlp.gate_proj source_tensors_remaining=4918 mlx_active_bytes=5068711936
+    layer 33 up_proj: experts 0...15
+    layer 33 up_proj: experts 16...31
+    layer 33 up_proj: experts 32...47
+    layer 33 up_proj: experts 48...63
+    layer 33 up_proj: experts 64...79
+    layer 33 up_proj: experts 80...95
+    layer 33 up_proj: experts 96...111
+    layer 33 up_proj: experts 112...127
+    layer 33 up_proj: experts 128...143
+    layer 33 up_proj: experts 144...159
+    layer 33 up_proj: experts 160...175
+    layer 33 up_proj: experts 176...191
+    layer 33 up_proj: experts 192...207
+    layer 33 up_proj: experts 208...223
+    layer 33 up_proj: experts 224...239
+    layer 33 up_proj: experts 240...255
+  [366/438] language_model.model.layers.33.mlp.switch_mlp.up_proj source_tensors_remaining=4662 mlx_active_bytes=5219706880
+  [367/438] language_model.model.layers.33.self_attn.g_proj source_tensors_remaining=4661 mlx_active_bytes=5219780608
+  [368/438] language_model.model.layers.33.self_attn.k_proj source_tensors_remaining=4660 mlx_active_bytes=5220960256
+  [369/438] language_model.model.layers.33.self_attn.o_proj source_tensors_remaining=4659 mlx_active_bytes=5230397440
+  [370/438] language_model.model.layers.33.self_attn.q_proj source_tensors_remaining=4658 mlx_active_bytes=5239834624
+  [371/438] language_model.model.layers.33.self_attn.v_proj source_tensors_remaining=4657 mlx_active_bytes=5241014272
+  [372/438] language_model.model.layers.34.self_attn.g_proj source_tensors_remaining=4656 mlx_active_bytes=5241088000
+  [373/438] language_model.model.layers.34.self_attn.k_proj source_tensors_remaining=4655 mlx_active_bytes=5242267648
+  [374/438] language_model.model.layers.34.self_attn.o_proj source_tensors_remaining=4654 mlx_active_bytes=5251704832
+  [375/438] language_model.model.layers.34.self_attn.q_proj source_tensors_remaining=4653 mlx_active_bytes=5261142016
+  [376/438] language_model.model.layers.34.self_attn.v_proj source_tensors_remaining=4652 mlx_active_bytes=5262321664
+[shard 4/4] model-00004-of-00004.safetensors: 62 Q4 module(s)
+  [377/438] language_model.lm_head source_tensors_remaining=4651 mlx_active_bytes=115605504
+  [378/438] language_model.model.layers.34.mlp.shared_expert.down_proj source_tensors_remaining=4650 mlx_active_bytes=116195328
+  [379/438] language_model.model.layers.34.mlp.shared_expert.gate_proj source_tensors_remaining=4649 mlx_active_bytes=116785152
+  [380/438] language_model.model.layers.34.mlp.shared_expert.up_proj source_tensors_remaining=4648 mlx_active_bytes=117374976
+    layer 34 down_proj: experts 0...15
+    layer 34 down_proj: experts 16...31
+    layer 34 down_proj: experts 32...47
+    layer 34 down_proj: experts 48...63
+    layer 34 down_proj: experts 64...79
+    layer 34 down_proj: experts 80...95
+    layer 34 down_proj: experts 96...111
+    layer 34 down_proj: experts 112...127
+    layer 34 down_proj: experts 128...143
+    layer 34 down_proj: experts 144...159
+    layer 34 down_proj: experts 160...175
+    layer 34 down_proj: experts 176...191
+    layer 34 down_proj: experts 192...207
+    layer 34 down_proj: experts 208...223
+    layer 34 down_proj: experts 224...239
+    layer 34 down_proj: experts 240...255
+  [381/438] language_model.model.layers.34.mlp.switch_mlp.down_proj source_tensors_remaining=4392 mlx_active_bytes=268369920
+    layer 34 gate_proj: experts 0...15
+    layer 34 gate_proj: experts 16...31
+    layer 34 gate_proj: experts 32...47
+    layer 34 gate_proj: experts 48...63
+    layer 34 gate_proj: experts 64...79
+    layer 34 gate_proj: experts 80...95
+    layer 34 gate_proj: experts 96...111
+    layer 34 gate_proj: experts 112...127
+    layer 34 gate_proj: experts 128...143
+    layer 34 gate_proj: experts 144...159
+    layer 34 gate_proj: experts 160...175
+    layer 34 gate_proj: experts 176...191
+    layer 34 gate_proj: experts 192...207
+    layer 34 gate_proj: experts 208...223
+    layer 34 gate_proj: experts 224...239
+    layer 34 gate_proj: experts 240...255
+  [382/438] language_model.model.layers.34.mlp.switch_mlp.gate_proj source_tensors_remaining=4136 mlx_active_bytes=419364864
+    layer 34 up_proj: experts 0...15
+    layer 34 up_proj: experts 16...31
+    layer 34 up_proj: experts 32...47
+    layer 34 up_proj: experts 48...63
+    layer 34 up_proj: experts 64...79
+    layer 34 up_proj: experts 80...95
+    layer 34 up_proj: experts 96...111
+    layer 34 up_proj: experts 112...127
+    layer 34 up_proj: experts 128...143
+    layer 34 up_proj: experts 144...159
+    layer 34 up_proj: experts 160...175
+    layer 34 up_proj: experts 176...191
+    layer 34 up_proj: experts 192...207
+    layer 34 up_proj: experts 208...223
+    layer 34 up_proj: experts 224...239
+    layer 34 up_proj: experts 240...255
+  [383/438] language_model.model.layers.34.mlp.switch_mlp.up_proj source_tensors_remaining=3880 mlx_active_bytes=570359808
+  [384/438] language_model.model.layers.35.mlp.shared_expert.down_proj source_tensors_remaining=3879 mlx_active_bytes=570949632
+  [385/438] language_model.model.layers.35.mlp.shared_expert.gate_proj source_tensors_remaining=3878 mlx_active_bytes=571539456
+  [386/438] language_model.model.layers.35.mlp.shared_expert.up_proj source_tensors_remaining=3877 mlx_active_bytes=572129280
+    layer 35 down_proj: experts 0...15
+    layer 35 down_proj: experts 16...31
+    layer 35 down_proj: experts 32...47
+    layer 35 down_proj: experts 48...63
+    layer 35 down_proj: experts 64...79
+    layer 35 down_proj: experts 80...95
+    layer 35 down_proj: experts 96...111
+    layer 35 down_proj: experts 112...127
+    layer 35 down_proj: experts 128...143
+    layer 35 down_proj: experts 144...159
+    layer 35 down_proj: experts 160...175
+    layer 35 down_proj: experts 176...191
+    layer 35 down_proj: experts 192...207
+    layer 35 down_proj: experts 208...223
+    layer 35 down_proj: experts 224...239
+    layer 35 down_proj: experts 240...255
+  [387/438] language_model.model.layers.35.mlp.switch_mlp.down_proj source_tensors_remaining=3621 mlx_active_bytes=723124224
+    layer 35 gate_proj: experts 0...15
+    layer 35 gate_proj: experts 16...31
+    layer 35 gate_proj: experts 32...47
+    layer 35 gate_proj: experts 48...63
+    layer 35 gate_proj: experts 64...79
+    layer 35 gate_proj: experts 80...95
+    layer 35 gate_proj: experts 96...111
+    layer 35 gate_proj: experts 112...127
+    layer 35 gate_proj: experts 128...143
+    layer 35 gate_proj: experts 144...159
+    layer 35 gate_proj: experts 160...175
+    layer 35 gate_proj: experts 176...191
+    layer 35 gate_proj: experts 192...207
+    layer 35 gate_proj: experts 208...223
+    layer 35 gate_proj: experts 224...239
+    layer 35 gate_proj: experts 240...255
+  [388/438] language_model.model.layers.35.mlp.switch_mlp.gate_proj source_tensors_remaining=3365 mlx_active_bytes=874119168
+    layer 35 up_proj: experts 0...15
+    layer 35 up_proj: experts 16...31
+    layer 35 up_proj: experts 32...47
+    layer 35 up_proj: experts 48...63
+    layer 35 up_proj: experts 64...79
+    layer 35 up_proj: experts 80...95
+    layer 35 up_proj: experts 96...111
+    layer 35 up_proj: experts 112...127
+    layer 35 up_proj: experts 128...143
+    layer 35 up_proj: experts 144...159
+    layer 35 up_proj: experts 160...175
+    layer 35 up_proj: experts 176...191
+    layer 35 up_proj: experts 192...207
+    layer 35 up_proj: experts 208...223
+    layer 35 up_proj: experts 224...239
+    layer 35 up_proj: experts 240...255
+  [389/438] language_model.model.layers.35.mlp.switch_mlp.up_proj source_tensors_remaining=3109 mlx_active_bytes=1025114112
+  [390/438] language_model.model.layers.35.self_attn.g_proj source_tensors_remaining=3108 mlx_active_bytes=1025187840
+  [391/438] language_model.model.layers.35.self_attn.k_proj source_tensors_remaining=3107 mlx_active_bytes=1026367488
+  [392/438] language_model.model.layers.35.self_attn.o_proj source_tensors_remaining=3106 mlx_active_bytes=1035804672
+  [393/438] language_model.model.layers.35.self_attn.q_proj source_tensors_remaining=3105 mlx_active_bytes=1045241856
+  [394/438] language_model.model.layers.35.self_attn.v_proj source_tensors_remaining=3104 mlx_active_bytes=1046421504
+  [395/438] language_model.model.layers.36.mlp.shared_expert.down_proj source_tensors_remaining=3103 mlx_active_bytes=1047011328
+  [396/438] language_model.model.layers.36.mlp.shared_expert.gate_proj source_tensors_remaining=3102 mlx_active_bytes=1047601152
+  [397/438] language_model.model.layers.36.mlp.shared_expert.up_proj source_tensors_remaining=3101 mlx_active_bytes=1048190976
+    layer 36 down_proj: experts 0...15
+    layer 36 down_proj: experts 16...31
+    layer 36 down_proj: experts 32...47
+    layer 36 down_proj: experts 48...63
+    layer 36 down_proj: experts 64...79
+    layer 36 down_proj: experts 80...95
+    layer 36 down_proj: experts 96...111
+    layer 36 down_proj: experts 112...127
+    layer 36 down_proj: experts 128...143
+    layer 36 down_proj: experts 144...159
+    layer 36 down_proj: experts 160...175
+    layer 36 down_proj: experts 176...191
+    layer 36 down_proj: experts 192...207
+    layer 36 down_proj: experts 208...223
+    layer 36 down_proj: experts 224...239
+    layer 36 down_proj: experts 240...255
+  [398/438] language_model.model.layers.36.mlp.switch_mlp.down_proj source_tensors_remaining=2845 mlx_active_bytes=1199185920
+    layer 36 gate_proj: experts 0...15
+    layer 36 gate_proj: experts 16...31
+    layer 36 gate_proj: experts 32...47
+    layer 36 gate_proj: experts 48...63
+    layer 36 gate_proj: experts 64...79
+    layer 36 gate_proj: experts 80...95
+    layer 36 gate_proj: experts 96...111
+    layer 36 gate_proj: experts 112...127
+    layer 36 gate_proj: experts 128...143
+    layer 36 gate_proj: experts 144...159
+    layer 36 gate_proj: experts 160...175
+    layer 36 gate_proj: experts 176...191
+    layer 36 gate_proj: experts 192...207
+    layer 36 gate_proj: experts 208...223
+    layer 36 gate_proj: experts 224...239
+    layer 36 gate_proj: experts 240...255
+  [399/438] language_model.model.layers.36.mlp.switch_mlp.gate_proj source_tensors_remaining=2589 mlx_active_bytes=1350180864
+    layer 36 up_proj: experts 0...15
+    layer 36 up_proj: experts 16...31
+    layer 36 up_proj: experts 32...47
+    layer 36 up_proj: experts 48...63
+    layer 36 up_proj: experts 64...79
+    layer 36 up_proj: experts 80...95
+    layer 36 up_proj: experts 96...111
+    layer 36 up_proj: experts 112...127
+    layer 36 up_proj: experts 128...143
+    layer 36 up_proj: experts 144...159
+    layer 36 up_proj: experts 160...175
+    layer 36 up_proj: experts 176...191
+    layer 36 up_proj: experts 192...207
+    layer 36 up_proj: experts 208...223
+    layer 36 up_proj: experts 224...239
+    layer 36 up_proj: experts 240...255
+  [400/438] language_model.model.layers.36.mlp.switch_mlp.up_proj source_tensors_remaining=2333 mlx_active_bytes=1501175808
+  [401/438] language_model.model.layers.36.self_attn.g_proj source_tensors_remaining=2332 mlx_active_bytes=1501231104
+  [402/438] language_model.model.layers.36.self_attn.k_proj source_tensors_remaining=2331 mlx_active_bytes=1502410752
+  [403/438] language_model.model.layers.36.self_attn.o_proj source_tensors_remaining=2330 mlx_active_bytes=1509488640
+  [404/438] language_model.model.layers.36.self_attn.q_proj source_tensors_remaining=2329 mlx_active_bytes=1516566528
+  [405/438] language_model.model.layers.36.self_attn.v_proj source_tensors_remaining=2328 mlx_active_bytes=1517746176
+  [406/438] language_model.model.layers.37.mlp.shared_expert.down_proj source_tensors_remaining=2327 mlx_active_bytes=1518336000
+  [407/438] language_model.model.layers.37.mlp.shared_expert.gate_proj source_tensors_remaining=2326 mlx_active_bytes=1518925824
+  [408/438] language_model.model.layers.37.mlp.shared_expert.up_proj source_tensors_remaining=2325 mlx_active_bytes=1519515648
+    layer 37 down_proj: experts 0...15
+    layer 37 down_proj: experts 16...31
+    layer 37 down_proj: experts 32...47
+    layer 37 down_proj: experts 48...63
+    layer 37 down_proj: experts 64...79
+    layer 37 down_proj: experts 80...95
+    layer 37 down_proj: experts 96...111
+    layer 37 down_proj: experts 112...127
+    layer 37 down_proj: experts 128...143
+    layer 37 down_proj: experts 144...159
+    layer 37 down_proj: experts 160...175
+    layer 37 down_proj: experts 176...191
+    layer 37 down_proj: experts 192...207
+    layer 37 down_proj: experts 208...223
+    layer 37 down_proj: experts 224...239
+    layer 37 down_proj: experts 240...255
+  [409/438] language_model.model.layers.37.mlp.switch_mlp.down_proj source_tensors_remaining=2069 mlx_active_bytes=1670510592
+    layer 37 gate_proj: experts 0...15
+    layer 37 gate_proj: experts 16...31
+    layer 37 gate_proj: experts 32...47
+    layer 37 gate_proj: experts 48...63
+    layer 37 gate_proj: experts 64...79
+    layer 37 gate_proj: experts 80...95
+    layer 37 gate_proj: experts 96...111
+    layer 37 gate_proj: experts 112...127
+    layer 37 gate_proj: experts 128...143
+    layer 37 gate_proj: experts 144...159
+    layer 37 gate_proj: experts 160...175
+    layer 37 gate_proj: experts 176...191
+    layer 37 gate_proj: experts 192...207
+    layer 37 gate_proj: experts 208...223
+    layer 37 gate_proj: experts 224...239
+    layer 37 gate_proj: experts 240...255
+  [410/438] language_model.model.layers.37.mlp.switch_mlp.gate_proj source_tensors_remaining=1813 mlx_active_bytes=1821505536
+    layer 37 up_proj: experts 0...15
+    layer 37 up_proj: experts 16...31
+    layer 37 up_proj: experts 32...47
+    layer 37 up_proj: experts 48...63
+    layer 37 up_proj: experts 64...79
+    layer 37 up_proj: experts 80...95
+    layer 37 up_proj: experts 96...111
+    layer 37 up_proj: experts 112...127
+    layer 37 up_proj: experts 128...143
+    layer 37 up_proj: experts 144...159
+    layer 37 up_proj: experts 160...175
+    layer 37 up_proj: experts 176...191
+    layer 37 up_proj: experts 192...207
+    layer 37 up_proj: experts 208...223
+    layer 37 up_proj: experts 224...239
+    layer 37 up_proj: experts 240...255
+  [411/438] language_model.model.layers.37.mlp.switch_mlp.up_proj source_tensors_remaining=1557 mlx_active_bytes=1972500480
+  [412/438] language_model.model.layers.37.self_attn.g_proj source_tensors_remaining=1556 mlx_active_bytes=1972574208
+  [413/438] language_model.model.layers.37.self_attn.k_proj source_tensors_remaining=1555 mlx_active_bytes=1973753856
+  [414/438] language_model.model.layers.37.self_attn.o_proj source_tensors_remaining=1554 mlx_active_bytes=1983191040
+  [415/438] language_model.model.layers.37.self_attn.q_proj source_tensors_remaining=1553 mlx_active_bytes=1992628224
+  [416/438] language_model.model.layers.37.self_attn.v_proj source_tensors_remaining=1552 mlx_active_bytes=1993807872
+  [417/438] language_model.model.layers.38.mlp.shared_expert.down_proj source_tensors_remaining=1551 mlx_active_bytes=1994397696
+  [418/438] language_model.model.layers.38.mlp.shared_expert.gate_proj source_tensors_remaining=1550 mlx_active_bytes=1994987520
+  [419/438] language_model.model.layers.38.mlp.shared_expert.up_proj source_tensors_remaining=1549 mlx_active_bytes=1995577344
+    layer 38 down_proj: experts 0...15
+    layer 38 down_proj: experts 16...31
+    layer 38 down_proj: experts 32...47
+    layer 38 down_proj: experts 48...63
+    layer 38 down_proj: experts 64...79
+    layer 38 down_proj: experts 80...95
+    layer 38 down_proj: experts 96...111
+    layer 38 down_proj: experts 112...127
+    layer 38 down_proj: experts 128...143
+    layer 38 down_proj: experts 144...159
+    layer 38 down_proj: experts 160...175
+    layer 38 down_proj: experts 176...191
+    layer 38 down_proj: experts 192...207
+    layer 38 down_proj: experts 208...223
+    layer 38 down_proj: experts 224...239
+    layer 38 down_proj: experts 240...255
+  [420/438] language_model.model.layers.38.mlp.switch_mlp.down_proj source_tensors_remaining=1293 mlx_active_bytes=2146572288
+    layer 38 gate_proj: experts 0...15
+    layer 38 gate_proj: experts 16...31
+    layer 38 gate_proj: experts 32...47
+    layer 38 gate_proj: experts 48...63
+    layer 38 gate_proj: experts 64...79
+    layer 38 gate_proj: experts 80...95
+    layer 38 gate_proj: experts 96...111
+    layer 38 gate_proj: experts 112...127
+    layer 38 gate_proj: experts 128...143
+    layer 38 gate_proj: experts 144...159
+    layer 38 gate_proj: experts 160...175
+    layer 38 gate_proj: experts 176...191
+    layer 38 gate_proj: experts 192...207
+    layer 38 gate_proj: experts 208...223
+    layer 38 gate_proj: experts 224...239
+    layer 38 gate_proj: experts 240...255
+  [421/438] language_model.model.layers.38.mlp.switch_mlp.gate_proj source_tensors_remaining=1037 mlx_active_bytes=2297567232
+    layer 38 up_proj: experts 0...15
+    layer 38 up_proj: experts 16...31
+    layer 38 up_proj: experts 32...47
+    layer 38 up_proj: experts 48...63
+    layer 38 up_proj: experts 64...79
+    layer 38 up_proj: experts 80...95
+    layer 38 up_proj: experts 96...111
+    layer 38 up_proj: experts 112...127
+    layer 38 up_proj: experts 128...143
+    layer 38 up_proj: experts 144...159
+    layer 38 up_proj: experts 160...175
+    layer 38 up_proj: experts 176...191
+    layer 38 up_proj: experts 192...207
+    layer 38 up_proj: experts 208...223
+    layer 38 up_proj: experts 224...239
+    layer 38 up_proj: experts 240...255
+  [422/438] language_model.model.layers.38.mlp.switch_mlp.up_proj source_tensors_remaining=781 mlx_active_bytes=2448562176
+  [423/438] language_model.model.layers.38.self_attn.g_proj source_tensors_remaining=780 mlx_active_bytes=2448635904
+  [424/438] language_model.model.layers.38.self_attn.k_proj source_tensors_remaining=779 mlx_active_bytes=2449815552
+  [425/438] language_model.model.layers.38.self_attn.o_proj source_tensors_remaining=778 mlx_active_bytes=2459252736
+  [426/438] language_model.model.layers.38.self_attn.q_proj source_tensors_remaining=777 mlx_active_bytes=2468689920
+  [427/438] language_model.model.layers.38.self_attn.v_proj source_tensors_remaining=776 mlx_active_bytes=2469869568
+  [428/438] language_model.model.layers.39.mlp.shared_expert.down_proj source_tensors_remaining=775 mlx_active_bytes=2470459392
+  [429/438] language_model.model.layers.39.mlp.shared_expert.gate_proj source_tensors_remaining=774 mlx_active_bytes=2471049216
+  [430/438] language_model.model.layers.39.mlp.shared_expert.up_proj source_tensors_remaining=773 mlx_active_bytes=2471639040
+    layer 39 down_proj: experts 0...15
+    layer 39 down_proj: experts 16...31
+    layer 39 down_proj: experts 32...47
+    layer 39 down_proj: experts 48...63
+    layer 39 down_proj: experts 64...79
+    layer 39 down_proj: experts 80...95
+    layer 39 down_proj: experts 96...111
+    layer 39 down_proj: experts 112...127
+    layer 39 down_proj: experts 128...143
+    layer 39 down_proj: experts 144...159
+    layer 39 down_proj: experts 160...175
+    layer 39 down_proj: experts 176...191
+    layer 39 down_proj: experts 192...207
+    layer 39 down_proj: experts 208...223
+    layer 39 down_proj: experts 224...239
+    layer 39 down_proj: experts 240...255
+  [431/438] language_model.model.layers.39.mlp.switch_mlp.down_proj source_tensors_remaining=517 mlx_active_bytes=2622633984
+    layer 39 gate_proj: experts 0...15
+    layer 39 gate_proj: experts 16...31
+    layer 39 gate_proj: experts 32...47
+    layer 39 gate_proj: experts 48...63
+    layer 39 gate_proj: experts 64...79
+    layer 39 gate_proj: experts 80...95
+    layer 39 gate_proj: experts 96...111
+    layer 39 gate_proj: experts 112...127
+    layer 39 gate_proj: experts 128...143
+    layer 39 gate_proj: experts 144...159
+    layer 39 gate_proj: experts 160...175
+    layer 39 gate_proj: experts 176...191
+    layer 39 gate_proj: experts 192...207
+    layer 39 gate_proj: experts 208...223
+    layer 39 gate_proj: experts 224...239
+    layer 39 gate_proj: experts 240...255
+  [432/438] language_model.model.layers.39.mlp.switch_mlp.gate_proj source_tensors_remaining=261 mlx_active_bytes=2773628928
+    layer 39 up_proj: experts 0...15
+    layer 39 up_proj: experts 16...31
+    layer 39 up_proj: experts 32...47
+    layer 39 up_proj: experts 48...63
+    layer 39 up_proj: experts 64...79
+    layer 39 up_proj: experts 80...95
+    layer 39 up_proj: experts 96...111
+    layer 39 up_proj: experts 112...127
+    layer 39 up_proj: experts 128...143
+    layer 39 up_proj: experts 144...159
+    layer 39 up_proj: experts 160...175
+    layer 39 up_proj: experts 176...191
+    layer 39 up_proj: experts 192...207
+    layer 39 up_proj: experts 208...223
+    layer 39 up_proj: experts 224...239
+    layer 39 up_proj: experts 240...255
+  [433/438] language_model.model.layers.39.mlp.switch_mlp.up_proj source_tensors_remaining=5 mlx_active_bytes=2924623872
+  [434/438] language_model.model.layers.39.self_attn.g_proj source_tensors_remaining=4 mlx_active_bytes=2924697600
+  [435/438] language_model.model.layers.39.self_attn.k_proj source_tensors_remaining=3 mlx_active_bytes=2925877248
+  [436/438] language_model.model.layers.39.self_attn.o_proj source_tensors_remaining=2 mlx_active_bytes=2935314432
+  [437/438] language_model.model.layers.39.self_attn.q_proj source_tensors_remaining=1 mlx_active_bytes=2944751616
+  [438/438] language_model.model.layers.39.self_attn.v_proj source_tensors_remaining=0 mlx_active_bytes=2945931264
+Created /Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-LS2-c5f36269 from 4 streamed shard(s). Peak MLX memory: 17742233636 bytes; released 30513 source tensors.
+      736.06 real        33.64 user       719.11 sys
+          5444878336  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             5235637  page reclaims
+                 191  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+               35313  voluntary context switches
+             1140576  involuntary context switches
+       5205742309892  instructions retired
+       2399559226900  cycles elapsed
+         18127537232  peak memory footprint

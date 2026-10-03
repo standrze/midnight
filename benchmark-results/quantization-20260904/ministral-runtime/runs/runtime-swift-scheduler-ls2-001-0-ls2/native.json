@@ -1,0 +1,60 @@
+{
+  "allow_early_stop" : false,
+  "context_length" : 262144,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-09-04T21:34:03Z",
+  "engine" : "metal",
+  "format" : 1,
+  "kv_compression" : "none",
+  "measured_trials" : 1,
+  "median_decode_tokens_per_second" : 33.213168766744744,
+  "median_prompt_tokens_per_second" : 421.4714308607102,
+  "memory_limit_bytes" : 54975581389,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx-archive-20260904/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+  "prefill_step_size" : 512,
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 256,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 421.4714308607102,
+        "stop_reason" : "length",
+        "tokens_per_second" : 33.213168766744744
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 8295034184,
+      "prompt_token_id_fingerprint" : "fnv1a64:43fb272f59a02e20",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 1374.580875,
+      "total_milliseconds" : 9092.604959
+    }
+  ],
+  "warmup_count" : 1,
+  "warmups" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover:\n\n1. **Core Data Structures** (deques, work queues)\n2. **Atomic Operations** (CAS, compare-and-swap)\n3. **Thread-Local Work Stealing**\n4. **Load Balancing & Fairness**\n5. **Benchmarking & Optimization**\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Producer Threads**: Add tasks to their local queue.\n- **Consumer Threads**: Execute tasks from their local queue; if empty, steal from another thread’s queue.\n- **Lock-Free Guarantees**: No global locks",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 256,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 544.0851837210938,
+        "stop_reason" : "length",
+        "tokens_per_second" : 31.826893578608928
+      },
+      "mode" : "target_only",
+      "peak_active_memory_bytes" : 8115744072,
+      "prompt_token_id_fingerprint" : "fnv1a64:43fb272f59a02e20",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 1093.239792,
+      "total_milliseconds" : 9148.490292
+    }
+  ]
+}

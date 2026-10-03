@@ -1,0 +1,52 @@
+{
+  "baseline_first": false,
+  "candidate": "g128-standard",
+  "command": [
+    "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/model-runner-runtime-bench",
+    "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-G128-Standard-c5f36269",
+    "/private/tmp/midnight-priorities-20260904/group-runtime-standard/runs/runtime-decode-g128-standard-000-0-g128-standard/native.json",
+    "--engine",
+    "metal",
+    "--tokens",
+    "512",
+    "--warmups",
+    "3",
+    "--trials",
+    "1",
+    "--prompt",
+    "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early."
+  ],
+  "directory": "/private/tmp/midnight-priorities-20260904/group-runtime-standard/runs/runtime-decode-g128-standard-000-0-g128-standard",
+  "elapsed_seconds": 24.45910774997901,
+  "environment": {
+    "MLX_MAX_MB_PER_BUFFER": null,
+    "MLX_MAX_OPS_PER_BUFFER": null
+  },
+  "exit_code": 0,
+  "finished_at": "2026-09-05T01:22:30.063154+00:00",
+  "measurement": {
+    "content_sha256": "d10d6247c0cc7feaaca76889cb9ab93669219ec0df9993826e1719bdcd9ffd01",
+    "context_length": 262144,
+    "decode_tokens_per_second": 79.60447701953231,
+    "engine": "metal",
+    "generation_tokens": 512,
+    "kv_compression": "none",
+    "memory_limit_bytes": 54975581389,
+    "native_mode": "target_only",
+    "peak_active_memory_bytes": 18036505422,
+    "prefill_step_size": 512,
+    "prefill_tokens_per_second": 420.53219434919487,
+    "prompt_token_id_fingerprint": "fnv1a64:01cd0f777fe2a08d",
+    "prompt_tokens": 50,
+    "total_milliseconds": 6557.156541,
+    "ttft_ms": 123.267583
+  },
+  "mode": "runtime",
+  "model": "g128-standard",
+  "pair_id": "runtime-decode-g128-standard-000",
+  "position": 0,
+  "repetition": 0,
+  "started_at": "2026-09-05T01:22:05.603705+00:00",
+  "status": "measured",
+  "workload": "decode"
+}

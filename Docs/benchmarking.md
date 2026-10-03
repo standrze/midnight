@@ -4,16 +4,6 @@
 
 The campaign measures native generation without HTTP overhead. It is not a serving throughput/load test. Runtime arms generate natural greedy continuations; different quantizations can produce different output tokens and MoE expert routes. Even a valid speed ratio describes those end-to-end trajectories, not identical computation or equal model quality. Run held-out quality evaluation alongside runtime measurements.
 
-For direct native runtime runs, `--disable-prompt-reuse` disables prompt-cache
-reuse for every warmup and measured request. The JSON report records
-`prompt_reuse_policy` as `disabled` or `mode_default`. Without the flag, ordinary
-repeated requests can reuse a shared prefix even when the dedicated
-`--prompt-cache` comparison mode is absent. Cold-prompt comparisons must verify
-zero cached tokens and full prompt prefill in every record. The flag cannot be
-combined with `--prompt-cache` or `--hot-cache-ab`. The current campaign helper
-does not yet accept this new flag; use a separately validated helper before
-including it in a campaign manifest.
-
 ## Prepare and run
 
 Build both tools in release mode before benchmarking:
@@ -44,32 +34,6 @@ python3 Scripts/benchmark-campaign.py run /tmp/ministral-campaign.json \
 Every output directory must be new. Review `commands.json` and `schedule.json` from the dry run before execution. `--mode all` runs both workloads. `--timeout 1800` limits each subprocess; failures are retained and subsequent arms still run. Interrupting the campaign terminates the current process group and retains completed records. There is no resume/retry facility in this version; a retry is a new campaign.
 
 The generated example uses one fixed 256-token generation prompt and the authored general smoke corpus. That corpus is a wiring/sanity check, not sufficient evidence of broad quantization quality. Add representative, disjoint held-out code, prose, reasoning, and long-context corpora before selecting a production quantizer. Quality runs use the native teacher-forced NLL tool, not the separate BF16-teacher KL tool.
-
-## Observe macOS process footprint
-
-For a macOS campaign, compile the optional kernel-ledger probe before timing:
-
-```sh
-xcrun clang -O2 -Wall -Wextra -Werror Scripts/macos-process-footprint.c \
-  -o /absolute/new/macos-process-footprint
-```
-
-Add `"process_memory_probe": "/absolute/new/macos-process-footprint"` at the
-manifest top level. The campaign records its binary hash and observes each
-native child with `proc_pid_rusage(RUSAGE_INFO_V4)` every 50 ms. Raw samples and
-errors stay in each run directory; `process_memory` retains physical footprint,
-resident and wired bytes separately. The kernel lifetime maximum observed
-before exit includes model loading, warmups and measured trials. It can retain
-a transient peak after allocations are freed, unlike sampled RSS alone.
-
-The last unsampled interval before process exit is not certified. These
-observations support a development memory screen, not a claim about concurrent
-serving or a guaranteed final process high-water mark. A failed/unsupported
-probe yields `status: "unavailable"`; valid native timing evidence is preserved.
-Missing memory is never treated as zero or a passing budget. Compare matched
-contexts, cache, assistant and runtime settings, and retain absolute device
-headroom and swap observations. MLX allocations, on-disk bytes, process RSS and
-physical footprint are distinct metrics.
 
 ## Manifest and configuration sweeps
 

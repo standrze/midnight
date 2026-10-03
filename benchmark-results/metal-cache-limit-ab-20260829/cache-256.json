@@ -1,0 +1,228 @@
+{
+  "created_at" : "2026-08-30T02:13:52Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 12,
+  "median_decode_tokens_per_second" : 160.88884556015228,
+  "median_prompt_tokens_per_second" : 1034.565179334962,
+  "model_path" : "/path/to/models/Laguna-XS-2.1-Abliterated-Q4R8-ScaleSearch-LS2",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 128,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1035.8475317537975,
+        "stop_reason" : "length",
+        "tokens_per_second" : 165.37853822279442
+      },
+      "mode" : "target_only",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 77.611958
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1037.8623700910225,
+        "stop_reason" : "length",
+        "tokens_per_second" : 165.65611026154656
+      },
+      "mode" : "target_only",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 77.293083
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1036.1179926797884,
+        "stop_reason" : "length",
+        "tokens_per_second" : 161.58720764343786
+      },
+      "mode" : "target_only",
+      "sequence" : 4,
+      "time_to_first_token_milliseconds" : 77.506416
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1024.2168180504489,
+        "stop_reason" : "length",
+        "tokens_per_second" : 159.37962727667832
+      },
+      "mode" : "target_only",
+      "sequence" : 5,
+      "time_to_first_token_milliseconds" : 78.337625
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1034.65239459489,
+        "stop_reason" : "length",
+        "tokens_per_second" : 155.0560385093539
+      },
+      "mode" : "target_only",
+      "sequence" : 6,
+      "time_to_first_token_milliseconds" : 77.589792
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1011.3558638645177,
+        "stop_reason" : "length",
+        "tokens_per_second" : 159.58547500281645
+      },
+      "mode" : "target_only",
+      "sequence" : 7,
+      "time_to_first_token_milliseconds" : 79.513417
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1025.0818379390087,
+        "stop_reason" : "length",
+        "tokens_per_second" : 155.14381692095515
+      },
+      "mode" : "target_only",
+      "sequence" : 8,
+      "time_to_first_token_milliseconds" : 78.266333
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1032.8141448932042,
+        "stop_reason" : "length",
+        "tokens_per_second" : 149.66087862023537
+      },
+      "mode" : "target_only",
+      "sequence" : 9,
+      "time_to_first_token_milliseconds" : 77.693375
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1035.5901582216666,
+        "stop_reason" : "length",
+        "tokens_per_second" : 161.25477126277676
+      },
+      "mode" : "target_only",
+      "sequence" : 10,
+      "time_to_first_token_milliseconds" : 77.536667
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1022.2419475505221,
+        "stop_reason" : "length",
+        "tokens_per_second" : 160.52291985752782
+      },
+      "mode" : "target_only",
+      "sequence" : 11,
+      "time_to_first_token_milliseconds" : 78.5335
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1034.4779640750344,
+        "stop_reason" : "length",
+        "tokens_per_second" : 164.18507526041213
+      },
+      "mode" : "target_only",
+      "sequence" : 12,
+      "time_to_first_token_milliseconds" : 77.591333
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1036.2962177613688,
+        "stop_reason" : "length",
+        "tokens_per_second" : 162.7049679982083
+      },
+      "mode" : "target_only",
+      "sequence" : 13,
+      "time_to_first_token_milliseconds" : 77.495209
+    }
+  ],
+  "warmup_count" : 2,
+  "warmups" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 710.6169317048586,
+        "stop_reason" : "length",
+        "tokens_per_second" : 165.48905744883672
+      },
+      "mode" : "target_only",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 117.00375
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrency mechanism that allows multiple threads to dynamically balance their workload by stealing tasks from each other's queues. This approach provides excellent load balancing characteristics while maintaining high throughput. In this comprehensive tutorial, we'll implement a lock-free work-stealing scheduler in Swift, covering all the essential components, data structures, and synchronization primitives required for a production-quality implementation.\n\n## Core Concepts\n\nBefore diving into the implementation, let's understand the key concepts:\n\n1. **Work Stealing**: Threads that run out of work can \"steal\"",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1035.129148248231,
+        "stop_reason" : "length",
+        "tokens_per_second" : 163.13192341712593
+      },
+      "mode" : "target_only",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 77.536875
+    }
+  ]
+}

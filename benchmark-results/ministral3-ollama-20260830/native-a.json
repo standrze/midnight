@@ -1,0 +1,140 @@
+{
+  "allow_early_stop" : false,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-08-30T16:09:16Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 6,
+  "median_decode_tokens_per_second" : 67.84834687234009,
+  "median_prompt_tokens_per_second" : 1626.1797659435979,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 128,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1682.6769359732011,
+        "stop_reason" : "length",
+        "tokens_per_second" : 67.94148692223196
+      },
+      "mode" : "target_only",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 346.52475
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1683.7351931688652,
+        "stop_reason" : "length",
+        "tokens_per_second" : 67.82829755583172
+      },
+      "mode" : "target_only",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 345.748917
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1678.895648781762,
+        "stop_reason" : "length",
+        "tokens_per_second" : 67.97081894778155
+      },
+      "mode" : "target_only",
+      "sequence" : 4,
+      "time_to_first_token_milliseconds" : 352.373291
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1548.5978787655022,
+        "stop_reason" : "length",
+        "tokens_per_second" : 67.24433612065708
+      },
+      "mode" : "target_only",
+      "sequence" : 5,
+      "time_to_first_token_milliseconds" : 382.99825
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1573.463883105434,
+        "stop_reason" : "length",
+        "tokens_per_second" : 67.86839618884845
+      },
+      "mode" : "target_only",
+      "sequence" : 6,
+      "time_to_first_token_milliseconds" : 369.544666
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1547.403110659478,
+        "stop_reason" : "length",
+        "tokens_per_second" : 59.750543490630236
+      },
+      "mode" : "target_only",
+      "sequence" : 7,
+      "time_to_first_token_milliseconds" : 375.497209
+    }
+  ],
+  "warmup_count" : 2,
+  "warmups" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1658.4181941215459,
+        "stop_reason" : "length",
+        "tokens_per_second" : 68.01651032199182
+      },
+      "mode" : "target_only",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 367.54575
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy ones. This approach minimizes contention and maximizes CPU utilization, making it ideal for high-performance applications like game engines, web servers, and scientific computing.\n\nIn this tutorial, we'll implement a **lock-free work-stealing scheduler** in Swift, leveraging **atomic operations** and **thread-local storage** to ensure safety without traditional locks. We'll cover",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 128,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1681.6590423823923,
+        "stop_reason" : "length",
+        "tokens_per_second" : 67.91232624273704
+      },
+      "mode" : "target_only",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 346.50175
+    }
+  ]
+}

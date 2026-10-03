@@ -103,7 +103,7 @@ def model_info(model, full_hash=False):
 def provenance(manifest, full_hash):
     dependencies = ROOT / ".build/checkouts"
     selected_env = {k: v for k, v in os.environ.items()
-                    if (k.startswith(("MODEL_RUNNER_", "MIDNIGHT_", "MLX_")) or k in {"SPM_CUDA", "CUDA_VISIBLE_DEVICES"})
+                    if (k.startswith(("MODEL_RUNNER_", "MLX_")) or k in {"SPM_CUDA", "CUDA_VISIBLE_DEVICES"})
                     and not any(secret in k.upper() for secret in ("TOKEN", "SECRET", "PASSWORD", "KEY"))}
     result = {"created_at": now(), "python": sys.version, "platform": platform.platform(),
               "machine": platform.machine(), "cpu_count": os.cpu_count(), "compiler": command_output(["swift", "--version"]), "environment": selected_env,
@@ -128,8 +128,6 @@ def provenance(manifest, full_hash):
         result["binaries"][mode] = {"executable": file_info(path)}
         metal = Path(path).parent / "mlx.metallib"
         result["binaries"][mode]["metallib"] = file_info(metal) if metal.exists() else None
-    if manifest.get("process_memory_probe"):
-        result["process_memory_probe"] = file_info(manifest["process_memory_probe"])
     for corpus in manifest.get("quality", {}).get("corpora", []):
         result["corpora"].append({"label": corpus["label"], **file_info(corpus["path"])})
     return result
@@ -218,11 +216,6 @@ def arm_environment(manifest, model_label):
 
 
 def validate_manifest(manifest, mode):
-    if manifest.get("process_memory_probe"):
-        probe = absolute_path(manifest["process_memory_probe"])
-        if sys.platform != "darwin" or not os.access(probe, os.X_OK):
-            raise ValueError("process_memory_probe requires an executable macOS ledger probe")
-        manifest["process_memory_probe"] = probe
     if manifest.get("version") != 1:
         raise ValueError("Manifest version must be 1")
     labels = named_items(manifest.get("models"), "model")
@@ -254,8 +247,7 @@ def validate_manifest(manifest, mode):
     binaries = {}
     for current in modes:
         binary = absolute_path(manifest["binaries"][current])
-        configuration_parts = {part.casefold() for part in Path(binary).parts}
-        if "release" not in configuration_parts or "debug" in configuration_parts or not os.access(binary, os.X_OK):
+        if "release" not in Path(binary).parts or "debug" in Path(binary).parts or not os.access(binary, os.X_OK):
             raise ValueError(f"Executable must resolve inside a release directory: {binary}")
         binaries[current] = binary
         section = manifest[current]
@@ -398,16 +390,8 @@ def execute(manifest, run, directory, timeout):
     start = time.monotonic()
     with (path / "stdout.log").open("wb") as stdout, (path / "stderr.log").open("wb") as stderr:
         process = None
-        memory_process = None
-        memory_stream = None
-        memory_errors = None
         try:
             process = subprocess.Popen(args, cwd=ROOT, stdout=stdout, stderr=stderr, env=environment, start_new_session=True)
-            if manifest.get("process_memory_probe"):
-                memory_stream = (path / "process-memory.jsonl").open("xb")
-                memory_errors = (path / "process-memory-stderr.log").open("xb")
-                memory_process = subprocess.Popen([manifest["process_memory_probe"], str(process.pid), "50"],
-                                                  stdout=memory_stream, stderr=memory_errors)
             record["exit_code"] = process.wait(timeout=timeout)
             if record["exit_code"] != 0:
                 raise ValueError(f"Native process exited with {record['exit_code']}")
@@ -425,53 +409,10 @@ def execute(manifest, run, directory, timeout):
             record["interrupted"] = isinstance(error, KeyboardInterrupt)
         except (OSError, ValueError, KeyError, TypeError) as error:
             record["error"] = str(error)
-            if process is not None and process.poll() is None:
-                os.killpg(process.pid, signal.SIGTERM)
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    os.killpg(process.pid, signal.SIGKILL)
-                    process.wait()
-        finally:
-            if memory_process is not None:
-                try:
-                    memory_code = memory_process.wait(timeout=2)
-                except subprocess.TimeoutExpired:
-                    memory_process.kill()
-                    memory_code = memory_process.wait()
-                record["process_memory_probe_exit_code"] = memory_code
-            for stream in (memory_stream, memory_errors):
-                if stream is not None:
-                    stream.close()
-    if manifest.get("process_memory_probe"):
-        try:
-            events = [json.loads(line) for line in (path / "process-memory.jsonl").read_text().splitlines()]
-            record["process_memory"] = process_memory_summary(events, record.get("process_memory_probe_exit_code"))
-        except (OSError, ValueError, KeyError, TypeError) as error:
-            record["process_memory"] = {"status": "unavailable", "error": str(error)}
     record["elapsed_seconds"] = time.monotonic() - start
     record["finished_at"] = now()
     write_json(path / "invocation.json", record)
     return record
-
-
-def process_memory_summary(events, exit_code):
-    samples = [s for s in events if s.get("event") == "sample"]
-    if exit_code != 0 or not samples:
-        return {"status": "unavailable", "probe_exit_code": exit_code, "samples": len(samples)}
-    fields = ("physical_footprint_bytes", "resident_size_bytes", "wired_size_bytes",
-              "observed_lifetime_max_physical_footprint_bytes")
-    for sample in samples:
-        for field in fields:
-            value = sample.get(field)
-            if type(value) is not int or value < 0:
-                raise ValueError(f"Invalid kernel memory observation: {field}")
-    return {"status": "observed", "samples": len(samples), "sampling_interval_ms": 50,
-            "sampled_peak_physical_footprint_bytes": max(s["physical_footprint_bytes"] for s in samples),
-            "observed_lifetime_max_physical_footprint_bytes": max(s["observed_lifetime_max_physical_footprint_bytes"] for s in samples),
-            "sampled_peak_resident_bytes": max(s["resident_size_bytes"] for s in samples),
-            "sampled_peak_wired_bytes": max(s["wired_size_bytes"] for s in samples),
-            "limitations": "Kernel lifetime maximum observed before exit includes load/warmup/trials. The final unsampled interval is not certified; this is not a serving-concurrency memory measurement."}
 
 
 def pair_errors(base, candidate, mode):

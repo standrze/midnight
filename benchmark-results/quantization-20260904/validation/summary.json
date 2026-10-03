@@ -1,0 +1,54 @@
+{
+  "captured_at": "2026-09-04T23:11:50.893911+00:00",
+  "version": "0.2.0-beta.2",
+  "platform": "macOS Apple M5 Max",
+  "swift_tests": {
+    "swift_testing": 166,
+    "xctest": 2,
+    "status": "passed",
+    "command": "MIDNIGHT_RUN_NAX_REGRESSION=1 MIDNIGHT_RUN_FUSED_GATHER_REGRESSION=1 swift test -c release --skip-build --no-parallel",
+    "build_flags": "swift build -c release --build-tests -Xswiftc -enable-testing --jobs 8",
+    "log": "full-release-tests-v6.log"
+  },
+  "python_tests": {
+    "count": 49,
+    "status": "passed",
+    "elapsed_seconds": 11.627,
+    "evidence": "Validation agent tool output, exec session75014 chunk4ce419; no filesystem log saved",
+    "reproduce_command": "python3 -m unittest discover -s Tests/Python -p '*test*.py'"
+  },
+  "shell_tests": {
+    "scripts": 29,
+    "status": "passed",
+    "log": "shell-tests-final.log"
+  },
+  "production_build": {
+    "command": "swift build -c release --jobs 8",
+    "status": "passed",
+    "log": "beta2-production-build.log",
+    "version_command": ".build/release/midnight --version",
+    "version_output": "0.2.0-beta.2"
+  },
+  "runtime_smokes": {
+    "models": [
+      "LS2",
+      "AWSS"
+    ],
+    "generation_tokens_each": 128,
+    "prompt_tokens_each": 50,
+    "warmups_each": 1,
+    "trials_each": 1,
+    "engine": "metal",
+    "status": "passed",
+    "interpretation": "Functional generation checks only; one trial and different output trajectories do not establish a speed comparison."
+  },
+  "artifact_hashes": {
+    ".build/release/midnight": "bba984897159b9558c6f6e32660c08993688f2d8cfb150b376981f499791a2be",
+    ".build/release/model-runner-runtime-bench": "d886e55f3391dd389a3be7c8b221bf54b3a37d746085ba356d3df6e7b6da6e4f",
+    ".build/release/mlx.metallib": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+    "Sources/RuntimeBenchmark/main.swift": "262780b90538f089362aa1a5b663da9d319e350cc00fad8faba2288609542d01",
+    "Sources/ModelRunnerCore/LocalModelRunner.swift": "ed5573f59178bfa2d6eb4a24398c1f99c2f30dbbff4076ef97597cc0affed60e",
+    "Sources/ModelRunnerCore/LagunaModel.swift": "1af9dcffc78b4e58884d60c8bef46d461b6f68fa797e202d8118520a79f3f07c",
+    "Sources/ModelRunner/main.swift": "53b3ac818da3eac4b8358e42ebccf92b6b26e84f414e8b7f64655d3a2b32111d"
+  }
+}

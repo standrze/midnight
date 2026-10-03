@@ -1,0 +1,9 @@
+{
+  "source_path": "/Users/stephen/Documents/ChatGPT/model-runner-mlx-archive-20260904/tmp/calibration/wikitext-2-raw-eval.jsonl",
+  "source_sha256": "be40b2e92a40298a2e7c29b1b52844f4c57b096a27250ddcaf4733cc5dcba0e7",
+  "source_records": 64,
+  "method": "Concatenate each consecutive group of eight records with two newlines, preserve source order.",
+  "output_sha256": "c7b87e6366cd2cd02fec1d24f75a9506e6aaaca95c3e4d091325b17d5ea76180",
+  "output_records": 8,
+  "purpose": "Chunked-prefill reference likelihood; not retrieval or generated-task accuracy."
+}

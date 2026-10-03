@@ -1,0 +1,60 @@
+{
+  "created_at" : "2026-08-30T03:03:06Z",
+  "dflash_ab_comparison" : {
+    "dflash_median_decode_tokens_per_second" : 44.401216207677614,
+    "dflash_speedup_percent" : -72.70671709608088,
+    "outputs_match_exactly" : true,
+    "target_only_median_decode_tokens_per_second" : 162.68184506782768,
+    "trials_per_mode" : 1
+  },
+  "dflash_block_size" : 3,
+  "dflash_model_path" : "/path/to/models/Laguna-XS-2.1-DFlash-BF16-target-MLX-Q4R8-ScaleSearch",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 2,
+  "median_decode_tokens_per_second" : 44.401216207677614,
+  "median_prompt_tokens_per_second" : 978.9163150229657,
+  "model_path" : "/path/to/midnight/tmp/Laguna-XS-2.1-standard-Q4R8-runtime-view",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 32,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 32,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 864.5286557904175,
+        "stop_reason" : "length",
+        "tokens_per_second" : 162.68184506782768
+      },
+      "mode" : "target_only",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 69.319792
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\nA work-stealing scheduler is a sophisticated concurrent scheduling algorithm designed to efficiently distribute tasks across",
+      "metrics" : {
+        "accepted_draft_tokens" : 16,
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 32,
+        "prefilled_prompt_token_count" : 50,
+        "prompt_token_count" : 50,
+        "prompt_tokens_per_second" : 978.9163150229657,
+        "proposed_draft_tokens" : 30,
+        "stop_reason" : "length",
+        "tokens_per_second" : 44.401216207677614
+      },
+      "mode" : "dflash",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 52.979708
+    }
+  ],
+  "warmup_count" : 0,
+  "warmups" : [
+
+  ]
+}

@@ -1,0 +1,162 @@
+[
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-decode-buffer200mb256-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-decode-buffer200mb256-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-prefill-long-buffer200mb256-000",
+    "position": 0,
+    "repetition": 0,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-prefill-long-buffer200mb256-000",
+    "position": 1,
+    "repetition": 0,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-decode-buffer200mb256-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-decode-buffer200mb256-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-prefill-long-buffer200mb256-001",
+    "position": 0,
+    "repetition": 1,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-prefill-long-buffer200mb256-001",
+    "position": 1,
+    "repetition": 1,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-prefill-long-buffer200mb256-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-prefill-long-buffer200mb256-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-decode-buffer200mb256-002",
+    "position": 0,
+    "repetition": 2,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-decode-buffer200mb256-002",
+    "position": 1,
+    "repetition": 2,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-prefill-long-buffer200mb256-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": false,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-prefill-long-buffer200mb256-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "prefill-long"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "stock",
+    "pair_id": "runtime-decode-buffer200mb256-003",
+    "position": 0,
+    "repetition": 3,
+    "workload": "decode"
+  },
+  {
+    "baseline_first": true,
+    "candidate": "buffer200mb256",
+    "mode": "runtime",
+    "model": "buffer200mb256",
+    "pair_id": "runtime-decode-buffer200mb256-003",
+    "position": 1,
+    "repetition": 3,
+    "workload": "decode"
+  }
+]

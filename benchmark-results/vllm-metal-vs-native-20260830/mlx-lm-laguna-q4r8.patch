@@ -1,0 +1,52 @@
+--- a/mlx_lm/models/laguna.py
++++ b/mlx_lm/models/laguna.py
+@@ -168,11 +168,13 @@
+         self.top_k = args.num_experts_per_tok
+         self.num_experts = args.num_experts
+         self.softcap = args.moe_router_logit_softcapping
+-        self.weight = mx.zeros((args.num_experts, args.hidden_size))
++        # Keep the router as a module so MLX-LM's per-module quantization
++        # policy can preserve Laguna Q4R8 checkpoints' affine-Q8 routers.
++        self.proj = nn.Linear(args.hidden_size, args.num_experts, bias=False)
+         self.e_score_correction_bias = mx.zeros((args.num_experts,))
+ 
+     def __call__(self, x):
+-        logits = (x @ self.weight.T).astype(mx.float32)
++        logits = self.proj(x).astype(mx.float32)
+         if self.softcap > 0.0:
+             logits = mx.tanh(logits / self.softcap) * self.softcap
+ 
+@@ -304,7 +306,33 @@
+         else:
+             out = self.lm_head(out)
+         return out
++
++    def sanitize(self, weights):
++        """Load the native runner's exact Laguna Q4R8 storage layout.
++
++        The Swift checkpoint wraps text weights in ``language_model`` and
++        stores gate/up projections concatenated along the output dimension.
++        MLX-LM uses the unwrapped namespace and separate projections. Slicing
++        here creates MLX views; it does not requantize or alter tensor values.
++        """
++        sanitized = {}
++        wrapper = "language_model."
++        fused = ".gate_up_proj."
++        for key, value in weights.items():
++            if key.startswith(wrapper):
++                key = key[len(wrapper) :]
++            if fused not in key:
++                sanitized[key] = value
++                continue
+ 
++            output_size = value.shape[-2]
++            if output_size % 2:
++                raise ValueError(f"Odd fused gate/up output dimension for {key}")
++            midpoint = output_size // 2
++            sanitized[key.replace(fused, ".gate_proj.")] = value[..., :midpoint, :]
++            sanitized[key.replace(fused, ".up_proj.")] = value[..., midpoint:, :]
++        return sanitized
++
+     @property
+     def layers(self):
+         return self.model.layers

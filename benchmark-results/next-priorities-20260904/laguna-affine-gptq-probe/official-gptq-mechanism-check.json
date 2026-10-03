@@ -1,0 +1,19 @@
+{
+  "mlx_version": "0.31.2",
+  "device": "Device(cpu, 0)",
+  "input_dtype": "mlx.core.bfloat16",
+  "initial_h_dtype": "mlx.core.float32",
+  "product_dtype": "mlx.core.bfloat16",
+  "first_accumulation_dtype": "mlx.core.float32",
+  "second_accumulation_dtype": "mlx.core.float32",
+  "second_group_global_slice": {
+    "status": "completed",
+    "nonzero": 0
+  },
+  "installed_gptq_path": "/Users/stephen/Library/Python/3.14/lib/python/site-packages/mlx_lm/quant/gptq.py",
+  "installed_gptq_sha256": "8ba42877f45e86262146c6c962691c19a819478b561f55f04371d28ae3a74c9e",
+  "expression": "H = mx.array(0.0); H = H + x.T @ x; H = H + x.T @ x",
+  "scope": "Tiny mechanism checks; not full execution of the upstream GPTQ conversion function",
+  "empty_write_expression": "err = mx.zeros((2,64)); e = mx.ones((2,1)); err[...,64:65] = e; mx.eval(err)",
+  "mlx_lm_distribution_version": "0.31.1"
+}

@@ -1,0 +1,4 @@
+Error: The model ended the turn without producing text.
+MLX resource guard: memory=54975581389 bytes cache=268435456 bytes
+Measured MLX wired-memory plan: peak=12129612580 kv=31244288 workspace=919887524 limit=13611009294 cap=54975581389
+Context policy: limit=8192, prefill=512, KV=none, geometry=known

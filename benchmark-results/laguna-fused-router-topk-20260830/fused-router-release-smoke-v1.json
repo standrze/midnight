@@ -1,0 +1,85 @@
+{
+  "created_at" : "2026-08-30T10:26:25Z",
+  "engine" : "metal",
+  "format" : 1,
+  "laguna_router_topk_ab_comparison" : {
+    "fused_median_decode_tokens_per_second" : 197.88273973895312,
+    "fused_speedup_percent" : 4.414177855688517,
+    "legacy_median_decode_tokens_per_second" : 189.51711712220546,
+    "outputs_match_exactly" : true,
+    "trials_per_mode" : 1
+  },
+  "measured_trials" : 2,
+  "median_decode_tokens_per_second" : 197.88273973895312,
+  "median_prompt_tokens_per_second" : 1044.4477870694627,
+  "model_path" : "/path/to/models/Laguna-XS-2.1-Abliterated-Q4R8-ScaleSearch-LS2",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 16,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 16,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1038.7489744960258,
+        "stop_reason" : "length",
+        "tokens_per_second" : 189.51711712220546
+      },
+      "mode" : "laguna_router_topk_legacy",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 77.86725
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 16,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 1044.4477870694627,
+        "stop_reason" : "length",
+        "tokens_per_second" : 197.88273973895312
+      },
+      "mode" : "laguna_router_topk_fused",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 77.599833
+    }
+  ],
+  "warmup_count" : 2,
+  "warmups" : [
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 16,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 202.68045639954258,
+        "stop_reason" : "length",
+        "tokens_per_second" : 187.21567828822106
+      },
+      "mode" : "laguna_router_topk_legacy",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 426.073334
+    },
+    {
+      "content" : "# Implementing a Lock-Free Work-Stealing Scheduler in Swift\n\n## Introduction\n\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 16,
+        "prefilled_prompt_token_count" : 79,
+        "prompt_token_count" : 79,
+        "prompt_tokens_per_second" : 816.6389179504052,
+        "stop_reason" : "length",
+        "tokens_per_second" : 198.96310922551015
+      },
+      "mode" : "laguna_router_topk_fused",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 98.566041
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "path": "/Users/stephen/Documents/ChatGPT/model-runner-mlx-archive-20260904/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
+    "model_type": "ministral3",
+    "layers": 40,
+    "hidden": 5120,
+    "intermediate": 16384,
+    "bytes": 27890141208,
+    "config_sha256": "b1897778395bb1795489a048ebde2e6d216eee21014ce9c18193d15f097454a6"
+  },
+  {
+    "path": "/Users/stephen/Documents/ChatGPT/model-runner-mlx-archive-20260904/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-AWSS1-3cea74c",
+    "model_type": "ministral3",
+    "layers": 40,
+    "hidden": 5120,
+    "intermediate": 16384,
+    "bytes": 7597868290,
+    "config_sha256": "5fc4302f96fa357a453bc8f29f9d31a90c6bebff172cce099b71c73625bab1a7"
+  },
+  {
+    "path": "/Users/stephen/Documents/ChatGPT/model-runner-mlx-archive-20260904/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-ScaleSearch-LS2-3cea74c",
+    "model_type": "ministral3",
+    "layers": 40,
+    "hidden": 5120,
+    "intermediate": 16384,
+    "bytes": 7597868262,
+    "config_sha256": "5fc4302f96fa357a453bc8f29f9d31a90c6bebff172cce099b71c73625bab1a7"
+  },
+  {
+    "path": "/Users/stephen/Documents/ChatGPT/model-runner-mlx-archive-20260904/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+    "model_type": "ministral3",
+    "layers": 40,
+    "hidden": 5120,
+    "intermediate": 16384,
+    "bytes": 7597868346,
+    "config_sha256": "5fc4302f96fa357a453bc8f29f9d31a90c6bebff172cce099b71c73625bab1a7"
+  }
+]

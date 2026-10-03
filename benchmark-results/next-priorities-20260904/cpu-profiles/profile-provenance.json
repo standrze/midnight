@@ -1,0 +1,32 @@
+{
+  "built_revision": "a49a5990d3f3965ad37fc202c0f46d9e323ab569",
+  "binary": {
+    "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-runtime-bench",
+    "sha256": "d886e55f3391dd389a3be7c8b221bf54b3a37d746085ba356d3df6e7b6da6e4f"
+  },
+  "method": "Attach Time Profiler to an already running optimized release benchmark. All captured stacks are after model load; inspect samples for any final teardown.",
+  "failed_launch": "Direct Instruments launch stalled in Metal initialization; stopped by Instruments at60s. Startup-only trace is diagnostic and excluded from decode findings.",
+  "profiled_timing_policy": "Profiled runtime timing must not be used for speed comparisons.",
+  "files": [
+    {
+      "path": "attached-time-profile.xml",
+      "bytes": 2813396,
+      "sha256": "477bebc8ee0c8e401b20273606d0dda8662d2da89488ed2035aedadff83b4fdb"
+    },
+    {
+      "path": "profile-analysis.json",
+      "bytes": 468755,
+      "sha256": "7c5072c6fb2a72531eff8262653724fc8049a42351a84f3d71b3e97099d4b378"
+    },
+    {
+      "path": "profile-attached-runtime.json",
+      "bytes": 24348,
+      "sha256": "ca645ee9c69dcd93c62b0af6740054233ca918a9980eadfe8c8bb46a12deea9b"
+    },
+    {
+      "path": "profile-toc.xml",
+      "bytes": 8609,
+      "sha256": "fde5ac854918f830e7b8e97c46521703b080d3d255c0224d0de0497f728456c4"
+    }
+  ]
+}

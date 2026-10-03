@@ -1,0 +1,63 @@
+Fingerprinting complete indexed source weights (bounded 8 MiB reads).
+Layerwise Laguna: 47 independent segments; two-stage BF16 payload <= 131047424 bytes
+Layerwise Laguna: completed layer 1/40
+Layerwise Laguna: completed layer 2/40
+Layerwise Laguna: completed layer 3/40
+Layerwise Laguna: completed layer 4/40
+Layerwise Laguna: completed layer 5/40
+Layerwise Laguna: completed layer 6/40
+Layerwise Laguna: completed layer 7/40
+Layerwise Laguna: completed layer 8/40
+Layerwise Laguna: completed layer 9/40
+Layerwise Laguna: completed layer 10/40
+Layerwise Laguna: completed layer 11/40
+Layerwise Laguna: completed layer 12/40
+Layerwise Laguna: completed layer 13/40
+Layerwise Laguna: completed layer 14/40
+Layerwise Laguna: completed layer 15/40
+Layerwise Laguna: completed layer 16/40
+Layerwise Laguna: completed layer 17/40
+Layerwise Laguna: completed layer 18/40
+Layerwise Laguna: completed layer 19/40
+Layerwise Laguna: completed layer 20/40
+Layerwise Laguna: completed layer 21/40
+Layerwise Laguna: completed layer 22/40
+Layerwise Laguna: completed layer 23/40
+Layerwise Laguna: completed layer 24/40
+Layerwise Laguna: completed layer 25/40
+Layerwise Laguna: completed layer 26/40
+Layerwise Laguna: completed layer 27/40
+Layerwise Laguna: completed layer 28/40
+Layerwise Laguna: completed layer 29/40
+Layerwise Laguna: completed layer 30/40
+Layerwise Laguna: completed layer 31/40
+Layerwise Laguna: completed layer 32/40
+Layerwise Laguna: completed layer 33/40
+Layerwise Laguna: completed layer 34/40
+Layerwise Laguna: completed layer 35/40
+Layerwise Laguna: completed layer 36/40
+Layerwise Laguna: completed layer 37/40
+Layerwise Laguna: completed layer 38/40
+Layerwise Laguna: completed layer 39/40
+Layerwise Laguna: completed layer 40/40
+Collected 320 module statistics across 15997 tokens in 47 segment(s).
+Wrote /private/tmp/midnight-optimization-20260904/laguna-dev-v2.safetensors
+Wrote /private/tmp/midnight-optimization-20260904/laguna-dev-v2.json
+      104.04 real        68.03 user        22.74 sys
+          2511093760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             4437891  page reclaims
+                 490  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 281  voluntary context switches
+              142616  involuntary context switches
+        601460354077  instructions retired
+        384725936616  cycles elapsed
+          4331555312  peak memory footprint

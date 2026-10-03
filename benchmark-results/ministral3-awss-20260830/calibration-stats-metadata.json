@@ -1,0 +1,3348 @@
+{
+  "add_special_tokens" : true,
+  "algorithm" : "input_channel_second_moment",
+  "architectures" : [
+    "Mistral3ForConditionalGeneration"
+  ],
+  "backend" : "metal",
+  "corpus_fingerprint" : "fnv1a64:535aa441808a576c",
+  "corpus_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/mlx-lm-calibration-v5-awss.jsonl",
+  "corpus_sample_count" : 128,
+  "created_at" : "2026-08-30T19:23:45Z",
+  "device" : "gpu",
+  "elapsed_seconds" : 111.224445458,
+  "format" : 1,
+  "maximum_total_tokens" : 65536,
+  "mlx_peak_memory_bytes" : 28496320520,
+  "model_type" : "mistral3",
+  "module_count" : 281,
+  "modules" : [
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 6386.045,
+      "mean_second_moment" : 29.148006773833185,
+      "minimum_second_moment" : 5.7372737,
+      "observed_position_count" : 65536,
+      "path" : "lm_head",
+      "tensor_key" : "lm_head.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 6.6363387,
+      "mean_second_moment" : 0.0006218920550091767,
+      "minimum_second_moment" : 1.0732662e-05,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.mlp.down_proj",
+      "tensor_key" : "model.layers.0.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1.8851177,
+      "mean_second_moment" : 0.030962094616363033,
+      "minimum_second_moment" : 2.844294e-06,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.mlp.gate_proj",
+      "tensor_key" : "model.layers.0.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1.8851177,
+      "mean_second_moment" : 0.030962094616363033,
+      "minimum_second_moment" : 2.844294e-06,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.mlp.up_proj",
+      "tensor_key" : "model.layers.0.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 33.93743,
+      "mean_second_moment" : 0.03001564442849694,
+      "minimum_second_moment" : 1.2058565e-14,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.self_attn.k_proj",
+      "tensor_key" : "model.layers.0.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.06890711,
+      "mean_second_moment" : 0.00018851966821836763,
+      "minimum_second_moment" : 1.7530908e-06,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.self_attn.o_proj",
+      "tensor_key" : "model.layers.0.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 33.93743,
+      "mean_second_moment" : 0.03001564442849694,
+      "minimum_second_moment" : 1.2058565e-14,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.self_attn.q_proj",
+      "tensor_key" : "model.layers.0.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 33.93743,
+      "mean_second_moment" : 0.03001564442849694,
+      "minimum_second_moment" : 1.2058565e-14,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.0.self_attn.v_proj",
+      "tensor_key" : "model.layers.0.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.032098167,
+      "mean_second_moment" : 0.0004136742992923992,
+      "minimum_second_moment" : 6.773174e-05,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.mlp.down_proj",
+      "tensor_key" : "model.layers.1.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 3.5406086,
+      "mean_second_moment" : 0.07082938436869286,
+      "minimum_second_moment" : 1.1871193e-06,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.mlp.gate_proj",
+      "tensor_key" : "model.layers.1.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 3.5406086,
+      "mean_second_moment" : 0.07082938436869286,
+      "minimum_second_moment" : 1.1871193e-06,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.mlp.up_proj",
+      "tensor_key" : "model.layers.1.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 887.17786,
+      "mean_second_moment" : 0.6821825313523283,
+      "minimum_second_moment" : 2.8485246e-13,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.self_attn.k_proj",
+      "tensor_key" : "model.layers.1.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.0378946,
+      "mean_second_moment" : 0.0007946686938045122,
+      "minimum_second_moment" : 1.1051313e-05,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.self_attn.o_proj",
+      "tensor_key" : "model.layers.1.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 887.17786,
+      "mean_second_moment" : 0.6821825313523283,
+      "minimum_second_moment" : 2.8485246e-13,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.self_attn.q_proj",
+      "tensor_key" : "model.layers.1.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 887.17786,
+      "mean_second_moment" : 0.6821825313523283,
+      "minimum_second_moment" : 2.8485246e-13,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.1.self_attn.v_proj",
+      "tensor_key" : "model.layers.1.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 2.034768,
+      "mean_second_moment" : 0.010721973585901878,
+      "minimum_second_moment" : 0.003767706,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.mlp.down_proj",
+      "tensor_key" : "model.layers.10.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 150.88,
+      "mean_second_moment" : 0.7943914285977371,
+      "minimum_second_moment" : 0.51275474,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.mlp.gate_proj",
+      "tensor_key" : "model.layers.10.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 150.88,
+      "mean_second_moment" : 0.7943914285977371,
+      "minimum_second_moment" : 0.51275474,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.mlp.up_proj",
+      "tensor_key" : "model.layers.10.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1334.0885,
+      "mean_second_moment" : 2.7804100131383165,
+      "minimum_second_moment" : 0.39385462,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.self_attn.k_proj",
+      "tensor_key" : "model.layers.10.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.3246816,
+      "mean_second_moment" : 0.030205676760999722,
+      "minimum_second_moment" : 0.002102688,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.self_attn.o_proj",
+      "tensor_key" : "model.layers.10.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1334.0885,
+      "mean_second_moment" : 2.7804100131383165,
+      "minimum_second_moment" : 0.39385462,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.self_attn.q_proj",
+      "tensor_key" : "model.layers.10.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1334.0885,
+      "mean_second_moment" : 2.7804100131383165,
+      "minimum_second_moment" : 0.39385462,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.10.self_attn.v_proj",
+      "tensor_key" : "model.layers.10.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 3.1545744,
+      "mean_second_moment" : 0.01153215050301526,
+      "minimum_second_moment" : 0.0030684897,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.mlp.down_proj",
+      "tensor_key" : "model.layers.11.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 138.60562,
+      "mean_second_moment" : 0.8256165228376631,
+      "minimum_second_moment" : 0.49688902,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.mlp.gate_proj",
+      "tensor_key" : "model.layers.11.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 138.60562,
+      "mean_second_moment" : 0.8256165228376631,
+      "minimum_second_moment" : 0.49688902,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.mlp.up_proj",
+      "tensor_key" : "model.layers.11.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1833.5679,
+      "mean_second_moment" : 2.735736484429799,
+      "minimum_second_moment" : 0.40632316,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.self_attn.k_proj",
+      "tensor_key" : "model.layers.11.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.6649166,
+      "mean_second_moment" : 0.03017555586211529,
+      "minimum_second_moment" : 0.0049178367,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.self_attn.o_proj",
+      "tensor_key" : "model.layers.11.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1833.5679,
+      "mean_second_moment" : 2.735736484429799,
+      "minimum_second_moment" : 0.40632316,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.self_attn.q_proj",
+      "tensor_key" : "model.layers.11.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1833.5679,
+      "mean_second_moment" : 2.735736484429799,
+      "minimum_second_moment" : 0.40632316,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.11.self_attn.v_proj",
+      "tensor_key" : "model.layers.11.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.46538043,
+      "mean_second_moment" : 0.0112257886466125,
+      "minimum_second_moment" : 0.0036616004,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.mlp.down_proj",
+      "tensor_key" : "model.layers.12.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 146.31512,
+      "mean_second_moment" : 0.8374814196955412,
+      "minimum_second_moment" : 0.5491038,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.mlp.gate_proj",
+      "tensor_key" : "model.layers.12.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 146.31512,
+      "mean_second_moment" : 0.8374814196955412,
+      "minimum_second_moment" : 0.5491038,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.mlp.up_proj",
+      "tensor_key" : "model.layers.12.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1722.65,
+      "mean_second_moment" : 3.182051534508355,
+      "minimum_second_moment" : 0.50385255,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.self_attn.k_proj",
+      "tensor_key" : "model.layers.12.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.4816008,
+      "mean_second_moment" : 0.046370079412099585,
+      "minimum_second_moment" : 0.009887793,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.self_attn.o_proj",
+      "tensor_key" : "model.layers.12.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1722.65,
+      "mean_second_moment" : 3.182051534508355,
+      "minimum_second_moment" : 0.50385255,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.self_attn.q_proj",
+      "tensor_key" : "model.layers.12.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1722.65,
+      "mean_second_moment" : 3.182051534508355,
+      "minimum_second_moment" : 0.50385255,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.12.self_attn.v_proj",
+      "tensor_key" : "model.layers.12.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.40082523,
+      "mean_second_moment" : 0.010859404374926385,
+      "minimum_second_moment" : 0.0023240075,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.mlp.down_proj",
+      "tensor_key" : "model.layers.13.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 160.53087,
+      "mean_second_moment" : 0.8208129449165427,
+      "minimum_second_moment" : 0.4975802,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.mlp.gate_proj",
+      "tensor_key" : "model.layers.13.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 160.53087,
+      "mean_second_moment" : 0.8208129449165427,
+      "minimum_second_moment" : 0.4975802,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.mlp.up_proj",
+      "tensor_key" : "model.layers.13.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1943.0908,
+      "mean_second_moment" : 3.0853760583791883,
+      "minimum_second_moment" : 0.4290817,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.self_attn.k_proj",
+      "tensor_key" : "model.layers.13.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.037848,
+      "mean_second_moment" : 0.050387049164328346,
+      "minimum_second_moment" : 0.008261333,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.self_attn.o_proj",
+      "tensor_key" : "model.layers.13.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1943.0908,
+      "mean_second_moment" : 3.0853760583791883,
+      "minimum_second_moment" : 0.4290817,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.self_attn.q_proj",
+      "tensor_key" : "model.layers.13.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1943.0908,
+      "mean_second_moment" : 3.0853760583791883,
+      "minimum_second_moment" : 0.4290817,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.13.self_attn.v_proj",
+      "tensor_key" : "model.layers.13.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.67561346,
+      "mean_second_moment" : 0.011431216872708205,
+      "minimum_second_moment" : 0.0033214071,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.mlp.down_proj",
+      "tensor_key" : "model.layers.14.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 181.6276,
+      "mean_second_moment" : 0.88431677443441,
+      "minimum_second_moment" : 0.53212434,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.mlp.gate_proj",
+      "tensor_key" : "model.layers.14.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 181.6276,
+      "mean_second_moment" : 0.88431677443441,
+      "minimum_second_moment" : 0.53212434,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.mlp.up_proj",
+      "tensor_key" : "model.layers.14.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1812.7125,
+      "mean_second_moment" : 4.23519113502698,
+      "minimum_second_moment" : 0.52963746,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.self_attn.k_proj",
+      "tensor_key" : "model.layers.14.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.003883,
+      "mean_second_moment" : 0.07322854996459682,
+      "minimum_second_moment" : 0.011903166,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.self_attn.o_proj",
+      "tensor_key" : "model.layers.14.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1812.7125,
+      "mean_second_moment" : 4.23519113502698,
+      "minimum_second_moment" : 0.52963746,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.self_attn.q_proj",
+      "tensor_key" : "model.layers.14.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1812.7125,
+      "mean_second_moment" : 4.23519113502698,
+      "minimum_second_moment" : 0.52963746,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.14.self_attn.v_proj",
+      "tensor_key" : "model.layers.14.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.28788388,
+      "mean_second_moment" : 0.012242121596258926,
+      "minimum_second_moment" : 0.0037539187,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.mlp.down_proj",
+      "tensor_key" : "model.layers.15.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 198.34647,
+      "mean_second_moment" : 0.9477221956010908,
+      "minimum_second_moment" : 0.5744592,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.mlp.gate_proj",
+      "tensor_key" : "model.layers.15.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 198.34647,
+      "mean_second_moment" : 0.9477221956010908,
+      "minimum_second_moment" : 0.5744592,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.mlp.up_proj",
+      "tensor_key" : "model.layers.15.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2363.6196,
+      "mean_second_moment" : 4.266518838098273,
+      "minimum_second_moment" : 0.5819398,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.self_attn.k_proj",
+      "tensor_key" : "model.layers.15.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.48819,
+      "mean_second_moment" : 0.06376490321997608,
+      "minimum_second_moment" : 0.0068355286,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.self_attn.o_proj",
+      "tensor_key" : "model.layers.15.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2363.6196,
+      "mean_second_moment" : 4.266518838098273,
+      "minimum_second_moment" : 0.5819398,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.self_attn.q_proj",
+      "tensor_key" : "model.layers.15.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2363.6196,
+      "mean_second_moment" : 4.266518838098273,
+      "minimum_second_moment" : 0.5819398,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.15.self_attn.v_proj",
+      "tensor_key" : "model.layers.15.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 3.5848086,
+      "mean_second_moment" : 0.015166299225384705,
+      "minimum_second_moment" : 0.002128339,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.mlp.down_proj",
+      "tensor_key" : "model.layers.16.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 256.4001,
+      "mean_second_moment" : 1.0549784277565777,
+      "minimum_second_moment" : 0.6023267,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.mlp.gate_proj",
+      "tensor_key" : "model.layers.16.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 256.4001,
+      "mean_second_moment" : 1.0549784277565777,
+      "minimum_second_moment" : 0.6023267,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.mlp.up_proj",
+      "tensor_key" : "model.layers.16.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2464.0552,
+      "mean_second_moment" : 3.96476013752399,
+      "minimum_second_moment" : 0.6701465,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.self_attn.k_proj",
+      "tensor_key" : "model.layers.16.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.7548459,
+      "mean_second_moment" : 0.07213255982037481,
+      "minimum_second_moment" : 0.013461945,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.self_attn.o_proj",
+      "tensor_key" : "model.layers.16.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2464.0552,
+      "mean_second_moment" : 3.96476013752399,
+      "minimum_second_moment" : 0.6701465,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.self_attn.q_proj",
+      "tensor_key" : "model.layers.16.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2464.0552,
+      "mean_second_moment" : 3.96476013752399,
+      "minimum_second_moment" : 0.6701465,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.16.self_attn.v_proj",
+      "tensor_key" : "model.layers.16.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 9.667028,
+      "mean_second_moment" : 0.01813580976174478,
+      "minimum_second_moment" : 0.003898009,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.mlp.down_proj",
+      "tensor_key" : "model.layers.17.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 291.29993,
+      "mean_second_moment" : 1.1150476571638137,
+      "minimum_second_moment" : 0.67627424,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.mlp.gate_proj",
+      "tensor_key" : "model.layers.17.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 291.29993,
+      "mean_second_moment" : 1.1150476571638137,
+      "minimum_second_moment" : 0.67627424,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.mlp.up_proj",
+      "tensor_key" : "model.layers.17.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1414.9207,
+      "mean_second_moment" : 4.914270805858541,
+      "minimum_second_moment" : 0.8290668,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.self_attn.k_proj",
+      "tensor_key" : "model.layers.17.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.4319255,
+      "mean_second_moment" : 0.08828866130932056,
+      "minimum_second_moment" : 0.0069568236,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.self_attn.o_proj",
+      "tensor_key" : "model.layers.17.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1414.9207,
+      "mean_second_moment" : 4.914270805858541,
+      "minimum_second_moment" : 0.8290668,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.self_attn.q_proj",
+      "tensor_key" : "model.layers.17.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1414.9207,
+      "mean_second_moment" : 4.914270805858541,
+      "minimum_second_moment" : 0.8290668,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.17.self_attn.v_proj",
+      "tensor_key" : "model.layers.17.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 6.7420936,
+      "mean_second_moment" : 0.021476193555528766,
+      "minimum_second_moment" : 0.003815477,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.mlp.down_proj",
+      "tensor_key" : "model.layers.18.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 354.02954,
+      "mean_second_moment" : 1.191929937445093,
+      "minimum_second_moment" : 0.7142222,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.mlp.gate_proj",
+      "tensor_key" : "model.layers.18.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 354.02954,
+      "mean_second_moment" : 1.191929937445093,
+      "minimum_second_moment" : 0.7142222,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.mlp.up_proj",
+      "tensor_key" : "model.layers.18.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1411.6115,
+      "mean_second_moment" : 4.982230906398035,
+      "minimum_second_moment" : 1.00203,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.self_attn.k_proj",
+      "tensor_key" : "model.layers.18.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.6070946,
+      "mean_second_moment" : 0.0762559594591039,
+      "minimum_second_moment" : 0.014194528,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.self_attn.o_proj",
+      "tensor_key" : "model.layers.18.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1411.6115,
+      "mean_second_moment" : 4.982230906398035,
+      "minimum_second_moment" : 1.00203,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.self_attn.q_proj",
+      "tensor_key" : "model.layers.18.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1411.6115,
+      "mean_second_moment" : 4.982230906398035,
+      "minimum_second_moment" : 1.00203,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.18.self_attn.v_proj",
+      "tensor_key" : "model.layers.18.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 7.497735,
+      "mean_second_moment" : 0.02370127956487522,
+      "minimum_second_moment" : 0.0051777605,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.mlp.down_proj",
+      "tensor_key" : "model.layers.19.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 314.8868,
+      "mean_second_moment" : 1.2185963703901508,
+      "minimum_second_moment" : 0.77324885,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.mlp.gate_proj",
+      "tensor_key" : "model.layers.19.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 314.8868,
+      "mean_second_moment" : 1.2185963703901508,
+      "minimum_second_moment" : 0.77324885,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.mlp.up_proj",
+      "tensor_key" : "model.layers.19.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1830.9213,
+      "mean_second_moment" : 4.853767080709804,
+      "minimum_second_moment" : 0.95679766,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.self_attn.k_proj",
+      "tensor_key" : "model.layers.19.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.2593696,
+      "mean_second_moment" : 0.058308215100964844,
+      "minimum_second_moment" : 0.002636114,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.self_attn.o_proj",
+      "tensor_key" : "model.layers.19.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1830.9213,
+      "mean_second_moment" : 4.853767080709804,
+      "minimum_second_moment" : 0.95679766,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.self_attn.q_proj",
+      "tensor_key" : "model.layers.19.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1830.9213,
+      "mean_second_moment" : 4.853767080709804,
+      "minimum_second_moment" : 0.95679766,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.19.self_attn.v_proj",
+      "tensor_key" : "model.layers.19.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 6013.339,
+      "mean_second_moment" : 0.5730820215692649,
+      "minimum_second_moment" : 0.00016426024,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.mlp.down_proj",
+      "tensor_key" : "model.layers.2.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 13.248804,
+      "mean_second_moment" : 0.13137328201555648,
+      "minimum_second_moment" : 0.066257924,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.mlp.gate_proj",
+      "tensor_key" : "model.layers.2.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 13.248804,
+      "mean_second_moment" : 0.13137328201555648,
+      "minimum_second_moment" : 0.066257924,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.mlp.up_proj",
+      "tensor_key" : "model.layers.2.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1003.02576,
+      "mean_second_moment" : 0.7298049065381974,
+      "minimum_second_moment" : 0.0007752392,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.self_attn.k_proj",
+      "tensor_key" : "model.layers.2.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.052647926,
+      "mean_second_moment" : 0.001619108477899367,
+      "minimum_second_moment" : 4.1817748e-05,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.self_attn.o_proj",
+      "tensor_key" : "model.layers.2.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1003.02576,
+      "mean_second_moment" : 0.7298049065381974,
+      "minimum_second_moment" : 0.0007752392,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.self_attn.q_proj",
+      "tensor_key" : "model.layers.2.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1003.02576,
+      "mean_second_moment" : 0.7298049065381974,
+      "minimum_second_moment" : 0.0007752392,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.2.self_attn.v_proj",
+      "tensor_key" : "model.layers.2.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 1.8507757,
+      "mean_second_moment" : 0.02741835759360356,
+      "minimum_second_moment" : 0.008079507,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.mlp.down_proj",
+      "tensor_key" : "model.layers.20.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 280.496,
+      "mean_second_moment" : 1.3298661214765162,
+      "minimum_second_moment" : 0.8737043,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.mlp.gate_proj",
+      "tensor_key" : "model.layers.20.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 280.496,
+      "mean_second_moment" : 1.3298661214765162,
+      "minimum_second_moment" : 0.8737043,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.mlp.up_proj",
+      "tensor_key" : "model.layers.20.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1684.7899,
+      "mean_second_moment" : 5.0140017802128565,
+      "minimum_second_moment" : 1.0932243,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.self_attn.k_proj",
+      "tensor_key" : "model.layers.20.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.2379669,
+      "mean_second_moment" : 0.06431593426032123,
+      "minimum_second_moment" : 0.0055447025,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.self_attn.o_proj",
+      "tensor_key" : "model.layers.20.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1684.7899,
+      "mean_second_moment" : 5.0140017802128565,
+      "minimum_second_moment" : 1.0932243,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.self_attn.q_proj",
+      "tensor_key" : "model.layers.20.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1684.7899,
+      "mean_second_moment" : 5.0140017802128565,
+      "minimum_second_moment" : 1.0932243,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.20.self_attn.v_proj",
+      "tensor_key" : "model.layers.20.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 3.9743063,
+      "mean_second_moment" : 0.03272252325695035,
+      "minimum_second_moment" : 0.009470498,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.mlp.down_proj",
+      "tensor_key" : "model.layers.21.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 277.2249,
+      "mean_second_moment" : 1.4865694366916613,
+      "minimum_second_moment" : 0.005358188,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.mlp.gate_proj",
+      "tensor_key" : "model.layers.21.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 277.2249,
+      "mean_second_moment" : 1.4865694366916613,
+      "minimum_second_moment" : 0.005358188,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.mlp.up_proj",
+      "tensor_key" : "model.layers.21.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2049.7546,
+      "mean_second_moment" : 4.725223289150745,
+      "minimum_second_moment" : 1.0113106,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.self_attn.k_proj",
+      "tensor_key" : "model.layers.21.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.8692491,
+      "mean_second_moment" : 0.059630041640502895,
+      "minimum_second_moment" : 0.009202231,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.self_attn.o_proj",
+      "tensor_key" : "model.layers.21.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2049.7546,
+      "mean_second_moment" : 4.725223289150745,
+      "minimum_second_moment" : 1.0113106,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.self_attn.q_proj",
+      "tensor_key" : "model.layers.21.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2049.7546,
+      "mean_second_moment" : 4.725223289150745,
+      "minimum_second_moment" : 1.0113106,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.21.self_attn.v_proj",
+      "tensor_key" : "model.layers.21.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 4.6446824,
+      "mean_second_moment" : 0.03892627773853974,
+      "minimum_second_moment" : 0.01117519,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.mlp.down_proj",
+      "tensor_key" : "model.layers.22.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 288.32965,
+      "mean_second_moment" : 1.595407234325819,
+      "minimum_second_moment" : 0.0006159916,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.mlp.gate_proj",
+      "tensor_key" : "model.layers.22.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 288.32965,
+      "mean_second_moment" : 1.595407234325819,
+      "minimum_second_moment" : 0.0006159916,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.mlp.up_proj",
+      "tensor_key" : "model.layers.22.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1662.2759,
+      "mean_second_moment" : 4.726220738666598,
+      "minimum_second_moment" : 0.90783405,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.self_attn.k_proj",
+      "tensor_key" : "model.layers.22.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.154908,
+      "mean_second_moment" : 0.06136553471259276,
+      "minimum_second_moment" : 0.0020989238,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.self_attn.o_proj",
+      "tensor_key" : "model.layers.22.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1662.2759,
+      "mean_second_moment" : 4.726220738666598,
+      "minimum_second_moment" : 0.90783405,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.self_attn.q_proj",
+      "tensor_key" : "model.layers.22.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1662.2759,
+      "mean_second_moment" : 4.726220738666598,
+      "minimum_second_moment" : 0.90783405,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.22.self_attn.v_proj",
+      "tensor_key" : "model.layers.22.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 14.085385,
+      "mean_second_moment" : 0.047568014240312095,
+      "minimum_second_moment" : 0.007197203,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.mlp.down_proj",
+      "tensor_key" : "model.layers.23.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 345.00098,
+      "mean_second_moment" : 1.71781554194406,
+      "minimum_second_moment" : 0.0012550476,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.mlp.gate_proj",
+      "tensor_key" : "model.layers.23.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 345.00098,
+      "mean_second_moment" : 1.71781554194406,
+      "minimum_second_moment" : 0.0012550476,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.mlp.up_proj",
+      "tensor_key" : "model.layers.23.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1428.7753,
+      "mean_second_moment" : 5.060420923121273,
+      "minimum_second_moment" : 1.1129115,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.self_attn.k_proj",
+      "tensor_key" : "model.layers.23.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.0982513,
+      "mean_second_moment" : 0.0667820994927979,
+      "minimum_second_moment" : 0.0025823682,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.self_attn.o_proj",
+      "tensor_key" : "model.layers.23.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1428.7753,
+      "mean_second_moment" : 5.060420923121273,
+      "minimum_second_moment" : 1.1129115,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.self_attn.q_proj",
+      "tensor_key" : "model.layers.23.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1428.7753,
+      "mean_second_moment" : 5.060420923121273,
+      "minimum_second_moment" : 1.1129115,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.23.self_attn.v_proj",
+      "tensor_key" : "model.layers.23.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 25.31202,
+      "mean_second_moment" : 0.0542949370549195,
+      "minimum_second_moment" : 0.014424748,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.mlp.down_proj",
+      "tensor_key" : "model.layers.24.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 306.37585,
+      "mean_second_moment" : 1.7632211897640673,
+      "minimum_second_moment" : 0.00063890324,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.mlp.gate_proj",
+      "tensor_key" : "model.layers.24.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 306.37585,
+      "mean_second_moment" : 1.7632211897640673,
+      "minimum_second_moment" : 0.00063890324,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.mlp.up_proj",
+      "tensor_key" : "model.layers.24.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1390.7214,
+      "mean_second_moment" : 5.212268938496709,
+      "minimum_second_moment" : 1.1394083,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.self_attn.k_proj",
+      "tensor_key" : "model.layers.24.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 4.187276,
+      "mean_second_moment" : 0.07374024567400284,
+      "minimum_second_moment" : 0.0024741227,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.self_attn.o_proj",
+      "tensor_key" : "model.layers.24.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1390.7214,
+      "mean_second_moment" : 5.212268938496709,
+      "minimum_second_moment" : 1.1394083,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.self_attn.q_proj",
+      "tensor_key" : "model.layers.24.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1390.7214,
+      "mean_second_moment" : 5.212268938496709,
+      "minimum_second_moment" : 1.1394083,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.24.self_attn.v_proj",
+      "tensor_key" : "model.layers.24.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 8.778373,
+      "mean_second_moment" : 0.05859489400620532,
+      "minimum_second_moment" : 0.016557004,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.mlp.down_proj",
+      "tensor_key" : "model.layers.25.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 287.62402,
+      "mean_second_moment" : 1.9171355647659993,
+      "minimum_second_moment" : 0.000643931,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.mlp.gate_proj",
+      "tensor_key" : "model.layers.25.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 287.62402,
+      "mean_second_moment" : 1.9171355647659993,
+      "minimum_second_moment" : 0.000643931,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.mlp.up_proj",
+      "tensor_key" : "model.layers.25.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1308.7546,
+      "mean_second_moment" : 5.248780791950412,
+      "minimum_second_moment" : 1.3161533,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.self_attn.k_proj",
+      "tensor_key" : "model.layers.25.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 3.9086013,
+      "mean_second_moment" : 0.08339228532895504,
+      "minimum_second_moment" : 0.011789555,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.self_attn.o_proj",
+      "tensor_key" : "model.layers.25.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1308.7546,
+      "mean_second_moment" : 5.248780791950412,
+      "minimum_second_moment" : 1.3161533,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.self_attn.q_proj",
+      "tensor_key" : "model.layers.25.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1308.7546,
+      "mean_second_moment" : 5.248780791950412,
+      "minimum_second_moment" : 1.3161533,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.25.self_attn.v_proj",
+      "tensor_key" : "model.layers.25.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 10.149187,
+      "mean_second_moment" : 0.06771267683507176,
+      "minimum_second_moment" : 0.018768812,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.mlp.down_proj",
+      "tensor_key" : "model.layers.26.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 266.5849,
+      "mean_second_moment" : 2.0786286988079836,
+      "minimum_second_moment" : 0.0016167251,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.mlp.gate_proj",
+      "tensor_key" : "model.layers.26.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 266.5849,
+      "mean_second_moment" : 2.0786286988079836,
+      "minimum_second_moment" : 0.0016167251,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.mlp.up_proj",
+      "tensor_key" : "model.layers.26.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1023.4281,
+      "mean_second_moment" : 4.663899125298485,
+      "minimum_second_moment" : 1.51201,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.self_attn.k_proj",
+      "tensor_key" : "model.layers.26.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.2706356,
+      "mean_second_moment" : 0.051885765159681796,
+      "minimum_second_moment" : 0.0054266267,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.self_attn.o_proj",
+      "tensor_key" : "model.layers.26.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1023.4281,
+      "mean_second_moment" : 4.663899125298485,
+      "minimum_second_moment" : 1.51201,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.self_attn.q_proj",
+      "tensor_key" : "model.layers.26.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1023.4281,
+      "mean_second_moment" : 4.663899125298485,
+      "minimum_second_moment" : 1.51201,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.26.self_attn.v_proj",
+      "tensor_key" : "model.layers.26.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 19.132414,
+      "mean_second_moment" : 0.07994679180376352,
+      "minimum_second_moment" : 0.01724715,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.mlp.down_proj",
+      "tensor_key" : "model.layers.27.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 203.94707,
+      "mean_second_moment" : 2.1745342826703564,
+      "minimum_second_moment" : 0.87530935,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.mlp.gate_proj",
+      "tensor_key" : "model.layers.27.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 203.94707,
+      "mean_second_moment" : 2.1745342826703564,
+      "minimum_second_moment" : 0.87530935,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.mlp.up_proj",
+      "tensor_key" : "model.layers.27.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1406.1815,
+      "mean_second_moment" : 4.61548687586328,
+      "minimum_second_moment" : 0.82353014,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.self_attn.k_proj",
+      "tensor_key" : "model.layers.27.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.5586302,
+      "mean_second_moment" : 0.08276296659164473,
+      "minimum_second_moment" : 0.0019563627,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.self_attn.o_proj",
+      "tensor_key" : "model.layers.27.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1406.1815,
+      "mean_second_moment" : 4.61548687586328,
+      "minimum_second_moment" : 0.82353014,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.self_attn.q_proj",
+      "tensor_key" : "model.layers.27.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1406.1815,
+      "mean_second_moment" : 4.61548687586328,
+      "minimum_second_moment" : 0.82353014,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.27.self_attn.v_proj",
+      "tensor_key" : "model.layers.27.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 14.425813,
+      "mean_second_moment" : 0.07225174356983644,
+      "minimum_second_moment" : 0.022857787,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.mlp.down_proj",
+      "tensor_key" : "model.layers.28.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 168.49535,
+      "mean_second_moment" : 2.3075097795799593,
+      "minimum_second_moment" : 0.0050696274,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.mlp.gate_proj",
+      "tensor_key" : "model.layers.28.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 168.49535,
+      "mean_second_moment" : 2.3075097795799593,
+      "minimum_second_moment" : 0.0050696274,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.mlp.up_proj",
+      "tensor_key" : "model.layers.28.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1208.0337,
+      "mean_second_moment" : 5.642370334267616,
+      "minimum_second_moment" : 1.120605,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.self_attn.k_proj",
+      "tensor_key" : "model.layers.28.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.5116658,
+      "mean_second_moment" : 0.05898390172728796,
+      "minimum_second_moment" : 0.0034183795,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.self_attn.o_proj",
+      "tensor_key" : "model.layers.28.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1208.0337,
+      "mean_second_moment" : 5.642370334267616,
+      "minimum_second_moment" : 1.120605,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.self_attn.q_proj",
+      "tensor_key" : "model.layers.28.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1208.0337,
+      "mean_second_moment" : 5.642370334267616,
+      "minimum_second_moment" : 1.120605,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.28.self_attn.v_proj",
+      "tensor_key" : "model.layers.28.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 22.960882,
+      "mean_second_moment" : 0.08158739611133115,
+      "minimum_second_moment" : 0.01959385,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.mlp.down_proj",
+      "tensor_key" : "model.layers.29.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 217.0866,
+      "mean_second_moment" : 2.479129971868679,
+      "minimum_second_moment" : 0.031603944,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.mlp.gate_proj",
+      "tensor_key" : "model.layers.29.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 217.0866,
+      "mean_second_moment" : 2.479129971868679,
+      "minimum_second_moment" : 0.031603944,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.mlp.up_proj",
+      "tensor_key" : "model.layers.29.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1422.058,
+      "mean_second_moment" : 5.213246841984801,
+      "minimum_second_moment" : 1.0675105,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.self_attn.k_proj",
+      "tensor_key" : "model.layers.29.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.6644421,
+      "mean_second_moment" : 0.06987769033401037,
+      "minimum_second_moment" : 0.0073859068,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.self_attn.o_proj",
+      "tensor_key" : "model.layers.29.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1422.058,
+      "mean_second_moment" : 5.213246841984801,
+      "minimum_second_moment" : 1.0675105,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.self_attn.q_proj",
+      "tensor_key" : "model.layers.29.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1422.058,
+      "mean_second_moment" : 5.213246841984801,
+      "minimum_second_moment" : 1.0675105,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.29.self_attn.v_proj",
+      "tensor_key" : "model.layers.29.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.2043515,
+      "mean_second_moment" : 0.0013695499497590191,
+      "minimum_second_moment" : 0.00020964794,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.mlp.down_proj",
+      "tensor_key" : "model.layers.3.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 16.44441,
+      "mean_second_moment" : 0.1927643212381099,
+      "minimum_second_moment" : 0.002009256,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.mlp.gate_proj",
+      "tensor_key" : "model.layers.3.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 16.44441,
+      "mean_second_moment" : 0.1927643212381099,
+      "minimum_second_moment" : 0.002009256,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.mlp.up_proj",
+      "tensor_key" : "model.layers.3.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 4325.5596,
+      "mean_second_moment" : 2.5227218370446547,
+      "minimum_second_moment" : 1.0680781e-09,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.self_attn.k_proj",
+      "tensor_key" : "model.layers.3.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.13122022,
+      "mean_second_moment" : 0.001567368342670017,
+      "minimum_second_moment" : 1.0748548e-05,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.self_attn.o_proj",
+      "tensor_key" : "model.layers.3.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 4325.5596,
+      "mean_second_moment" : 2.5227218370446547,
+      "minimum_second_moment" : 1.0680781e-09,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.self_attn.q_proj",
+      "tensor_key" : "model.layers.3.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 4325.5596,
+      "mean_second_moment" : 2.5227218370446547,
+      "minimum_second_moment" : 1.0680781e-09,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.3.self_attn.v_proj",
+      "tensor_key" : "model.layers.3.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 16.41721,
+      "mean_second_moment" : 0.08624036118510503,
+      "minimum_second_moment" : 0.023569992,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.mlp.down_proj",
+      "tensor_key" : "model.layers.30.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 293.35315,
+      "mean_second_moment" : 2.644394522046423,
+      "minimum_second_moment" : 0.02362038,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.mlp.gate_proj",
+      "tensor_key" : "model.layers.30.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 293.35315,
+      "mean_second_moment" : 2.644394522046423,
+      "minimum_second_moment" : 0.02362038,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.mlp.up_proj",
+      "tensor_key" : "model.layers.30.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1262.3103,
+      "mean_second_moment" : 6.054025676241144,
+      "minimum_second_moment" : 1.1284802,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.self_attn.k_proj",
+      "tensor_key" : "model.layers.30.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.5006365,
+      "mean_second_moment" : 0.06950845343499168,
+      "minimum_second_moment" : 0.010080736,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.self_attn.o_proj",
+      "tensor_key" : "model.layers.30.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1262.3103,
+      "mean_second_moment" : 6.054025676241144,
+      "minimum_second_moment" : 1.1284802,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.self_attn.q_proj",
+      "tensor_key" : "model.layers.30.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1262.3103,
+      "mean_second_moment" : 6.054025676241144,
+      "minimum_second_moment" : 1.1284802,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.30.self_attn.v_proj",
+      "tensor_key" : "model.layers.30.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 23.036354,
+      "mean_second_moment" : 0.09854750832778336,
+      "minimum_second_moment" : 0.030983258,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.mlp.down_proj",
+      "tensor_key" : "model.layers.31.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 305.309,
+      "mean_second_moment" : 2.7896190379891777,
+      "minimum_second_moment" : 0.06048985,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.mlp.gate_proj",
+      "tensor_key" : "model.layers.31.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 305.309,
+      "mean_second_moment" : 2.7896190379891777,
+      "minimum_second_moment" : 0.06048985,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.mlp.up_proj",
+      "tensor_key" : "model.layers.31.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1329.2018,
+      "mean_second_moment" : 4.832066534855403,
+      "minimum_second_moment" : 1.6675707,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.self_attn.k_proj",
+      "tensor_key" : "model.layers.31.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.3005693,
+      "mean_second_moment" : 0.05102106068034118,
+      "minimum_second_moment" : 0.0024782198,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.self_attn.o_proj",
+      "tensor_key" : "model.layers.31.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1329.2018,
+      "mean_second_moment" : 4.832066534855403,
+      "minimum_second_moment" : 1.6675707,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.self_attn.q_proj",
+      "tensor_key" : "model.layers.31.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1329.2018,
+      "mean_second_moment" : 4.832066534855403,
+      "minimum_second_moment" : 1.6675707,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.31.self_attn.v_proj",
+      "tensor_key" : "model.layers.31.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 10.473663,
+      "mean_second_moment" : 0.11298532894716118,
+      "minimum_second_moment" : 0.026256412,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.mlp.down_proj",
+      "tensor_key" : "model.layers.32.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 383.59454,
+      "mean_second_moment" : 3.0369757639860837,
+      "minimum_second_moment" : 0.013961035,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.mlp.gate_proj",
+      "tensor_key" : "model.layers.32.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 383.59454,
+      "mean_second_moment" : 3.0369757639860837,
+      "minimum_second_moment" : 0.013961035,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.mlp.up_proj",
+      "tensor_key" : "model.layers.32.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1002.8035,
+      "mean_second_moment" : 5.041418504831381,
+      "minimum_second_moment" : 1.1430863,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.self_attn.k_proj",
+      "tensor_key" : "model.layers.32.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.1378951,
+      "mean_second_moment" : 0.062407103206624015,
+      "minimum_second_moment" : 0.016001334,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.self_attn.o_proj",
+      "tensor_key" : "model.layers.32.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1002.8035,
+      "mean_second_moment" : 5.041418504831381,
+      "minimum_second_moment" : 1.1430863,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.self_attn.q_proj",
+      "tensor_key" : "model.layers.32.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1002.8035,
+      "mean_second_moment" : 5.041418504831381,
+      "minimum_second_moment" : 1.1430863,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.32.self_attn.v_proj",
+      "tensor_key" : "model.layers.32.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 17.31752,
+      "mean_second_moment" : 0.14546755226285768,
+      "minimum_second_moment" : 0.030468138,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.mlp.down_proj",
+      "tensor_key" : "model.layers.33.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 353.87033,
+      "mean_second_moment" : 3.3110070215989253,
+      "minimum_second_moment" : 0.05522608,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.mlp.gate_proj",
+      "tensor_key" : "model.layers.33.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 353.87033,
+      "mean_second_moment" : 3.3110070215989253,
+      "minimum_second_moment" : 0.05522608,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.mlp.up_proj",
+      "tensor_key" : "model.layers.33.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1308.2905,
+      "mean_second_moment" : 5.400485689961352,
+      "minimum_second_moment" : 1.4281396,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.self_attn.k_proj",
+      "tensor_key" : "model.layers.33.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 9.002054,
+      "mean_second_moment" : 0.10589631575271596,
+      "minimum_second_moment" : 0.0048487373,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.self_attn.o_proj",
+      "tensor_key" : "model.layers.33.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1308.2905,
+      "mean_second_moment" : 5.400485689961352,
+      "minimum_second_moment" : 1.4281396,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.self_attn.q_proj",
+      "tensor_key" : "model.layers.33.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1308.2905,
+      "mean_second_moment" : 5.400485689961352,
+      "minimum_second_moment" : 1.4281396,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.33.self_attn.v_proj",
+      "tensor_key" : "model.layers.33.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 29.748653,
+      "mean_second_moment" : 0.21703298436841578,
+      "minimum_second_moment" : 0.029399052,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.mlp.down_proj",
+      "tensor_key" : "model.layers.34.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 287.6174,
+      "mean_second_moment" : 3.7807395142037423,
+      "minimum_second_moment" : 0.019194126,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.mlp.gate_proj",
+      "tensor_key" : "model.layers.34.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 287.6174,
+      "mean_second_moment" : 3.7807395142037423,
+      "minimum_second_moment" : 0.019194126,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.mlp.up_proj",
+      "tensor_key" : "model.layers.34.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 910.80896,
+      "mean_second_moment" : 5.397934067784808,
+      "minimum_second_moment" : 1.3806992,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.self_attn.k_proj",
+      "tensor_key" : "model.layers.34.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 2.9799333,
+      "mean_second_moment" : 0.12184035141581262,
+      "minimum_second_moment" : 0.024997098,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.self_attn.o_proj",
+      "tensor_key" : "model.layers.34.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 910.80896,
+      "mean_second_moment" : 5.397934067784808,
+      "minimum_second_moment" : 1.3806992,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.self_attn.q_proj",
+      "tensor_key" : "model.layers.34.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 910.80896,
+      "mean_second_moment" : 5.397934067784808,
+      "minimum_second_moment" : 1.3806992,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.34.self_attn.v_proj",
+      "tensor_key" : "model.layers.34.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 29.420872,
+      "mean_second_moment" : 0.28866789828543915,
+      "minimum_second_moment" : 0.024406325,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.mlp.down_proj",
+      "tensor_key" : "model.layers.35.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 241.73228,
+      "mean_second_moment" : 4.150646959980077,
+      "minimum_second_moment" : 0.03634662,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.mlp.gate_proj",
+      "tensor_key" : "model.layers.35.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 241.73228,
+      "mean_second_moment" : 4.150646959980077,
+      "minimum_second_moment" : 0.03634662,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.mlp.up_proj",
+      "tensor_key" : "model.layers.35.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1239.1448,
+      "mean_second_moment" : 5.201365304249339,
+      "minimum_second_moment" : 0.99169433,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.self_attn.k_proj",
+      "tensor_key" : "model.layers.35.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 10.097955,
+      "mean_second_moment" : 0.1664950994058927,
+      "minimum_second_moment" : 0.027700331,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.self_attn.o_proj",
+      "tensor_key" : "model.layers.35.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1239.1448,
+      "mean_second_moment" : 5.201365304249339,
+      "minimum_second_moment" : 0.99169433,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.self_attn.q_proj",
+      "tensor_key" : "model.layers.35.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1239.1448,
+      "mean_second_moment" : 5.201365304249339,
+      "minimum_second_moment" : 0.99169433,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.35.self_attn.v_proj",
+      "tensor_key" : "model.layers.35.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 67.43352,
+      "mean_second_moment" : 0.4351854367657779,
+      "minimum_second_moment" : 0.027757917,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.mlp.down_proj",
+      "tensor_key" : "model.layers.36.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 234.39659,
+      "mean_second_moment" : 4.730746717075817,
+      "minimum_second_moment" : 1.319672,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.mlp.gate_proj",
+      "tensor_key" : "model.layers.36.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 234.39659,
+      "mean_second_moment" : 4.730746717075817,
+      "minimum_second_moment" : 1.319672,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.mlp.up_proj",
+      "tensor_key" : "model.layers.36.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 885.23773,
+      "mean_second_moment" : 5.413940651575103,
+      "minimum_second_moment" : 1.5858513,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.self_attn.k_proj",
+      "tensor_key" : "model.layers.36.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 3.6325426,
+      "mean_second_moment" : 0.2506991681566433,
+      "minimum_second_moment" : 0.04030073,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.self_attn.o_proj",
+      "tensor_key" : "model.layers.36.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 885.23773,
+      "mean_second_moment" : 5.413940651575103,
+      "minimum_second_moment" : 1.5858513,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.self_attn.q_proj",
+      "tensor_key" : "model.layers.36.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 885.23773,
+      "mean_second_moment" : 5.413940651575103,
+      "minimum_second_moment" : 1.5858513,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.36.self_attn.v_proj",
+      "tensor_key" : "model.layers.36.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 109.53408,
+      "mean_second_moment" : 0.725703203937428,
+      "minimum_second_moment" : 0.034124006,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.mlp.down_proj",
+      "tensor_key" : "model.layers.37.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 452.33997,
+      "mean_second_moment" : 5.484301497973502,
+      "minimum_second_moment" : 2.835748,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.mlp.gate_proj",
+      "tensor_key" : "model.layers.37.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 452.33997,
+      "mean_second_moment" : 5.484301497973502,
+      "minimum_second_moment" : 2.835748,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.mlp.up_proj",
+      "tensor_key" : "model.layers.37.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 767.1858,
+      "mean_second_moment" : 5.803877944569104,
+      "minimum_second_moment" : 1.7384876,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.self_attn.k_proj",
+      "tensor_key" : "model.layers.37.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 13.5688505,
+      "mean_second_moment" : 0.35495942057696084,
+      "minimum_second_moment" : 0.045374837,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.self_attn.o_proj",
+      "tensor_key" : "model.layers.37.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 767.1858,
+      "mean_second_moment" : 5.803877944569104,
+      "minimum_second_moment" : 1.7384876,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.self_attn.q_proj",
+      "tensor_key" : "model.layers.37.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 767.1858,
+      "mean_second_moment" : 5.803877944569104,
+      "minimum_second_moment" : 1.7384876,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.37.self_attn.v_proj",
+      "tensor_key" : "model.layers.37.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 1451.3833,
+      "mean_second_moment" : 1.4661442415930424,
+      "minimum_second_moment" : 0.023774436,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.mlp.down_proj",
+      "tensor_key" : "model.layers.38.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 749.2926,
+      "mean_second_moment" : 5.539171803323552,
+      "minimum_second_moment" : 2.4499674,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.mlp.gate_proj",
+      "tensor_key" : "model.layers.38.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 749.2926,
+      "mean_second_moment" : 5.539171803323552,
+      "minimum_second_moment" : 2.4499674,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.mlp.up_proj",
+      "tensor_key" : "model.layers.38.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 563.1548,
+      "mean_second_moment" : 5.6207064486574385,
+      "minimum_second_moment" : 2.1603856,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.self_attn.k_proj",
+      "tensor_key" : "model.layers.38.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 11.209841,
+      "mean_second_moment" : 0.4389529224358739,
+      "minimum_second_moment" : 0.015370249,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.self_attn.o_proj",
+      "tensor_key" : "model.layers.38.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 563.1548,
+      "mean_second_moment" : 5.6207064486574385,
+      "minimum_second_moment" : 2.1603856,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.self_attn.q_proj",
+      "tensor_key" : "model.layers.38.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 563.1548,
+      "mean_second_moment" : 5.6207064486574385,
+      "minimum_second_moment" : 2.1603856,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.38.self_attn.v_proj",
+      "tensor_key" : "model.layers.38.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 2003.4424,
+      "mean_second_moment" : 4.06654375914718,
+      "minimum_second_moment" : 0.023753906,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.mlp.down_proj",
+      "tensor_key" : "model.layers.39.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 811.5083,
+      "mean_second_moment" : 4.692402279889211,
+      "minimum_second_moment" : 2.281811,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.mlp.gate_proj",
+      "tensor_key" : "model.layers.39.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 811.5083,
+      "mean_second_moment" : 4.692402279889211,
+      "minimum_second_moment" : 2.281811,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.mlp.up_proj",
+      "tensor_key" : "model.layers.39.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 869.86426,
+      "mean_second_moment" : 4.603314126189798,
+      "minimum_second_moment" : 1.0679183,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.self_attn.k_proj",
+      "tensor_key" : "model.layers.39.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 7.552962,
+      "mean_second_moment" : 0.39619487222398675,
+      "minimum_second_moment" : 0.02276516,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.self_attn.o_proj",
+      "tensor_key" : "model.layers.39.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 869.86426,
+      "mean_second_moment" : 4.603314126189798,
+      "minimum_second_moment" : 1.0679183,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.self_attn.q_proj",
+      "tensor_key" : "model.layers.39.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 869.86426,
+      "mean_second_moment" : 4.603314126189798,
+      "minimum_second_moment" : 1.0679183,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.39.self_attn.v_proj",
+      "tensor_key" : "model.layers.39.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.124847375,
+      "mean_second_moment" : 0.0022729643553063283,
+      "minimum_second_moment" : 0.00040012551,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.mlp.down_proj",
+      "tensor_key" : "model.layers.4.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 31.600872,
+      "mean_second_moment" : 0.26342852512170795,
+      "minimum_second_moment" : 0.0638991,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.mlp.gate_proj",
+      "tensor_key" : "model.layers.4.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 31.600872,
+      "mean_second_moment" : 0.26342852512170795,
+      "minimum_second_moment" : 0.0638991,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.mlp.up_proj",
+      "tensor_key" : "model.layers.4.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 3128.5532,
+      "mean_second_moment" : 2.1191837961896356,
+      "minimum_second_moment" : 8.8019814e-10,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.self_attn.k_proj",
+      "tensor_key" : "model.layers.4.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.09431814,
+      "mean_second_moment" : 0.0031037525397952237,
+      "minimum_second_moment" : 0.000117483745,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.self_attn.o_proj",
+      "tensor_key" : "model.layers.4.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 3128.5532,
+      "mean_second_moment" : 2.1191837961896356,
+      "minimum_second_moment" : 8.8019814e-10,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.self_attn.q_proj",
+      "tensor_key" : "model.layers.4.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 3128.5532,
+      "mean_second_moment" : 2.1191837961896356,
+      "minimum_second_moment" : 8.8019814e-10,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.4.self_attn.v_proj",
+      "tensor_key" : "model.layers.4.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.23091443,
+      "mean_second_moment" : 0.003115038238739487,
+      "minimum_second_moment" : 0.00066444953,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.mlp.down_proj",
+      "tensor_key" : "model.layers.5.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 34.40983,
+      "mean_second_moment" : 0.33059510135998094,
+      "minimum_second_moment" : 0.00012757203,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.mlp.gate_proj",
+      "tensor_key" : "model.layers.5.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 34.40983,
+      "mean_second_moment" : 0.33059510135998094,
+      "minimum_second_moment" : 0.00012757203,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.mlp.up_proj",
+      "tensor_key" : "model.layers.5.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2743.693,
+      "mean_second_moment" : 2.0714792833823594,
+      "minimum_second_moment" : 0.059297584,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.self_attn.k_proj",
+      "tensor_key" : "model.layers.5.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.14374675,
+      "mean_second_moment" : 0.006393568609951217,
+      "minimum_second_moment" : 0.00052280835,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.self_attn.o_proj",
+      "tensor_key" : "model.layers.5.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2743.693,
+      "mean_second_moment" : 2.0714792833823594,
+      "minimum_second_moment" : 0.059297584,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.self_attn.q_proj",
+      "tensor_key" : "model.layers.5.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2743.693,
+      "mean_second_moment" : 2.0714792833823594,
+      "minimum_second_moment" : 0.059297584,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.5.self_attn.v_proj",
+      "tensor_key" : "model.layers.5.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.19216235,
+      "mean_second_moment" : 0.0040092307809516115,
+      "minimum_second_moment" : 0.00049386255,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.mlp.down_proj",
+      "tensor_key" : "model.layers.6.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 71.334015,
+      "mean_second_moment" : 0.41604178269153635,
+      "minimum_second_moment" : 0.010039365,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.mlp.gate_proj",
+      "tensor_key" : "model.layers.6.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 71.334015,
+      "mean_second_moment" : 0.41604178269153635,
+      "minimum_second_moment" : 0.010039365,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.mlp.up_proj",
+      "tensor_key" : "model.layers.6.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2805.8865,
+      "mean_second_moment" : 2.384089387028871,
+      "minimum_second_moment" : 0.017373314,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.self_attn.k_proj",
+      "tensor_key" : "model.layers.6.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.2674075,
+      "mean_second_moment" : 0.008482969506211191,
+      "minimum_second_moment" : 0.0003857861,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.self_attn.o_proj",
+      "tensor_key" : "model.layers.6.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2805.8865,
+      "mean_second_moment" : 2.384089387028871,
+      "minimum_second_moment" : 0.017373314,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.self_attn.q_proj",
+      "tensor_key" : "model.layers.6.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 2805.8865,
+      "mean_second_moment" : 2.384089387028871,
+      "minimum_second_moment" : 0.017373314,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.6.self_attn.v_proj",
+      "tensor_key" : "model.layers.6.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.7637641,
+      "mean_second_moment" : 0.006613038734897714,
+      "minimum_second_moment" : 0.0016671428,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.mlp.down_proj",
+      "tensor_key" : "model.layers.7.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 117.79264,
+      "mean_second_moment" : 0.519721642856075,
+      "minimum_second_moment" : 0.004888076,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.mlp.gate_proj",
+      "tensor_key" : "model.layers.7.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 117.79264,
+      "mean_second_moment" : 0.519721642856075,
+      "minimum_second_moment" : 0.004888076,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.mlp.up_proj",
+      "tensor_key" : "model.layers.7.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1525.4077,
+      "mean_second_moment" : 2.519563128100708,
+      "minimum_second_moment" : 0.058170095,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.self_attn.k_proj",
+      "tensor_key" : "model.layers.7.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 1.152552,
+      "mean_second_moment" : 0.01724129118056794,
+      "minimum_second_moment" : 0.00026051461,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.self_attn.o_proj",
+      "tensor_key" : "model.layers.7.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1525.4077,
+      "mean_second_moment" : 2.519563128100708,
+      "minimum_second_moment" : 0.058170095,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.self_attn.q_proj",
+      "tensor_key" : "model.layers.7.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1525.4077,
+      "mean_second_moment" : 2.519563128100708,
+      "minimum_second_moment" : 0.058170095,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.7.self_attn.v_proj",
+      "tensor_key" : "model.layers.7.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 0.54139584,
+      "mean_second_moment" : 0.00871160293084472,
+      "minimum_second_moment" : 0.0018635297,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.mlp.down_proj",
+      "tensor_key" : "model.layers.8.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 105.34305,
+      "mean_second_moment" : 0.6354179711488541,
+      "minimum_second_moment" : 0.2001704,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.mlp.gate_proj",
+      "tensor_key" : "model.layers.8.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 105.34305,
+      "mean_second_moment" : 0.6354179711488541,
+      "minimum_second_moment" : 0.2001704,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.mlp.up_proj",
+      "tensor_key" : "model.layers.8.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1434.661,
+      "mean_second_moment" : 2.5575621922384015,
+      "minimum_second_moment" : 0.14001973,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.self_attn.k_proj",
+      "tensor_key" : "model.layers.8.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.4485926,
+      "mean_second_moment" : 0.019156563845939445,
+      "minimum_second_moment" : 0.001031632,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.self_attn.o_proj",
+      "tensor_key" : "model.layers.8.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1434.661,
+      "mean_second_moment" : 2.5575621922384015,
+      "minimum_second_moment" : 0.14001973,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.self_attn.q_proj",
+      "tensor_key" : "model.layers.8.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1434.661,
+      "mean_second_moment" : 2.5575621922384015,
+      "minimum_second_moment" : 0.14001973,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.8.self_attn.v_proj",
+      "tensor_key" : "model.layers.8.self_attn.v_proj.input_second_moment"
+    },
+    {
+      "input_width" : 16384,
+      "maximum_second_moment" : 2.0565627,
+      "mean_second_moment" : 0.009466760627482529,
+      "minimum_second_moment" : 0.0017959567,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.mlp.down_proj",
+      "tensor_key" : "model.layers.9.mlp.down_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 123.98458,
+      "mean_second_moment" : 0.7359656566870398,
+      "minimum_second_moment" : 0.45286533,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.mlp.gate_proj",
+      "tensor_key" : "model.layers.9.mlp.gate_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 123.98458,
+      "mean_second_moment" : 0.7359656566870398,
+      "minimum_second_moment" : 0.45286533,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.mlp.up_proj",
+      "tensor_key" : "model.layers.9.mlp.up_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1387.4584,
+      "mean_second_moment" : 2.497516067721881,
+      "minimum_second_moment" : 0.11772841,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.self_attn.k_proj",
+      "tensor_key" : "model.layers.9.self_attn.k_proj.input_second_moment"
+    },
+    {
+      "input_width" : 4096,
+      "maximum_second_moment" : 0.41851294,
+      "mean_second_moment" : 0.018763455412283747,
+      "minimum_second_moment" : 0.0023407056,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.self_attn.o_proj",
+      "tensor_key" : "model.layers.9.self_attn.o_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1387.4584,
+      "mean_second_moment" : 2.497516067721881,
+      "minimum_second_moment" : 0.11772841,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.self_attn.q_proj",
+      "tensor_key" : "model.layers.9.self_attn.q_proj.input_second_moment"
+    },
+    {
+      "input_width" : 5120,
+      "maximum_second_moment" : 1387.4584,
+      "mean_second_moment" : 2.497516067721881,
+      "minimum_second_moment" : 0.11772841,
+      "observed_position_count" : 65536,
+      "path" : "model.layers.9.self_attn.v_proj",
+      "tensor_key" : "model.layers.9.self_attn.v_proj.input_second_moment"
+    }
+  ],
+  "observed_sample_count" : 87,
+  "observed_segment_count" : 177,
+  "observed_token_count" : 65536,
+  "output_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/calibration/ministral3-awss-calibration-stats.safetensors",
+  "samples" : [
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-001",
+      "observed_token_count" : 1679,
+      "original_token_count" : 1679,
+      "segment_count" : 4,
+      "token_id_fingerprint" : "fnv1a64:36fc398a04ae8491",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-002",
+      "observed_token_count" : 638,
+      "original_token_count" : 638,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:5b8b9d6685895aea",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-003",
+      "observed_token_count" : 1534,
+      "original_token_count" : 1534,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:7fbab20d9a5c3266",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-004",
+      "observed_token_count" : 1536,
+      "original_token_count" : 1536,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:ad3028a1a4d0b037",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-005",
+      "observed_token_count" : 771,
+      "original_token_count" : 771,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:9dd9595cc7f1bb41",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-006",
+      "observed_token_count" : 948,
+      "original_token_count" : 948,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:12e8e20722d5d9c7",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-007",
+      "observed_token_count" : 889,
+      "original_token_count" : 889,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:2de5c28234298cdc",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-008",
+      "observed_token_count" : 884,
+      "original_token_count" : 884,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:a2433e4ffd5b6e2f",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-009",
+      "observed_token_count" : 836,
+      "original_token_count" : 836,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:46f7192fa776fd23",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-010",
+      "observed_token_count" : 814,
+      "original_token_count" : 814,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:c625049b702ff302",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-011",
+      "observed_token_count" : 821,
+      "original_token_count" : 821,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:d082ce207664d841",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-012",
+      "observed_token_count" : 841,
+      "original_token_count" : 841,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:a0789ffcde3094b5",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-013",
+      "observed_token_count" : 826,
+      "original_token_count" : 826,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:ec6e2290ab83d8e0",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-014",
+      "observed_token_count" : 352,
+      "original_token_count" : 352,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:0a6a709264c2cd2e",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-015",
+      "observed_token_count" : 286,
+      "original_token_count" : 286,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:ef34ba0013839574",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-016",
+      "observed_token_count" : 1617,
+      "original_token_count" : 1617,
+      "segment_count" : 4,
+      "token_id_fingerprint" : "fnv1a64:b02e9f24200a02aa",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-017",
+      "observed_token_count" : 733,
+      "original_token_count" : 733,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:31fcb2b9b3fbcd13",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-018",
+      "observed_token_count" : 907,
+      "original_token_count" : 907,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:339b4caf647ef95a",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-019",
+      "observed_token_count" : 756,
+      "original_token_count" : 756,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:15f11681c196cbba",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-020",
+      "observed_token_count" : 758,
+      "original_token_count" : 758,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:1be12c80f10a1569",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-021",
+      "observed_token_count" : 669,
+      "original_token_count" : 669,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:f1611c05f09a1a4e",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-022",
+      "observed_token_count" : 577,
+      "original_token_count" : 577,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:2a21417cb3228ca2",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-023",
+      "observed_token_count" : 729,
+      "original_token_count" : 729,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:2373d9f3ca67f57d",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-024",
+      "observed_token_count" : 695,
+      "original_token_count" : 695,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:437cb6bd623513ff",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-025",
+      "observed_token_count" : 584,
+      "original_token_count" : 584,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:dadcf2ab9c02d756",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-026",
+      "observed_token_count" : 781,
+      "original_token_count" : 781,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:b44872c97d140dc9",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-027",
+      "observed_token_count" : 679,
+      "original_token_count" : 679,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:1efe895b1073a6df",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-028",
+      "observed_token_count" : 829,
+      "original_token_count" : 829,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:214bd8637ff52286",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-029",
+      "observed_token_count" : 411,
+      "original_token_count" : 411,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:7236f933f8369ddf",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-030",
+      "observed_token_count" : 2739,
+      "original_token_count" : 2739,
+      "segment_count" : 6,
+      "token_id_fingerprint" : "fnv1a64:163f6698a566a5ba",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-031",
+      "observed_token_count" : 424,
+      "original_token_count" : 424,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:732ca68579dd22a2",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-032",
+      "observed_token_count" : 955,
+      "original_token_count" : 955,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:adf9801ad9eaa8e6",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-033",
+      "observed_token_count" : 1189,
+      "original_token_count" : 1189,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:7f87b1c6933c8b93",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-034",
+      "observed_token_count" : 1290,
+      "original_token_count" : 1290,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:b3ecddc09bfe4080",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-035",
+      "observed_token_count" : 497,
+      "original_token_count" : 497,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:c324f28c5ac5a46e",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-036",
+      "observed_token_count" : 582,
+      "original_token_count" : 582,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:2fa8ae694e4f888f",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-037",
+      "observed_token_count" : 456,
+      "original_token_count" : 456,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:1285ed4de769cbc5",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-038",
+      "observed_token_count" : 995,
+      "original_token_count" : 995,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:cdef92c8682e0f29",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-039",
+      "observed_token_count" : 737,
+      "original_token_count" : 737,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:506c37e9eb477cdb",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-040",
+      "observed_token_count" : 968,
+      "original_token_count" : 968,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:efaa6171834e4c68",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-041",
+      "observed_token_count" : 1206,
+      "original_token_count" : 1206,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:18a987898f767227",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-042",
+      "observed_token_count" : 1274,
+      "original_token_count" : 1274,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:c01f0ed00ce6cfb9",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-043",
+      "observed_token_count" : 1352,
+      "original_token_count" : 1352,
+      "segment_count" : 3,
+      "token_id_fingerprint" : "fnv1a64:08907a18691cdab4",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-044",
+      "observed_token_count" : 665,
+      "original_token_count" : 665,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:b1b4cde5eb7520c4",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-045",
+      "observed_token_count" : 843,
+      "original_token_count" : 843,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:071d7432c891cd3e",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-046",
+      "observed_token_count" : 844,
+      "original_token_count" : 844,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:bdfcc54b675c8854",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-047",
+      "observed_token_count" : 542,
+      "original_token_count" : 542,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:9d215e60e6062ea5",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-048",
+      "observed_token_count" : 341,
+      "original_token_count" : 341,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:5ebeac504e44abd8",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-049",
+      "observed_token_count" : 588,
+      "original_token_count" : 588,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:790be7e9f099d16c",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-050",
+      "observed_token_count" : 643,
+      "original_token_count" : 643,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:d8e7ca022a8e4a99",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-051",
+      "observed_token_count" : 630,
+      "original_token_count" : 630,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:b796ecaa55efedc2",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-052",
+      "observed_token_count" : 630,
+      "original_token_count" : 630,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:4806ca76a84dc222",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-053",
+      "observed_token_count" : 539,
+      "original_token_count" : 539,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:9cdae39651579afa",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-054",
+      "observed_token_count" : 628,
+      "original_token_count" : 628,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:5b4033101ffa9f45",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-055",
+      "observed_token_count" : 640,
+      "original_token_count" : 640,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:70a40d359011fd0e",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-056",
+      "observed_token_count" : 540,
+      "original_token_count" : 540,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:ae3c37790be805a8",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-057",
+      "observed_token_count" : 39,
+      "original_token_count" : 39,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:de0d1a8e152da136",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-058",
+      "observed_token_count" : 704,
+      "original_token_count" : 704,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:fe54a67e1dc1451a",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-059",
+      "observed_token_count" : 589,
+      "original_token_count" : 589,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:2d706b59a28b088b",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-060",
+      "observed_token_count" : 513,
+      "original_token_count" : 513,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:0d023d2d3f9e61ad",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-061",
+      "observed_token_count" : 614,
+      "original_token_count" : 614,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:0203bcde6b9eddd2",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-062",
+      "observed_token_count" : 740,
+      "original_token_count" : 740,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:3cd482350c9da07d",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-063",
+      "observed_token_count" : 699,
+      "original_token_count" : 699,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:fb03c7b29775480d",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-064",
+      "observed_token_count" : 842,
+      "original_token_count" : 842,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:8ea2cce7da0b68bd",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-065",
+      "observed_token_count" : 681,
+      "original_token_count" : 681,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:57b61f4349ec6b99",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-066",
+      "observed_token_count" : 698,
+      "original_token_count" : 698,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:dcf4e2b4e78605ac",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-067",
+      "observed_token_count" : 791,
+      "original_token_count" : 791,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:55266bcc3ff656b7",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-068",
+      "observed_token_count" : 571,
+      "original_token_count" : 571,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:d8f0ec68e0eeb605",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-069",
+      "observed_token_count" : 626,
+      "original_token_count" : 626,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:285af0735b78b688",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-070",
+      "observed_token_count" : 117,
+      "original_token_count" : 117,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:6bb324eae8bb4b70",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-071",
+      "observed_token_count" : 691,
+      "original_token_count" : 691,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:ddeb919ba3f575ed",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-072",
+      "observed_token_count" : 777,
+      "original_token_count" : 777,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:5a14b2ec427a6b38",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-073",
+      "observed_token_count" : 824,
+      "original_token_count" : 824,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:7f76d316834c39a7",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-074",
+      "observed_token_count" : 752,
+      "original_token_count" : 752,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:600550d41c04f2d8",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-075",
+      "observed_token_count" : 518,
+      "original_token_count" : 518,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:46b2f8bda9b71349",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-076",
+      "observed_token_count" : 646,
+      "original_token_count" : 646,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:1a7c48c3f624e71d",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-077",
+      "observed_token_count" : 707,
+      "original_token_count" : 707,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:7d5654ba871d2239",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-078",
+      "observed_token_count" : 333,
+      "original_token_count" : 333,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:743de56863dcbdb0",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-079",
+      "observed_token_count" : 568,
+      "original_token_count" : 568,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:c0221c6d9f3a80a0",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-080",
+      "observed_token_count" : 628,
+      "original_token_count" : 628,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:8d41aa0b3ba0955d",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-081",
+      "observed_token_count" : 723,
+      "original_token_count" : 723,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:265ad4b61d220c0b",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-082",
+      "observed_token_count" : 724,
+      "original_token_count" : 724,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:c63b648fe9c3fca0",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-083",
+      "observed_token_count" : 672,
+      "original_token_count" : 672,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:0e9694ab9f542a9a",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-084",
+      "observed_token_count" : 339,
+      "original_token_count" : 339,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:2bb936e988ca5392",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-085",
+      "observed_token_count" : 649,
+      "original_token_count" : 649,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:97915fd1685bbac8",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-086",
+      "observed_token_count" : 634,
+      "original_token_count" : 634,
+      "segment_count" : 2,
+      "token_id_fingerprint" : "fnv1a64:b89da8bfde2b1d21",
+      "truncated" : false
+    },
+    {
+      "category" : "mlx-lm-calibration",
+      "id" : "mlx-cal-v5-087",
+      "observed_token_count" : 10,
+      "original_token_count" : 595,
+      "segment_count" : 1,
+      "token_id_fingerprint" : "fnv1a64:8dd6d74616f5f16f",
+      "truncated" : true
+    }
+  ],
+  "segment_token_limit" : 512,
+  "segmentation" : "contiguous_nonoverlapping_independent",
+  "source_config_fingerprint" : "fnv1a64:070723084045d98f",
+  "source_index_fingerprint" : "fnv1a64:b0248d7b1544b9f8",
+  "source_model" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
+  "source_weight_dtype" : "bfloat16",
+  "status" : "measured",
+  "text_model_type" : "ministral3",
+  "token_id_fingerprint" : "fnv1a64:61264171d803c7db"
+}

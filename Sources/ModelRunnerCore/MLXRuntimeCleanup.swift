@@ -7,7 +7,7 @@ import MLX
 /// mlx-swift's cross-thread global encoders. Metal does not need this backport,
 /// so the call is a no-op on Apple platforms.
 public func clearModelRunnerMLXStreams() {
-    #if os(Linux)
-        clearStreams()
-    #endif
+  #if os(Linux)
+    clearStreams()
+  #endif
 }

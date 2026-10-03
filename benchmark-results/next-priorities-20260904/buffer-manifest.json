@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "baseline": "stock",
+  "seed": 20260904,
+  "pairs": 4,
+  "maximum_drift_fraction": 0.1,
+  "binaries": {
+    "runtime": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-runtime-bench"
+  },
+  "environment_allowlist": [
+    "MLX_MAX_OPS_PER_BUFFER",
+    "MLX_MAX_MB_PER_BUFFER"
+  ],
+  "models": [
+    {
+      "label": "stock",
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269"
+    },
+    {
+      "label": "buffer200mb256",
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-AWSS-c5f36269",
+      "environment": {
+        "MLX_MAX_OPS_PER_BUFFER": "200",
+        "MLX_MAX_MB_PER_BUFFER": "256"
+      }
+    }
+  ],
+  "runtime": {
+    "native_args": [
+      "--engine",
+      "metal",
+      "--tokens",
+      "512",
+      "--warmups",
+      "3"
+    ],
+    "prompts": [
+      {
+        "label": "decode",
+        "text": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early."
+      }
+    ]
+  }
+}

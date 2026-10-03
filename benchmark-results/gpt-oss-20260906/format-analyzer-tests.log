@@ -1,0 +1,10 @@
+test_cli_preserves_input_and_existing_outputs (test_analyze_gptoss_metal_formats.GPTOSSPrimitiveAnalysisTests.test_cli_preserves_input_and_existing_outputs) ... ok
+test_drift_unequal_order_counts_and_known_contamination_withhold_estimates (test_analyze_gptoss_metal_formats.GPTOSSPrimitiveAnalysisTests.test_drift_unequal_order_counts_and_known_contamination_withhold_estimates) ... ok
+test_incomplete_duplicate_reordered_or_malformed_rounds_are_rejected (test_analyze_gptoss_metal_formats.GPTOSSPrimitiveAnalysisTests.test_incomplete_duplicate_reordered_or_malformed_rounds_are_rejected) ... ok
+test_pairs_repeated_workload_baselines_with_their_own_candidate (test_analyze_gptoss_metal_formats.GPTOSSPrimitiveAnalysisTests.test_pairs_repeated_workload_baselines_with_their_own_candidate) ... ok
+test_uses_paired_ratios_not_ratio_of_marginal_medians_or_printed_summary (test_analyze_gptoss_metal_formats.GPTOSSPrimitiveAnalysisTests.test_uses_paired_ratios_not_ratio_of_marginal_medians_or_printed_summary) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.066s
+
+OK

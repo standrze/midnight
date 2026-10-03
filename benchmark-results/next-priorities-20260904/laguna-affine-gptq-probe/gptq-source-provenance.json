@@ -1,0 +1,10 @@
+[
+  {
+    "repository": "ml-explore/mlx-lm",
+    "commit": "32bb4e68791c941db382d6fc8fa5b35ba9f3d98b"
+  },
+  {
+    "repository": "IST-DASLab/gptq",
+    "commit": "2d65066eeb06a5c9ff5184d8cebdf33662c67faf"
+  }
+]

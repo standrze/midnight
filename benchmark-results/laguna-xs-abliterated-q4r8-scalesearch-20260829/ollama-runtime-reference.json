@@ -1,0 +1,41 @@
+{
+  "format": 1,
+  "created_at": "2026-08-29T16:16:00Z",
+  "machine": {
+    "description": "40-GPU-core M5 Max MacBook",
+    "unified_memory_gib": 64
+  },
+  "prompt": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "prompt_tokens": 79,
+  "requested_tokens": 512,
+  "model_runner": {
+    "model": "Laguna-XS-2.1-Abliterated-Q4R8-ScaleSearch-LS2",
+    "weights": "abliterated qvo-r16-neg075-v4",
+    "quantization": "Q4R8 ScaleSearch LS2",
+    "engine": "metal",
+    "mlx_version": "0.32.2",
+    "warmup_decode_tokens_per_second": 159.8094244521146,
+    "measured_decode_tokens_per_second": [
+      159.79266960893284,
+      159.69717229370167,
+      159.73843370568355
+    ],
+    "median_decode_tokens_per_second": 159.73843370568355
+  },
+  "ollama": {
+    "version": "0.33.1",
+    "model": "laguna-xs-2.1:nvfp4",
+    "weights": "stock, not abliterated",
+    "quantization": "NVFP4",
+    "warmup_requested_tokens": 128,
+    "warmup_decode_tokens_per_second": 154.044464616995,
+    "measured_decode_tokens_per_second": [
+      151.8782211850448,
+      154.10905495669616,
+      153.70276952964704
+    ],
+    "median_decode_tokens_per_second": 153.70276952964704
+  },
+  "observed_model_runner_advantage_percent": 3.9268415193967954,
+  "interpretation": "Useful same-Mac runtime reference, not a strict quantization A/B: the checkpoints and formats differ, and the runtimes were measured in separate processes."
+}

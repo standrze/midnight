@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "checkpoint_revision": "f356f2747216d7e98fee755df25987459fc19089",
+  "model": "GPT-OSS-20B MXFP4 experts / affine Q4 dense / Q8 routers",
+  "hardware": {
+    "chip": "Apple M5 Max",
+    "gpu_cores": 40,
+    "unified_memory_gib": 64
+  },
+  "median_decode_tokens_per_second": 138.5297183752791,
+  "median_time_to_first_visible_text_ms": 295.111854,
+  "trials": 4,
+  "generation_tokens_each": [
+    256,
+    256,
+    256,
+    256
+  ],
+  "all_measured_text_identical": true,
+  "matches_initial_low_effort_output": true,
+  "max_measured_peak_active_bytes": 11617478076,
+  "prefill_step_size": 512,
+  "context_length": 8192,
+  "reasoning_effort": "low",
+  "limitations": [
+    "Single short prompt and one Mac; not a full-model quantization comparison.",
+    "Generation rate includes reasoning tokens; TTFT waits for visible content.",
+    "Initial and final runtime runs are not interleaved AB/BA; their difference is not an established speedup."
+  ]
+}

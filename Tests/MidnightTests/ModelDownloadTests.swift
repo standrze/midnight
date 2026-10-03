@@ -1,6 +1,5 @@
 import Foundation
 import XCTest
-
 @testable import Midnight
 
 final class ModelDownloadTests: XCTestCase {
@@ -32,27 +31,15 @@ final class ModelDownloadTests: XCTestCase {
         XCTAssertEqual(try String(contentsOf: url, encoding: .utf8), "invalid json")
     }
 
-    func testSelectsNativeRootFilesAndVoxtralVoiceEmbeddings() throws {
-        let plan = try DownloadPlan(
-            entries: [
-                ("config.json", 10), ("model.safetensors", 20), ("chat_template.jinja", 30), ("tokenizer.json", 40),
-                ("tokenizer_config.json", 50), ("voice_embedding/casual_male.safetensors", 60),
-                ("original/model.safetensors", 900), ("nested/other.safetensors", 900), ("model.gguf", 900),
-                ("model.py", 900),
-            ], maxGB: 1)
-        XCTAssertEqual(
-            plan.files,
-            [
-                "chat_template.jinja", "config.json", "model.safetensors", "tokenizer.json", "tokenizer_config.json",
-                "voice_embedding/casual_male.safetensors",
-            ])
-        XCTAssertEqual(plan.bytes, 210)
+    func testSelectsOnlyNativeRootFiles() throws {
+        let plan = try DownloadPlan(entries: [("config.json", 10), ("model.safetensors", 20), ("original/model.safetensors", 900), ("model.gguf", 900), ("model.py", 900)], maxGB: 1)
+        XCTAssertEqual(plan.files, ["config.json", "model.safetensors"])
+        XCTAssertEqual(plan.bytes, 30)
     }
 
     func testRefusesMissingSizeAndOversize() {
         XCTAssertThrowsError(try DownloadPlan(entries: [("config.json", 10), ("model.safetensors", nil)], maxGB: 30))
-        XCTAssertThrowsError(
-            try DownloadPlan(entries: [("config.json", 10), ("model.safetensors", 31_000_000_000)], maxGB: 30))
+        XCTAssertThrowsError(try DownloadPlan(entries: [("config.json", 10), ("model.safetensors", 31_000_000_000)], maxGB: 30))
         XCTAssertThrowsError(try DownloadPlan(entries: [("config.json", 10), ("model.safetensors", 20)], maxGB: .nan))
     }
 

@@ -1,0 +1,26 @@
+mlx sorted gather QMM NAX row bounds patch already applied.
+mlx-swift sorted gather QMM NAX generated JIT patch already applied.
+mlx affine Q4 QMV specialization patch already applied.
+mlx-swift affine Q4 QMV generated JIT patch already applied.
+mlx-swift existing default stream API patch already applied.
+mlx-swift direct slice update patch already applied.
+swift-transformers incremental ByteLevel decoder patch already applied.
+mlx-swift-lm README warning fix patch already applied.
+mlx-swift-lm Gemma 4 LoRA layer coverage patch already applied.
+mlx-swift-lm Gemma 4 non-rotating cache patch already applied.
+mlx-swift-lm Mistral hybrid attention patch already applied.
+mlx-swift-lm Mixtral fused decode router patch already applied.
+mlx-swift-lm backend-aware token evaluation patch already applied.
+mlx-swift-lm task executor preference patch already applied.
+mlx-swift-lm MTP prompt hidden window patch already applied.
+mlx-swift-lm MTP decode scheduling patch already applied.
+mlx-swift-lm MTP first-rejection diagnostic patch already applied.
+mlx-swift-lm ChatSession in-memory snapshot patch already applied.
+mlx-swift-lm direct KV slice update patch already applied.
+mlx-swift-lm incremental ByteLevel streaming patch already applied.
+mlx-swift-lm Q4 affine scale search patch already applied.
+mlx-swift-lm Q4 affine centered scale search patch already applied.
+mlx-swift-lm Q4 affine bias refinement patch already applied.
+mlx-swift-lm Q4 affine joint fit patch already applied.
+Applied mlx-swift-lm Q4 affine group size patch.
+mlx-swift-lm cache memory accounting patch already applied.

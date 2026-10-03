@@ -19,12 +19,8 @@ main() {
         return 1
       fi
       ;;
-    Linux-x86_64)
-      platform=linux-x86_64-cuda13-sm89
-      echo 'Linux package: RTX 4090 (sm_89), CUDA 13, cuDNN 9; tested on Ubuntu 24.04.'
-      ;;
     *)
-      echo 'Prebuilt downloads support Apple silicon on macOS 26+ and x86-64 Linux/CUDA 13 (sm_89).' >&2
+      echo 'Prebuilt downloads currently support Apple silicon on macOS 26+.' >&2
       echo 'Linux/CUDA and other configurations: https://github.com/standrze/midnight#readme' >&2
       return 1
       ;;
@@ -45,11 +41,7 @@ main() {
   curl --proto '=https' --tlsv1.2 -fsSL --retry 3 \
     "https://github.com/$repo/releases/download/$version/SHA256SUMS" -o "$stage/SHA256SUMS"
   expected="$(awk -v file="$archive" '$2 == file {print $1}' "$stage/SHA256SUMS")"
-  if command -v sha256sum >/dev/null 2>&1; then
-    actual="$(sha256sum "$stage/$archive" | awk '{print $1}')"
-  else
-    actual="$(shasum -a 256 "$stage/$archive" | awk '{print $1}')"
-  fi
+  actual="$(shasum -a 256 "$stage/$archive" | awk '{print $1}')"
   if [[ ! "$expected" =~ ^[0-9a-f]{64}$ || "$expected" != "$actual" ]]; then
     echo 'Release checksum verification failed; nothing was installed.' >&2
     return 1

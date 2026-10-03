@@ -1,0 +1,83 @@
+[0/1] Planning build
+[1/1] Compiling plugin GenerateManual
+[2/2] Compiling plugin GenerateDoccReference
+Building for production...
+[2/33] Write swift-version--58304C5D6DBC2206.txt
+[4/41] Compiling RealModule AlgebraicField.swift
+[5/41] Compiling MLXHuggingFaceMacros HuggingFaceIntegrationMacros.swift
+[6/43] Compiling _NIOBase64 Base64.swift
+[7/43] Compiling Crypto AES-GCM.swift
+[8/45] Compiling _NIODataStructures Heap.swift
+[9/45] Compiling ArgumentParserToolInfo ToolInfo.swift
+[10/47] Compiling InternalCollectionsUtilities Debugging.swift
+[11/48] Compiling ComplexModule Complex+AdditiveArithmetic.swift
+[12/49] Compiling NIOConcurrencyHelpers NIOAtomic.swift
+[13/49] Compiling EventSource AsyncEventsSequence.swift
+[14/51] Compiling Numerics Numerics.swift
+[15/52] Compiling ContainersPreview OutputSpan+Extras.swift
+[16/53] Compiling ModelQualityCore ModelQualityCore.swift
+[17/54] Compiling Atomics OptionalRawRepresentable.swift
+[17/54] Write Objects.LinkFileList
+[19/54] Compiling ScalePlanMLX ScalePlan.swift
+[19/54] Linking MLXHuggingFaceMacros-tool
+[21/54] Compiling OrderedCollections _HashTable+Bucket.swift
+[22/54] Compiling DequeModule Deque+Codable.swift
+[23/56] Compiling ModelRunnerProtocol AudioAPIRoute.swift
+[24/56] Compiling ArgumentParser BashCompletionsGenerator.swift
+[25/58] Compiling ScalePlanCLI main.swift
+[25/58] Write Objects.LinkFileList
+[26/58] Linking model-runner-scale-plan
+[28/58] Compiling MLX ArrayAt.swift
+[29/60] Compiling LagunaQ4R8Verifier main.swift
+[29/60] Write Objects.LinkFileList
+[31/60] Compiling NIOCore AddressedEnvelope.swift
+[31/60] Linking model-runner-laguna-q4r8-verify
+[33/62] Compiling HuggingFace AccessRequest.swift
+[34/62] Compiling MistralActivationScaleSearchCore ActivationWeightedScaleSearch.swift
+[35/63] Compiling NIOEmbedded AsyncTestingChannel.swift
+[36/63] Compiling Jinja AST.swift
+[37/64] Compiling MLXNN Activations.swift
+[38/65] Compiling MLXOptimizers Optimizers.swift
+[39/66] Compiling MistralActivationScaleSearchRescorer main.swift
+[39/66] Write Objects.LinkFileList
+[41/66] Compiling Hub BinaryDistinct.swift
+[42/67] Compiling NIOPosix BSDSocketAPICommon.swift
+[43/68] Compiling NIO Exports.swift
+[43/69] Linking model-runner-mistral-awss-quantize
+[45/69] Compiling Tokenizers BPETokenizer.swift
+[46/69] Compiling NIOHTTP1 ByteCollectionUtils.swift
+[47/69] Compiling MLXLMCommon DoRA+Layers.swift
+[48/73] Compiling MLXHuggingFace FoundationModelsMacros.swift
+[49/73] Compiling Q4ScaleSearchAudit main.swift
+[49/73] Write Objects.LinkFileList
+[51/73] Compiling LagunaScaleSearchCore LagunaActivationStatistics.swift
+[52/74] Compiling LagunaScaleSearchRescorerCLI main.swift
+[52/74] Write Objects.LinkFileList
+[53/74] Linking model-runner-q4-scale-search-audit
+[54/74] Linking model-runner-laguna-q4r8-rescore
+[56/74] Compiling MLXLLM LLMModel.swift
+[57/75] Compiling ModelRunnerCore CompletedMessagePrefixLRU.swift
+[58/83] Compiling ModelQualityBenchmark main.swift
+[59/84] Compiling ModelQuantizer main.swift
+[59/84] Write Objects.LinkFileList
+[62/84] Compiling ModelGenerationBenchmark Command.swift
+[63/84] Compiling LagunaQuantizer main.swift
+[63/84] Write Objects.LinkFileList
+[66/84] Compiling ModelTeacherKLBenchmark main.swift
+[67/84] Compiling MetalQuantizationBenchmark FusedGatherSiluBenchmark.swift
+[67/84] Write Objects.LinkFileList
+[70/84] Compiling Midnight ModelHTTPServer.swift
+[71/84] Compiling RuntimeBenchmark main.swift
+[71/84] Write Objects.LinkFileList
+[74/84] Compiling MistralActivationStats main.swift
+[74/84] Linking model-runner-quality-bench
+[75/84] Write Objects.LinkFileList
+[76/84] Linking model-runner-quantize
+[77/84] Linking model-runner-generation-bench
+[78/84] Linking model-runner-laguna-quantize
+[79/84] Linking model-runner-teacher-kl-bench
+[80/84] Linking model-runner-metal-quant-bench
+[81/84] Linking model-runner-runtime-bench
+[82/84] Linking midnight
+[83/84] Linking model-runner-mistral-activation-stats
+Build complete! (77.68s)

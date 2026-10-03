@@ -1,0 +1,70 @@
+{
+  "date": "2026-08-30",
+  "host": "40-GPU-core M5 Max",
+  "accepted_production": {
+    "native_metal_tokens_per_second": 185.291435150063,
+    "historical_ollama_q4r8_tokens_per_second": 179.566223067381,
+    "native_lead_percent": 3.188356910828
+  },
+  "router_precision_ab": {
+    "shape": [1, 2048, 256],
+    "dtype": "bfloat16",
+    "group_size": 64,
+    "warmup": 32,
+    "queue_depth": 512,
+    "queue_rounds": 21,
+    "runs": [
+      {
+        "q4_total_ms": 0.002980,
+        "q8_total_ms": 0.002994,
+        "q4_total_speedup": 1.004807,
+        "q4_execution_ms": 0.002742,
+        "q8_execution_ms": 0.002767,
+        "q4_execution_speedup": 1.009113
+      },
+      {
+        "q4_total_ms": 0.002749,
+        "q8_total_ms": 0.002752,
+        "q4_total_speedup": 1.001095,
+        "q4_execution_ms": 0.002523,
+        "q8_execution_ms": 0.002535,
+        "q4_execution_speedup": 1.004806
+      },
+      {
+        "q4_total_ms": 0.002885,
+        "q8_total_ms": 0.002853,
+        "q4_total_speedup": 0.988858,
+        "q4_execution_ms": 0.002662,
+        "q8_execution_ms": 0.002631,
+        "q4_execution_speedup": 0.988383
+      }
+    ],
+    "geometric_total_speedup": 0.998230017,
+    "geometric_execution_speedup": 1.000727335,
+    "decision": "No measurable Q4 router speed advantage; retain Q8 routers pending end-to-end quality and acceptance evidence."
+  },
+  "scale_search_microbenchmark": {
+    "weight_shape": [6144, 2048],
+    "dtype": "bfloat16",
+    "group_size": 64,
+    "bits": 4,
+    "standard_reconstruction_mse": 0.000003314102968943189,
+    "scale_search_reconstruction_mse": 0.000002812670118146343,
+    "stored_bytes_each": 7077888,
+    "runs": [
+      {
+        "conversion_overhead": 215.425,
+        "qmv_speedup": 1.007
+      },
+      {
+        "conversion_overhead": 207.290,
+        "qmv_speedup": 0.981
+      },
+      {
+        "conversion_overhead": 228.993,
+        "qmv_speedup": 1.018
+      }
+    ],
+    "decision": "ScaleSearch is a quality calibration and conversion-time optimization target, not an inference-speed path."
+  }
+}

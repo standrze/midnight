@@ -1,0 +1,36 @@
+{
+  "allow_early_stop" : false,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-08-30T14:45:28Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 1,
+  "median_decode_tokens_per_second" : 68.71177222240425,
+  "median_prompt_tokens_per_second" : 1666.3111688521687,
+  "model_path" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-Standard-3cea74c",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 64,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Guide**\n\n## **Introduction**\nA **lock-free work-stealing scheduler** is a concurrent algorithm that efficiently distributes tasks across multiple threads without traditional synchronization primitives like locks or semaphores. This approach minimizes contention and maximizes throughput by",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 64,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 1666.3111688521687,
+        "stop_reason" : "length",
+        "tokens_per_second" : 68.71177222240425
+      },
+      "mode" : "target_only",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 365.461167
+    }
+  ],
+  "warmup_count" : 0,
+  "warmups" : [
+
+  ]
+}

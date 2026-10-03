@@ -1,0 +1,22 @@
+{
+  "captured_at_utc": "2026-09-04T22:02:36.543791+00:00",
+  "purpose": "Post-campaign, pre-next-build snapshot of production runtime artifacts; captured for same-loaded Laguna and prefill evidence archival.",
+  "artifacts": [
+    {
+      "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/model-runner-runtime-bench",
+      "resolved_path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/model-runner-runtime-bench",
+      "sha256": "379179d3343679277cf1a8bf9f172d4ba5c30420178a08f3f59f8645858faf73",
+      "bytes": 48443880,
+      "mtime_ns": 1788558637411898354,
+      "mtime_utc": "2026-09-04T21:50:37.411898+00:00"
+    },
+    {
+      "path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/release/mlx.metallib",
+      "resolved_path": "/private/tmp/midnight-memory-release.ccwHpH/repo/.build/arm64-apple-macosx/release/mlx.metallib",
+      "sha256": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c",
+      "bytes": 1941214,
+      "mtime_ns": 1788557068230365615,
+      "mtime_utc": "2026-09-04T21:24:28.230366+00:00"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "algorithm" : "q4r8_affine_scale_search_ls2",
+  "bias_refinement_iterations" : 1,
+  "bits" : 4,
+  "created_at" : "2026-08-30T14:30:16Z",
+  "device" : "Device(gpu, 0)",
+  "format" : 2,
+  "group_size" : 64,
+  "joint_affine_refinement_iterations" : 2,
+  "search_factors" : [
+    0.75,
+    0.8125,
+    0.875,
+    0.9375,
+    1,
+    1.0625,
+    1.125,
+    1.1875,
+    1.25
+  ],
+  "source_model" : "/path/to/midnight/tmp/models/Ministral-3-14B-Instruct-2512-BF16-3cea74c",
+  "status" : "experimental_measured_candidate",
+  "tensors" : [
+    {
+      "changed_group_fraction" : 0.9831062316894531,
+      "changed_groups" : 1288577,
+      "dtype" : "bfloat16",
+      "elements" : 83886080,
+      "groups" : 1310720,
+      "mse_reduction_percent" : 15.140508591595303,
+      "searched_conversion_ms" : 911.539958,
+      "searched_mse" : 2.451982368256722e-07,
+      "searched_relative_mse" : 0.007267358758429758,
+      "searched_stored_bytes" : 47185920,
+      "shape" : [
+        5120,
+        16384
+      ],
+      "shard" : "model-00001-of-00006.safetensors",
+      "standard_conversion_ms" : 12.430459,
+      "standard_mse" : 2.8894615411445557e-07,
+      "standard_relative_mse" : 0.00856399047155965,
+      "standard_stored_bytes" : 47185920,
+      "tensor" : "language_model.model.layers.0.mlp.down_proj.weight"
+    },
+    {
+      "changed_group_fraction" : 0.9823463439941407,
+      "changed_groups" : 1287581,
+      "dtype" : "bfloat16",
+      "elements" : 83886080,
+      "groups" : 1310720,
+      "mse_reduction_percent" : 15.135964083267893,
+      "searched_conversion_ms" : 896.925459,
+      "searched_mse" : 2.475594556017313e-07,
+      "searched_relative_mse" : 0.0071611716060806675,
+      "searched_stored_bytes" : 47185920,
+      "shape" : [
+        16384,
+        5120
+      ],
+      "shard" : "model-00001-of-00006.safetensors",
+      "standard_conversion_ms" : 18.954875,
+      "standard_mse" : 2.9171303594921483e-07,
+      "standard_relative_mse" : 0.008438405655261494,
+      "standard_stored_bytes" : 47185920,
+      "tensor" : "language_model.model.layers.0.mlp.gate_proj.weight"
+    },
+    {
+      "changed_group_fraction" : 0.982073974609375,
+      "changed_groups" : 321806,
+      "dtype" : "bfloat16",
+      "elements" : 20971520,
+      "groups" : 327680,
+      "mse_reduction_percent" : 15.220765453561425,
+      "searched_conversion_ms" : 245.68525,
+      "searched_mse" : 1.1856059245474171e-07,
+      "searched_relative_mse" : 0.007636513358109867,
+      "searched_stored_bytes" : 11796480,
+      "shape" : [
+        5120,
+        4096
+      ],
+      "shard" : "model-00001-of-00006.safetensors",
+      "standard_conversion_ms" : 24.966958,
+      "standard_mse" : 1.3984626434648817e-07,
+      "standard_relative_mse" : 0.009007528080389661,
+      "standard_stored_bytes" : 11796480,
+      "tensor" : "language_model.model.layers.0.self_attn.o_proj.weight"
+    },
+    {
+      "changed_group_fraction" : 0.979974365234375,
+      "changed_groups" : 321118,
+      "dtype" : "bfloat16",
+      "elements" : 20971520,
+      "groups" : 327680,
+      "mse_reduction_percent" : 12.62983085384839,
+      "searched_conversion_ms" : 241.763458,
+      "searched_mse" : 7.002736879258009e-07,
+      "searched_relative_mse" : 0.011758244578809808,
+      "searched_stored_bytes" : 11796480,
+      "shape" : [
+        4096,
+        5120
+      ],
+      "shard" : "model-00001-of-00006.safetensors",
+      "standard_conversion_ms" : 5.089042,
+      "standard_mse" : 8.015020398488559e-07,
+      "standard_relative_mse" : 0.013457962475888973,
+      "standard_stored_bytes" : 11796480,
+      "tensor" : "language_model.model.layers.0.self_attn.q_proj.weight"
+    },
+    {
+      "changed_group_fraction" : 0.9811912536621094,
+      "changed_groups" : 1286067,
+      "dtype" : "bfloat16",
+      "elements" : 83886080,
+      "groups" : 1310720,
+      "mse_reduction_percent" : 15.130417707835264,
+      "searched_conversion_ms" : 898.126583,
+      "searched_mse" : 2.7983574568679614e-07,
+      "searched_relative_mse" : 0.007215013332229642,
+      "searched_stored_bytes" : 47185920,
+      "shape" : [
+        5120,
+        16384
+      ],
+      "shard" : "model-00003-of-00006.safetensors",
+      "standard_conversion_ms" : 7.18525,
+      "standard_mse" : 3.2972442909340316e-07,
+      "standard_relative_mse" : 0.00850129473642495,
+      "standard_stored_bytes" : 47185920,
+      "tensor" : "language_model.model.layers.19.mlp.down_proj.weight"
+    },
+    {
+      "changed_group_fraction" : 0.980975341796875,
+      "changed_groups" : 321446,
+      "dtype" : "bfloat16",
+      "elements" : 20971520,
+      "groups" : 327680,
+      "mse_reduction_percent" : 15.139045589925725,
+      "searched_conversion_ms" : 249.886958,
+      "searched_mse" : 2.746774896422721e-07,
+      "searched_relative_mse" : 0.00716585093845472,
+      "searched_stored_bytes" : 11796480,
+      "shape" : [
+        4096,
+        5120
+      ],
+      "shard" : "model-00003-of-00006.safetensors",
+      "standard_conversion_ms" : 23.573291,
+      "standard_mse" : 3.236794725580694e-07,
+      "standard_relative_mse" : 0.008444226191267095,
+      "standard_stored_bytes" : 11796480,
+      "tensor" : "language_model.model.layers.19.self_attn.q_proj.weight"
+    }
+  ],
+  "totals" : {
+    "changed_group_fraction" : 0.9819732666015625,
+    "changed_groups" : 4826595,
+    "elements" : 314572800,
+    "groups" : 4915200,
+    "mse_reduction_percent" : 14.728779409738667,
+    "passes_fifteen_percent_mse_gate" : false,
+    "searched_mse" : 2.789257014986409e-07,
+    "standard_mse" : 3.2710415022544717e-07,
+    "tensors" : 6,
+    "tensors_improved" : 6
+  }
+}

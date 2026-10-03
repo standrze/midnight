@@ -1,0 +1,5 @@
+Mistral-7B-shaped packed-row Metal A/B
+workload	first	second	first_total_ms	second_total_ms	second_total_speedup	first_execution_ms	second_execution_ms	second_execution_speedup
+mistral7b-swiglu	current-eager	compiled-elementwise	0.073	0.074	0.983x	0.072	0.073	0.986x
+mistral7b-gate-up	two-op-compiled	packed-row-fused	0.075	0.104	0.722x	0.074	0.103	0.717x
+mistral7b-qkv	three-op-current	packed-row-fused	0.019	0.020	0.955x	0.018	0.018	1.030x

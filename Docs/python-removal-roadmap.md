@@ -46,12 +46,6 @@ ports; remaining interpreter-based quantization helpers now belong to that
 project. See the [project layout](project-layout.md) for ownership and
 verification. Runtime evaluation and corpus preparation remain in Midnight.
 
-The current independent quantization project is `../wick`. On 30 September,
-the remaining Gemma grouping planner and its tests moved there, the Talkie GQA
-conversion/recovery tools moved to `../training/Experiments/TalkieGQARecovery`,
-and the five quantization forwarding shell scripts were removed from Midnight.
-These are ownership changes, not Python ports.
-
 Midnight Studio now also owns a small native `midnight-studio-worker` for
 interactive LoRA fine-tuning, adapter-based CPT, and dense shard quantization.
 This worker shares Midnight's pinned model runtime. Broader distillation,

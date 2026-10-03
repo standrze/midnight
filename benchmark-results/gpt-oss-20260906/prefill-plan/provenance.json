@@ -1,0 +1,1933 @@
+{
+  "binaries": {
+    "runtime": {
+      "executable": {
+        "bytes": 58617048,
+        "mtime_ns": 1788705521134306864,
+        "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/arm64-apple-macosx/release/model-runner-runtime-bench",
+        "sha256": "c1e7696074e150a6cc8bc2d7b30408d1ba79262afe9e92b1d01e70c200afed25"
+      },
+      "metallib": {
+        "bytes": 1941214,
+        "mtime_ns": 1788564050518246239,
+        "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/arm64-apple-macosx/release/mlx.metallib",
+        "sha256": "903daf038bc9e65c6b77ccb3dc023df6435cf50d4d2dc78ed950a711f68be48c"
+      }
+    }
+  },
+  "compiler": {
+    "exit_code": 0,
+    "stderr": "swift-driver version: 1.148.6",
+    "stdout": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx26.0"
+  },
+  "corpora": [],
+  "cpu_count": 18,
+  "created_at": "2026-09-06T14:43:53.806393+00:00",
+  "dependencies": {
+    "mlx-c": {
+      "head": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "c74db5307cc8ce122f48d97ef951b30578674e7f"
+      },
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-swift/Source/Cmlx/mlx-c",
+      "status": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "mlx-core": {
+      "head": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "1f8e74e3f12f31365464a6867c6579f0e9b29d85"
+      },
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-swift/Source/Cmlx/mlx",
+      "status": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "M mlx/backend/metal/kernels/quantized.h\n M mlx/backend/metal/kernels/quantized.metal\n M mlx/backend/metal/kernels/quantized_nax.h\n M mlx/backend/metal/quantized.cpp"
+      },
+      "tracked_diff_sha256": "aee0e6ff0d4851111f4bb8079195b7ca7321ecf1a33057ea5901e55c07f8a5ec"
+    },
+    "mlx-swift": {
+      "head": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "72f3c3ad8aeee39bfc94f8fbeb446cac89e3a798"
+      },
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-swift",
+      "status": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "M Source/Cmlx/mlx\n M Source/Cmlx/mlx-generated/metal/quantized.h\n M Source/Cmlx/mlx-generated/metal/quantized_nax.h\n M Source/Cmlx/mlx-generated/quantized.cpp\n M Source/Cmlx/mlx-generated/quantized_nax.cpp\n M Source/MLX/MLXArray+Indexing.swift\n M Source/MLX/Stream.swift\n M Tests/MLXTests/MLXArray+IndexingTests.swift"
+      },
+      "tracked_diff_sha256": "613b964f89d6e98d88f23ce92c0456549b9b581d8bbd430a25b5500d90858082"
+    },
+    "mlx-swift-lm": {
+      "head": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "14414441fa44f45eee35a61e9fa0bab577cf9734"
+      },
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/mlx-swift-lm",
+      "status": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "M Libraries/MLXHuggingFaceMacros/HuggingFaceIntegrationMacros.swift\n M Libraries/MLXLLM/Models/Gemma4Text.swift\n M Libraries/MLXLLM/Models/Llama.swift\n M Libraries/MLXLLM/Models/Mixtral.swift\n M Libraries/MLXLMCommon/ChatSession.swift\n M Libraries/MLXLMCommon/Evaluate.swift\n M Libraries/MLXLMCommon/KVCache.swift\n M Libraries/MLXLMCommon/MTPDrafterModel.swift\n M Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift\n M Libraries/MLXLMCommon/ModelConversion.swift\n M Libraries/MLXLMCommon/SwitchLayers.swift\n M Libraries/MLXLMCommon/Tokenizer.swift\n M Package.swift\n M Tests/MLXLMTests/HarmonyOutputRouterTests.swift\n M Tests/MLXLMTests/KVCacheTests.swift\n M Tests/MLXLMTests/StopStringTests.swift\n M Tests/MLXLMTests/StreamingDetokenizerTests.swift\n?? Libraries/MLXLMCommon/MLXTaskExecutorPreference.swift\n?? Libraries/MLXLMCommon/MoERouterTopK.swift\n?? Tests/MLXLMTests/MixtralFusedRouterTests.swift"
+      },
+      "tracked_diff_sha256": "90e4e4167a595287637fb677d5df3f63bc213c796137dec57552e67048e80559"
+    },
+    "swift-transformers": {
+      "head": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "2fa33e1f5e7131a7fc64c28e6d161dcec0d24820"
+      },
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/.build/checkouts/swift-transformers",
+      "status": {
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": "M Sources/Tokenizers/Decoder.swift\n M Sources/Tokenizers/Tokenizer.swift\n?? Tests/TokenizersTests/IncrementalByteLevelDecoderTests.swift"
+      },
+      "tracked_diff_sha256": "5d9327b15054948987ba0cc5c01f46650aaebcb0f4bb5819c1e60e751640d7fa"
+    }
+  },
+  "displays": {
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "{\n  \"SPDisplaysDataType\" : [\n    {\n      \"_name\" : \"Apple M5 Max\",\n      \"spdisplays_metal\" : \"spdisplays_supported\",\n      \"spdisplays_vendor\" : \"sppci_vendor_Apple\",\n      \"sppci_bus\" : \"spdisplays_builtin\",\n      \"sppci_cores\" : \"40\",\n      \"sppci_device_type\" : \"spdisplays_gpu\",\n      \"sppci_model\" : \"Apple M5 Max\"\n    }\n  ]\n}"
+  },
+  "environment": {},
+  "hardware": {
+    "exit_code": 1,
+    "stderr": "sysctl: sysctl fmt -1 1024 1: Operation not permitted",
+    "stdout": ""
+  },
+  "machine": "arm64",
+  "models": [
+    {
+      "label": "prefill512",
+      "metadata": [
+        {
+          "bytes": 33998,
+          "mtime_ns": 1788704847282312475,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/config.json",
+          "sha256": "e8ec3c105ab83e913a75baf587de778083ada1af3fac68d807e75ff926240e38"
+        },
+        {
+          "bytes": 458,
+          "mtime_ns": 1788704869994682463,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/download-manifest.json",
+          "sha256": "69fd5208c178ffd95670023bed7b81882d8b173ba776f22e772ab6754126b28d"
+        },
+        {
+          "bytes": 177,
+          "mtime_ns": 1788704877793920323,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/generation_config.json",
+          "sha256": "f9970ada892d2d1f72e3ed0a6535ccebadd11897318794ca671d8c7014c957da"
+        },
+        {
+          "bytes": 67046,
+          "mtime_ns": 1788704902421897333,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model.safetensors.index.json",
+          "sha256": "065001869dd5ffd332419a432127467191b1bb0fd5c463dd0dc51f1359728a27"
+        },
+        {
+          "bytes": 440,
+          "mtime_ns": 1788704902619540628,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/special_tokens_map.json",
+          "sha256": "8464cabd6eda239fe46ebf8ae63b46c417721784a961a022f6b59174a2cda0e2"
+        },
+        {
+          "bytes": 27868174,
+          "mtime_ns": 1788704904402284858,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/tokenizer.json",
+          "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+        },
+        {
+          "bytes": 21694,
+          "mtime_ns": 1788704904608598835,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/tokenizer_config.json",
+          "sha256": "2d8386578f85ea1fa698e78c58b2d8503e8122d6b110b61f93d3995601b07d91"
+        }
+      ],
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274",
+      "weight_hash_policy": "size + first/last 1 MiB sample SHA256; NOT a full content hash",
+      "weights": [
+        {
+          "bytes": 5306798277,
+          "mtime_ns": 1788704988054612098,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model-00001-of-00003.safetensors",
+          "sample_sha256": "f8ee165bb67c887840812abac2b79d321ff5719eb6feb7494f8c9f6af3ba31a3"
+        },
+        {
+          "bytes": 5263518916,
+          "mtime_ns": 1788704984888597800,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model-00002-of-00003.safetensors",
+          "sample_sha256": "45cb412fea4fec59a04e9e72df4d213ffc8bad260b2bebd0aaee7d5fd75ae811"
+        },
+        {
+          "bytes": 608251966,
+          "mtime_ns": 1788704902095050652,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model-00003-of-00003.safetensors",
+          "sample_sha256": "aff2209ba3d55e3cc194c17a73963683b064dd3ac6de514a60c5ed8481d771b2"
+        }
+      ]
+    },
+    {
+      "label": "prefill2048",
+      "metadata": [
+        {
+          "bytes": 33998,
+          "mtime_ns": 1788704847282312475,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/config.json",
+          "sha256": "e8ec3c105ab83e913a75baf587de778083ada1af3fac68d807e75ff926240e38"
+        },
+        {
+          "bytes": 458,
+          "mtime_ns": 1788704869994682463,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/download-manifest.json",
+          "sha256": "69fd5208c178ffd95670023bed7b81882d8b173ba776f22e772ab6754126b28d"
+        },
+        {
+          "bytes": 177,
+          "mtime_ns": 1788704877793920323,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/generation_config.json",
+          "sha256": "f9970ada892d2d1f72e3ed0a6535ccebadd11897318794ca671d8c7014c957da"
+        },
+        {
+          "bytes": 67046,
+          "mtime_ns": 1788704902421897333,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model.safetensors.index.json",
+          "sha256": "065001869dd5ffd332419a432127467191b1bb0fd5c463dd0dc51f1359728a27"
+        },
+        {
+          "bytes": 440,
+          "mtime_ns": 1788704902619540628,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/special_tokens_map.json",
+          "sha256": "8464cabd6eda239fe46ebf8ae63b46c417721784a961a022f6b59174a2cda0e2"
+        },
+        {
+          "bytes": 27868174,
+          "mtime_ns": 1788704904402284858,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/tokenizer.json",
+          "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+        },
+        {
+          "bytes": 21694,
+          "mtime_ns": 1788704904608598835,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/tokenizer_config.json",
+          "sha256": "2d8386578f85ea1fa698e78c58b2d8503e8122d6b110b61f93d3995601b07d91"
+        }
+      ],
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274",
+      "weight_hash_policy": "size + first/last 1 MiB sample SHA256; NOT a full content hash",
+      "weights": [
+        {
+          "bytes": 5306798277,
+          "mtime_ns": 1788704988054612098,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model-00001-of-00003.safetensors",
+          "sample_sha256": "f8ee165bb67c887840812abac2b79d321ff5719eb6feb7494f8c9f6af3ba31a3"
+        },
+        {
+          "bytes": 5263518916,
+          "mtime_ns": 1788704984888597800,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model-00002-of-00003.safetensors",
+          "sample_sha256": "45cb412fea4fec59a04e9e72df4d213ffc8bad260b2bebd0aaee7d5fd75ae811"
+        },
+        {
+          "bytes": 608251966,
+          "mtime_ns": 1788704902095050652,
+          "path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274/model-00003-of-00003.safetensors",
+          "sample_sha256": "aff2209ba3d55e3cc194c17a73963683b064dd3ac6de514a60c5ed8481d771b2"
+        }
+      ]
+    }
+  ],
+  "orchestrator": {
+    "bytes": 37351,
+    "mtime_ns": 1788705786912876383,
+    "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/benchmark-campaign.py",
+    "sha256": "30f16c104e83eb43c927b52e69b56b2c40a1b698c5504d4112337d72370ab889"
+  },
+  "package_resolved": {
+    "bytes": 4647,
+    "mtime_ns": 1788668194430732940,
+    "path": "/Users/stephen/Documents/ChatGPT/midnight/Package.resolved",
+    "sha256": "19bb73ad4e87a94de24bfe5777fe4790024f93c843ffbacd506d007d7053fc76"
+  },
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "repository": {
+    "head": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "ca8d1cef8cec26c4b18c0c9f78097312249b9573"
+    },
+    "path": "/Users/stephen/Documents/ChatGPT/midnight",
+    "status": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "M Benchmarks/MetalQuantization/main.swift\n M Docs/memory-and-context.md\n M Package.resolved\n M Package.swift\n M README.md\n M Scripts/benchmark-campaign.py\n M Sources/ModelRunner/ModelHTTPServer.swift\n M Sources/ModelRunner/main.swift\n M Sources/ModelRunnerCore/LocalModelRunner.swift\n M Sources/ModelRunnerCore/ModelRuntimeCapabilities.swift\n M Sources/ModelRunnerProtocol/ModelCatalog.swift\n M Sources/ModelRunnerProtocol/ModelStackSettings.swift\n M Sources/ModelRunnerProtocol/OpenAIWire.swift\n M Sources/RuntimeBenchmark/main.swift\n M THIRD_PARTY_NOTICES.md\n M Tests/ModelRunnerProtocolTests/ModelCatalogTests.swift\n M Tests/ModelRunnerProtocolTests/ToolCallingWiringTests.swift\n M Tests/Python/test_benchmark_campaign.py\n M prepare-dependencies.sh\n?? Docs/chatterbox-integration.md\n?? Docs/latent-reasoning-plan-20260905.md\n?? Docs/latent-reasoning-status.md\n?? Docs/python-removal-roadmap.md\n?? Examples/chatterbox-multilingual.json\n?? Examples/chatterbox-turbo.json\n?? Examples/midnight.json\n?? Experiments/\n?? Patches/mlx-audio-chatterbox-cache-dtype.patch\n?? Patches/mlx-audio-chatterbox-controls.patch\n?? Patches/mlx-audio-midnight-platform.patch\n?? Scripts/analyze-gptoss-metal-formats.py\n?? Sources/ModelRunnerCore/ChatterboxAudioEncoding.swift\n?? Sources/ModelRunnerCore/ChatterboxSpeechSynthesizer.swift\n?? Sources/ModelRunnerProtocol/ChatterboxSettings.swift\n?? Tests/Integration/\n?? Tests/ModelRunnerProtocolTests/ChatterboxAudioEncodingTests.swift\n?? Tests/ModelRunnerProtocolTests/ChatterboxSettingsTests.swift\n?? Tests/ModelRunnerProtocolTests/GPTOSSReasoningRuntimeTests.swift\n?? Tests/ModelRunnerProtocolTests/GPTOSSRuntimeCapabilitiesTests.swift\n?? Tests/ModelRunnerProtocolTests/ModelLocalSettingsTests.swift\n?? Tests/ModelRunnerProtocolTests/ReasoningEffortTests.swift\n?? Tests/Python/test_analyze_gptoss_metal_formats.py\n?? Tests/Shell/MetalQuantizationCLITests.sh\n?? benchmark-results/gpt-oss-20260906/"
+    },
+    "tracked_diff_sha256": "fa4e4c6062ff230b0e38a241baf2e8e14c5eb63986725538a6d2daf63d346570"
+  },
+  "source_files": [
+    {
+      "bytes": 4647,
+      "mtime_ns": 1788668194430732940,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Package.resolved",
+      "relative_path": "Package.resolved",
+      "sha256": "19bb73ad4e87a94de24bfe5777fe4790024f93c843ffbacd506d007d7053fc76"
+    },
+    {
+      "bytes": 14508,
+      "mtime_ns": 1788705618339862304,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Package.swift",
+      "relative_path": "Package.swift",
+      "sha256": "037b5ec14d0910ac32418f2ca73d5849663b1be57620c1edf428fda27b577ac7"
+    },
+    {
+      "bytes": 2790,
+      "mtime_ns": 1788563876725533060,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/README.md",
+      "relative_path": "Patches/README.md",
+      "sha256": "a4f4a8cd13fb6efd85d18d385e9525620d747bbb576a7124ed535ae7fc7c4a40"
+    },
+    {
+      "bytes": 7652,
+      "mtime_ns": 1788532287198832255,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-affine-q4-qmv-specialization.patch",
+      "relative_path": "Patches/mlx-affine-q4-qmv-specialization.patch",
+      "sha256": "d794e7b139ed08143cd3ccf15174cabef96de0fc484a7d4ba46b3cdd3e77f9f6"
+    },
+    {
+      "bytes": 808,
+      "mtime_ns": 1788668858357634764,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-audio-chatterbox-cache-dtype.patch",
+      "relative_path": "Patches/mlx-audio-chatterbox-cache-dtype.patch",
+      "sha256": "38f611be9def20f60b0a5730fa591712bb6d2cfde1b24d5db83070d1c53b2842"
+    },
+    {
+      "bytes": 2864,
+      "mtime_ns": 1788668573321849369,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-audio-chatterbox-controls.patch",
+      "relative_path": "Patches/mlx-audio-chatterbox-controls.patch",
+      "sha256": "5257c0435ba418ed1b8dd430a266e9e98a9522b37ee2697ca26693bfc534dffc"
+    },
+    {
+      "bytes": 678,
+      "mtime_ns": 1788668400817431916,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-audio-midnight-platform.patch",
+      "relative_path": "Patches/mlx-audio-midnight-platform.patch",
+      "sha256": "b6255c1c0fcbca559120fc221bdb3a62c8b3f4bb20d75ad73dd4dbe24229f4f1"
+    },
+    {
+      "bytes": 579,
+      "mtime_ns": 1788532287198892880,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-c-clear-global-streams.patch",
+      "relative_path": "Patches/mlx-c-clear-global-streams.patch",
+      "sha256": "5cfbaa93ffe06dd35ba9fe32f65d39ee4a6793d5ede1b2947de0a61a9b11dc54"
+    },
+    {
+      "bytes": 982,
+      "mtime_ns": 1788532287198946422,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-c-clear-streams.patch",
+      "relative_path": "Patches/mlx-c-clear-streams.patch",
+      "sha256": "f773e53c33dd272827b695b38dabcc6865487a12cbd2c4fbc015bd03a732505e"
+    },
+    {
+      "bytes": 802,
+      "mtime_ns": 1788532287198992630,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-cuda-half-fmod.patch",
+      "relative_path": "Patches/mlx-cuda-half-fmod.patch",
+      "sha256": "6ca0b4ad7f769cbd9f1b1351f04766e57bcba2bb9e7575a1061f8d1cb50e4b4a"
+    },
+    {
+      "bytes": 1176,
+      "mtime_ns": 1788532287199043213,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-global-stream-cleanup.patch",
+      "relative_path": "Patches/mlx-global-stream-cleanup.patch",
+      "sha256": "941183da33b771339d3e10bc9121833f3310c7df53bd36c7b9f36f08d81d4e8b"
+    },
+    {
+      "bytes": 574,
+      "mtime_ns": 1788563876725605145,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-sorted-gather-qmm-nax-row-bounds.patch",
+      "relative_path": "Patches/mlx-sorted-gather-qmm-nax-row-bounds.patch",
+      "sha256": "88fd63ef6d71da4dadbb4804be6fc39f1799d9997132632dc7b53bd95e951559"
+    },
+    {
+      "bytes": 3866,
+      "mtime_ns": 1788532287199094963,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-affine-q4-qmv-jit.patch",
+      "relative_path": "Patches/mlx-swift-affine-q4-qmv-jit.patch",
+      "sha256": "104c447e5167639b0f5163067541f3515a2e7afa0ad1df8cc6bec2e579e8bf4b"
+    },
+    {
+      "bytes": 1820,
+      "mtime_ns": 1788532287199149922,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-clear-streams.patch",
+      "relative_path": "Patches/mlx-swift-clear-streams.patch",
+      "sha256": "6ee9ae76a33e7805c405d580bf1550565cf37ad8a122033b838adf2f6ade65a0"
+    },
+    {
+      "bytes": 5839,
+      "mtime_ns": 1788532287199221672,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-cross-thread-stream.patch",
+      "relative_path": "Patches/mlx-swift-cross-thread-stream.patch",
+      "sha256": "36f8381d1fa5263f2ed9b76b723aa749c0a190d722b7ecf8e3851f40c4326c16"
+    },
+    {
+      "bytes": 280,
+      "mtime_ns": 1788532287199278046,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-cuda-generated-header.patch",
+      "relative_path": "Patches/mlx-swift-cuda-generated-header.patch",
+      "sha256": "565d105bcba66c3c1c366fb5dceebc45843884edf60ede8b33d1341aa4eb587d"
+    },
+    {
+      "bytes": 3409,
+      "mtime_ns": 1788532287199335005,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-cuda-host-cxx.patch",
+      "relative_path": "Patches/mlx-swift-cuda-host-cxx.patch",
+      "sha256": "d60dcf4a0167c8afa3e42a42c8929df89f5fddfa0696f3a2a64318d3e9facca8"
+    },
+    {
+      "bytes": 5328,
+      "mtime_ns": 1788532287199389796,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-cuda-linux.patch",
+      "relative_path": "Patches/mlx-swift-cuda-linux.patch",
+      "sha256": "eff2df6b021d55896d8d95cb36ab9953dddfcb50b99e63724b0753bee8937335"
+    },
+    {
+      "bytes": 4035,
+      "mtime_ns": 1788532287199445130,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-direct-slice-update.patch",
+      "relative_path": "Patches/mlx-swift-direct-slice-update.patch",
+      "sha256": "276a1cccfdf8c881429d7a03669c3eba95c3a9b053a97bba31f963a01f7dd95b"
+    },
+    {
+      "bytes": 1221,
+      "mtime_ns": 1788532287199495296,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-existing-default-stream.patch",
+      "relative_path": "Patches/mlx-swift-existing-default-stream.patch",
+      "sha256": "701242cdc583706c054881497573160ccfc927d8bca7368f849200823c40d37a"
+    },
+    {
+      "bytes": 1895,
+      "mtime_ns": 1788532287199560754,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-backend-token-evaluation.patch",
+      "relative_path": "Patches/mlx-swift-lm-backend-token-evaluation.patch",
+      "sha256": "14ce85935a41619b667e09c35710f44d6ce0f862aafdc054d239a49501fd2c6b"
+    },
+    {
+      "bytes": 705,
+      "mtime_ns": 1788553091617575547,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-chat-cache-memory.patch",
+      "relative_path": "Patches/mlx-swift-lm-chat-cache-memory.patch",
+      "sha256": "47342b5919ab10da1dfebfb6e1e1bf30b311bb83d33c8021a9bb33b1962c7347"
+    },
+    {
+      "bytes": 6972,
+      "mtime_ns": 1788532287199653879,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-chat-session-snapshot.patch",
+      "relative_path": "Patches/mlx-swift-lm-chat-session-snapshot.patch",
+      "sha256": "866ffc66a6495a657e57d4c10dffc8365a89bbdad4d973de0ac8456e3bd64784"
+    },
+    {
+      "bytes": 353,
+      "mtime_ns": 1788532287199729004,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-corefoundation-linux.patch",
+      "relative_path": "Patches/mlx-swift-lm-corefoundation-linux.patch",
+      "sha256": "70ca08af576e6ea7cc8cb33b08c16111658af35b69278bcb12b47c69062a59cd"
+    },
+    {
+      "bytes": 4202,
+      "mtime_ns": 1788532287199829004,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-direct-kv-slice-update.patch",
+      "relative_path": "Patches/mlx-swift-lm-direct-kv-slice-update.patch",
+      "sha256": "56e4446967f66080f85a774ea08838e8366ac790ead4bbd96b6d3c866007ae66"
+    },
+    {
+      "bytes": 473,
+      "mtime_ns": 1788532287199903712,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-gemma4-lora-layers.patch",
+      "relative_path": "Patches/mlx-swift-lm-gemma4-lora-layers.patch",
+      "sha256": "a637e379d47dd6eafa675a0f42fdfe073cd5354d940484ee295ff3c686599b85"
+    },
+    {
+      "bytes": 1183,
+      "mtime_ns": 1788532287199971962,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-gemma4-nonrotating-cache.patch",
+      "relative_path": "Patches/mlx-swift-lm-gemma4-nonrotating-cache.patch",
+      "sha256": "cf15372692048a231495267cbdd340f8b148cf7aa8b1cc862fb6892211a723d3"
+    },
+    {
+      "bytes": 984,
+      "mtime_ns": 1788532287200024129,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-ignore-readmes.patch",
+      "relative_path": "Patches/mlx-swift-lm-ignore-readmes.patch",
+      "sha256": "a2cc67d439ac21a38822e9bd31e7d1cb83688816dcc95200283e8481fc244c5e"
+    },
+    {
+      "bytes": 21046,
+      "mtime_ns": 1788532287200103462,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-incremental-bytelevel-streaming.patch",
+      "relative_path": "Patches/mlx-swift-lm-incremental-bytelevel-streaming.patch",
+      "sha256": "c9d0f756d78bdb84c607e521d2633fedbfb676b4f9c32a0213f2eeba0a7ee78f"
+    },
+    {
+      "bytes": 8444,
+      "mtime_ns": 1788532287200174212,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-mistral-hybrid-attention.patch",
+      "relative_path": "Patches/mlx-swift-lm-mistral-hybrid-attention.patch",
+      "sha256": "caa1be929e715bf507acd9867fc7609d24ba8595e2dbf6ac7e05d03fdd2dcb2a"
+    },
+    {
+      "bytes": 11038,
+      "mtime_ns": 1788532287200242629,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-mixtral-fused-router.patch",
+      "relative_path": "Patches/mlx-swift-lm-mixtral-fused-router.patch",
+      "sha256": "6abbeb59ffc966dc15a895325c2f325bb60082f14837016369b93823a5203490"
+    },
+    {
+      "bytes": 11014,
+      "mtime_ns": 1788532287200316212,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-mtp-decode-scheduling.patch",
+      "relative_path": "Patches/mlx-swift-lm-mtp-decode-scheduling.patch",
+      "sha256": "08d4e5e902c8f7574cfaa46ada026dfe9b126ffdac4c3d7b2de04e91dc25b521"
+    },
+    {
+      "bytes": 3614,
+      "mtime_ns": 1788532287200380212,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-mtp-first-rejection-diagnostic.patch",
+      "relative_path": "Patches/mlx-swift-lm-mtp-first-rejection-diagnostic.patch",
+      "sha256": "686f73eb1c6c6619a4b79f7f3160637d97246f67f337193d8ce788587e61ba1c"
+    },
+    {
+      "bytes": 3253,
+      "mtime_ns": 1788532287200440670,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-mtp-prompt-hidden-window.patch",
+      "relative_path": "Patches/mlx-swift-lm-mtp-prompt-hidden-window.patch",
+      "sha256": "b45f4b25229b5057b2c28164b3fb8872f09f6463555135d6124060094e9048cd"
+    },
+    {
+      "bytes": 4933,
+      "mtime_ns": 1788532287200511337,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-q4-affine-bias-refinement.patch",
+      "relative_path": "Patches/mlx-swift-lm-q4-affine-bias-refinement.patch",
+      "sha256": "14dd8f86eca39461aff027d271293f2e932b6a9d39ecc06254b9e6d14caa4b30"
+    },
+    {
+      "bytes": 5861,
+      "mtime_ns": 1788532287200592712,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-q4-affine-centered-scale-search.patch",
+      "relative_path": "Patches/mlx-swift-lm-q4-affine-centered-scale-search.patch",
+      "sha256": "f23bbe81b8f7163bf2467900e5b72cd1ee71ea11f85139c9cbbdf9fbb8ab96ae"
+    },
+    {
+      "bytes": 2242,
+      "mtime_ns": 1788571963103398983,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-q4-affine-group-size.patch",
+      "relative_path": "Patches/mlx-swift-lm-q4-affine-group-size.patch",
+      "sha256": "91c21cca3dd62612440ddc3547e250260a447fc0109c5c4b1a2e335bcd10eb2f"
+    },
+    {
+      "bytes": 7891,
+      "mtime_ns": 1788532287200677795,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-q4-affine-joint-fit.patch",
+      "relative_path": "Patches/mlx-swift-lm-q4-affine-joint-fit.patch",
+      "sha256": "d079a860786d9d21c8ef60bcd78094eb94885e47fea529d14f0c30d614f8d3c3"
+    },
+    {
+      "bytes": 12543,
+      "mtime_ns": 1788532287200754753,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-q4-affine-scale-search.patch",
+      "relative_path": "Patches/mlx-swift-lm-q4-affine-scale-search.patch",
+      "sha256": "51c475b6f6e647c4423e43d20a01686e2c17746bdd4fe68fcaa82f36bcda3916"
+    },
+    {
+      "bytes": 3426,
+      "mtime_ns": 1788532287200819086,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-lm-task-executor-preference.patch",
+      "relative_path": "Patches/mlx-swift-lm-task-executor-preference.patch",
+      "sha256": "b3ac8b0508983a81c5dde14fcf0453dd093d1b363bc52e9f758ba5b3588dc639"
+    },
+    {
+      "bytes": 1187,
+      "mtime_ns": 1788532287200868753,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-mlx32-cuda-link.patch",
+      "relative_path": "Patches/mlx-swift-mlx32-cuda-link.patch",
+      "sha256": "56f90ec116b1111f08ed2b3901fa58db53fc228be38069333da2439d403f0126"
+    },
+    {
+      "bytes": 1180,
+      "mtime_ns": 1788563876725672354,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/mlx-swift-sorted-gather-qmm-nax-row-bounds-jit.patch",
+      "relative_path": "Patches/mlx-swift-sorted-gather-qmm-nax-row-bounds-jit.patch",
+      "sha256": "307b52d6c29c3d4598eb13544cf99f18b18e4e8d9fdac305fa51f601a019658a"
+    },
+    {
+      "bytes": 21550,
+      "mtime_ns": 1788532287200937378,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Patches/swift-transformers-incremental-bytelevel-decoder.patch",
+      "relative_path": "Patches/swift-transformers-incremental-bytelevel-decoder.patch",
+      "sha256": "59c49ad2758576c420513fb197ec6d41c149b5c5f90e0781e579bf36ea92da45"
+    },
+    {
+      "bytes": 7628,
+      "mtime_ns": 1788705724496629281,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/analyze-gptoss-metal-formats.py",
+      "relative_path": "Scripts/analyze-gptoss-metal-formats.py",
+      "sha256": "29e9a129d89fa0c384a67c9f439443c34be7d6d577fbfd0f393c70fe872694c0"
+    },
+    {
+      "bytes": 11082,
+      "mtime_ns": 1788563876726194990,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/analyze-laguna-gather-silu-ab.py",
+      "relative_path": "Scripts/analyze-laguna-gather-silu-ab.py",
+      "sha256": "929042b27b2cb4238fd2ac9b415f795fe45016894d5b1a29be25b3f1ac6e72e5"
+    },
+    {
+      "bytes": 10777,
+      "mtime_ns": 1788563876726360951,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/analyze-quality-nll.py",
+      "relative_path": "Scripts/analyze-quality-nll.py",
+      "sha256": "89d44701fce90a0dd6f1eb2d9a3936a86b4e2b9b1510b893c8ec89446bc4b95f"
+    },
+    {
+      "bytes": 3899,
+      "mtime_ns": 1788571963103796445,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/analyze-time-profiler.py",
+      "relative_path": "Scripts/analyze-time-profiler.py",
+      "sha256": "3be121b4b55bf85dd3153ee42d86153e5cafb45754e371d988c7460766eb2113"
+    },
+    {
+      "bytes": 1030,
+      "mtime_ns": 1788532287201103586,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/audit-laguna-q4-scale-search.sh",
+      "relative_path": "Scripts/audit-laguna-q4-scale-search.sh",
+      "sha256": "2118c46e76b139110e139e969df24513d2f16238bfe3aa9433c68233d75ac018"
+    },
+    {
+      "bytes": 6970,
+      "mtime_ns": 1788532287201177669,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/audit-ollama-q4r8-compat.py",
+      "relative_path": "Scripts/audit-ollama-q4r8-compat.py",
+      "sha256": "144c2d199ce536c1033187a90529b301cac3850929f0ef41ddc53f7a8a3c2506"
+    },
+    {
+      "bytes": 37351,
+      "mtime_ns": 1788705786912876383,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/benchmark-campaign.py",
+      "relative_path": "Scripts/benchmark-campaign.py",
+      "sha256": "30f16c104e83eb43c927b52e69b56b2c40a1b698c5504d4112337d72370ab889"
+    },
+    {
+      "bytes": 10481,
+      "mtime_ns": 1788532287201268253,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/benchmark-cuda-laguna-ab.sh",
+      "relative_path": "Scripts/benchmark-cuda-laguna-ab.sh",
+      "sha256": "cea4fdb68d89d71da96944f64d1421d70acc93a2f233efc1357910fab79cb97d"
+    },
+    {
+      "bytes": 368,
+      "mtime_ns": 1788532287201324461,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/benchmark-metal-quantization.sh",
+      "relative_path": "Scripts/benchmark-metal-quantization.sh",
+      "sha256": "f432560c553d25b68082b3b8c480810be72ad2b54cbe9a87acf931b5a46d8d28"
+    },
+    {
+      "bytes": 1018,
+      "mtime_ns": 1788532287201383336,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/benchmark-model-quality.sh",
+      "relative_path": "Scripts/benchmark-model-quality.sh",
+      "sha256": "6d4a4b2950f2ab75276bb2922543a1d435696831991df049d63f478daab4e5f7"
+    },
+    {
+      "bytes": 1018,
+      "mtime_ns": 1788532287201448127,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/benchmark-runtime-model.sh",
+      "relative_path": "Scripts/benchmark-runtime-model.sh",
+      "sha256": "367425b8971004d834674b1cdc05a6d2fbbb66ab3e1bd19a6b2cdf9c905cde8a"
+    },
+    {
+      "bytes": 13525,
+      "mtime_ns": 1788532287201528419,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/build-ollama-q4r8-compat.py",
+      "relative_path": "Scripts/build-ollama-q4r8-compat.py",
+      "sha256": "ba783e3c8e078a39ca277a43e01abb3e7566205fb2916dffa0d9edcc29c720d8"
+    },
+    {
+      "bytes": 9408,
+      "mtime_ns": 1788532287201601836,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/cuda-dependency-checks.sh",
+      "relative_path": "Scripts/cuda-dependency-checks.sh",
+      "sha256": "1fab4adbd9408ad1c4ff5f1322cccffb009a5c3d95ff28771f0dcb2cac732f11"
+    },
+    {
+      "bytes": 3080,
+      "mtime_ns": 1788532287201669669,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/cuda-host-cxx.sh",
+      "relative_path": "Scripts/cuda-host-cxx.sh",
+      "sha256": "11b34ce8ac13d0a1621db36927982c1676478ba6a46750c2221164a843dfd35f"
+    },
+    {
+      "bytes": 21393,
+      "mtime_ns": 1788532287201737377,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/cuda-runtime-environment.sh",
+      "relative_path": "Scripts/cuda-runtime-environment.sh",
+      "sha256": "8ff3250020bd263dd7cefc25b83afaa67ae3fc88c5dc8953787d86f9e0d31700"
+    },
+    {
+      "bytes": 6994,
+      "mtime_ns": 1788532287201811877,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/cuda-smoke-host-guard.sh",
+      "relative_path": "Scripts/cuda-smoke-host-guard.sh",
+      "sha256": "903cd5c24e676a596820747f59cc41d770e50e9d23d591b41609af2e8c56dd36"
+    },
+    {
+      "bytes": 5427,
+      "mtime_ns": 1788532287201873544,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/cuda-smoke-policy.sh",
+      "relative_path": "Scripts/cuda-smoke-policy.sh",
+      "sha256": "5a60a6eea71c4d8c07a54aa6e1aca6167e0a41cf17fc07dc237dd7caa08103e4"
+    },
+    {
+      "bytes": 1511,
+      "mtime_ns": 1788532287201927585,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/cuda-toolkit.sh",
+      "relative_path": "Scripts/cuda-toolkit.sh",
+      "sha256": "f6417b800e487cd8dccb241b7ce9d2624de81a99514017412767c293a69a58c0"
+    },
+    {
+      "bytes": 27332,
+      "mtime_ns": 1788571963103911862,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/evaluate-generated.py",
+      "relative_path": "Scripts/evaluate-generated.py",
+      "sha256": "47710a59b9f1fc96bcdd426e7229e0d1d5cff635382d26cecf40d8f2329927c9"
+    },
+    {
+      "bytes": 2823,
+      "mtime_ns": 1788532287201983918,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/optional-dependency-patch.sh",
+      "relative_path": "Scripts/optional-dependency-patch.sh",
+      "sha256": "b0694a81db34f31985e0a3fe4e8028e127250dce1e1188a8dd05e91f1d7565c1"
+    },
+    {
+      "bytes": 14043,
+      "mtime_ns": 1788532287202066210,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/pack-laguna-gate-up.py",
+      "relative_path": "Scripts/pack-laguna-gate-up.py",
+      "sha256": "afd4b7cce6e68310ef81bdd27f6526715c08e48be427dae9661cebc42ce50b09"
+    },
+    {
+      "bytes": 10358,
+      "mtime_ns": 1788571963104059405,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/prepare-generated-eval-corpus.py",
+      "relative_path": "Scripts/prepare-generated-eval-corpus.py",
+      "sha256": "28d44452da5ef0ac0021228dd4e5174eaf62d18070ae0cc2bb941fd75ded3a6d"
+    },
+    {
+      "bytes": 6673,
+      "mtime_ns": 1788563876726668290,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/prepare-quantization-corpus.py",
+      "relative_path": "Scripts/prepare-quantization-corpus.py",
+      "sha256": "dcd70c705234e5201a630dde5893921eeab8241cb309c6bc9b97cd83b02e631e"
+    },
+    {
+      "bytes": 3921,
+      "mtime_ns": 1788532287202127043,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/prepare-text-benchmark-corpus.py",
+      "relative_path": "Scripts/prepare-text-benchmark-corpus.py",
+      "sha256": "778f30490cf063c700a1883411b1cd4031fcd195bf4aee7d348bbf773aa4d9ab"
+    },
+    {
+      "bytes": 18481,
+      "mtime_ns": 1788571963104160364,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/probe-laguna-affine-gptq.py",
+      "relative_path": "Scripts/probe-laguna-affine-gptq.py",
+      "sha256": "832105c28c5cc87c2123d674a551ac4cf057f331c5a11a37c0d65ef2d84ee43e"
+    },
+    {
+      "bytes": 1373,
+      "mtime_ns": 1788532287202185002,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/quantize-laguna-q4r8.sh",
+      "relative_path": "Scripts/quantize-laguna-q4r8.sh",
+      "sha256": "1015ed096dada3c01d6fe8891547cdfe30a393dae20c009491918b4606bb8b72"
+    },
+    {
+      "bytes": 11838,
+      "mtime_ns": 1788532287202249793,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/release-publisher.sh",
+      "relative_path": "Scripts/release-publisher.sh",
+      "sha256": "eb671e0bb3c9117645746c7e09c2ec531e8540a4b15a3b387e6825a9fa9c2d52"
+    },
+    {
+      "bytes": 1028,
+      "mtime_ns": 1788532287202296460,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/rescore-laguna-q4r8.sh",
+      "relative_path": "Scripts/rescore-laguna-q4r8.sh",
+      "sha256": "1127dcc48dda3a02c377a8de3396d286fea1a51faedea5ca374d51bfe4e005f6"
+    },
+    {
+      "bytes": 17642,
+      "mtime_ns": 1788532287202370501,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/smoke-cuda-model.sh",
+      "relative_path": "Scripts/smoke-cuda-model.sh",
+      "sha256": "13aef95b02abba7d736f3b66c34eba4b08101eb68aab6a84e26ca2b48466d07e"
+    },
+    {
+      "bytes": 1583,
+      "mtime_ns": 1788532287202453335,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/swiftpm-scratch-path.sh",
+      "relative_path": "Scripts/swiftpm-scratch-path.sh",
+      "sha256": "609f440f37440b2dec7af92abc52bfc4fcc6b5caffb7697501b4b86606128033"
+    },
+    {
+      "bytes": 5897,
+      "mtime_ns": 1788553091617934927,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/test-long-context-http.py",
+      "relative_path": "Scripts/test-long-context-http.py",
+      "sha256": "5474e68717abea4385a69cdf613e443f229f86c0cc5ffcc7fd66067b3122ccd1"
+    },
+    {
+      "bytes": 551,
+      "mtime_ns": 1788553091618052970,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/test-metal.sh",
+      "relative_path": "Scripts/test-metal.sh",
+      "sha256": "7e56c85381c4bb23fb2e10d1b81944203fa7571518a63991f039c480cbad128a"
+    },
+    {
+      "bytes": 4088,
+      "mtime_ns": 1788571963104316365,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/validate-generated-code-references.py",
+      "relative_path": "Scripts/validate-generated-code-references.py",
+      "sha256": "01367c556319b9256f8123cb2776a5a14ff163f0cd9ff25612820b6365ce950f"
+    },
+    {
+      "bytes": 8009,
+      "mtime_ns": 1788571963104405366,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/verify-laguna-group-size.py",
+      "relative_path": "Scripts/verify-laguna-group-size.py",
+      "sha256": "5d23cd299e338630b796fc306acb1c84463d7928056f3f879c7f8b0fc463a023"
+    },
+    {
+      "bytes": 1162,
+      "mtime_ns": 1788532287202505001,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Scripts/verify-laguna-q4r8.sh",
+      "relative_path": "Scripts/verify-laguna-q4r8.sh",
+      "sha256": "8ccc447a285981038fb13160a777672e4cecf48e15947d9ff5662be79bb51fab"
+    },
+    {
+      "bytes": 17931,
+      "mtime_ns": 1788532287202674584,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/LagunaQ4R8Verifier/main.swift",
+      "relative_path": "Sources/LagunaQ4R8Verifier/main.swift",
+      "sha256": "2c19edb34395095a05ed379872fdf5d5c0d4eb5a17d99e7225194da3564170a2"
+    },
+    {
+      "bytes": 10766,
+      "mtime_ns": 1788532287202793001,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/LagunaQuantizer/main.swift",
+      "relative_path": "Sources/LagunaQuantizer/main.swift",
+      "sha256": "ad0f67cc4fee70801cec708e37b62e36acc39c9ea991440e71efd0ddffd78829"
+    },
+    {
+      "bytes": 7120,
+      "mtime_ns": 1788563876726781459,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/LagunaScaleSearchRescorer/LagunaActivationStatistics.swift",
+      "relative_path": "Sources/LagunaScaleSearchRescorer/LagunaActivationStatistics.swift",
+      "sha256": "1d368313de5bebc85bee7a6b8aefd0439fa1e1e983f852bc57555d065eff9a10"
+    },
+    {
+      "bytes": 3246,
+      "mtime_ns": 1788571963104499241,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/LagunaScaleSearchRescorer/LagunaGroupSizePolicy.swift",
+      "relative_path": "Sources/LagunaScaleSearchRescorer/LagunaGroupSizePolicy.swift",
+      "sha256": "7e0c82942daaf24cf605fb3b97195a37a1aa8c713fa33166f39e06ebe4648b6c"
+    },
+    {
+      "bytes": 46981,
+      "mtime_ns": 1788571963104705493,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/LagunaScaleSearchRescorer/LagunaScaleSearchRescorer.swift",
+      "relative_path": "Sources/LagunaScaleSearchRescorer/LagunaScaleSearchRescorer.swift",
+      "sha256": "340eb1ed2d55544cdc113310e996b661e24f6113d895247750d49a7f29f95f99"
+    },
+    {
+      "bytes": 85,
+      "mtime_ns": 1788532287203004667,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/LagunaScaleSearchRescorerCLI/main.swift",
+      "relative_path": "Sources/LagunaScaleSearchRescorerCLI/main.swift",
+      "sha256": "af9e839b5898f6064c4e6e4457a40c077d26b2b60124839c5889e51363be9ccb"
+    },
+    {
+      "bytes": 22781,
+      "mtime_ns": 1788532287203108292,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/MistralActivationScaleSearchCore/ActivationWeightedScaleSearch.swift",
+      "relative_path": "Sources/MistralActivationScaleSearchCore/ActivationWeightedScaleSearch.swift",
+      "sha256": "66a11bcfbcfca59a3e325078c41007be67158b9dd9d251d6dfa3facbbbe593ba"
+    },
+    {
+      "bytes": 5124,
+      "mtime_ns": 1788563876727304594,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/MistralActivationScaleSearchCore/ExpertActivationWeightedScaleSearch.swift",
+      "relative_path": "Sources/MistralActivationScaleSearchCore/ExpertActivationWeightedScaleSearch.swift",
+      "sha256": "a51b4edb42687453708d811c95b9059b451b5c66927233fa2756d1727c469d67"
+    },
+    {
+      "bytes": 3631,
+      "mtime_ns": 1788563876727379887,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/MistralActivationScaleSearchCore/IndexedSafetensorsFingerprint.swift",
+      "relative_path": "Sources/MistralActivationScaleSearchCore/IndexedSafetensorsFingerprint.swift",
+      "sha256": "73cd52f7022eda7c53cacf1bada77a36bf291204320be78ba2527ab2d048433a"
+    },
+    {
+      "bytes": 40159,
+      "mtime_ns": 1788532287203241000,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/MistralActivationScaleSearchRescorer/main.swift",
+      "relative_path": "Sources/MistralActivationScaleSearchRescorer/main.swift",
+      "sha256": "3b15dd88a4ab84c2d8a2410ef8bfd954a232097831b19d3d7f3603bd8ffec0e3"
+    },
+    {
+      "bytes": 47445,
+      "mtime_ns": 1788563876727604850,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/MistralActivationStats/main.swift",
+      "relative_path": "Sources/MistralActivationStats/main.swift",
+      "sha256": "5811f09635e72faf981a09cac01a45b601c6e7dd1d9a4167392a5c2ef8bb12cf"
+    },
+    {
+      "bytes": 12842,
+      "mtime_ns": 1788571963105007453,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelGenerationBenchmark/Command.swift",
+      "relative_path": "Sources/ModelGenerationBenchmark/Command.swift",
+      "sha256": "47aec6863c0c389dd907bcc601199f0382812055fc22addc96afc118adadef81"
+    },
+    {
+      "bytes": 4034,
+      "mtime_ns": 1788571963105082954,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelGenerationBenchmark/GenerationCorpus.swift",
+      "relative_path": "Sources/ModelGenerationBenchmark/GenerationCorpus.swift",
+      "sha256": "84e2d2f3c37b34887c51472af55671e6b8a934618715bc6134be84026bfe26e5"
+    },
+    {
+      "bytes": 3535,
+      "mtime_ns": 1788571963105150413,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelGenerationBenchmark/GenerationReport.swift",
+      "relative_path": "Sources/ModelGenerationBenchmark/GenerationReport.swift",
+      "sha256": "b184c77976d11f4365eeb8a8c5ab97b3ece003de2c8bede8954f13fb30d49b0f"
+    },
+    {
+      "bytes": 10819,
+      "mtime_ns": 1788563876728085234,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelQualityBenchmark/main.swift",
+      "relative_path": "Sources/ModelQualityBenchmark/main.swift",
+      "sha256": "b1cddb52a65f09b715a5f46452c9ae54223f2989c360cad71094458c2857c755"
+    },
+    {
+      "bytes": 10750,
+      "mtime_ns": 1788532287203600792,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelQualityCore/ModelQualityCore.swift",
+      "relative_path": "Sources/ModelQualityCore/ModelQualityCore.swift",
+      "sha256": "1ed0810b330f73ac38ba1bb5d785a233415f38d88df67088e7c5cad2d04167d4"
+    },
+    {
+      "bytes": 26248,
+      "mtime_ns": 1788571963105399581,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelQuantizer/main.swift",
+      "relative_path": "Sources/ModelQuantizer/main.swift",
+      "sha256": "4ae8b5fd19e04fe554b948536c8371b03bcde77072d6901fa1dc5c151ab5e8e8"
+    },
+    {
+      "bytes": 64532,
+      "mtime_ns": 1788704993535279831,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunner/ModelHTTPServer.swift",
+      "relative_path": "Sources/ModelRunner/ModelHTTPServer.swift",
+      "sha256": "ed0ca79ace7a686fc1c9c4aa921ef116e827eae1da9cf9bd56bac6c13e35f932"
+    },
+    {
+      "bytes": 9418,
+      "mtime_ns": 1788669984574680531,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunner/main.swift",
+      "relative_path": "Sources/ModelRunner/main.swift",
+      "sha256": "93fec5c9148a97c14d52869a55013cdec1fc6e2f379fe28794d4317db937d6d4"
+    },
+    {
+      "bytes": 3485,
+      "mtime_ns": 1788668644499649744,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/ChatterboxAudioEncoding.swift",
+      "relative_path": "Sources/ModelRunnerCore/ChatterboxAudioEncoding.swift",
+      "sha256": "5bf83cc6f22b22fa9393daf1ece60eb73847c0d2f32e833df6d33ab5bf8ab519"
+    },
+    {
+      "bytes": 6817,
+      "mtime_ns": 1788668742291024195,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/ChatterboxSpeechSynthesizer.swift",
+      "relative_path": "Sources/ModelRunnerCore/ChatterboxSpeechSynthesizer.swift",
+      "sha256": "7c8d2b196b124840b5cdcb16ea76987c6ac22b5728ca4f58a5401043c194cf2a"
+    },
+    {
+      "bytes": 3176,
+      "mtime_ns": 1788553091619141982,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/CompletedMessagePrefixLRU.swift",
+      "relative_path": "Sources/ModelRunnerCore/CompletedMessagePrefixLRU.swift",
+      "sha256": "f4150f6ea334a3930b2985de57bd0d34a26f8793cad862065cb334e885bb1e6b"
+    },
+    {
+      "bytes": 21944,
+      "mtime_ns": 1788532287204301249,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LagunaDFlashModel.swift",
+      "relative_path": "Sources/ModelRunnerCore/LagunaDFlashModel.swift",
+      "sha256": "cd8a3b7e9451e07a0394d3c8fa3e72887fe1b1b792d009c4dd04d09aa1426520"
+    },
+    {
+      "bytes": 7405,
+      "mtime_ns": 1788563876728780664,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LagunaFusedGatherSilu.swift",
+      "relative_path": "Sources/ModelRunnerCore/LagunaFusedGatherSilu.swift",
+      "sha256": "e34f54619362d23a0f14d116a4c67155553825b24e928645f96f363276492b7e"
+    },
+    {
+      "bytes": 56171,
+      "mtime_ns": 1788563876728970293,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LagunaModel.swift",
+      "relative_path": "Sources/ModelRunnerCore/LagunaModel.swift",
+      "sha256": "1af9dcffc78b4e58884d60c8bef46d461b6f68fa797e202d8118520a79f3f07c"
+    },
+    {
+      "bytes": 5454,
+      "mtime_ns": 1788563876729094837,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LagunaRoutedActivationStatistics.swift",
+      "relative_path": "Sources/ModelRunnerCore/LagunaRoutedActivationStatistics.swift",
+      "sha256": "d5c76678df7bf4763e5b8a839fead33bf153593ed3feb37ef86162d742a4704b"
+    },
+    {
+      "bytes": 61546,
+      "mtime_ns": 1788705374066469036,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LocalModelRunner.swift",
+      "relative_path": "Sources/ModelRunnerCore/LocalModelRunner.swift",
+      "sha256": "fe69de77df5d73fc3bfd1647134812f01b56aeab62d78868999c465d0f79c430"
+    },
+    {
+      "bytes": 2223,
+      "mtime_ns": 1788532287204607499,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LocalSpeechSynthesizer.swift",
+      "relative_path": "Sources/ModelRunnerCore/LocalSpeechSynthesizer.swift",
+      "sha256": "b40159a313c9dc8a412fe4c4e54abb3ba7032b5a8f479598002e26be92a28020"
+    },
+    {
+      "bytes": 623,
+      "mtime_ns": 1788553091619736948,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/LongContextConfiguration.swift",
+      "relative_path": "Sources/ModelRunnerCore/LongContextConfiguration.swift",
+      "sha256": "8cec0d016b15015a39dea4f1890d00444c712f1a3e6fea9991cc7c1416b173b0"
+    },
+    {
+      "bytes": 4686,
+      "mtime_ns": 1788532287204687374,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/MLXPinnedRuntime.swift",
+      "relative_path": "Sources/ModelRunnerCore/MLXPinnedRuntime.swift",
+      "sha256": "7db4bab622a10187727cbf81f05c2130ef9959b1efd899d8dd28b9d54735b3ff"
+    },
+    {
+      "bytes": 1387,
+      "mtime_ns": 1788532287204760332,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/MLXResourceGuard.swift",
+      "relative_path": "Sources/ModelRunnerCore/MLXResourceGuard.swift",
+      "sha256": "30591ab4c28f91866ed092b7085088c2403e7c5cdaecabca56748531a8d8c6f6"
+    },
+    {
+      "bytes": 470,
+      "mtime_ns": 1788532287204825582,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/MLXRuntimeCleanup.swift",
+      "relative_path": "Sources/ModelRunnerCore/MLXRuntimeCleanup.swift",
+      "sha256": "c61ae973d73b7e72315251ee28bf883dde1430821d736b900fe764aee329e15c"
+    },
+    {
+      "bytes": 3387,
+      "mtime_ns": 1788532287204894415,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/MLXWiredMemoryPlan.swift",
+      "relative_path": "Sources/ModelRunnerCore/MLXWiredMemoryPlan.swift",
+      "sha256": "c88722983ff490388fd6ec0ff38fb3f8ee04d023868a5017f26d0f7eb4c2f87d"
+    },
+    {
+      "bytes": 2375,
+      "mtime_ns": 1788563876729739100,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/ModelQualityScoring.swift",
+      "relative_path": "Sources/ModelRunnerCore/ModelQualityScoring.swift",
+      "sha256": "8ba112196787e6be0171bfa8f95130175afb006ad14efb4e266a05670ab72f6d"
+    },
+    {
+      "bytes": 3274,
+      "mtime_ns": 1788704922102512934,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/ModelRuntimeCapabilities.swift",
+      "relative_path": "Sources/ModelRunnerCore/ModelRuntimeCapabilities.swift",
+      "sha256": "bca40879a2b3b7a36423a2c39ab80fab811ac3283a022d88f7247ede3fd869c0"
+    },
+    {
+      "bytes": 5392,
+      "mtime_ns": 1788563876729852893,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/SelectiveSafetensorsReader.swift",
+      "relative_path": "Sources/ModelRunnerCore/SelectiveSafetensorsReader.swift",
+      "sha256": "c35e55d6f0322c8616a836f790fdcf74d3cf43fc2f05f361426e86927e972f8b"
+    },
+    {
+      "bytes": 12021,
+      "mtime_ns": 1788532287205087457,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralAcousticTransformer.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralAcousticTransformer.swift",
+      "sha256": "1fc1b8870341bcc800527f187a9d67fbadddc4a3a533bdde5d3fb9f4e190938e"
+    },
+    {
+      "bytes": 1190,
+      "mtime_ns": 1788532287205151373,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralAudioCodeEmbeddings.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralAudioCodeEmbeddings.swift",
+      "sha256": "228da96f157fbfbe8d6765bde0fd07a2a590617ba964f12c97d64bd55f562a32"
+    },
+    {
+      "bytes": 18147,
+      "mtime_ns": 1788532287205229623,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralAudioDecoder.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralAudioDecoder.swift",
+      "sha256": "415babda122121ce3e1a8b99b565b228525caf7f4ecc0c91d461ae14abb1dc9b"
+    },
+    {
+      "bytes": 2820,
+      "mtime_ns": 1788532287205311623,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralAudioEncoding.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralAudioEncoding.swift",
+      "sha256": "58d8298592c9ae9728e291f439d39b02e88ed4ddca9946556ce1a1e789d5e511"
+    },
+    {
+      "bytes": 6428,
+      "mtime_ns": 1788532287205396373,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralLanguageBackbone.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralLanguageBackbone.swift",
+      "sha256": "21ce3b891909300a1444980d33b5bd605e942a9cdced4f8b2eb06be19fd7a106"
+    },
+    {
+      "bytes": 11010,
+      "mtime_ns": 1788532287205479206,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralTTSConfiguration.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralTTSConfiguration.swift",
+      "sha256": "b35d2b4e0c0793b26254b6bd084d528a38790f7e1b96a7c1ffa6e04385c2845f"
+    },
+    {
+      "bytes": 18040,
+      "mtime_ns": 1788553091619937575,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralTTSSynthesizer.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralTTSSynthesizer.swift",
+      "sha256": "ba428943c7fea21f98ed2988c24544767f868bb95a9030590ff6c1b607e42d18"
+    },
+    {
+      "bytes": 9980,
+      "mtime_ns": 1788532287205653248,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralTTS/VoxtralTekkenTokenizer.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralTTS/VoxtralTekkenTokenizer.swift",
+      "sha256": "a266d9ae284247ffde99914513f946955d2cd2a981fe72dea51f5a02796712ce"
+    },
+    {
+      "bytes": 4306,
+      "mtime_ns": 1788532287205724831,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerCore/VoxtralVoiceCatalog.swift",
+      "relative_path": "Sources/ModelRunnerCore/VoxtralVoiceCatalog.swift",
+      "sha256": "3bce093b737617be97154a62ac360d56ebf6e679076049a03490d1ea58853e4a"
+    },
+    {
+      "bytes": 2210,
+      "mtime_ns": 1788532287205818997,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/AudioAPIRoute.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/AudioAPIRoute.swift",
+      "sha256": "6a600b8c2918a9b336fbffa92e1d4be46c7ed54ebab6a7b1abfaa1c3681f05bb"
+    },
+    {
+      "bytes": 24281,
+      "mtime_ns": 1788532287205897081,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/AudioSpeechWire.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/AudioSpeechWire.swift",
+      "sha256": "a0b373b5ae4ac398b517afb0426a1e330b45c9653d96714324e212cbc8688e02"
+    },
+    {
+      "bytes": 5486,
+      "mtime_ns": 1788668644644536818,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/ChatterboxSettings.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/ChatterboxSettings.swift",
+      "sha256": "6c456468a6af54c4251fb935affa7da2c6058b823578dd1e1c0b57733aa0bc93"
+    },
+    {
+      "bytes": 1959,
+      "mtime_ns": 1788532287205962039,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/GenerationTokenLimit.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/GenerationTokenLimit.swift",
+      "sha256": "c070b29bf7e434d0ece5c894f0d94b548b6f644077ed57a801674e4ef47ebb05"
+    },
+    {
+      "bytes": 6450,
+      "mtime_ns": 1788553091620104619,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/LongContextOptions.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/LongContextOptions.swift",
+      "sha256": "611ba702dff89a44f8b8c1172fd3c4c1e2e4068f75d8c7eeb69b9cdbde8652a0"
+    },
+    {
+      "bytes": 7679,
+      "mtime_ns": 1788553091620269621,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/MLXResourceLimits.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/MLXResourceLimits.swift",
+      "sha256": "42b002c30693d32e699ec874693c1236e8ea983b5f22c7a0aa623f29734227d0"
+    },
+    {
+      "bytes": 4444,
+      "mtime_ns": 1788669984241295971,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/ModelCatalog.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/ModelCatalog.swift",
+      "sha256": "3195392e70d1971321c8bb3a4dd27a62b2e0b35f3fded65f9509d404216b1811"
+    },
+    {
+      "bytes": 1979,
+      "mtime_ns": 1788532287206150206,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/ModelEngine.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/ModelEngine.swift",
+      "sha256": "b00be16b1ee7c8f4f6c580f07fead1fc170386311d0ee10151446d4af6b6ac8a"
+    },
+    {
+      "bytes": 6247,
+      "mtime_ns": 1788669984407375926,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/ModelStackSettings.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/ModelStackSettings.swift",
+      "sha256": "0cc6e030e13ba73926a5d0c1e1f57368298512ae8e0c129cae6978dc135ee228"
+    },
+    {
+      "bytes": 12537,
+      "mtime_ns": 1788704939231397471,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelRunnerProtocol/OpenAIWire.swift",
+      "relative_path": "Sources/ModelRunnerProtocol/OpenAIWire.swift",
+      "sha256": "0b7e44f7363206b4bf726e9cf23e4143a0faf6755632c875f7805873b8711d0b"
+    },
+    {
+      "bytes": 43443,
+      "mtime_ns": 1788532287206365872,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ModelTeacherKLBenchmark/main.swift",
+      "relative_path": "Sources/ModelTeacherKLBenchmark/main.swift",
+      "sha256": "7097f658f29edcc36ba1a18005201e8d5347f24895def57971c69365a13a5c97"
+    },
+    {
+      "bytes": 16881,
+      "mtime_ns": 1788532287206464872,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/Q4ScaleSearchAudit/main.swift",
+      "relative_path": "Sources/Q4ScaleSearchAudit/main.swift",
+      "sha256": "5aad717c7c80265d9ec04760699914b14af7d655c68e4114b3d556ab76550618"
+    },
+    {
+      "bytes": 66173,
+      "mtime_ns": 1788705063549578777,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/RuntimeBenchmark/main.swift",
+      "relative_path": "Sources/RuntimeBenchmark/main.swift",
+      "sha256": "bf5e86c0d1653d33a9c05aad71cf31fea2a264ff05e52cef7cc91fd8413df5ff"
+    },
+    {
+      "bytes": 3713,
+      "mtime_ns": 1788532287206702080,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ScalePlanCLI/main.swift",
+      "relative_path": "Sources/ScalePlanCLI/main.swift",
+      "sha256": "06418010f9a12142963dc3b0cfabf79bd28b44eb6e318abd84c0113218536e80"
+    },
+    {
+      "bytes": 26435,
+      "mtime_ns": 1788532287206825746,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Sources/ScalePlanMLX/ScalePlan.swift",
+      "relative_path": "Sources/ScalePlanMLX/ScalePlan.swift",
+      "sha256": "6c50f4b593b0c1c98952a4ba2e2bb2efb55ac85979bc44fb33075690281a8af9"
+    },
+    {
+      "bytes": 400,
+      "mtime_ns": 1788532287207236746,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Fixtures/GPTOSSTiny/config.json",
+      "relative_path": "Tests/Fixtures/GPTOSSTiny/config.json",
+      "sha256": "7a9068caf833a008614943f22d153814658eb1439b245dc5bcfe4c03ba86034a"
+    },
+    {
+      "bytes": 573,
+      "mtime_ns": 1788532287207343954,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Fixtures/LagunaDFlashTiny/config.json",
+      "relative_path": "Tests/Fixtures/LagunaDFlashTiny/config.json",
+      "sha256": "f1ddd34b5ac6ecaccb8bb047acfd8da4ac3af7ba223744f186c4118b785a4d3a"
+    },
+    {
+      "bytes": 348,
+      "mtime_ns": 1788532287207446787,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Fixtures/MistralTiny/config.json",
+      "relative_path": "Tests/Fixtures/MistralTiny/config.json",
+      "sha256": "9ddd2a55645c412387695944731027dedf023215dba8d5cac338cc669b39bfc1"
+    },
+    {
+      "bytes": 322,
+      "mtime_ns": 1788532287207534204,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Fixtures/MixtralTiny/config.json",
+      "relative_path": "Tests/Fixtures/MixtralTiny/config.json",
+      "sha256": "88e3db31b0dd6b3bb9d713ccfefd269e18345cc423eb0373b7d783a05bb0dd2e"
+    },
+    {
+      "bytes": 4312,
+      "mtime_ns": 1788669078782550893,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Integration/ChatterboxHTTP.swift",
+      "relative_path": "Tests/Integration/ChatterboxHTTP.swift",
+      "sha256": "f376fdfebb98149b3a64e24b5b26e64baa674b3581e66505d3f1ab5bb039a385"
+    },
+    {
+      "bytes": 3566,
+      "mtime_ns": 1788563876730227109,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/MistralActivationScaleSearchCoreTests/ExpertActivationWeightedScaleSearchTests.swift",
+      "relative_path": "Tests/MistralActivationScaleSearchCoreTests/ExpertActivationWeightedScaleSearchTests.swift",
+      "sha256": "d6b8fcebd9ffd46591cb79f44a3857feddf8fba1f524a31a2ba6527e55941d30"
+    },
+    {
+      "bytes": 1748,
+      "mtime_ns": 1788563876730295694,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/MistralActivationScaleSearchCoreTests/IndexedSafetensorsFingerprintTests.swift",
+      "relative_path": "Tests/MistralActivationScaleSearchCoreTests/IndexedSafetensorsFingerprintTests.swift",
+      "sha256": "b35b420f3344f8766cfc836a926eba857bb5430bdda410ba0f79bb883a6c0d5e"
+    },
+    {
+      "bytes": 6715,
+      "mtime_ns": 1788532287207636329,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/MistralActivationScaleSearchCoreTests/MistralActivationScaleSearchCoreTests.swift",
+      "relative_path": "Tests/MistralActivationScaleSearchCoreTests/MistralActivationScaleSearchCoreTests.swift",
+      "sha256": "9ab2fcb45ee7a9140ba4750827d41bdedcc6f86a64640d3a1a865dc082d5700a"
+    },
+    {
+      "bytes": 4614,
+      "mtime_ns": 1788532287207755287,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelQualityCoreTests/ModelQualityCoreTests.swift",
+      "relative_path": "Tests/ModelQualityCoreTests/ModelQualityCoreTests.swift",
+      "sha256": "0d764d8ede5ac56a0012f9dc2674155d264672744eed6c7129b451880cc6127a"
+    },
+    {
+      "bytes": 5269,
+      "mtime_ns": 1788532287207918204,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelQuantizerTests/DFlashScaleSearchConversionTests.swift",
+      "relative_path": "Tests/ModelQuantizerTests/DFlashScaleSearchConversionTests.swift",
+      "sha256": "9ea3341bee635dc331a378cee848b15909c131920745cb080ddee1c43f8be128"
+    },
+    {
+      "bytes": 24321,
+      "mtime_ns": 1788571963106252837,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelQuantizerTests/LagunaActivationRescoreTests.swift",
+      "relative_path": "Tests/ModelQuantizerTests/LagunaActivationRescoreTests.swift",
+      "sha256": "126ec2298d6ab802ed20ef24c9bc44bf5ba6330d483966ab30ef4bb40b4fd7e1"
+    },
+    {
+      "bytes": 3550,
+      "mtime_ns": 1788571963106390213,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelQuantizerTests/LagunaGroupSizePolicyTests.swift",
+      "relative_path": "Tests/ModelQuantizerTests/LagunaGroupSizePolicyTests.swift",
+      "sha256": "5b59b82c196f48b6a6e7f56d5b816e191c3569ac15aed1fafcec9e4a7b880a09"
+    },
+    {
+      "bytes": 5175,
+      "mtime_ns": 1788532287208178661,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelQuantizerTests/MixtralScaleSearchConversionTests.swift",
+      "relative_path": "Tests/ModelQuantizerTests/MixtralScaleSearchConversionTests.swift",
+      "sha256": "6f81a0b07149f5930694240c0ce53b9646cf230c345e97a4cf7c8998cdd519fa"
+    },
+    {
+      "bytes": 2116,
+      "mtime_ns": 1788532287208347953,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/AudioAPIRouteTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/AudioAPIRouteTests.swift",
+      "sha256": "7452f1a64c6ed5e3929a88370b963939f795701d2e7ace8e986c6c6cd21d802a"
+    },
+    {
+      "bytes": 9874,
+      "mtime_ns": 1788532287208474411,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/AudioSpeechWireTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/AudioSpeechWireTests.swift",
+      "sha256": "2c9f47cb9ef65a86e7249555fa46b2cc030fffdb074b314157a8a624e34ed2e5"
+    },
+    {
+      "bytes": 1663,
+      "mtime_ns": 1788668742626821544,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ChatterboxAudioEncodingTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ChatterboxAudioEncodingTests.swift",
+      "sha256": "c7c8b195f91a885e58b2bab53710364fcf6f828ae1c15c4f6b951e85b0dd0f34"
+    },
+    {
+      "bytes": 1709,
+      "mtime_ns": 1788668742516345362,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ChatterboxSettingsTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ChatterboxSettingsTests.swift",
+      "sha256": "5496c759247a9a4e2f89834e3ae04349109de50e00487115cce1f9173c03edcb"
+    },
+    {
+      "bytes": 3088,
+      "mtime_ns": 1788532287208534494,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/CompletedMessagePrefixLRUTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/CompletedMessagePrefixLRUTests.swift",
+      "sha256": "f18d84af18e7629d16aa014c71c20abcf078afb2d9a57ccfa44fbc67370c3203"
+    },
+    {
+      "bytes": 3800,
+      "mtime_ns": 1788705223792859657,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/GPTOSSReasoningRuntimeTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/GPTOSSReasoningRuntimeTests.swift",
+      "sha256": "3fe51f9df60f1fac62680911402ba7ed5725764cdea1427f573439f378f2978d"
+    },
+    {
+      "bytes": 4087,
+      "mtime_ns": 1788705374202750858,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/GPTOSSRuntimeCapabilitiesTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/GPTOSSRuntimeCapabilitiesTests.swift",
+      "sha256": "3eb676e8fb3d82373f6f321ddc85f2a4b553db55ff4f988190d8dec6b23100fa"
+    },
+    {
+      "bytes": 1661,
+      "mtime_ns": 1788553091620625583,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/GenerationStopTokenTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/GenerationStopTokenTests.swift",
+      "sha256": "ebc106fcfa1b78e7441c8b357e85f8859583dd2a1f1ba531b4d172b37da53bad"
+    },
+    {
+      "bytes": 1876,
+      "mtime_ns": 1788532287208653536,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/GenerationTokenLimitTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/GenerationTokenLimitTests.swift",
+      "sha256": "4e23a3b2e2a286461896e912012b0ff92693ee2f88ae7e90a531046dfcfd6b69"
+    },
+    {
+      "bytes": 2121,
+      "mtime_ns": 1788532287208708119,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/HTTPCompatibilityWiringTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/HTTPCompatibilityWiringTests.swift",
+      "sha256": "f82b87ebc34622eab81ea4d71f4989ad786849c75676c556b4f9eaf8df4f3556"
+    },
+    {
+      "bytes": 11275,
+      "mtime_ns": 1788532287208784619,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LagunaDFlashModelTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LagunaDFlashModelTests.swift",
+      "sha256": "6494884922555c2bfdc1f6ea330d5b0df1a0f0485bd1a2ed99ea02c4764c4335"
+    },
+    {
+      "bytes": 7549,
+      "mtime_ns": 1788563876731827056,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LagunaFusedGatherSiluTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LagunaFusedGatherSiluTests.swift",
+      "sha256": "ae790f5f59c76de608ab07aa5e484be52e4ae6945d335687819475a440d244c6"
+    },
+    {
+      "bytes": 9761,
+      "mtime_ns": 1788563876731988976,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LagunaLayerwiseCalibrationTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LagunaLayerwiseCalibrationTests.swift",
+      "sha256": "d86d1512ea05b0d9501ce984f87b478b4bb747e53cd167c35b7d9a43031f42a1"
+    },
+    {
+      "bytes": 18331,
+      "mtime_ns": 1788563876732138021,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LagunaModelTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LagunaModelTests.swift",
+      "sha256": "9e14612a273cb4a3a06d845513b11691e36b2548a972eb7003aaf045aae042e4"
+    },
+    {
+      "bytes": 3916,
+      "mtime_ns": 1788563876732485111,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LagunaRoutedActivationStatisticsTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LagunaRoutedActivationStatisticsTests.swift",
+      "sha256": "bae11bd51fc7e41a807577fa83e2349afcb7b0af54f754ddab773776b816acfc"
+    },
+    {
+      "bytes": 6159,
+      "mtime_ns": 1788553091620802293,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LocalModelRunnerPromptCacheTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LocalModelRunnerPromptCacheTests.swift",
+      "sha256": "7f4044415c5d275474a57c2348d55722835db43cfd19f658b57a6bbf984302a4"
+    },
+    {
+      "bytes": 3494,
+      "mtime_ns": 1788553091620921086,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LongContextOptionsTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LongContextOptionsTests.swift",
+      "sha256": "38698c103efb7c5db65cd6ff054b8906e923ad6795044b9bae5ab7a6752c3d1f"
+    },
+    {
+      "bytes": 1898,
+      "mtime_ns": 1788553091621036546,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/LongContextRuntimeTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/LongContextRuntimeTests.swift",
+      "sha256": "9ff3f25ec9a6852d7a2c7870d38efc5a0c3558129072ce82f7d915ed0efa230d"
+    },
+    {
+      "bytes": 5881,
+      "mtime_ns": 1788532287209032869,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/MLXPinnedRuntimeTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/MLXPinnedRuntimeTests.swift",
+      "sha256": "17197a3441587a7eef38586ccb1d0baa454b208c25eb208728c51f0d2e8d4039"
+    },
+    {
+      "bytes": 5030,
+      "mtime_ns": 1788553091621218173,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/MLXResourceLimitsTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/MLXResourceLimitsTests.swift",
+      "sha256": "852e7e7b132751b127b95dd1269c029c1a7602f9ed0522861b2c6c55143e0d84"
+    },
+    {
+      "bytes": 3117,
+      "mtime_ns": 1788532287209173202,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/MLXWiredMemoryPlanTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/MLXWiredMemoryPlanTests.swift",
+      "sha256": "8228783a628b4b2e45ea3b372df3a8f39a67b5aea3b92975d9dc6231a7dc436f"
+    },
+    {
+      "bytes": 9044,
+      "mtime_ns": 1788532287209249494,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/MistralHybridAttentionTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/MistralHybridAttentionTests.swift",
+      "sha256": "ad3d5ef28aaaa678086a8d4578cb5bf11b40d7d6a0079b83b3cd81a19ad141e8"
+    },
+    {
+      "bytes": 4595,
+      "mtime_ns": 1788532287209328202,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/MistralRuntimeCapabilitiesTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/MistralRuntimeCapabilitiesTests.swift",
+      "sha256": "b4b704aecaa4996a627610d0b08641d32ac46bc407d0ca50e0ec79444718aba8"
+    },
+    {
+      "bytes": 4521,
+      "mtime_ns": 1788667701651519014,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ModelCatalogTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ModelCatalogTests.swift",
+      "sha256": "9ac082c5d2b6dfb2b326b7a40fd2ea68317124b694b1e92dc1351e7ebc5a35e7"
+    },
+    {
+      "bytes": 1402,
+      "mtime_ns": 1788532287209471410,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ModelEngineTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ModelEngineTests.swift",
+      "sha256": "dde095d50abda9edb684eb3c72055b26e1526839217a7b3200c1b34e96bc8806"
+    },
+    {
+      "bytes": 4134,
+      "mtime_ns": 1788670044303759169,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ModelLocalSettingsTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ModelLocalSettingsTests.swift",
+      "sha256": "9dd4f020907460df04b4a025ed9ea51b6966a13aa7532ffc2bbb7749f32543a5"
+    },
+    {
+      "bytes": 8699,
+      "mtime_ns": 1788532287209552119,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/OpenAIToolWireTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/OpenAIToolWireTests.swift",
+      "sha256": "bb9dae0a93ea03a2482710c887ad32cc2cbe125bda185fd2b0c6d64541a0cd8b"
+    },
+    {
+      "bytes": 2484,
+      "mtime_ns": 1788704939370609783,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ReasoningEffortTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ReasoningEffortTests.swift",
+      "sha256": "8b8bbe9b9358f55e37c5229eb348d917b00a261d1824c6175469a347b807a12f"
+    },
+    {
+      "bytes": 2202,
+      "mtime_ns": 1788532287209622827,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ResourceGuardPlacementTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ResourceGuardPlacementTests.swift",
+      "sha256": "b2f48eb8907ed812ab3d5280db9eabe8886fc85971af06b051ceb8e6fb0a8bd4"
+    },
+    {
+      "bytes": 3350,
+      "mtime_ns": 1788563876732563696,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/SortedGatherQMMNAXTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/SortedGatherQMMNAXTests.swift",
+      "sha256": "c94fe859223f5e3edbdf3e048169145622804890edaa446401d100efe7397aa4"
+    },
+    {
+      "bytes": 1683,
+      "mtime_ns": 1788705223927944900,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/ToolCallingWiringTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/ToolCallingWiringTests.swift",
+      "sha256": "82b566183ca3420748222123cb068d95910b7a296b30de097c9fc8f3f16f1fca"
+    },
+    {
+      "bytes": 2219,
+      "mtime_ns": 1788532287209767785,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/VoxtralAudioEncodingTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/VoxtralAudioEncodingTests.swift",
+      "sha256": "f26c6e0d49cd43e2a209c14bdd97573205eced42dee6067656aa5f9ddb86b2e4"
+    },
+    {
+      "bytes": 5517,
+      "mtime_ns": 1788532287209840243,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/VoxtralTekkenTokenizerTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/VoxtralTekkenTokenizerTests.swift",
+      "sha256": "7c81eb2d5ddb29dd900e48c76045e6a3a9a9866abe3f572887685b9567033a5d"
+    },
+    {
+      "bytes": 3028,
+      "mtime_ns": 1788532287209908285,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ModelRunnerProtocolTests/VoxtralVoiceCatalogWiringTests.swift",
+      "relative_path": "Tests/ModelRunnerProtocolTests/VoxtralVoiceCatalogWiringTests.swift",
+      "sha256": "2bbb11d21e56d972a9871816243569250129cb6ae4523d0211851f42abf74d2d"
+    },
+    {
+      "bytes": 6855,
+      "mtime_ns": 1788571963106505547,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_affine_gptq_probe.py",
+      "relative_path": "Tests/Python/test_affine_gptq_probe.py",
+      "sha256": "37c40ab894d02e56aa200463903dda21ed9db9cdce527f0aa9f43cdcd9b2406e"
+    },
+    {
+      "bytes": 4693,
+      "mtime_ns": 1788705780650055439,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_analyze_gptoss_metal_formats.py",
+      "relative_path": "Tests/Python/test_analyze_gptoss_metal_formats.py",
+      "sha256": "4f7e73ee71cbe15caff85e444c3127487f489bb295f5c75386b2ee17a61a9e3b"
+    },
+    {
+      "bytes": 9031,
+      "mtime_ns": 1788563876732780658,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_analyze_laguna_gather_silu_ab.py",
+      "relative_path": "Tests/Python/test_analyze_laguna_gather_silu_ab.py",
+      "sha256": "67a95cbdebaceb45a6c0f66bbb972ef8c34692d3d8a1d421560ce687cd99fa0a"
+    },
+    {
+      "bytes": 5844,
+      "mtime_ns": 1788563876732869952,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_analyze_quality_nll.py",
+      "relative_path": "Tests/Python/test_analyze_quality_nll.py",
+      "sha256": "9f475f63a1e36ac5c356280e0e70679ab95599cd98cb1772014471c3c5baa994"
+    },
+    {
+      "bytes": 21967,
+      "mtime_ns": 1788705787049043789,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_benchmark_campaign.py",
+      "relative_path": "Tests/Python/test_benchmark_campaign.py",
+      "sha256": "b7a09d4a437461e58209fab6dac74745ef13501178d74a4231c90aaeaac3420a"
+    },
+    {
+      "bytes": 15618,
+      "mtime_ns": 1788571963106648757,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_generated_evaluation.py",
+      "relative_path": "Tests/Python/test_generated_evaluation.py",
+      "sha256": "77cb4a44f381e5d7a1decbf82ad2b22b32f616a54a1579ee185311a83d1122fb"
+    },
+    {
+      "bytes": 5203,
+      "mtime_ns": 1788571963106848175,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_group_size_audit.py",
+      "relative_path": "Tests/Python/test_group_size_audit.py",
+      "sha256": "9cfed552a0b30e8f562ae656198328ab377412f4cd480f7fd4d4b2602cf9b159"
+    },
+    {
+      "bytes": 2693,
+      "mtime_ns": 1788563876733211167,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_prepare_laguna_heldout_corpus.py",
+      "relative_path": "Tests/Python/test_prepare_laguna_heldout_corpus.py",
+      "sha256": "bd04871398ca6e729479099e9aecf2f4c490934076160f874dd587818a267cd1"
+    },
+    {
+      "bytes": 6048,
+      "mtime_ns": 1788563876733309752,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_prepare_quantization_corpus.py",
+      "relative_path": "Tests/Python/test_prepare_quantization_corpus.py",
+      "sha256": "b96ef0544e1aa64ba6be55df66908eba30ca071e6125bfbaaa6c07bb59d4714e"
+    },
+    {
+      "bytes": 1903,
+      "mtime_ns": 1788571963106926092,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Python/test_time_profiler.py",
+      "relative_path": "Tests/Python/test_time_profiler.py",
+      "sha256": "c689ecd77b265e06db80786c851667c9d03d0fcb9fc6b4fff3f8a98e84220516"
+    },
+    {
+      "bytes": 8055,
+      "mtime_ns": 1788532287210028118,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/ScalePlanMLXTests/ScalePlanTests.swift",
+      "relative_path": "Tests/ScalePlanMLXTests/ScalePlanTests.swift",
+      "sha256": "ea94e6b61b826a09d635aa98f6d9b38f519f32c4369e3180a329e92b1c7ed05a"
+    },
+    {
+      "bytes": 3632,
+      "mtime_ns": 1788532287210128909,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/BuildCacheProfileTests.sh",
+      "relative_path": "Tests/Shell/BuildCacheProfileTests.sh",
+      "sha256": "5ab0843bcf7128b5a243dceec97c7ccc9f10264ccfa7f0ecf5cbb927ae10817f"
+    },
+    {
+      "bytes": 4088,
+      "mtime_ns": 1788532287210190493,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/CUDADependencyChecksTests.sh",
+      "relative_path": "Tests/Shell/CUDADependencyChecksTests.sh",
+      "sha256": "6dff7208fd7851328ad36e85e93b4866d393b70faaa9f0c30d6c28daace88e37"
+    },
+    {
+      "bytes": 3036,
+      "mtime_ns": 1788532287210251326,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/CUDAHalfFmodPatchTests.sh",
+      "relative_path": "Tests/Shell/CUDAHalfFmodPatchTests.sh",
+      "sha256": "12f56577d5fd928bf327351291f346882620b02f3e61ced3b9353505f340e90c"
+    },
+    {
+      "bytes": 6090,
+      "mtime_ns": 1788532287210321326,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/CUDAHostCompilerTests.sh",
+      "relative_path": "Tests/Shell/CUDAHostCompilerTests.sh",
+      "sha256": "fea760934056ae6e00b242279ffa0d1e7e407cc688e848c85a1932d50758f5e7"
+    },
+    {
+      "bytes": 12476,
+      "mtime_ns": 1788532287210394826,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/CUDARuntimeEnvironmentTests.sh",
+      "relative_path": "Tests/Shell/CUDARuntimeEnvironmentTests.sh",
+      "sha256": "5f6de74f2a197897116ba6004a55f74f97c7dd5a8657e75db59cdfc8e4268888"
+    },
+    {
+      "bytes": 12873,
+      "mtime_ns": 1788532287210463867,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/CUDASmokeHarnessTests.sh",
+      "relative_path": "Tests/Shell/CUDASmokeHarnessTests.sh",
+      "sha256": "585f9885f5e5deef00ea79b9d239dc3d2a0303e1428b6c48732f8b383c949e98"
+    },
+    {
+      "bytes": 2090,
+      "mtime_ns": 1788532287210518701,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/CUDAToolkitSelectionTests.sh",
+      "relative_path": "Tests/Shell/CUDAToolkitSelectionTests.sh",
+      "sha256": "164b5dedc35abe2b54b9baf0736ded3418f64079a7da6ba21f69387cbc982231"
+    },
+    {
+      "bytes": 548,
+      "mtime_ns": 1788532287210579326,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/Gemma4CachePatchTests.sh",
+      "relative_path": "Tests/Shell/Gemma4CachePatchTests.sh",
+      "sha256": "8145768e1803cc4ed8df70ed9f08290f4d43272177f58fccae21f7b9b29638ae"
+    },
+    {
+      "bytes": 511,
+      "mtime_ns": 1788532287210635326,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/Gemma4LoRALayerPatchTests.sh",
+      "relative_path": "Tests/Shell/Gemma4LoRALayerPatchTests.sh",
+      "sha256": "da98892b95583bafe3a94aef7338e36507ca03ae7f917fde9e46907fde7b9869"
+    },
+    {
+      "bytes": 3807,
+      "mtime_ns": 1788571963107230928,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/GenericScaleSearchQuantizerTests.sh",
+      "relative_path": "Tests/Shell/GenericScaleSearchQuantizerTests.sh",
+      "sha256": "b12a7cae5f86af022ee6f634eb2f079b09af51150e54fdea158d394e20b8c8c3"
+    },
+    {
+      "bytes": 7286,
+      "mtime_ns": 1788532287210780742,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/IncrementalByteLevelStreamingPatchTests.sh",
+      "relative_path": "Tests/Shell/IncrementalByteLevelStreamingPatchTests.sh",
+      "sha256": "b2602a9fc0927f73f2d65df950b5510202e7a2e163888798457df9d682121018"
+    },
+    {
+      "bytes": 4302,
+      "mtime_ns": 1788532287210854659,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/LagunaQ4R8QuantizerTests.sh",
+      "relative_path": "Tests/Shell/LagunaQ4R8QuantizerTests.sh",
+      "sha256": "05a50425d5ed5ad7eaf4f6e28b8980019302f6b0b1e196fbb58a3b633efa696f"
+    },
+    {
+      "bytes": 4690,
+      "mtime_ns": 1788532287210946367,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXAffineQ4QMVSpecializationPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXAffineQ4QMVSpecializationPatchTests.sh",
+      "sha256": "81243a9b9bd3b12f868774c8e46a5753b0729c32ae80da8136e23362e90067ad"
+    },
+    {
+      "bytes": 1554,
+      "mtime_ns": 1788532287211027242,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXClearStreamsPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXClearStreamsPatchTests.sh",
+      "sha256": "9adaa23dfa285beb94b75b96269c4a667ca957b4b1eaf42fae2e83a4e30ea259"
+    },
+    {
+      "bytes": 10305,
+      "mtime_ns": 1788532287211138533,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXDirectKVSliceUpdatePatchTests.sh",
+      "relative_path": "Tests/Shell/MLXDirectKVSliceUpdatePatchTests.sh",
+      "sha256": "0dfe940b80b02c1da40b187d986e797648624c1bc501035231477d8cda15ff09"
+    },
+    {
+      "bytes": 2723,
+      "mtime_ns": 1788532287211209617,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMBackendTokenEvaluationPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMBackendTokenEvaluationPatchTests.sh",
+      "sha256": "297cdbc832de9b8b036d44f241fb199edc2eeefba7088d4c77daea60ecb5fcd3"
+    },
+    {
+      "bytes": 931,
+      "mtime_ns": 1788532287211283033,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMChatSessionSnapshotPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMChatSessionSnapshotPatchTests.sh",
+      "sha256": "9cbeeb8667c2e3ca7af072e631fde652e2aeccb6011596f5876655b9a8d6e13d"
+    },
+    {
+      "bytes": 1780,
+      "mtime_ns": 1788532287211361908,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMCoreFoundationPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMCoreFoundationPatchTests.sh",
+      "sha256": "9642687db03c68c3bc377729df894bda9cdccdf248b6943b8cf6d43778e9fbe1"
+    },
+    {
+      "bytes": 4380,
+      "mtime_ns": 1788532287211457700,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMMTPDecodeSchedulingPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMMTPDecodeSchedulingPatchTests.sh",
+      "sha256": "2ad98ef8de6b0e893ae1dcaeb83d3acab1d439d7e670a3b1f52a48fa374e7cb4"
+    },
+    {
+      "bytes": 747,
+      "mtime_ns": 1788532287211537741,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMMTPPromptWindowPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMMTPPromptWindowPatchTests.sh",
+      "sha256": "8fbc3e71cb304b7626c6f21362b92c1b7dcb897b9114c50b93b18cd2d6980b7d"
+    },
+    {
+      "bytes": 917,
+      "mtime_ns": 1788532287211609908,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMMistralHybridAttentionPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMMistralHybridAttentionPatchTests.sh",
+      "sha256": "208cd8214c897f530d6cacdbadd478e35dc7e68fd96a64e0ab8c85335001be1b"
+    },
+    {
+      "bytes": 1332,
+      "mtime_ns": 1788532287211685116,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXLMMixtralFusedRouterPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXLMMixtralFusedRouterPatchTests.sh",
+      "sha256": "e18d5ad5cc51dae50f06514fd36f1a2218996be1163f93fc1f3d6f928d33efb2"
+    },
+    {
+      "bytes": 1904,
+      "mtime_ns": 1788532287211767741,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXMetalBackendUpgradeTests.sh",
+      "relative_path": "Tests/Shell/MLXMetalBackendUpgradeTests.sh",
+      "sha256": "55cc6fab5b20f4bedb4886b59b7592f5f8042b08aefbfe03cf7b521f6e8975cc"
+    },
+    {
+      "bytes": 4051,
+      "mtime_ns": 1788563876733400712,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXSortedGatherQMMNAXPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXSortedGatherQMMNAXPatchTests.sh",
+      "sha256": "36b15ae5fe3655991fd84c2ac98afd8a5a2f813dfb9ea36330e7a3bbb7e07596"
+    },
+    {
+      "bytes": 9805,
+      "mtime_ns": 1788532287211860116,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MLXSwiftCrossThreadStreamPatchTests.sh",
+      "relative_path": "Tests/Shell/MLXSwiftCrossThreadStreamPatchTests.sh",
+      "sha256": "cabd8d7398025ebf0ab8e622a8b73896cbf7fcb0736ce63ffdd5940196c0985c"
+    },
+    {
+      "bytes": 1888,
+      "mtime_ns": 1788705073732329068,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MetalQuantizationCLITests.sh",
+      "relative_path": "Tests/Shell/MetalQuantizationCLITests.sh",
+      "sha256": "b9f28c68f3f71db786012e1a25f068cb1dfdac489c0553b8735272e6e092e88c"
+    },
+    {
+      "bytes": 1803,
+      "mtime_ns": 1788553091621356050,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/MetalReleaseLaunchTests.sh",
+      "relative_path": "Tests/Shell/MetalReleaseLaunchTests.sh",
+      "sha256": "3a0336581549fc82a71334c36e9269e7bc80f0c9af66b3b688f9c1d0bc0ae178"
+    },
+    {
+      "bytes": 6183,
+      "mtime_ns": 1788571963107329345,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/ModelGenerationBenchmarkTests.sh",
+      "relative_path": "Tests/Shell/ModelGenerationBenchmarkTests.sh",
+      "sha256": "d38040eea56cc382be60af5766b1b2091b0762155d3c15b7aa2ca78aa4365421"
+    },
+    {
+      "bytes": 5764,
+      "mtime_ns": 1788532287211965532,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/ReleasePublisherTests.sh",
+      "relative_path": "Tests/Shell/ReleasePublisherTests.sh",
+      "sha256": "05480ba8a4e01fe0606b88a6e1009f4a5415fa00d0f6727ebca2c12eb2fb7a39"
+    },
+    {
+      "bytes": 2780,
+      "mtime_ns": 1788553091621531760,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/RuntimeBenchmarkMistralHotCacheTests.sh",
+      "relative_path": "Tests/Shell/RuntimeBenchmarkMistralHotCacheTests.sh",
+      "sha256": "479d129a009722ab98aa60731f430b5a905f6ba56cc3474e6c12da2d54bc0625"
+    },
+    {
+      "bytes": 2763,
+      "mtime_ns": 1788532287212128782,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/Tests/Shell/SwiftPMScratchPathTests.sh",
+      "relative_path": "Tests/Shell/SwiftPMScratchPathTests.sh",
+      "sha256": "5d1eb720c9b306466a1c135b5750847809e0d099fc9d5745760dd0dd38dc56dd"
+    },
+    {
+      "bytes": 478,
+      "mtime_ns": 1788532287230169012,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/build-cuda.sh",
+      "relative_path": "build-cuda.sh",
+      "sha256": "aa2dfd13e46aecdd32668b1e1f11b520eb03d5363484726e8a15e78e6f07059d"
+    },
+    {
+      "bytes": 2164,
+      "mtime_ns": 1788553091622121517,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/build-metal.sh",
+      "relative_path": "build-metal.sh",
+      "sha256": "a0b95098d15e8003888098b4a0830e9c2ce86b582eaaa65040e4f6f39c4c1c5e"
+    },
+    {
+      "bytes": 9269,
+      "mtime_ns": 1788532287230299179,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/build.sh",
+      "relative_path": "build.sh",
+      "sha256": "49a341db51c04bc6b7a39796b3bc538af335d6f283059da88609c812662fb511"
+    },
+    {
+      "bytes": 18310,
+      "mtime_ns": 1788705618502448668,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/prepare-dependencies.sh",
+      "relative_path": "prepare-dependencies.sh",
+      "sha256": "98048fa2e32fcca63c410cfeb3b36151d612d069477c950b44df8bc623859152"
+    },
+    {
+      "bytes": 402,
+      "mtime_ns": 1788532287230449137,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/run-cuda.sh",
+      "relative_path": "run-cuda.sh",
+      "sha256": "6ea6230023a6292775d91727b7fd323e48bb0a0eed8cfad35de8e38cc35d8c42"
+    },
+    {
+      "bytes": 1392,
+      "mtime_ns": 1788553091622657482,
+      "path": "/Users/stephen/Documents/ChatGPT/midnight/run.sh",
+      "relative_path": "run.sh",
+      "sha256": "1bd3ffdd99347aee157164b25b4513fd21b7988aa4c0ed466cbd4f532b3edd09"
+    }
+  ],
+  "start_state": {
+    "memory": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                   744486.\nPages active:                                 640594.\nPages inactive:                              1841774.\nPages speculative:                             12922.\nPages throttled:                                   0.\nPages wired down:                             387751.\nPages purgeable:                               56857.\n\"Translation faults\":                     4941490068.\nPages copy-on-write:                       317515069.\nPages zero filled:                        9676028666.\nPages reactivated:                          29942917.\nPages purged:                               26699379.\nFile-backed pages:                           1662026.\nAnonymous pages:                              833264.\nPages stored in compressor:                  2332658.\nPages occupied by compressor:                 500126.\nDecompressions:                             53777489.\nCompressions:                              109936080.\nPageins:                                   744800206.\nPageouts:                                     725417.\nSwapins:                                     6249669.\nSwapouts:                                   16214383.\nPages tagged:                                 283067.\nPages tagged resident:                        184161.\nPages tagged compressed:                       98906.\nPages tag-storage:                            131072.\nPages tag-storage holding tags:                 9907.\nPages tag-storage free:                         6525.\nPages tag-storage non-tag pageable:           114632.\nPages tag-storage non-tag wired:                   8.\nBytes of compressed tags:                   16541824.\nTagged compressions:                         1366782.\nTagged decompressions:                       1067265."
+    },
+    "power": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=36110435)\t80%; AC attached; not charging present: true"
+    },
+    "swap": {
+      "exit_code": 1,
+      "stderr": "sysctl: sysctl fmt -1 1024 1: Operation not permitted",
+      "stdout": ""
+    },
+    "thermal": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Error:Failed to get thermal warning level with error code 0xe00002bc\nError: Failed to get performance warning level with error code 0xe00002bc\nError: No CPU power status with error code 0xe00002bc"
+    }
+  }
+}

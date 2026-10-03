@@ -1,0 +1,11 @@
+{
+  "variant": "multilingual",
+  "language": "pl",
+  "temperature": 0.8,
+  "exaggeration": 0.5,
+  "cfg_weight": 0.5,
+  "speech_tokenizer": "../s3-tokenizer",
+  "voices": {
+    "reference": "reference.wav"
+  }
+}

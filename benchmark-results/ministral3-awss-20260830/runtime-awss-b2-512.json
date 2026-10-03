@@ -1,0 +1,125 @@
+{
+  "allow_early_stop" : false,
+  "continuation_prompt" : "Continue from exactly where you stopped, adding new implementation details and code without repeating the earlier response.",
+  "created_at" : "2026-08-30T19:47:29Z",
+  "engine" : "metal",
+  "format" : 1,
+  "measured_trials" : 5,
+  "median_decode_tokens_per_second" : 46.584471538748225,
+  "median_prompt_tokens_per_second" : 618.3378676754899,
+  "model_path" : "/Users/stephen/Documents/ChatGPT/model-runner-mlx/tmp/models/Ministral-3-14B-Instruct-2512-MLX-Q4-AWSS1-3cea74c",
+  "prompt" : "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+  "requested_tokens" : 512,
+  "served_model_name" : "runtime-benchmark",
+  "status" : "measured",
+  "trials" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 652.0306756045816,
+        "stop_reason" : "length",
+        "tokens_per_second" : 48.302798208592456
+      },
+      "mode" : "target_only",
+      "sequence" : 2,
+      "time_to_first_token_milliseconds" : 889.919875
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 645.9516469751767,
+        "stop_reason" : "length",
+        "tokens_per_second" : 47.6329054520218
+      },
+      "mode" : "target_only",
+      "sequence" : 3,
+      "time_to_first_token_milliseconds" : 897.421916
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 618.3378676754899,
+        "stop_reason" : "length",
+        "tokens_per_second" : 46.584471538748225
+      },
+      "mode" : "target_only",
+      "sequence" : 4,
+      "time_to_first_token_milliseconds" : 936.644666
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 617.4451763929268,
+        "stop_reason" : "length",
+        "tokens_per_second" : 45.7254880985496
+      },
+      "mode" : "target_only",
+      "sequence" : 5,
+      "time_to_first_token_milliseconds" : 938.622458
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 616.532878635318,
+        "stop_reason" : "length",
+        "tokens_per_second" : 44.71915305298212
+      },
+      "mode" : "target_only",
+      "sequence" : 6,
+      "time_to_first_token_milliseconds" : 940.057167
+    }
+  ],
+  "warmup_count" : 2,
+  "warmups" : [
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 730.5903816147255,
+        "stop_reason" : "length",
+        "tokens_per_second" : 50.10956047058964
+      },
+      "mode" : "target_only",
+      "sequence" : 0,
+      "time_to_first_token_milliseconds" : 803.716166
+    },
+    {
+      "content" : "# **Lock-Free Work-Stealing Scheduler in Swift: A Comprehensive Implementation Guide**\n\n## **Introduction**\nA **work-stealing scheduler** is a concurrent programming technique that efficiently distributes tasks across multiple threads by allowing idle threads to \"steal\" work from busy threads. This approach minimizes contention and maximizes CPU utilization, making it ideal for parallel workloads. A **lock-free** implementation ensures that threads do not block each other, improving scalability.\n\nIn this tutorial, we will:\n1. Design a lock-free work-stealing scheduler in Swift.\n2. Implement a **deque-based work-stealing queue** (double-ended queue) that allows threads to push tasks to their local queue and steal from others.\n3. Ensure thread safety without locks using **atomic operations** and **compare-and-swap (CAS)**.\n4. Benchmark and optimize the implementation.\n\n---\n\n## **1. Core Concepts**\n### **1.1 Work-Stealing Basics**\n- **Local Queue:** Each thread has its own queue where it pushes new tasks.\n- **Stealing:** An idle thread \"steals\" tasks from the tail of another thread's queue.\n- **Lock-Free Guarantees:** No locks are used; instead, atomic operations ensure safety.\n\n### **1.2 Data Structures**\n- **Deque (Double-Ended Queue):** Supports `push` (to local end) and `pop`/`steal` (from remote end).\n- **Atomic Pointers:** Used to safely modify shared state without locks.\n\n---\n\n## **2. Implementation Overview**\nWe will implement:\n1. A **lock-free deque** using **atomic pointers** and **CAS**.\n2. A **work-stealing scheduler** that assigns tasks to threads.\n3. A **thread pool** that manages worker threads.\n\n---\n\n## **3. Lock-Free Deque Implementation**\nA deque must support:\n- **Push:** Add a task to the local end.\n- **Pop:** Remove a task from the local end.\n- **Steal:** Remove a task from the remote end (another thread's tail).\n\n### **3.1 Node Structure**\nEach node in the deque holds:\n- A task (or `nil` if empty).\n- A **next** pointer (atomic for CAS operations).\n\n```swift\nstruct DequeNode<T> {\n    var value: T?\n    var next: Atomic<DequeNode<T>?> // Atomic reference for thread safety\n",
+      "metrics" : {
+        "cached_prompt_token_count" : 0,
+        "generation_token_count" : 512,
+        "prefilled_prompt_token_count" : 570,
+        "prompt_token_count" : 570,
+        "prompt_tokens_per_second" : 643.048304339827,
+        "stop_reason" : "length",
+        "tokens_per_second" : 48.73807920484994
+      },
+      "mode" : "target_only",
+      "sequence" : 1,
+      "time_to_first_token_milliseconds" : 901.653625
+    }
+  ]
+}

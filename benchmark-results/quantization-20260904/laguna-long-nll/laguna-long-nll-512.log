@@ -1,0 +1,28 @@
+sample 1/8 wikitext2-heldout-long-0: NLL 2.810102, perplexity 16.611606
+sample 2/8 wikitext2-heldout-long-1: NLL 2.714440, perplexity 15.096160
+sample 3/8 wikitext2-heldout-long-2: NLL 2.761295, perplexity 15.820320
+sample 4/8 wikitext2-heldout-long-3: NLL 2.815039, perplexity 16.693833
+sample 5/8 wikitext2-heldout-long-4: NLL 2.619365, perplexity 13.727009
+sample 6/8 wikitext2-heldout-long-5: NLL 3.054057, perplexity 21.201185
+sample 7/8 wikitext2-heldout-long-6: NLL 2.791170, perplexity 16.300081
+sample 8/8 wikitext2-heldout-long-7: NLL 2.836340, perplexity 17.053238
+token-weighted NLL 2.803887, perplexity 16.508684 across 32528 scored tokens
+Wrote /private/tmp/midnight-optimization-20260904/laguna-long-nll-512.json
+       23.13 real         1.60 user         5.31 sys
+          7452590080  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              594650  page reclaims
+                 430  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1593  voluntary context switches
+               65741  involuntary context switches
+         57206378890  instructions retired
+         28262715634  cycles elapsed
+         20308335816  peak memory footprint

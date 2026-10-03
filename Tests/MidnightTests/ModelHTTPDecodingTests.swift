@@ -1,65 +1,10 @@
 import Foundation
-import ModelRunnerProtocol
 import Testing
 
 @testable import Midnight
 
 @Suite("Chat request decoding diagnostics")
 struct ModelHTTPDecodingTests {
-    @Test("Chat validation runs without a channel and retains parsed limits")
-    func chatValidationWithoutChannel() throws {
-        let server = ModelHTTPServer(
-            servedModelName: "local", tokenLimit: try GenerationTokenLimit(configuredMaximum: 64))
-        let body = Data(
-            #"{"model":"local","messages":[{"role":"user","content":"Hi"}],"max_completion_tokens":12,"stop":["END"]}"#
-                .utf8)
-
-        let request = try server.decodeAndValidateChatRequest(body)
-
-        #expect(request.completion.model == "local")
-        #expect(request.requestedMaximumTokens == 12)
-        #expect(request.stop == ["END"])
-    }
-
-    @Test("Chat validation identifies conflicting token-limit fields before I/O")
-    func conflictingTokenLimitsWithoutChannel() throws {
-        let server = ModelHTTPServer(
-            servedModelName: "local", tokenLimit: try GenerationTokenLimit(configuredMaximum: 64))
-        let body = Data(
-            #"{"model":"local","messages":[{"role":"user","content":"Hi"}],"max_tokens":8,"max_completion_tokens":12}"#
-                .utf8)
-
-        do {
-            _ = try server.decodeAndValidateChatRequest(body)
-            Issue.record("Expected a conflicting-token-limit error")
-        } catch let error as ModelHTTPError {
-            #expect(error.param == "max_completion_tokens")
-            #expect(error.code == "invalid_parameter")
-        }
-    }
-
-    @Test("Unsupported top-level Chat Completions fields are rejected")
-    func unsupportedTopLevelFields() throws {
-        let server = ModelHTTPServer(
-            servedModelName: "local", tokenLimit: try GenerationTokenLimit(configuredMaximum: 64))
-
-        for field in ["seed", "presence_penalty", "topP"] {
-            let body = Data(
-                """
-                {"model":"local","messages":[{"role":"user","content":"Hi"}],"\(field)":1}
-                """.utf8)
-
-            do {
-                _ = try server.decodeAndValidateChatRequest(body)
-                Issue.record("Expected an unsupported-field error for \(field)")
-            } catch let error as ModelHTTPError {
-                #expect(error.param == field)
-                #expect(error.code == "invalid_json")
-                #expect(error.message.contains("Unsupported Chat Completions parameter '\(field)'"))
-            }
-        }
-    }
-
     @Test("Missing nested fields include the absent key and array indices")
     func missingNestedField() throws {
         let issue = try diagnose(#"{"messages":[{"content":[{"type":"text","text":"a"},{"text":"b"}]}]}"#)

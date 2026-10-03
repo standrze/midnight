@@ -7,50 +7,50 @@ struct OpenAIToolWireTests {
     @Test("Decodes tool declarations and a complete tool exchange")
     func decodesToolRequest() throws {
         let json = #"""
+        {
+          "model": "local-model",
+          "stream": true,
+          "stream_options": {"include_usage": true},
+          "max_tokens": 256,
+          "tools": [{
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "description": "Read the weather",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {"type": "string"},
+                  "days": {"type": "integer", "minimum": 1},
+                  "metric": {"type": "boolean", "default": true}
+                },
+                "required": ["city"]
+              }
+            }
+          }],
+          "messages": [
+            {"role": "user", "content": "Weather in Boston?"},
             {
-              "model": "local-model",
-              "stream": true,
-              "stream_options": {"include_usage": true},
-              "max_tokens": 256,
-              "tools": [{
+              "role": "assistant",
+              "content": null,
+              "tool_calls": [{
+                "id": "call_weather_1",
                 "type": "function",
                 "function": {
                   "name": "get_weather",
-                  "description": "Read the weather",
-                  "parameters": {
-                    "type": "object",
-                    "properties": {
-                      "city": {"type": "string"},
-                      "days": {"type": "integer", "minimum": 1},
-                      "metric": {"type": "boolean", "default": true}
-                    },
-                    "required": ["city"]
-                  }
+                  "arguments": "{\"city\":\"Boston\",\"days\":1}"
                 }
-              }],
-              "messages": [
-                {"role": "user", "content": "Weather in Boston?"},
-                {
-                  "role": "assistant",
-                  "content": null,
-                  "tool_calls": [{
-                    "id": "call_weather_1",
-                    "type": "function",
-                    "function": {
-                      "name": "get_weather",
-                      "arguments": "{\"city\":\"Boston\",\"days\":1}"
-                    }
-                  }]
-                },
-                {
-                  "role": "tool",
-                  "content": "{\"temperature\":72}",
-                  "name": "get_weather",
-                  "tool_call_id": "call_weather_1"
-                }
-              ]
+              }]
+            },
+            {
+              "role": "tool",
+              "content": "{\"temperature\":72}",
+              "name": "get_weather",
+              "tool_call_id": "call_weather_1"
             }
-            """#
+          ]
+        }
+        """#
 
         let request = try JSONDecoder().decode(
             ChatCompletionRequest.self,
@@ -103,12 +103,12 @@ struct OpenAIToolWireTests {
     @Test("Legacy requests remain valid when tools are absent")
     func decodesLegacyRequest() throws {
         let json = #"""
-            {
-              "model": "local-model",
-              "stream": true,
-              "messages": [{"role": "user", "content": "Hello"}]
-            }
-            """#
+        {
+          "model": "local-model",
+          "stream": true,
+          "messages": [{"role": "user", "content": "Hello"}]
+        }
+        """#
 
         let request = try JSONDecoder().decode(
             ChatCompletionRequest.self,
@@ -123,17 +123,17 @@ struct OpenAIToolWireTests {
     @Test("Non-streaming defaults and modern generation controls decode")
     func decodesGenerationControls() throws {
         let json = #"""
-            {
-              "model": "local-model",
-              "max_completion_tokens": 64,
-              "top_p": 0.8,
-              "stop": ["END", "DONE"],
-              "messages": [
-                {"role": "developer", "content": "Be concise."},
-                {"role": "user", "content": "Hello"}
-              ]
-            }
-            """#
+        {
+          "model": "local-model",
+          "max_completion_tokens": 64,
+          "top_p": 0.8,
+          "stop": ["END", "DONE"],
+          "messages": [
+            {"role": "developer", "content": "Be concise."},
+            {"role": "user", "content": "Hello"}
+          ]
+        }
+        """#
 
         let request = try JSONDecoder().decode(
             ChatCompletionRequest.self,

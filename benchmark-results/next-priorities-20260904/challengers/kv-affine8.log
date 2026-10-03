@@ -1,0 +1,15 @@
+MLX resource guard: memory=54975581389 bytes cache=268435456 bytes
+Experimental KV compression: affine8, eligible=10, skipped=30
+Measured MLX wired-memory plan: peak=19335292120 kv=74077440 workspace=439251416 limit=21537256788 cap=54975581389
+Context policy: limit=262144, prefill=512, KV=affine8, geometry=known
+Conversation prefix cache: entries=4 memory=2147483648 bytes
+[1/9] retrieval-est4096-pos10: prompt=4309, generated=11, stop=stop
+[2/9] retrieval-est4096-pos50: prompt=4311, generated=26, stop=stop
+[3/9] retrieval-est4096-pos90: prompt=4305, generated=12, stop=stop
+[4/9] retrieval-est16384-pos10: prompt=17004, generated=13, stop=stop
+[5/9] retrieval-est16384-pos50: prompt=17090, generated=22, stop=stop
+[6/9] retrieval-est16384-pos90: prompt=17063, generated=12, stop=stop
+[7/9] retrieval-est32768-pos10: prompt=34122, generated=12, stop=stop
+[8/9] retrieval-est32768-pos50: prompt=34041, generated=26, stop=stop
+[9/9] retrieval-est32768-pos90: prompt=34092, generated=10, stop=stop
+Saved completed report: /private/tmp/midnight-priorities-20260904/challengers/kv-affine8.json

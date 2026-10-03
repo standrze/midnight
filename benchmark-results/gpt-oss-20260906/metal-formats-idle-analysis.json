@@ -1,0 +1,487 @@
+{
+  "format": 1,
+  "status": "synthetic_primitive_diagnostics",
+  "settings": {
+    "warmup": 32,
+    "iterations": 40,
+    "queue_depth": 128,
+    "queue_rounds": 16
+  },
+  "orders": {
+    "AB": 8,
+    "BA": 8
+  },
+  "thresholds": {
+    "maximum_drift_fraction": 0.1,
+    "seed": 20260906,
+    "bootstrap_draws": 2000
+  },
+  "known_confounder": null,
+  "comparisons": [
+    {
+      "workload": "gptoss-query-qmv",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 16,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.01568457421875,
+          "candidate_median": 0.017585937500000003,
+          "diagnostic_paired_ratios": [
+            2.3308094068106016,
+            0.9015030538574287,
+            0.8143549723919473,
+            0.46274521403290586,
+            0.9261843479871658,
+            0.9988438449296778,
+            1.7032750622751174,
+            0.8605708683783112,
+            0.8900038082980907,
+            1.6934385676065034,
+            0.8732104061055095,
+            0.8858881530449834,
+            0.8267758811665572,
+            0.47669735430968085,
+            0.878901350899479,
+            0.978038158216645
+          ],
+          "diagnostic_paired_median_ratio": 0.8879459806715371,
+          "accepted_paired_median_ratio": 0.8879459806715371,
+          "paired_ratio_min": 0.46274521403290586,
+          "paired_ratio_max": 2.3308094068106016,
+          "paired_ratio_median_absolute_deviation": 0.06738055389228481,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8605708683783112,
+            0.978038158216645
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            0.8605708683783112,
+            0.978038158216645
+          ],
+          "baseline_drift_fraction": 0.05861451135218265,
+          "candidate_drift_fraction": 0.01766275356223035,
+          "order_effect_fraction": 0.010342474346664798,
+          "acceptance_reasons": [],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.015376953124999999,
+          "candidate_median": 0.0172501640625,
+          "diagnostic_paired_ratios": [
+            2.350624098867147,
+            0.900519384455545,
+            0.8110224419494819,
+            0.4584623397667757,
+            0.9230411016620284,
+            0.996718744571197,
+            1.717377811942402,
+            0.8509523395758671,
+            0.8876263673050087,
+            1.7048009210801758,
+            0.870851235444476,
+            0.883827806864456,
+            0.823653178787643,
+            0.4720646796186798,
+            0.8784199925141549,
+            0.9778277921178746
+          ],
+          "diagnostic_paired_median_ratio": 0.8857270870847322,
+          "accepted_paired_median_ratio": 0.8857270870847322,
+          "paired_ratio_min": 0.4584623397667757,
+          "paired_ratio_max": 2.350624098867147,
+          "paired_ratio_median_absolute_deviation": 0.06838927671616979,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8509523395758671,
+            0.9778277921178746
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            0.8509523395758671,
+            0.9778277921178746
+          ],
+          "baseline_drift_fraction": 0.060036918949403884,
+          "candidate_drift_fraction": 0.019020268947971597,
+          "order_effect_fraction": 0.010256317598874465,
+          "acceptance_reasons": [],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-output-qmv",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 16,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.00951773828125,
+          "candidate_median": 0.009861003906249999,
+          "diagnostic_paired_ratios": [
+            2.4631886186849297,
+            0.8948461538461537,
+            0.44049919783838554,
+            0.9350317614792533,
+            0.8945896337732715,
+            1.0099775070195607,
+            1.0038700948482846,
+            0.9350883328564312,
+            2.132862837627864,
+            0.9502492301375486,
+            0.9375501440900581,
+            0.9263620923011597,
+            0.9836478331306435,
+            0.898636906077348,
+            0.8914316702819955,
+            0.4893110093719852
+          ],
+          "diagnostic_paired_median_ratio": 0.9350600471678423,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.44049919783838554,
+          "paired_ratio_max": 2.4631886186849297,
+          "paired_ratio_median_absolute_deviation": 0.04204939514020878,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8948461538461537,
+            0.9836478331306435
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.14966569420304254,
+          "candidate_drift_fraction": 0.15368167428772428,
+          "order_effect_fraction": 0.032128677828622276,
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.0092802734375,
+          "candidate_median": 0.009615234375,
+          "diagnostic_paired_ratios": [
+            2.4899238295317394,
+            0.8926529068851425,
+            0.43011332918228157,
+            0.9323933984731627,
+            0.8923076923076924,
+            1.0104335586628392,
+            1.000959968212973,
+            0.9375104031635704,
+            2.159792207792208,
+            0.9490940828661085,
+            0.9398525437109919,
+            0.9293039007482816,
+            0.980058916836619,
+            0.8939620670073822,
+            0.8844142841250416,
+            0.4822127438319027
+          ],
+          "diagnostic_paired_median_ratio": 0.9349519008183665,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.43011332918228157,
+          "paired_ratio_max": 2.4899238295317394,
+          "paired_ratio_median_absolute_deviation": 0.04387561226446335,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8926529068851425,
+            0.980058916836619
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.14696895766303497,
+          "candidate_drift_fraction": 0.15739530907068466,
+          "order_effect_fraction": 0.031269402040015715,
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-output-qmv",
+      "baseline": "affine-4bit-g64",
+      "candidate": "affine-4bit-g128",
+      "valid_pairs": 16,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.00739404296875,
+          "candidate_median": 0.00729605859375,
+          "diagnostic_paired_ratios": [
+            3.124503929024081,
+            1.0148853426310849,
+            1.0235584756559188,
+            1.0238799901815654,
+            0.46354520683676,
+            1.0508698659230054,
+            0.9685189905684425,
+            0.9896028605151705,
+            1.0258053851916888,
+            0.9757399637399637,
+            0.9882624667114326,
+            0.9820200776335163,
+            1.0037183552808384,
+            0.46614536694282865,
+            0.9861700624038994,
+            0.9819878191006869
+          ],
+          "diagnostic_paired_median_ratio": 0.9889326636133016,
+          "accepted_paired_median_ratio": 0.9889326636133016,
+          "paired_ratio_min": 0.46354520683676,
+          "paired_ratio_max": 3.124503929024081,
+          "paired_ratio_median_absolute_deviation": 0.023183176031321195,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9809550130719316,
+            1.0235584756559188
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            0.9809550130719316,
+            1.0235584756559188
+          ],
+          "baseline_drift_fraction": 0.0020033018556429028,
+          "candidate_drift_fraction": 0.01894440180834378,
+          "order_effect_fraction": 0.010325444814869078,
+          "acceptance_reasons": [],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.0071731796875,
+          "candidate_median": 0.00707421875,
+          "diagnostic_paired_ratios": [
+            3.197825926899816,
+            1.0173985472412426,
+            1.0194856984171063,
+            1.0261051846292673,
+            0.45534830138609145,
+            1.0496921094085636,
+            0.9656178243774575,
+            0.990814939152329,
+            1.025210111919579,
+            0.9748459871328863,
+            0.9877833205998232,
+            0.9824763195745306,
+            1.0026329180159217,
+            0.45880927805083543,
+            0.9860510030571782,
+            0.9823371509232902
+          ],
+          "diagnostic_paired_median_ratio": 0.989299129876076,
+          "accepted_paired_median_ratio": 0.989299129876076,
+          "paired_ratio_min": 0.45534830138609145,
+          "paired_ratio_max": 3.197825926899816,
+          "paired_ratio_median_absolute_deviation": 0.02589036143189255,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.9804484950950323,
+            1.0194856984171063
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            0.9804484950950323,
+            1.0194856984171063
+          ],
+          "baseline_drift_fraction": 0.0012710106113592579,
+          "candidate_drift_fraction": 0.020728374274298966,
+          "order_effect_fraction": 0.008678384304977804,
+          "acceptance_reasons": [],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-separate-gate-up-bias-clamp",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 16,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.10792317968750001,
+          "candidate_median": 0.10507568359375,
+          "diagnostic_paired_ratios": [
+            1.0959668045819408,
+            1.0427607983887133,
+            1.0194124646516582,
+            0.9502038367293699,
+            1.097695712743678,
+            1.008115446683368,
+            1.0969584994105936,
+            1.0260153211235472,
+            1.022208481149575,
+            1.110097917222664,
+            1.021454554388708,
+            1.0701391899495447,
+            0.9426205641492265,
+            1.031696077404526,
+            1.1077514452616604,
+            1.0413739954405181
+          ],
+          "diagnostic_paired_median_ratio": 1.036535036422522,
+          "accepted_paired_median_ratio": 1.036535036422522,
+          "paired_ratio_min": 0.9426205641492265,
+          "paired_ratio_max": 1.110097917222664,
+          "paired_ratio_median_absolute_deviation": 0.031011871633088384,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.021454554388708,
+            1.0959668045819408
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            1.021454554388708,
+            1.0959668045819408
+          ],
+          "baseline_drift_fraction": 0.010594169467555647,
+          "candidate_drift_fraction": 0.002694160123286271,
+          "order_effect_fraction": 0.02175768850136839,
+          "acceptance_reasons": [],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.10378499218750001,
+          "candidate_median": 0.10115804296875,
+          "diagnostic_paired_ratios": [
+            1.0937927804596874,
+            1.0441147320012685,
+            1.0204231065761795,
+            0.9471094757508935,
+            1.1020575096195984,
+            1.0086711884059107,
+            1.0942622236731065,
+            1.027812008668678,
+            1.0229646858423904,
+            1.114767407532369,
+            1.021749734602096,
+            1.071540412161748,
+            0.9394895407003183,
+            1.0322147791906493,
+            1.1125988734172545,
+            1.0435305268601782
+          ],
+          "diagnostic_paired_median_ratio": 1.0378726530254139,
+          "accepted_paired_median_ratio": 1.0378726530254139,
+          "paired_ratio_min": 0.9394895407003183,
+          "paired_ratio_max": 1.114767407532369,
+          "paired_ratio_median_absolute_deviation": 0.03143461187791863,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            1.021749734602096,
+            1.0937927804596874
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": [
+            1.021749734602096,
+            1.0937927804596874
+          ],
+          "baseline_drift_fraction": 0.00886833353630545,
+          "candidate_drift_fraction": 0.0041159797588711244,
+          "order_effect_fraction": 0.019757799828186373,
+          "acceptance_reasons": [],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    },
+    {
+      "workload": "gptoss-down-bias-weighted-reduction",
+      "baseline": "affine-4bit-g64",
+      "candidate": "mxfp4-g32",
+      "valid_pairs": 16,
+      "metrics": {
+        "total_ms": {
+          "baseline_median": 0.05272021484375,
+          "candidate_median": 0.0560748671875,
+          "diagnostic_paired_ratios": [
+            0.8824103015213991,
+            1.0491495248364675,
+            1.198398628509088,
+            0.8929159314835554,
+            0.9446552353155783,
+            1.2003246920595103,
+            0.8836452819176055,
+            0.9760396948013942,
+            1.165519224511032,
+            0.8573377759991468,
+            1.2018011601241063,
+            1.1905702265631737,
+            1.1184560684299736,
+            0.7537382724507674,
+            1.1415145991613413,
+            0.7544911445892686
+          ],
+          "diagnostic_paired_median_ratio": 1.012594609818931,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7537382724507674,
+          "paired_ratio_max": 1.2018011601241063,
+          "paired_ratio_median_absolute_deviation": 0.14155446149481643,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8836452819176055,
+            1.1660424128622575
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.15129829012789076,
+          "candidate_drift_fraction": 0.1553294816178492,
+          "order_effect_fraction": 0.20921579721162908,
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable",
+            "AB/BA order effect exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        },
+        "execution_ms": {
+          "baseline_median": 0.05019596875,
+          "candidate_median": 0.0535615234375,
+          "diagnostic_paired_ratios": [
+            0.8760315998661538,
+            1.04948508597466,
+            1.2078915953657838,
+            0.8841515083100328,
+            0.9470125304626484,
+            1.2093404877485665,
+            0.8766373759589907,
+            0.9745378484046837,
+            1.1745493212547375,
+            0.8529828187569164,
+            1.2113700046611553,
+            1.1973527362322187,
+            1.1456711574724063,
+            0.7459250147235713,
+            1.1471133390415296,
+            0.7571695572585398
+          ],
+          "diagnostic_paired_median_ratio": 1.0120114671896718,
+          "accepted_paired_median_ratio": null,
+          "paired_ratio_min": 0.7459250147235713,
+          "paired_ratio_max": 1.2113700046611553,
+          "paired_ratio_median_absolute_deviation": 0.14750425787813676,
+          "diagnostic_paired_bootstrap_95_percent_interval": [
+            0.8766373759589907,
+            1.1745493212547375
+          ],
+          "accepted_paired_bootstrap_95_percent_interval": null,
+          "baseline_drift_fraction": 0.15807888587186114,
+          "candidate_drift_fraction": 0.16146366091741737,
+          "order_effect_fraction": 0.2335490533859268,
+          "acceptance_reasons": [
+            "baseline drift exceeds threshold or is unavailable",
+            "candidate drift exceeds threshold or is unavailable",
+            "AB/BA order effect exceeds threshold or is unavailable"
+          ],
+          "ratio_direction": "baseline/candidate (latency)",
+          "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Random BF16 source weights and synthetic inputs; this does not evaluate a model checkpoint, quantization quality, or tokens/s.",
+    "Even-indexed rounds are AB and odd-indexed rounds BA per the current native benchmark implementation; the text log has no per-arm timestamps.",
+    "Individual latency ratios are paired by round; reported intervals bootstrap pairs and do not account for temporal autocorrelation or multiple comparisons.",
+    "Passing drift/order gates only makes a primitive measurement eligible; it does not prove a model speedup or support changing deployment defaults.",
+    "The log lacks executable, Metal-library, hardware-state and source-array hashes; preserve external run provenance. Shape/finite checks are not numerical parity tests."
+  ],
+  "provenance": {
+    "native_log": "/Users/stephen/Documents/ChatGPT/midnight/benchmark-results/gpt-oss-20260906/metal-formats-idle.log",
+    "native_log_sha256": "d9b556b5a8075ff184cbc3e7c94138b3556a40c6594dcf900061b491c4ce6546",
+    "analyzer_sha256": "29e9a129d89fa0c384a67c9f439443c34be7d6d577fbfd0f393c70fe872694c0",
+    "statistics_helper_sha256": "30f16c104e83eb43c927b52e69b56b2c40a1b698c5504d4112337d72370ab889"
+  }
+}

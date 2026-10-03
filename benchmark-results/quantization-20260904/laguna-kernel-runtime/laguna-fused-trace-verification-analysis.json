@@ -1,0 +1,175 @@
+{
+  "format": 1,
+  "status": "analyzed",
+  "baseline_mode": "laguna_gather_silu_stock",
+  "candidate_mode": "laguna_gather_silu_fused",
+  "report_settings": {
+    "created_at": "2026-09-04T22:20:15Z",
+    "model_path": "/Users/stephen/Documents/ChatGPT/midnight/tmp/models/Laguna-XS-2.1-Q4R8-c42e0a8f",
+    "served_model_name": "runtime-benchmark",
+    "engine": "metal",
+    "prompt": "Write a long, detailed technical tutorial about implementing a lock-free work-stealing scheduler in Swift. Continue with implementation details and code examples until the output limit; do not conclude or summarize early.",
+    "requested_tokens": 32,
+    "context_length": 262144,
+    "prefill_step_size": 512,
+    "kv_compression": "none",
+    "memory_limit_bytes": 54975581389,
+    "allow_early_stop": false,
+    "warmup_count": 2
+  },
+  "retained_trials": 2,
+  "valid_pairs": 1,
+  "orders": {
+    "AB": 1,
+    "BA": 0
+  },
+  "comparable": true,
+  "validation_errors": [],
+  "rejected_pairs": [],
+  "fused_kernel_trace_verification": {
+    "status": "observed",
+    "reported_count": 39,
+    "interpretation": "Positive count records fused graph construction on the loaded model, not every GPU dispatch or measured token."
+  },
+  "prompt_token_identity_verified": true,
+  "output_text_matches_exactly": true,
+  "output_text_sha256": "5c25238e5e30213512192634eb4b1e13ae4a2ca70e44768ee5e012f3aa180152",
+  "thresholds": {
+    "maximum_drift_fraction": 0.1,
+    "minimum_pairs": 4,
+    "seed": 20260904,
+    "bootstrap_draws": 2000
+  },
+  "metrics": {
+    "decode": {
+      "baseline_median": 167.49715061583262,
+      "candidate_median": 173.37028655278957,
+      "diagnostic_paired_ratios": [
+        1.0350640946151224
+      ],
+      "diagnostic_paired_median_ratio": 1.0350640946151224,
+      "accepted_paired_median_ratio": null,
+      "paired_ratio_min": 1.0350640946151224,
+      "paired_ratio_max": 1.0350640946151224,
+      "paired_ratio_median_absolute_deviation": 0.0,
+      "diagnostic_paired_bootstrap_95_percent_interval": [
+        1.0350640946151224,
+        1.0350640946151224
+      ],
+      "accepted_paired_bootstrap_95_percent_interval": null,
+      "baseline_drift_fraction": null,
+      "candidate_drift_fraction": null,
+      "order_effect_fraction": null,
+      "acceptance_reasons": [
+        "fewer than four complete pairs; exploratory only",
+        "AB and BA pair counts must be equal and nonzero",
+        "baseline drift exceeds threshold or is unavailable",
+        "candidate drift exceeds threshold or is unavailable",
+        "AB/BA order effect exceeds threshold or is unavailable"
+      ],
+      "ratio_direction": "candidate/baseline (rate)",
+      "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+    },
+    "prefill": {
+      "baseline_median": 845.9942232907879,
+      "candidate_median": 841.0154816640232,
+      "diagnostic_paired_ratios": [
+        0.994114922431269
+      ],
+      "diagnostic_paired_median_ratio": 0.994114922431269,
+      "accepted_paired_median_ratio": null,
+      "paired_ratio_min": 0.994114922431269,
+      "paired_ratio_max": 0.994114922431269,
+      "paired_ratio_median_absolute_deviation": 0.0,
+      "diagnostic_paired_bootstrap_95_percent_interval": [
+        0.994114922431269,
+        0.994114922431269
+      ],
+      "accepted_paired_bootstrap_95_percent_interval": null,
+      "baseline_drift_fraction": null,
+      "candidate_drift_fraction": null,
+      "order_effect_fraction": null,
+      "acceptance_reasons": [
+        "fewer than four complete pairs; exploratory only",
+        "AB and BA pair counts must be equal and nonzero",
+        "baseline drift exceeds threshold or is unavailable",
+        "candidate drift exceeds threshold or is unavailable",
+        "AB/BA order effect exceeds threshold or is unavailable"
+      ],
+      "ratio_direction": "candidate/baseline (rate)",
+      "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+    },
+    "ttft": {
+      "baseline_median": 61.203125,
+      "candidate_median": 61.621542,
+      "diagnostic_paired_ratios": [
+        0.9932098907878677
+      ],
+      "diagnostic_paired_median_ratio": 0.9932098907878677,
+      "accepted_paired_median_ratio": null,
+      "paired_ratio_min": 0.9932098907878677,
+      "paired_ratio_max": 0.9932098907878677,
+      "paired_ratio_median_absolute_deviation": 0.0,
+      "diagnostic_paired_bootstrap_95_percent_interval": [
+        0.9932098907878677,
+        0.9932098907878677
+      ],
+      "accepted_paired_bootstrap_95_percent_interval": null,
+      "baseline_drift_fraction": null,
+      "candidate_drift_fraction": null,
+      "order_effect_fraction": null,
+      "acceptance_reasons": [
+        "fewer than four complete pairs; exploratory only",
+        "AB and BA pair counts must be equal and nonzero",
+        "baseline drift exceeds threshold or is unavailable",
+        "candidate drift exceeds threshold or is unavailable",
+        "AB/BA order effect exceeds threshold or is unavailable"
+      ],
+      "ratio_direction": "baseline/candidate (latency)",
+      "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+    },
+    "total": {
+      "baseline_median": 254.399917,
+      "candidate_median": 248.180583,
+      "diagnostic_paired_ratios": [
+        1.0250597122660476
+      ],
+      "diagnostic_paired_median_ratio": 1.0250597122660476,
+      "accepted_paired_median_ratio": null,
+      "paired_ratio_min": 1.0250597122660476,
+      "paired_ratio_max": 1.0250597122660476,
+      "paired_ratio_median_absolute_deviation": 0.0,
+      "diagnostic_paired_bootstrap_95_percent_interval": [
+        1.0250597122660476,
+        1.0250597122660476
+      ],
+      "accepted_paired_bootstrap_95_percent_interval": null,
+      "baseline_drift_fraction": null,
+      "candidate_drift_fraction": null,
+      "order_effect_fraction": null,
+      "acceptance_reasons": [
+        "fewer than four complete pairs; exploratory only",
+        "AB and BA pair counts must be equal and nonzero",
+        "baseline drift exceeds threshold or is unavailable",
+        "candidate drift exceeds threshold or is unavailable",
+        "AB/BA order effect exceeds threshold or is unavailable"
+      ],
+      "ratio_direction": "baseline/candidate (latency)",
+      "interpretation": "Ratio >1 favors candidate. Accepted means eligible measurement, not proven improvement. Bootstrap resamples pairs (2000 draws); few pairs, thermal autocorrelation and multiple comparisons limit inference."
+    }
+  },
+  "limitations": [
+    "Same-loaded native modes isolate the kernel toggle, subject to build/provenance verification outside this report.",
+    "Exact decoded output text and generation length do not independently prove identical generated token IDs, expert routes or all internal activations.",
+    "Accepted ratios are eligible measurements, not automatic promotion decisions. A single session and few pairs do not establish repeatability.",
+    "Percentile intervals resample paired observations; thermal autocorrelation and multiple comparisons limit inference. First-half versus second-half drift checks cannot detect every nonlinear drift pattern.",
+    "Native rates/latencies exclude HTTP serving overhead. Warmups are excluded from estimates and their count is recorded."
+  ],
+  "provenance": {
+    "native_report": "/private/tmp/midnight-memory-release.ccwHpH/repo/benchmark-results/quantization-20260904/laguna-kernel-runtime/laguna-fused-trace-verification.json",
+    "native_report_sha256": "e517018566e5fa4a370db250bbfd2779bf65e1faed86dae94ecca68efa86e5af",
+    "analyzer_sha256": "929042b27b2cb4238fd2ac9b415f795fe45016894d5b1a29be25b3f1ac6e72e5",
+    "statistics_helper_sha256": "e1ac7fc442fd99cd3de160e99f3aec55b80562b0dd3f7976a1de6daf0fb0b70d",
+    "build_attribution": "Native JSON does not contain executable/metallib hashes; retain the launch/build provenance separately."
+  }
+}

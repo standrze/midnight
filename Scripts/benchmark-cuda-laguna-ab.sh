@@ -97,8 +97,6 @@ for command_name in curl jq journalctl nvidia-smi pgrep sed ss stdbuf systemctl 
   }
 done
 systemctl --user show-environment >/dev/null
-: "${MIDNIGHT_API_KEY:?Set MIDNIGHT_API_KEY before running the benchmark.}"
-systemctl --user import-environment MIDNIGHT_API_KEY
 
 model_runner_resolve_cuda_runtime_environment /usr/local/cuda
 model_runner_cuda_runtime_systemd_setenv_args
@@ -184,7 +182,6 @@ run_variant() {
 
   for attempt in {1..180}; do
     if curl --fail --silent --show-error --max-time 3 \
-      --header "Authorization: Bearer $MIDNIGHT_API_KEY" \
       "$base_url/v1/models" > "$result_dir/models.json" 2> "$result_dir/readiness-errors.txt"; then
       break
     fi
@@ -208,7 +205,6 @@ run_variant() {
 
   for ((request_index=0; request_index<=10#$TRIALS; request_index++)); do
     curl --fail-with-body --silent --show-error \
-      --header "Authorization: Bearer $MIDNIGHT_API_KEY" \
       --connect-timeout 3 --max-time 360 \
       --header 'Content-Type: application/json' \
       --data-binary "@$request_file" \

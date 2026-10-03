@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "sources": [],
+  "seed": 20260904,
+  "selection": {
+    "math_count": 0,
+    "code_count": 0,
+    "retrieval_context_token_estimates": [
+      4096,
+      16384,
+      32768
+    ]
+  },
+  "task_count": 9,
+  "files": {
+    "tasks.jsonl": "400070262ec413631a4fa4bfd411dee69500026b2e4b16f18bd7117bd146dc8b",
+    "answers.jsonl": "96698f3452af1ba0465c2d230a0681c144d4f49b4f507b0d8f73c175f42ac951"
+  },
+  "builder_sha256": "28d44452da5ef0ac0021228dd4e5174eaf62d18070ae0cc2bb941fd75ded3a6d",
+  "limitations": [
+    "Only tasks.jsonl is passed to generation. Gold answers, tests and reference bodies are excluded from prompts.",
+    "Code APIs are extracted from reference signatures; private tests stay in the scoring key. Three public MBPP test cases are used, not challenge tests or hidden HumanEval tests.",
+    "Public benchmark training contamination and reuse in prior reference evaluation are possible. Do not use these records for fitting or candidate selection.",
+    "Retrieval contains its supporting fact in the context by design; the scorer key is separate. Context lengths are estimates until measured by the model tokenizer."
+  ]
+}

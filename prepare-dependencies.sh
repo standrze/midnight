@@ -12,20 +12,6 @@ fi
 DEPENDENCY_PACKAGE_ROOT="$(cd "$DEPENDENCY_PACKAGE_ROOT" && pwd -P)"
 source "$PACKAGE_ROOT/Scripts/swiftpm-scratch-path.sh"
 source "$PACKAGE_ROOT/Scripts/optional-dependency-patch.sh"
-source "$PACKAGE_ROOT/Scripts/cuda-expert-patch.sh"
-source "$PACKAGE_ROOT/Scripts/compile-cache-lifetime-patch.sh"
-source "$PACKAGE_ROOT/Scripts/gate-up-slices-patch.sh"
-source "$PACKAGE_ROOT/Scripts/gemma-grouped-expert-patch.sh"
-source "$PACKAGE_ROOT/Scripts/gemma3-compiled-tail-patch.sh"
-source "$PACKAGE_ROOT/Scripts/mtp-adaptive-drafts-patch.sh"
-source "$PACKAGE_ROOT/Scripts/extra-eos-token-identity-patch.sh"
-source "$PACKAGE_ROOT/Scripts/generation-progress-patch.sh"
-source "$PACKAGE_ROOT/Scripts/added-token-regex-patch.sh"
-source "$PACKAGE_ROOT/Scripts/gemma-cleanup-default-patch.sh"
-source "$PACKAGE_ROOT/Scripts/affine-q4-qmv-tail-patch.sh"
-source "$PACKAGE_ROOT/Scripts/metal-sdpa-d512-patch.sh"
-source "$PACKAGE_ROOT/Scripts/metal-command-timing-patch.sh"
-source "$PACKAGE_ROOT/Scripts/gemma4-window-cache-patch.sh"
 HOST_OS="$(uname -s)"
 model_runner_configure_swiftpm_scratch "$DEPENDENCY_PACKAGE_ROOT" "$HOST_OS"
 MLX_SWIFT_CHECKOUT="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-swift"
@@ -35,9 +21,7 @@ MLX_SWIFT_MLX32_LINK_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-mlx32-cuda-link.patc
 MLX_SWIFT_CROSS_THREAD_STREAM_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-cross-thread-stream.patch"
 MLX_SWIFT_CLEAR_STREAMS_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-clear-streams.patch"
 MLX_SWIFT_EXISTING_DEFAULT_STREAM_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-existing-default-stream.patch"
-MLX_SWIFT_CUDA_KERNEL_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-cuda-kernel.patch"
 MLX_SWIFT_DIRECT_SLICE_UPDATE_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-direct-slice-update.patch"
-MLX_SWIFT_WIRED_MEMORY_SNAPSHOT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-wired-memory-snapshot.patch"
 MLX_SWIFT_AFFINE_Q4_QMV_JIT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-affine-q4-qmv-jit.patch"
 MLX_SWIFT_SORTED_GATHER_QMM_NAX_JIT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-sorted-gather-qmm-nax-row-bounds-jit.patch"
 MLX_SWIFT_DARWIN_EXPECTED_REVISION="72f3c3ad8aeee39bfc94f8fbeb446cac89e3a798"
@@ -77,12 +61,7 @@ MLX_SWIFT_LM_Q4_AFFINE_JOINT_FIT_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4-af
 MLX_SWIFT_LM_Q4_AFFINE_GROUP_SIZE_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-q4-affine-group-size.patch"
 MLX_SWIFT_LM_MISTRAL_HYBRID_ATTENTION_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-mistral-hybrid-attention.patch"
 MLX_SWIFT_LM_MIXTRAL_FUSED_ROUTER_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-mixtral-fused-router.patch"
-MLX_SWIFT_LM_MUSE_GLIMMER_PREFILL_LOGITS_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-muse-glimmer-prefill-logits.patch"
-MLX_SWIFT_LM_MUSE_GLIMMER_DFLASH_TARGET_PATCH="$PACKAGE_ROOT/Patches/mlx-swift-lm-muse-glimmer-dflash-target.patch"
 MLX_SWIFT_LM_EXPECTED_REVISION="14414441fa44f45eee35a61e9fa0bab577cf9734"
-MLX_AUDIO_SWIFT_CHECKOUT="$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift"
-MLX_AUDIO_SWIFT_EXPECTED_REVISION="bf14ae0c26e4e85553dd989571cae29d70fa6735"
-MLX_AUDIO_SWIFT_QWEN_TTS_PATCH="$PACKAGE_ROOT/Patches/mlx-audio-swift-qwen3-tts-only.patch"
 
 case "$HOST_OS" in
   Darwin)
@@ -142,14 +121,6 @@ apply_dependency_patch() {
   local checkout="$2"
   local patch_file="$3"
 
-  if [[ "$label" == "swift-transformers incremental ByteLevel decoder" ]]; then
-    source "$PACKAGE_ROOT/Scripts/incremental-bytelevel-patch.sh"
-    if model_runner_bytelevel_present_with_gemma_cleanup "$PACKAGE_ROOT" "$checkout"; then
-      echo "$label patch already applied (complete replay with Gemma cleanup)."
-      return 0
-    fi
-  fi
-
   # This checkout may also carry the CUDA diagnostic overlay used on the
   # Linux hosts. That overlay preserves the cache fix while changing its
   # explanatory comment, so a byte-for-byte reverse patch check is not a
@@ -201,18 +172,6 @@ apply_dependency_patch() {
     return 0
   fi
 
-  # Repository formatting removes spaces around these four inserted ranges.
-  # Validate the complete patch (including its tests) with only that exact
-  # formatting difference; do not treat a matching source substring as proof.
-  if [[ "$label" == "mlx-swift-lm direct KV slice update" ]] \
-    && sed \
-      -e '/^+.*updateKVCacheSlice/s/previous \.\.< self.offset/previous..<self.offset/' \
-      -e '/^+.*updateKVCacheSlice/s/idx \.\.< (idx + S)/idx..<(idx + S)/' \
-      "$patch_file" | git -C "$checkout" apply --reverse --check - >/dev/null 2>&1; then
-    echo "$label patch already applied (formatted ranges)."
-    return 0
-  fi
-
   # The diagnostic follow-up inserts calls inside the scheduling patch's
   # verifier hunk. Recognize both durable semantic states directly so an
   # already fully overlaid checkout remains idempotent in forward order.
@@ -227,21 +186,6 @@ apply_dependency_patch() {
   if [[ "$label" == "mlx-swift-lm MTP first-rejection diagnostic" ]] \
     && grep -Fq 'MODEL_RUNNER_DFLASH_FIRST_REJECTION_DIAGNOSTIC' \
       "$checkout/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift"; then
-    echo "$label patch already applied."
-    return 0
-  fi
-
-  # The Foundation Models follow-up extends the reasoning-stream switch with
-  # richer protocol routing. Its extra cases make reverse-applying the original
-  # patch non-exact even though the public Generation.reasoning event and its
-  # decoder emission are already present.
-  if [[ "$label" == "mlx-swift-lm reasoning stream events" ]] \
-    && grep -Fq 'case reasoning(String)' \
-      "$checkout/Libraries/MLXLMCommon/Evaluate.swift" \
-    && grep -Fq 'emit(.reasoning(text))' \
-      "$checkout/Libraries/MLXLMCommon/Evaluate.swift" \
-    && grep -Fq 'ReasoningEventEmitter' \
-      "$checkout/Libraries/MLXLMCommon/Tool/TokenStreamDecoder.swift"; then
     echo "$label patch already applied."
     return 0
   fi
@@ -287,8 +231,6 @@ verify_checkout_revision \
   "mlx-c source" "$MLX_C_SOURCE_CHECKOUT" "$MLX_C_SOURCE_EXPECTED_REVISION"
 verify_checkout_revision \
   "swift-transformers" "$SWIFT_TRANSFORMERS_CHECKOUT" "$SWIFT_TRANSFORMERS_EXPECTED_REVISION"
-verify_checkout_revision \
-  "mlx-audio-swift" "$MLX_AUDIO_SWIFT_CHECKOUT" "$MLX_AUDIO_SWIFT_EXPECTED_REVISION"
 
 if [[ "$APPLY_LINUX_DEPENDENCY_PATCHES" == "1" ]]; then
   apply_dependency_patch \
@@ -320,16 +262,21 @@ if [[ "$APPLY_LINUX_DEPENDENCY_PATCHES" == "1" ]]; then
     "mlx-c clear global streams API" \
     "$MLX_C_SOURCE_CHECKOUT" \
     "$MLX_C_SOURCE_CLEAR_GLOBAL_STREAMS_PATCH"
-  model_runner_prepare_cuda_experts "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_CHECKOUT"
 fi
 
 if [[ "$HOST_OS" == "Darwin" ]]; then
-  apply_dependency_patch \
-    "mlx-swift sparse module array updates" "$MLX_SWIFT_CHECKOUT" \
-    "$PACKAGE_ROOT/Patches/mlx-swift-sparse-module-array-update.patch"
-  model_runner_prepare_compile_cache_lifetime "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_CHECKOUT"
-  model_runner_prepare_gate_up_slices "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
-  model_runner_prepare_gemma_grouped_expert "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
+  verify_checkout_revision "mlx-audio-swift" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "bf14ae0c26e4e85553dd989571cae29d70fa6735"
+  apply_dependency_patch "mlx-audio Midnight platform" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "$PACKAGE_ROOT/Patches/mlx-audio-midnight-platform.patch"
+  apply_dependency_patch "mlx-audio Chatterbox controls" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "$PACKAGE_ROOT/Patches/mlx-audio-chatterbox-controls.patch"
+  apply_dependency_patch "mlx-audio Chatterbox cache dtype" \
+    "$MODEL_RUNNER_SWIFTPM_SCRATCH_PATH/checkouts/mlx-audio-swift" \
+    "$PACKAGE_ROOT/Patches/mlx-audio-chatterbox-cache-dtype.patch"
   # Upstream d73eb752: clamp large sorted expert-row counts before narrowing.
   # Keep compiled Metal headers and generated JIT shader sources synchronized.
   apply_dependency_patch \
@@ -340,27 +287,20 @@ if [[ "$HOST_OS" == "Darwin" ]]; then
     "mlx-swift sorted gather QMM NAX generated JIT" \
     "$MLX_SWIFT_CHECKOUT" \
     "$MLX_SWIFT_SORTED_GATHER_QMM_NAX_JIT_PATCH"
-  # Own the "mlx affine Q4 QMV specialization" and
-  # "mlx-swift affine Q4 QMV generated JIT" prerequisites with their tail overlay.
-  model_runner_prepare_affine_q4_qmv_tail "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_CHECKOUT"
-  model_runner_prepare_metal_sdpa_d512 "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_CHECKOUT"
-  model_runner_prepare_metal_command_timing "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SOURCE_CHECKOUT"
+  apply_dependency_patch \
+    "mlx affine Q4 QMV specialization" \
+    "$MLX_SOURCE_CHECKOUT" \
+    "$MLX_SOURCE_AFFINE_Q4_QMV_PATCH"
+  apply_dependency_patch \
+    "mlx-swift affine Q4 QMV generated JIT" \
+    "$MLX_SWIFT_CHECKOUT" \
+    "$MLX_SWIFT_AFFINE_Q4_QMV_JIT_PATCH"
 fi
 
 apply_dependency_patch \
   "mlx-swift existing default stream API" \
   "$MLX_SWIFT_CHECKOUT" \
   "$MLX_SWIFT_EXISTING_DEFAULT_STREAM_PATCH"
-apply_dependency_patch \
-  "mlx-swift custom CUDA kernel API" \
-  "$MLX_SWIFT_CHECKOUT" \
-  "$MLX_SWIFT_CUDA_KERNEL_PATCH"
-if [[ "$HOST_OS" == "Darwin" ]]; then
-  apply_dependency_patch \
-    "mlx-swift wired-memory snapshot" \
-    "$MLX_SWIFT_CHECKOUT" \
-    "$MLX_SWIFT_WIRED_MEMORY_SNAPSHOT_PATCH"
-fi
 apply_dependency_patch \
   "mlx-swift direct slice update" \
   "$MLX_SWIFT_CHECKOUT" \
@@ -369,12 +309,6 @@ apply_dependency_patch \
   "swift-transformers incremental ByteLevel decoder" \
   "$SWIFT_TRANSFORMERS_CHECKOUT" \
   "$SWIFT_TRANSFORMERS_INCREMENTAL_BYTELEVEL_PATCH"
-model_runner_prepare_added_token_regex "$PACKAGE_ROOT" "$SWIFT_TRANSFORMERS_CHECKOUT"
-model_runner_prepare_gemma_cleanup_default "$PACKAGE_ROOT" "$SWIFT_TRANSFORMERS_CHECKOUT"
-apply_dependency_patch \
-  "mlx-audio-swift Qwen3-TTS-only target" \
-  "$MLX_AUDIO_SWIFT_CHECKOUT" \
-  "$MLX_AUDIO_SWIFT_QWEN_TTS_PATCH"
 
 apply_dependency_patch \
   "mlx-swift-lm README warning fix" "$MLX_SWIFT_LM_CHECKOUT" "$MLX_SWIFT_LM_PATCH"
@@ -384,8 +318,8 @@ if [[ "$APPLY_LINUX_DEPENDENCY_PATCHES" == "1" ]]; then
 fi
 apply_dependency_patch \
   "mlx-swift-lm Gemma 4 LoRA layer coverage" "$MLX_SWIFT_LM_CHECKOUT" "$MLX_SWIFT_LM_GEMMA4_LORA_PATCH"
-# The stack owns "mlx-swift-lm Gemma 4 non-rotating cache" and later overlapping overlays.
-model_runner_prepare_gemma4_window_cache "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
+apply_dependency_patch \
+  "mlx-swift-lm Gemma 4 non-rotating cache" "$MLX_SWIFT_LM_CHECKOUT" "$MLX_SWIFT_LM_GEMMA4_CACHE_PATCH"
 apply_dependency_patch \
   "mlx-swift-lm Mistral hybrid attention" \
   "$MLX_SWIFT_LM_CHECKOUT" \
@@ -395,22 +329,21 @@ apply_dependency_patch \
   "$MLX_SWIFT_LM_CHECKOUT" \
   "$MLX_SWIFT_LM_MIXTRAL_FUSED_ROUTER_PATCH"
 apply_dependency_patch \
-  "mlx-swift-lm Muse Glimmer prefill logits" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$MLX_SWIFT_LM_MUSE_GLIMMER_PREFILL_LOGITS_PATCH"
-apply_dependency_patch \
-  "mlx-swift-lm Muse Glimmer DFlash target state" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$MLX_SWIFT_LM_MUSE_GLIMMER_DFLASH_TARGET_PATCH"
-apply_dependency_patch \
   "mlx-swift-lm backend-aware token evaluation" "$MLX_SWIFT_LM_CHECKOUT" "$MLX_SWIFT_LM_BACKEND_TOKEN_EVAL_PATCH"
 apply_dependency_patch \
   "mlx-swift-lm task executor preference" \
   "$MLX_SWIFT_LM_CHECKOUT" \
   "$MLX_SWIFT_LM_TASK_EXECUTOR_PREFERENCE_PATCH"
-# Own the overlapping MTP prompt, scheduling, diagnostic, and adaptive overlays.
-model_runner_prepare_mtp_adaptive_drafts "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
-model_runner_prepare_extra_eos_token_identity "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
+apply_dependency_patch \
+  "mlx-swift-lm MTP prompt hidden window" "$MLX_SWIFT_LM_CHECKOUT" "$MLX_SWIFT_LM_MTP_PROMPT_WINDOW_PATCH"
+apply_dependency_patch \
+  "mlx-swift-lm MTP decode scheduling" \
+  "$MLX_SWIFT_LM_CHECKOUT" \
+  "$MLX_SWIFT_LM_MTP_DECODE_SCHEDULING_PATCH"
+apply_dependency_patch \
+  "mlx-swift-lm MTP first-rejection diagnostic" \
+  "$MLX_SWIFT_LM_CHECKOUT" \
+  "$MLX_SWIFT_LM_MTP_FIRST_REJECTION_DIAGNOSTIC_PATCH"
 apply_dependency_patch \
   "mlx-swift-lm ChatSession in-memory snapshot" \
   "$MLX_SWIFT_LM_CHECKOUT" \
@@ -445,37 +378,6 @@ apply_dependency_patch \
   "$MLX_SWIFT_LM_Q4_AFFINE_GROUP_SIZE_PATCH"
 
 apply_dependency_patch \
-  "mlx-swift-lm self-contained conversion metadata" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$PACKAGE_ROOT/Patches/mlx-swift-lm-self-contained-conversion.patch"
-
-apply_dependency_patch \
   "mlx-swift-lm cache memory accounting" \
   "$MLX_SWIFT_LM_CHECKOUT" \
   "$PACKAGE_ROOT/Patches/mlx-swift-lm-chat-cache-memory.patch"
-
-apply_dependency_patch \
-  "mlx-swift-lm reasoning stream events" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$PACKAGE_ROOT/Patches/mlx-swift-lm-reasoning-stream.patch"
-
-apply_dependency_patch \
-  "mlx-swift-lm Laguna tool calls and reasoning history" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$PACKAGE_ROOT/Patches/mlx-swift-lm-laguna-tools.patch"
-
-
-apply_dependency_patch \
-  "mlx-swift-lm nested Gemma marker values" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$PACKAGE_ROOT/Patches/mlx-swift-lm-gemma-nested-marker-values.patch"
-
-apply_dependency_patch \
-  "mlx-swift-lm Gemma 3 attention layout" \
-  "$MLX_SWIFT_LM_CHECKOUT" \
-  "$PACKAGE_ROOT/Patches/mlx-swift-lm-gemma3-attention-layout.patch"
-
-model_runner_prepare_gemma3_compiled_tail \
-  "$HOST_OS" "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
-
-model_runner_prepare_generation_progress "$PACKAGE_ROOT" "$MLX_SWIFT_LM_CHECKOUT"
