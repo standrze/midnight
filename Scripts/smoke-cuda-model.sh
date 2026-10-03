@@ -114,6 +114,8 @@ if ! systemctl --user show-environment >/dev/null 2>&1; then
   echo "A working systemd user manager is required for the memory-capped unit." >&2
   exit 1
 fi
+: "${MIDNIGHT_API_KEY:?Set MIDNIGHT_API_KEY before running the smoke test.}"
+systemctl --user import-environment MIDNIGHT_API_KEY
 
 # Runtime CUDA kernel compilation is separate from the Swift build. Reuse the
 # same exact toolkit, dependency, and Clang validators now; publication waits
@@ -385,6 +387,7 @@ while (( SECONDS < HEALTH_DEADLINE )); do
     exit 1
   fi
   if curl --fail --silent --show-error \
+    --header "Authorization: Bearer $MIDNIGHT_API_KEY" \
     --connect-timeout 2 --max-time 5 \
     --output "$RESULT_DIR/models-readiness.body" \
     --write-out '{"http_code":%{http_code},"time_total":%{time_total},"time_starttransfer":%{time_starttransfer}}\n' \
@@ -427,6 +430,7 @@ fi
 printf '%s\n' "$EXPECTED_GUARD_LINE" > "$RESULT_DIR/verified-mlx-resource-guard.txt"
 
 curl --fail-with-body --silent --show-error \
+  --header "Authorization: Bearer $MIDNIGHT_API_KEY" \
   --connect-timeout 2 --max-time "$MODEL_RUNNER_SMOKE_HTTP_TIMEOUT_SECONDS" \
   --output "$RESULT_DIR/models.json" \
   --write-out '{"http_code":%{http_code},"time_total":%{time_total},"time_starttransfer":%{time_starttransfer}}\n' \
@@ -443,6 +447,7 @@ jq --null-input \
   > "$RESULT_DIR/chat-request.json"
 
 curl --fail-with-body --silent --show-error --no-buffer \
+  --header "Authorization: Bearer $MIDNIGHT_API_KEY" \
   --connect-timeout 2 --max-time "$MODEL_RUNNER_SMOKE_HTTP_TIMEOUT_SECONDS" \
   --header 'Content-Type: application/json' \
   --data-binary "@$RESULT_DIR/chat-request.json" \

@@ -23,7 +23,8 @@ struct AudioSpeechWireTests {
     @Test("Decodes every official Mistral speech field")
     func mistralRequest() throws {
         let data = Data(
-            #"{"input":"Bonjour","model":"voxtral","voice_id":"fr_female","ref_audio":"AQID","response_format":"pcm","stream":true,"metadata":{"turn":3},"prompt_cache_key":"key"}"#.utf8
+            #"{"input":"Bonjour","model":"voxtral","voice_id":"fr_female","ref_audio":"AQID","response_format":"pcm","stream":true,"metadata":{"turn":3},"prompt_cache_key":"key"}"#
+                .utf8
         )
         let request = try AudioSpeechRequest.decode(from: data)
         guard case .mistral(let speech) = request else {

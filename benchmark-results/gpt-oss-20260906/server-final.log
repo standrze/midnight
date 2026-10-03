@@ -1,6 +1,0 @@
-^DLoading /Users/stephen/Documents/ChatGPT/midnight/tmp/models/gpt-oss-20b-MXFP4-Q4-f356f274…  engine=metal
-MLX resource guard: memory=54975581389 bytes cache=268435456 bytes
-Measured MLX wired-memory plan: peak=12129612580 kv=31244288 workspace=919887524 limit=13611009294 cap=54975581389
-Context policy: limit=8192, prefill=512, KV=none, geometry=known
-GPT-OSS tool-continuation cache available: zero-copy reuse after tool calls; completed text replies release KV state
-Ready: http://127.0.0.1:18841/v1  model=gpt-oss-20b  engine=metal

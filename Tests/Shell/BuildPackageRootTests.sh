@@ -67,9 +67,6 @@ if [[ "$resolve" == 1 ]]; then
   checkout mlx-swift/Source/Cmlx/mlx-c "$c_revision"
   checkout mlx-swift-lm "$MLX_SWIFT_LM_EXPECTED_REVISION"
   checkout swift-transformers "$SWIFT_TRANSFORMERS_EXPECTED_REVISION"
-  # The audio revision is an inline verify_checkout_revision argument.
-  audio_revision="$(sed -n '/verify_checkout_revision "mlx-audio-swift"/,+2p' "$TEST_RUNTIME/prepare-dependencies.sh" | tail -n 1 | tr -d ' "')"
-  checkout mlx-audio-swift "$audio_revision"
   mkdir -p "$scratch/checkouts/mlx-swift-lm/Libraries/MLXLLM/Models"
   mkdir -p "$scratch/checkouts/mlx-swift-lm/Libraries/MLXLMCommon"
   mkdir -p "$scratch/checkouts/mlx-swift/Source/Cmlx/mlx-c/mlx/c"

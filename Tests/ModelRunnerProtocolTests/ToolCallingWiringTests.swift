@@ -13,7 +13,8 @@ struct ToolCallingWiringTests {
             encoding: .utf8
         )
 
-        #expect(source.contains("container.prepare(input: UserInput("))
+        #expect(source.contains("container.prepare("))
+        #expect(source.contains("input: UserInput("))
         #expect(source.contains("tools: toolSpecs"))
         #expect(source.contains("case .toolCall(let call):"))
         #expect(source.contains("case .rejectedToolCall(let rejection):"))

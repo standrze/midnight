@@ -1,6 +1,0 @@
-Laguna-shaped interleaved Metal format A/B
-warmup=32 iterations=40 queue_depth=64 queue_rounds=31 dtype=bfloat16
-workload	first	second	first_total_ms	second_total_ms	second_total_speedup	first_execution_ms	second_execution_ms	second_execution_speedup
-dense-qmv	q4r8-affine-4bit-g64	nvfp4-g16	0.010	0.011	0.939x	0.010	0.010	0.938x
-moe-gate-up	q4r8-affine-4bit-g64	nvfp4-g16	0.041	0.041	0.999x	0.040	0.040	0.998x
-moe-down	q4r8-affine-4bit-g64	nvfp4-g16	0.040	0.039	1.018x	0.039	0.039	1.019x

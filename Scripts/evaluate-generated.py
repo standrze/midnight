@@ -24,6 +24,7 @@ from fractions import Fraction
 import hashlib
 import itertools
 import json
+import math
 import os
 from pathlib import Path
 import random
@@ -221,8 +222,73 @@ output(MARKER, flush=True)
                     "sandbox": {**result, "output": result["output"].replace(marker, "MIDNIGHT_TESTS_PASSED")}}
 
 
+def validate_security_key(key):
+    verdict = key.get("verdict")
+    cwes, lines = key.get("cwes"), key.get("evidence_lines")
+    line_count = key.get("line_count")
+    if not isinstance(verdict, str) or verdict not in {"safe", "vulnerable"} or type(line_count) is not int or line_count < 1:
+        raise ValueError("Security keys require a safe/vulnerable verdict and positive line_count")
+    if not isinstance(cwes, list) or any(not isinstance(v, str) or not re.fullmatch(r"CWE-[1-9][0-9]*", v) for v in cwes) or len(cwes) != len(set(cwes)):
+        raise ValueError("Security keys require distinct canonical CWE labels")
+    if not isinstance(lines, list) or any(type(v) is not int or not 1 <= v <= line_count for v in lines) or len(lines) != len(set(lines)):
+        raise ValueError("Security keys require distinct in-range evidence lines")
+    if (verdict == "safe" and (cwes or lines)) or (verdict == "vulnerable" and (not cwes or not lines)):
+        raise ValueError("Security verdict disagrees with CWE/evidence labels")
+    if "evidence_anchor_lines" in key:
+        anchors = key["evidence_anchor_lines"]
+        if (not isinstance(anchors, list)
+                or any(type(v) is not int or v not in lines for v in anchors)
+                or len(anchors) != len(set(anchors))
+                or (verdict == "vulnerable" and not anchors)
+                or (verdict == "safe" and anchors)):
+            raise ValueError("Security anchors must be distinct accepted evidence lines and match the verdict")
+
+
+def score_security_json(text, key):
+    """Grade labeled code review without executing the supplied source or response."""
+    validate_security_key(key)
+    diagnostic = {"expected_verdict": key["verdict"], "predicted_verdict": None,
+                  "format_valid": False, "classification_passed": False}
+    result = {"status": "scored", "passed": False, "security_diagnostic": diagnostic}
+    if not isinstance(text, str) or len(text.encode()) > CODE_LIMIT:
+        return {**result, "reason": "invalid_or_oversized_security_response"}
+    if "```" in text:
+        match = re.fullmatch(r"\s*```json[ \t]*\n(.*?)\n```\s*", text, re.S | re.I)
+        if not match or "```" in match.group(1):
+            return {**result, "reason": "ambiguous_security_json_fence"}
+        text = match.group(1)
+
+    def unique_object(pairs):
+        value = {}
+        for name, item in pairs:
+            if name in value:
+                raise ValueError("duplicate JSON key")
+            value[name] = item
+        return value
+
+    try:
+        value = json.loads(text, object_pairs_hook=unique_object,
+                           parse_constant=lambda v: (_ for _ in ()).throw(ValueError(v)))
+        if not isinstance(value, dict) or set(value) != {"verdict", "cwes", "evidence_lines"}:
+            raise ValueError("unexpected response fields")
+        validate_security_key({**value, "line_count": key["line_count"]})
+    except (ValueError, TypeError, RecursionError):
+        return {**result, "reason": "invalid_security_json"}
+    classification = value["verdict"] == key["verdict"]
+    cwes = set(value["cwes"]) == set(key["cwes"])
+    expected_lines, actual_lines = set(key["evidence_lines"]), set(value["evidence_lines"])
+    evidence = (bool(actual_lines & expected_lines) and actual_lines <= expected_lines) if key["verdict"] == "vulnerable" else not actual_lines
+    if key["verdict"] == "vulnerable" and "evidence_anchor_lines" in key:
+        evidence = evidence and bool(actual_lines & set(key["evidence_anchor_lines"]))
+    diagnostic.update(predicted_verdict=value["verdict"], format_valid=True,
+                      classification_passed=classification, cwe_passed=cwes, evidence_passed=evidence)
+    return {**result, "passed": classification and cwes and evidence, "reason": "security_verdict_cwe_evidence"}
+
+
 def score_answer(text, key, sandbox=None, retrieval_diagnostics=False):
     kind = key["kind"]
+    if kind == "security-json":
+        return score_security_json(text, key)
     if kind == "exact":
         result = {"status": "scored", "passed": text.strip() == key["answer"].strip(), "reason": "exact_match"}
         if retrieval_diagnostics:
@@ -268,10 +334,10 @@ def load_inputs(tasks_path, answers_path):
     for task in tasks:
         if set(task) - {"id", "category", "prompt", "metadata"}:
             raise ValueError("Public tasks may contain only id/category/prompt/metadata; answers belong in the private key")
-        if task.get("category") not in {"math", "code", "retrieval"} or not isinstance(task.get("prompt"), str) or not task["prompt"].strip():
+        if task.get("category") not in {"math", "code", "retrieval", "cybersecurity"} or not isinstance(task.get("prompt"), str) or not task["prompt"].strip():
             raise ValueError("Each public task needs a supported category and nonblank prompt")
         answer = keys[task["id"]]
-        expected = {"math": "numeric", "code": "python-tests", "retrieval": "exact"}[task["category"]]
+        expected = {"math": "numeric", "code": "python-tests", "retrieval": "exact", "cybersecurity": "security-json"}[task["category"]]
         if answer.get("kind") != expected:
             raise ValueError("Task category and answer kind disagree")
         if expected == "python-tests":
@@ -282,6 +348,8 @@ def load_inputs(tasks_path, answers_path):
             ast.parse(answer["setup"])
             for case in answer["tests"]:
                 ast.parse(case)
+        elif expected == "security-json":
+            validate_security_key(answer)
         elif not isinstance(answer.get("answer"), str) or not answer["answer"].strip():
             raise ValueError("Numeric/exact keys need nonblank answer text")
         elif expected == "numeric":
@@ -292,11 +360,32 @@ def load_inputs(tasks_path, answers_path):
 def summarize(rows):
     scored = [r for r in rows if r["status"] == "scored"]
     passed = sum(r["passed"] is True for r in scored)
-    return {"tasks": len(rows), "scored": len(scored), "passed": passed,
+    result = {"tasks": len(rows), "scored": len(scored), "passed": passed,
             "accuracy": passed / len(rows) if len(scored) == len(rows) and rows else None,
             "scored_subset_accuracy_diagnostic": passed / len(scored) if scored else None,
             "complete": len(scored) == len(rows),
             "output_limit_reached": sum(bool(r.get("output_limit_reached")) for r in rows)}
+
+    security_rows = [r for r in rows if r.get("category") == "cybersecurity" or "security_diagnostic" in r]
+    security = [r["security_diagnostic"] for r in security_rows if "security_diagnostic" in r]
+    if security:
+        tp = sum(r["expected_verdict"] == "vulnerable" and r["predicted_verdict"] == "vulnerable" for r in security)
+        fp = sum(r["expected_verdict"] == "safe" and r["predicted_verdict"] == "vulnerable" for r in security)
+        fn = sum(r["expected_verdict"] == "vulnerable" and r["predicted_verdict"] != "vulnerable" for r in security)
+        tn = sum(r["expected_verdict"] == "safe" and r["predicted_verdict"] == "safe" for r in security)
+        negatives = sum(r["expected_verdict"] == "safe" for r in security)
+        result["security_detection"] = {
+            "tasks": len(security), "true_positive": tp, "false_positive": fp,
+            "false_negative_including_invalid": fn, "true_negative": tn,
+            "invalid_response_count": sum(not r["format_valid"] for r in security),
+            "precision": tp / (tp + fp) if tp + fp else None,
+            "recall_including_invalid": tp / (tp + fn) if tp + fn else None,
+            "false_positive_rate": fp / negatives if negatives else None,
+            "classification_accuracy_including_invalid": (tp + tn) / len(security),
+            "complete": len(security) == len(security_rows),
+            "purpose": "Labeled vulnerability detection; primary task success also requires correct CWE and relevant evidence lines",
+        }
+    return result
 
 
 def score_report(path, tasks, keys, tasks_hash, sandbox, retrieval_diagnostics=False):
@@ -358,6 +447,35 @@ def score_report(path, tasks, keys, tasks_hash, sandbox, retrieval_diagnostics=F
                            for category in sorted({r["category"] for r in rows})}, "samples": rows}
 
 
+def conservative_paired_bound(baseline_rows, candidate_rows, ids, confidence=0.95):
+    """Weighted Hoeffding bound for paired deltas in [-1, 1].
+
+    Group correlated tasks by declared category/family. Unit weights preserve
+    record-weighted accuracy. Independence across units is an assumption, not
+    something this bound can establish; unknown source correlation still matters.
+    Unlike an empirical bootstrap, zero observed discordance never gives [0, 0].
+    """
+    if not ids or not 0 < confidence < 1:
+        raise ValueError("A paired bound needs records and confidence in (0, 1)")
+    units = {}
+    for identifier in ids:
+        row = baseline_rows[identifier]
+        metadata = row.get("metadata", {})
+        family = metadata.get("family") if isinstance(metadata, dict) else None
+        key = (row["category"], "family", family) if isinstance(family, str) and family else (row["category"], "task", identifier)
+        units.setdefault(key, []).append(int(candidate_rows[identifier]["passed"]) - int(row["passed"]))
+    count = len(ids)
+    mean = sum(sum(values) for values in units.values()) / count
+    weights_squared = sum((len(values) / count) ** 2 for values in units.values())
+    radius = math.sqrt(2 * math.log(2 / (1 - confidence)) * weights_squared)
+    return {"confidence": confidence, "interval": [max(-1.0, mean - radius), min(1.0, mean + radius)],
+            "independent_unit_count": len(units), "record_count": count,
+            "method": "weighted Hoeffding, paired delta range [-1,1]",
+            "unit": "category/family where declared; otherwise task ID",
+            "assumptions": "Independent sampled units; arbitrary dependence within a family. Authored convenience tasks do not establish representative sampling or independence.",
+            "promotion_gate": False}
+
+
 def paired_comparison(baseline, candidate, draws, seed, allow_setting_differences=()):
     a = {r["id"]: r for r in baseline["samples"]}
     b = {r["id"]: r for r in candidate["samples"]}
@@ -396,7 +514,8 @@ def paired_comparison(baseline, candidate, draws, seed, allow_setting_difference
             result.update(accuracy_delta=sum(delta.values()) / len(ids),
                           paired_95_percent_interval=[bootstrap[int(draws * .025)], bootstrap[min(draws - 1, int(draws * .975))]],
                           candidate_only_correct=sum(v == 1 for v in delta.values()),
-                          baseline_only_correct=sum(v == -1 for v in delta.values()))
+                          baseline_only_correct=sum(v == -1 for v in delta.values()),
+                          conservative_finite_sample_bound=conservative_paired_bound(a, b, ids))
         comparisons[category] = result
     return comparisons
 
@@ -412,7 +531,7 @@ def evaluate(tasks_path, answers_path, reports, sandbox=None, draws=10000, seed=
     tasks_info = file_info(tasks_path)
     models = {label: score_report(path, tasks, keys, tasks_info["sha256"], sandbox, retrieval_diagnostics) for label, path in reports.items()}
     return {"format": 1, "created_at": datetime.now(timezone.utc).isoformat(),
-            "purpose": "Single greedy generation task accuracy; code success is pass@1 on the provided MBPP tests, not teacher-forced NLL or KL.",
+            "purpose": "Single greedy generation task accuracy; code success uses supplied executable tests; cybersecurity success requires labeled verdict, CWE and source evidence. NLL/KL are separate diagnostics.",
             "provenance": {"tasks": tasks_info, "private_answers": file_info(answers_path),
                            "scorer": file_info(__file__), "python": sys.version,
                            "sandbox": sandbox.provenance if sandbox else None},
@@ -428,6 +547,7 @@ def evaluate(tasks_path, answers_path, reports, sandbox=None, draws=10000, seed=
                             "Matching token identities and all recorded execution settings gate paired comparisons. Only explicitly allowed kv_compression differences qualify as runtime-setting experiments, with both values retained.",
                             "Retrieval target lengths are estimates; sample prompt_token_count is the measured length. Synthetic key lookup is not a broad long-context reasoning test.",
                             "Code never runs on the host. The Docker sandbox is a containment boundary, not a formally secure or adversarially tamper-proof grader.",
+                            "Security-json scores only the labeled threat scope and source lines; it does not establish broad security expertise, remediation quality or exploit validity.",
                             "Timing is excluded from all accuracy comparisons. No speed or universal-quality promotion follows automatically."]}
 
 

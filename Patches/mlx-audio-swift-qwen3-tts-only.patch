@@ -1,0 +1,23 @@
+diff --git a/Package.swift b/Package.swift
+index c0ae8fb..6f1bfcc 100644
+--- a/Package.swift
++++ b/Package.swift
+@@ -3,7 +3,7 @@ import PackageDescription
+ 
+ let package = Package(
+     name: "MLXAudio",
+-    platforms: [.macOS(.v14), .iOS(.v17)],
++    platforms: [.macOS(.v15), .iOS(.v17)],
+     products: [
+         // Core foundation library
+         .library(name: "MLXAudioCore", targets: ["MLXAudioCore"]),
+@@ -123,7 +123,8 @@ let package = Package(
+                 "Models/Soprano/README.md",
+                 "Models/StyleTTS2/KittenTTS/README.md",
+                 "Models/StyleTTS2/Kokoro/README.md",
+-            ]
++            ],
++            sources: ["Generation.swift", "Models/Qwen3", "Models/Qwen3TTS"]
+         ),
+ 
+         // MARK: - MLXAudioSTT

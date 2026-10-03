@@ -6,13 +6,20 @@ import NIOHTTP1
 import NIOPosix
 
 final class ModelHTTPServer: @unchecked Sendable {
-    private let runner: LocalModelRunner?
-    private let tokenLimit: GenerationTokenLimit
-    private let servedModelName: String
+    private let manager: ModelLifecycleManager?
+    let authentication: APIKeyAuthentication?
+    let runner: LocalModelRunner?
+    let tokenLimit: GenerationTokenLimit
+    let servedModelName: String
+    let responsesStore: ResponsesStore
+    let recordingStore: InspectorRecordingStore
+    let modelCard: ModelCard?
     private let modelCreated: Int
-    private let verbose: Bool
-    private let speechSynthesizer: (any LocalSpeechSynthesizing)?
-    private let voiceCatalog: VoxtralVoiceCatalog?
+    let verbose: Bool
+    let speechSynthesizer: (any LocalSpeechSynthesizing)?
+    private let vision: (any VisionModelServing)?
+    let voiceCatalog: VoxtralVoiceCatalog?
+    let inspectorRuntimeGeneration: UInt64?
 
     init(
         runner: LocalModelRunner? = nil,
@@ -20,25 +27,61 @@ final class ModelHTTPServer: @unchecked Sendable {
         tokenLimit: GenerationTokenLimit,
         verbose: Bool = false,
         speechSynthesizer: (any LocalSpeechSynthesizing)? = nil,
-        voiceCatalog: VoxtralVoiceCatalog? = nil
+        vision: (any VisionModelServing)? = nil,
+        voiceCatalog: VoxtralVoiceCatalog? = nil,
+        modelCreated: Int = Int(Date().timeIntervalSince1970),
+        modelCard: ModelCard? = nil,
+        inspectorRuntimeGeneration: UInt64? = nil,
+        manager: ModelLifecycleManager? = nil,
+        authentication: APIKeyAuthentication? = nil,
+        responsesStore: ResponsesStore = ResponsesStore(),
+        recordingStore: InspectorRecordingStore = InspectorRecordingStore()
     ) {
+        self.manager = manager
+        self.authentication = authentication
+        self.responsesStore = responsesStore
+        self.recordingStore = recordingStore
         self.runner = runner
         self.tokenLimit = tokenLimit
         self.servedModelName = servedModelName
-        self.modelCreated = Int(Date().timeIntervalSince1970)
+        self.modelCreated = modelCreated
+        self.modelCard = (modelCard ?? ModelCard(name: servedModelName)).withCapabilities(
+            .init(
+                vision: vision != nil, audioInput: speechSynthesizer?.supportsReferenceAudio ?? false,
+                audioOutput: speechSynthesizer != nil, decisions: runner?.supportsDecisions == true ? true : nil)
+        ).withVoices(speechSynthesizer?.voiceCatalog.modelCardVoices)
+        self.inspectorRuntimeGeneration = inspectorRuntimeGeneration
         self.verbose = verbose
         self.speechSynthesizer = speechSynthesizer
+        self.vision = vision
         self.voiceCatalog = speechSynthesizer?.voiceCatalog ?? voiceCatalog
     }
 
-    func run(host: String, port: Int) async throws {
+    convenience init(
+        manager: ModelLifecycleManager, verbose: Bool = false,
+        authentication: APIKeyAuthentication? = nil,
+        responsesStore: ResponsesStore = ResponsesStore(),
+        recordingStore: InspectorRecordingStore = InspectorRecordingStore()
+    ) {
+        // Model handlers run on a request-scoped server with the selected
+        // model's real limits. This listener only handles admission and control.
+        self.init(
+            servedModelName: "", tokenLimit: try! GenerationTokenLimit(configuredMaximum: 512),
+            verbose: verbose, manager: manager, authentication: authentication, responsesStore: responsesStore,
+            recordingStore: recordingStore)
+    }
+
+    func run(
+        host: String, port: Int,
+        onListening: (@Sendable () async -> Void)? = nil
+    ) async throws {
         let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
         do {
             let channel = try await ServerBootstrap(group: group)
                 .serverChannelOption(ChannelOptions.backlog, value: 256)
                 .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
                 .childChannelInitializer { channel in
-                    channel.pipeline.configureHTTPServerPipeline().flatMap {
+                    Self.configureHTTPPipeline(on: channel).flatMap {
                         channel.pipeline.addHandler(ModelHTTPRequestHandler(server: self))
                     }
                 }
@@ -46,7 +89,13 @@ final class ModelHTTPServer: @unchecked Sendable {
                 .bind(host: host, port: port)
                 .get()
 
-            try await channel.closeFuture.get()
+            try await withTaskCancellationHandler {
+                await onListening?()
+                try Task.checkCancellation()
+                try await channel.closeFuture.get()
+            } onCancel: {
+                channel.close(promise: nil)
+            }
             try await group.shutdownGracefully()
         } catch {
             try? await group.shutdownGracefully()
@@ -54,7 +103,18 @@ final class ModelHTTPServer: @unchecked Sendable {
         }
     }
 
-    fileprivate func handle(head: HTTPRequestHead, body: Data, channel: Channel) async {
+    static func configureHTTPPipeline(on channel: Channel) -> EventLoopFuture<Void> {
+        // Responses close the connection, and responseInFlight ignores extra requests.
+        // Keep socket reads active while streaming so a disconnect cancels work even
+        // during prefill or hidden reasoning, when no response chunks are written.
+        channel.pipeline.configureHTTPServerPipeline(withPipeliningAssistance: false)
+    }
+
+    func handle(head: HTTPRequestHead, body: Data, channel: Channel) async {
+        if let manager {
+            await handleManaged(head: head, body: body, channel: channel, manager: manager)
+            return
+        }
         let requestID = String(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(12))
         let started = ContinuousClock.now
         log(
@@ -63,6 +123,28 @@ final class ModelHTTPServer: @unchecked Sendable {
                 + "client=\(channel.remoteAddress?.description ?? "unknown") bytes=\(body.count)"
         )
         do {
+            // Recording status belongs to the listener and must stay readable
+            // during generation and when the selected runtime changes.
+            if let route = InspectorRecordingRoute.parse(uri: head.uri) {
+                try await handleRecording(route: route, head: head, body: body, channel: channel)
+                return
+            }
+            // Discovery belongs to this listener, including for vision cards.
+            // The optional worker owns image decoding and request validation;
+            // dispatch before the text-only message decoder sees image parts.
+            let isModelDiscovery =
+                head.method == .GET
+                && (head.uri == "/v1/models" || head.uri.hasPrefix("/v1/models/"))
+            if let vision, !isModelDiscovery {
+                try await handleVision(vision, head: head, body: body, channel: channel)
+                return
+            }
+            if let route = ResponsesAPIRoute.parse(uri: head.uri) {
+                try await handleResponses(
+                    route: route, head: head, body: body,
+                    channel: channel, requestID: requestID)
+                return
+            }
             if let audioRoute = AudioAPIRoute.parse(uri: head.uri) {
                 guard audioRoute.allows(method: head.method.rawValue) else {
                     throw AudioHTTPError(
@@ -116,6 +198,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                     )
                 }
                 try await sendJSON(modelDescriptor(), on: channel)
+            case (.POST, "/v1/decisions"):
+                try await handleDecisions(body: body, channel: channel)
             case (.POST, "/v1/chat/completions"):
                 try await handleChat(body: body, channel: channel, requestID: requestID)
             default:
@@ -177,737 +261,13 @@ final class ModelHTTPServer: @unchecked Sendable {
     }
 
     private func modelDescriptor() -> ModelResponse {
-        ModelResponse(id: servedModelName, created: modelCreated,
+        ModelResponse(
+            id: servedModelName, created: modelCreated,
             contextLength: runner?.contextLength, prefillStepSize: runner?.prefillStepSize,
-            kvCompression: runner?.kvCompression, memoryLimitBytes: runner?.memoryLimitBytes)
-    }
-
-    private func handleInspector(body: Data?, channel: Channel) async throws {
-        guard let runner else {
-            throw ModelHTTPError(
-                status: .notImplemented,
-                message: "The loaded model does not provide layer inspection.",
-                type: "invalid_request_error",
-                code: "unsupported_model_feature"
-            )
-        }
-        do {
-            if let body {
-                guard body.count <= 32 * 1024 else {
-                    throw ModelHTTPError(
-                        status: .payloadTooLarge,
-                        message: "Inspector requests may not exceed 32 KiB.",
-                        code: "request_too_large"
-                    )
-                }
-                let request: InspectorTraceRequest
-                do {
-                    request = try JSONDecoder().decode(InspectorTraceRequest.self, from: body)
-                } catch {
-                    throw ModelHTTPError(
-                        status: .badRequest,
-                        message: "Invalid Inspector request: \(error.localizedDescription)",
-                        code: "invalid_json"
-                    )
-                }
-                try await sendJSON(try await runner.inspectorTrace(request: request), on: channel)
-            } else {
-                try await sendJSON(try await runner.inspectorModel(), on: channel)
-            }
-        } catch LocalModelRunnerError.busy {
-            throw ModelHTTPError(
-                status: .conflict,
-                message: LocalModelRunnerError.busy.localizedDescription,
-                type: "server_error",
-                code: "model_busy"
-            )
-        } catch let error as ModelInspectionError {
-            switch error {
-            case .invalidRequest(let message):
-                throw ModelHTTPError(status: .badRequest, message: message, code: "invalid_inspector_request")
-            case .unsupported(let message):
-                throw ModelHTTPError(status: .unprocessableEntity, message: message, code: "unsupported_model_feature")
-            case .invalidGraph(let message):
-                throw ModelHTTPError(status: .internalServerError, message: message, type: "server_error", code: "invalid_model_graph")
-            }
-        }
-    }
-
-    private func handleAudio(
-        route: AudioAPIRoute,
-        head: HTTPRequestHead,
-        body: Data,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        switch route {
-        case .speech:
-            try await handleSpeech(body: body, channel: channel, requestID: requestID)
-        case .voices where head.method == .GET:
-            try await handleVoiceList(uri: head.uri, channel: channel)
-        case .voices where head.method == .POST:
-            if requestUsesMultipartFormData(head) {
-                throw AudioHTTPError(
-                    status: .notImplemented,
-                    message: "OpenAI custom voice creation is recognized, but this local checkpoint does not include the encoder needed to create a voice from audio.",
-                    type: "invalid_request_error",
-                    param: "audio_sample",
-                    code: "unsupported_model_feature",
-                    style: .openAI
-                )
-            }
-            try await handleCreateVoice(body: body)
-        case .voice(let voiceID) where head.method == .GET:
-            try await sendJSON(try voiceResponse(id: voiceID), on: channel)
-        case .voice(let voiceID) where head.method == .PATCH:
-            try handleUpdateVoice(id: voiceID, body: body)
-        case .voice(let voiceID) where head.method == .DELETE:
-            try handleDeleteVoice(id: voiceID)
-        case .voiceSample(let voiceID):
-            try handleVoiceSample(id: voiceID)
-        default:
-            throw AudioHTTPError(
-                status: .methodNotAllowed,
-                message: "Method \(head.method.rawValue) is not allowed for this audio route.",
-                code: "method_not_allowed"
-            )
-        }
-    }
-
-    private func handleSpeech(
-        body: Data,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        let request: AudioSpeechRequest
-        do {
-            request = try AudioSpeechRequest.decode(from: body)
-        } catch {
-            let style: AudioHTTPError.Style = speechBodyLooksOpenAI(body) ? .openAI : .mistralValidation
-            let issue = decodingIssue(error)
-            throw AudioHTTPError(
-                status: style == .openAI ? .badRequest : .unprocessableEntity,
-                message: "Invalid speech request: \(issue.message)",
-                param: issue.param,
-                code: issue.code,
-                style: style
-            )
-        }
-
-        switch request {
-        case .openAI(let openAI):
-            try await handleOpenAISpeech(openAI, channel: channel, requestID: requestID)
-        case .mistral(let mistral):
-            try await handleMistralSpeech(mistral, channel: channel, requestID: requestID)
-        }
-    }
-
-    private func handleOpenAISpeech(
-        _ request: OpenAISpeechRequest,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        guard !request.input.isEmpty, request.input.count <= 4_096 else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "input must contain between 1 and 4096 characters.",
-                param: "input",
-                code: "invalid_parameter",
-                style: .openAI
-            )
-        }
-        guard request.speed.isFinite, (0.25...4).contains(request.speed) else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "speed must be between 0.25 and 4.0.",
-                param: "speed",
-                code: "invalid_parameter",
-                style: .openAI
-            )
-        }
-        if let instructions = request.instructions, instructions.count > 4_096 {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "instructions may not exceed 4096 characters.",
-                param: "instructions",
-                code: "invalid_parameter",
-                style: .openAI
-            )
-        }
-        let synthesizer = try requireSpeechSynthesizer(style: .openAI)
-        guard request.model == synthesizer.servedModelName else {
-            throw AudioHTTPError(
-                status: .notFound,
-                message: "The speech model '\(request.model)' is not loaded.",
-                param: "model",
-                code: "model_not_found",
-                style: .openAI
-            )
-        }
-        let requestedVoiceID = request.voice.value
-        guard let voice = synthesizer.voiceCatalog.voice(id: requestedVoiceID) else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "The voice '\(requestedVoiceID)' is not available.",
-                param: "voice",
-                code: "voice_not_found",
-                style: .openAI
-            )
-        }
-        guard let format = LocalSpeechAudioFormat(rawValue: request.responseFormat.rawValue) else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "The requested response format is not supported.",
-                param: "response_format",
-                code: "unsupported_format",
-                style: .openAI
-            )
-        }
-        guard synthesizer.supportedAudioFormats.contains(format) else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "The loaded speech model does not support \(format.rawValue) output.",
-                param: "response_format",
-                code: "unsupported_format",
-                style: .openAI
-            )
-        }
-        guard synthesizer.supportedSpeedRange.contains(request.speed) else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "The loaded speech model currently supports speed 1.0 only.",
-                param: "speed",
-                code: "unsupported_model_feature",
-                style: .openAI
-            )
-        }
-        guard request.instructions == nil || synthesizer.supportsInstructions else {
-            throw AudioHTTPError(
-                status: .badRequest,
-                message: "The loaded speech model does not support instructions.",
-                param: "instructions",
-                code: "unsupported_model_feature",
-                style: .openAI
-            )
-        }
-        log(
-            requestID,
-            "speech protocol=openai model=\(request.model) voice=\(voice.id) "
-                + "format=\(format.rawValue) characters=\(request.input.count)"
-        )
-        let synthesis = LocalSpeechSynthesisRequest(
-            input: request.input,
-            voiceID: voice.id,
-            format: format,
-            pcmEncoding: .signedInt16LittleEndian,
-            instructions: request.instructions,
-            speed: request.speed
-        )
-        switch request.streamFormat {
-        case .audio:
-            try await streamOpenAIAudio(
-                synthesizer: synthesizer,
-                request: synthesis,
-                channel: channel,
-                requestID: requestID
-            )
-        case .sse:
-            try await streamOpenAISSE(
-                synthesizer: synthesizer,
-                request: synthesis,
-                channel: channel,
-                requestID: requestID
-            )
-        }
-    }
-
-    private func handleMistralSpeech(
-        _ request: MistralSpeechRequest,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        guard !request.input.isEmpty else {
-            throw mistralValidation("input must not be empty.", param: "input")
-        }
-        guard request.refAudio == nil else {
-            throw mistralValidation(
-                "ref_audio is unavailable because the open Voxtral checkpoint does not include audio encoder weights.",
-                param: "ref_audio",
-                code: "unsupported_model_feature"
-            )
-        }
-        let synthesizer = try requireSpeechSynthesizer(style: .mistral)
-        if let model = request.model, model != synthesizer.servedModelName {
-            throw AudioHTTPError(
-                status: .notFound,
-                message: "The speech model '\(model)' is not loaded.",
-                param: "model",
-                code: "model_not_found"
-            )
-        }
-        guard let requestedVoiceID = request.voiceID ?? synthesizer.voiceCatalog.voices.first?.id else {
-            throw mistralValidation("No preset voice is available.", param: "voice_id")
-        }
-        guard let voice = synthesizer.voiceCatalog.voice(id: requestedVoiceID) else {
-            throw mistralValidation(
-                "The voice '\(requestedVoiceID)' is not available.",
-                param: "voice_id",
-                code: "voice_not_found"
-            )
-        }
-        let requestedFormat = request.responseFormat ?? .mp3
-        guard let format = LocalSpeechAudioFormat(rawValue: requestedFormat.rawValue) else {
-            throw mistralValidation(
-                "The response format '\(requestedFormat.rawValue)' is not supported.",
-                param: "response_format",
-                code: "unsupported_format"
-            )
-        }
-        guard synthesizer.supportedAudioFormats.contains(format) else {
-            throw mistralValidation(
-                "The loaded speech model does not support \(format.rawValue) output.",
-                param: "response_format",
-                code: "unsupported_format"
-            )
-        }
-        log(
-            requestID,
-            "speech protocol=mistral model=\(synthesizer.servedModelName) voice=\(voice.id) "
-                + "format=\(format.rawValue) characters=\(request.input.count) stream=\(request.stream)"
-        )
-        let synthesis = LocalSpeechSynthesisRequest(
-            input: request.input,
-            voiceID: voice.id,
-            format: format,
-            pcmEncoding: .float32LittleEndian
-        )
-        if request.stream {
-            try await streamMistralAudio(
-                synthesizer: synthesizer,
-                request: synthesis,
-                channel: channel,
-                requestID: requestID
-            )
-        } else {
-            let audio: Data
-            let usage: LocalSpeechUsage
-            do {
-                (audio, usage) = try await collectSpeech(
-                    synthesizer: synthesizer,
-                    request: synthesis
-                )
-            } catch {
-                throw speechGenerationError(error, style: .mistral)
-            }
-            try await sendJSON(
-                MistralSpeechResponse(audioData: audio.base64EncodedString()),
-                on: channel
-            )
-            log(
-                requestID,
-                "speech-complete bytes=\(audio.count) prompt_tokens=\(usage.promptTokens) "
-                    + "completion_tokens=\(usage.completionTokens)"
-            )
-        }
-    }
-
-    private func streamMistralAudio(
-        synthesizer: any LocalSpeechSynthesizing,
-        request: LocalSpeechSynthesisRequest,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        let events = await synthesizer.stream(request: request)
-        var iterator = events.makeAsyncIterator()
-        let firstEvent: LocalSpeechSynthesisEvent
-        do {
-            guard let event = try await iterator.next() else {
-                throw AudioHTTPError(
-                    status: .internalServerError,
-                    message: "Speech generation ended before producing audio or usage information.",
-                    type: "server_error",
-                    code: "missing_usage"
-                )
-            }
-            firstEvent = event
-        } catch {
-            throw speechGenerationError(error, style: .mistral)
-        }
-
-        try await beginEventStream(on: channel)
-        var usage: LocalSpeechUsage?
-        var bytes = 0
-        var nextEvent: LocalSpeechSynthesisEvent? = firstEvent
-        do {
-            while let event = nextEvent {
-                switch event {
-                case .audio(let data):
-                    bytes += data.count
-                    try await writeNamedEvent(
-                        "speech.audio.delta",
-                        value: MistralSpeechAudioDeltaEvent(
-                            audioData: data.base64EncodedString()
-                        ),
-                        on: channel
-                    )
-                case .completed(let completedUsage):
-                    usage = completedUsage
-                }
-                nextEvent = try await iterator.next()
-            }
-        } catch {
-            log(requestID, "speech-generation-failed error=\(error.localizedDescription)")
-            // The official stream has no error-event variant. Closing before
-            // the terminating chunk makes a partial stream visibly fail.
-            try? await channel.close().get()
-            return
-        }
-        guard let usage else {
-            log(requestID, "speech-generation-failed error=missing_usage")
-            try? await channel.close().get()
-            return
-        }
-        do {
-            try await writeNamedEvent(
-                "speech.audio.done",
-                value: MistralSpeechAudioDoneEvent(
-                    usage: MistralUsageInfo(
-                        promptTokens: usage.promptTokens,
-                        totalTokens: usage.totalTokens,
-                        completionTokens: usage.completionTokens
-                    )
-                ),
-                on: channel
-            )
-            log(
-                requestID,
-                "speech-complete bytes=\(bytes) prompt_tokens=\(usage.promptTokens) "
-                    + "completion_tokens=\(usage.completionTokens)"
-            )
-        } catch {
-            try? await channel.close().get()
-            return
-        }
-        try await finishStream(on: channel)
-    }
-
-    private func streamOpenAIAudio(
-        synthesizer: any LocalSpeechSynthesizing,
-        request: LocalSpeechSynthesisRequest,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        let events = await synthesizer.stream(request: request)
-        var iterator = events.makeAsyncIterator()
-        let firstEvent: LocalSpeechSynthesisEvent
-        do {
-            guard let event = try await iterator.next() else {
-                throw AudioHTTPError(
-                    status: .internalServerError,
-                    message: "Speech generation ended before producing audio or usage information.",
-                    type: "server_error",
-                    code: "missing_usage",
-                    style: .openAI
-                )
-            }
-            firstEvent = event
-        } catch {
-            throw speechGenerationError(error, style: .openAI)
-        }
-
-        var headers = HTTPHeaders()
-        headers.add(name: "content-type", value: contentType(for: request.format))
-        headers.add(name: "transfer-encoding", value: "chunked")
-        headers.add(name: "connection", value: "close")
-        try await channel.writeAndFlush(
-            HTTPServerResponsePart.head(.init(version: .http1_1, status: .ok, headers: headers))
-        ).get()
-        var bytes = 0
-        var usage: LocalSpeechUsage?
-        var nextEvent: LocalSpeechSynthesisEvent? = firstEvent
-        do {
-            while let event = nextEvent {
-                switch event {
-                case .audio(let data):
-                    bytes += data.count
-                    try await writeBody(data, on: channel)
-                case .completed(let completedUsage):
-                    usage = completedUsage
-                    log(
-                        requestID,
-                        "speech-usage prompt_tokens=\(completedUsage.promptTokens) "
-                            + "completion_tokens=\(completedUsage.completionTokens)"
-                    )
-                }
-                nextEvent = try await iterator.next()
-            }
-        } catch {
-            log(requestID, "speech-generation-failed error=\(error.localizedDescription)")
-            try? await channel.close().get()
-            return
-        }
-        guard usage != nil else {
-            log(requestID, "speech-generation-failed error=missing_usage")
-            try? await channel.close().get()
-            return
-        }
-        log(requestID, "speech-complete bytes=\(bytes)")
-        try await finishStream(on: channel)
-    }
-
-    private func streamOpenAISSE(
-        synthesizer: any LocalSpeechSynthesizing,
-        request: LocalSpeechSynthesisRequest,
-        channel: Channel,
-        requestID: String
-    ) async throws {
-        let events = await synthesizer.stream(request: request)
-        var iterator = events.makeAsyncIterator()
-        let firstEvent: LocalSpeechSynthesisEvent
-        do {
-            guard let event = try await iterator.next() else {
-                throw AudioHTTPError(
-                    status: .internalServerError,
-                    message: "Speech generation ended before producing audio or usage information.",
-                    type: "server_error",
-                    code: "missing_usage",
-                    style: .openAI
-                )
-            }
-            firstEvent = event
-        } catch {
-            throw speechGenerationError(error, style: .openAI)
-        }
-
-        try await beginEventStream(on: channel)
-        var bytes = 0
-        var usage: LocalSpeechUsage?
-        var nextEvent: LocalSpeechSynthesisEvent? = firstEvent
-        do {
-            while let event = nextEvent {
-                switch event {
-                case .audio(let data):
-                    bytes += data.count
-                    try await writeEvent(
-                        OpenAISpeechAudioDeltaEvent(audio: data.base64EncodedString()),
-                        on: channel
-                    )
-                case .completed(let completedUsage):
-                    usage = completedUsage
-                }
-                nextEvent = try await iterator.next()
-            }
-        } catch {
-            log(requestID, "speech-generation-failed error=\(error.localizedDescription)")
-            try? await channel.close().get()
-            return
-        }
-        guard let usage else {
-            log(requestID, "speech-generation-failed error=missing_usage")
-            try? await channel.close().get()
-            return
-        }
-        try await writeEvent(
-            OpenAISpeechAudioDoneEvent(
-                usage: OpenAISpeechUsage(
-                    inputTokens: usage.promptTokens,
-                    outputTokens: usage.completionTokens,
-                    totalTokens: usage.totalTokens
-                )
-            ),
-            on: channel
-        )
-        log(
-            requestID,
-            "speech-complete bytes=\(bytes) prompt_tokens=\(usage.promptTokens) "
-                + "completion_tokens=\(usage.completionTokens)"
-        )
-        try await finishStream(on: channel)
-    }
-
-    private func collectSpeech(
-        synthesizer: any LocalSpeechSynthesizing,
-        request: LocalSpeechSynthesisRequest
-    ) async throws -> (Data, LocalSpeechUsage) {
-        var audio = Data()
-        var usage: LocalSpeechUsage?
-        let events = await synthesizer.stream(request: request)
-        for try await event in events {
-            switch event {
-            case .audio(let data): audio.append(data)
-            case .completed(let completedUsage): usage = completedUsage
-            }
-        }
-        guard let usage else {
-            throw AudioHTTPError(
-                status: .internalServerError,
-                message: "Speech generation completed without usage information.",
-                code: "missing_usage"
-            )
-        }
-        return (audio, usage)
-    }
-
-    private func handleVoiceList(uri: String, channel: Channel) async throws {
-        let query = try VoiceListQuery(items: AudioAPIRoute.queryItems(uri: uri))
-        let allVoices = query.type == .custom ? [] : (voiceCatalog?.voices ?? [])
-        let selected = Array(allVoices.dropFirst(query.offset).prefix(query.limit))
-        let total = allVoices.count
-        let totalPages = total == 0 ? 0 : (total + query.limit - 1) / query.limit
-        let page = query.offset / query.limit + 1
-        try await sendJSON(
-            VoiceListResponse(
-                items: selected.map(voiceResponse),
-                total: total,
-                page: page,
-                pageSize: query.limit,
-                totalPages: totalPages
-            ),
-            on: channel
-        )
-    }
-
-    private func handleCreateVoice(body: Data) async throws {
-        let request: VoiceCreateRequest = try decodeMistralBody(body)
-        guard !request.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw mistralValidation("name must not be empty.", param: "name")
-        }
-        guard let sampleAudio = Data(base64Encoded: request.sampleAudio), !sampleAudio.isEmpty else {
-            throw mistralValidation(
-                "sample_audio must contain non-empty valid base64.",
-                param: "sample_audio"
-            )
-        }
-        throw mistralValidation(
-            "Custom voice creation is unavailable because the open Voxtral checkpoint does not include audio encoder weights.",
-            param: "sample_audio",
-            code: "unsupported_model_feature"
-        )
-    }
-
-    private func handleUpdateVoice(id: String, body: Data) throws {
-        let request: VoiceUpdateRequest = try decodeMistralBody(body)
-        if case .value(let description) = request.description, description.count > 500 {
-            throw mistralValidation(
-                "description may not exceed 500 characters.",
-                param: "description"
-            )
-        }
-        guard voiceCatalog?.voice(id: id) != nil else { throw voiceNotFound(id) }
-        throw mistralValidation(
-            "Bundled preset voices cannot be updated.",
-            param: "voice_id",
-            code: "preset_voice_read_only"
-        )
-    }
-
-    private func handleDeleteVoice(id: String) throws {
-        guard voiceCatalog?.voice(id: id) != nil else { throw voiceNotFound(id) }
-        throw mistralValidation(
-            "Bundled preset voices cannot be deleted.",
-            param: "voice_id",
-            code: "preset_voice_read_only"
-        )
-    }
-
-    private func handleVoiceSample(id: String) throws {
-        guard voiceCatalog?.voice(id: id) != nil else { throw voiceNotFound(id) }
-        throw AudioHTTPError(
-            status: .notFound,
-            message: "The open checkpoint contains an embedding for voice '\(id)', but no original WAV sample.",
-            param: "voice_id",
-            code: "voice_sample_not_found"
-        )
-    }
-
-    private func voiceResponse(id: String) throws -> VoiceResponse {
-        guard let voice = voiceCatalog?.voice(id: id) else { throw voiceNotFound(id) }
-        return voiceResponse(voice)
-    }
-
-    private func voiceResponse(_ voice: VoxtralPresetVoice) -> VoiceResponse {
-        VoiceResponse(
-            name: voice.name,
-            id: voice.apiID,
-            createdAt: voiceCatalog?.createdAt ?? Date(timeIntervalSince1970: 0),
-            userID: nil,
-            slug: voice.id,
-            languages: voice.languages,
-            gender: voice.gender,
-            tags: ["preset"],
-            description: "Bundled Voxtral preset voice"
-        )
-    }
-
-    private func requireSpeechSynthesizer(
-        style: AudioHTTPError.Style
-    ) throws -> any LocalSpeechSynthesizing {
-        guard let speechSynthesizer else {
-            throw AudioHTTPError(
-                status: .notImplemented,
-                message: "The speech API is installed, but the native Voxtral MLX generator is not connected yet.",
-                code: "speech_engine_unavailable",
-                style: style
-            )
-        }
-        return speechSynthesizer
-    }
-
-    private func speechGenerationError(
-        _ error: Error,
-        style: AudioHTTPError.Style
-    ) -> AudioHTTPError {
-        if let error = error as? AudioHTTPError { return error }
-        return AudioHTTPError(
-            status: .internalServerError,
-            message: error.localizedDescription,
-            type: "server_error",
-            code: "generation_failed",
-            style: style
-        )
-    }
-
-    private func decodeMistralBody<Value: Decodable>(_ body: Data) throws -> Value {
-        do { return try JSONDecoder().decode(Value.self, from: body) }
-        catch {
-            let issue = decodingIssue(error)
-            throw mistralValidation(
-                "Invalid JSON request: \(issue.message)",
-                param: issue.param,
-                code: issue.code
-            )
-        }
-    }
-
-    private func decodingIssue(_ error: Error) -> (message: String, param: String?, code: String) {
-        switch error {
-        case DecodingError.keyNotFound(let key, _):
-            return ("Field '\(key.stringValue)' is required.", key.stringValue, "missing")
-        case DecodingError.valueNotFound(_, let context):
-            return (
-                context.debugDescription,
-                context.codingPath.last?.stringValue,
-                "value_error"
-            )
-        case DecodingError.typeMismatch(_, let context):
-            return (
-                context.debugDescription,
-                context.codingPath.last?.stringValue,
-                "type_error"
-            )
-        case DecodingError.dataCorrupted(let context):
-            return (
-                context.debugDescription,
-                context.codingPath.last?.stringValue,
-                "value_error"
-            )
-        case AudioSpeechRequestError.mixedProtocols:
-            return (error.localizedDescription, "voice", "invalid_request")
-        case AudioSpeechRequestError.expectedObject:
-            return (error.localizedDescription, nil, "invalid_request")
-        default:
-            return (error.localizedDescription, nil, "invalid_json")
-        }
+            kvCompression: runner?.kvCompression, memoryLimitBytes: runner?.memoryLimitBytes,
+            maximumOutputTokens: runner == nil ? nil : tokenLimit.configuredMaximum,
+            defaultOutputTokens: runner == nil ? nil : tokenLimit.defaultTokens, modelCard: modelCard,
+            nativeProtocol: nativeModelProtocol(at: runner?.modelPath))
     }
 
     static func chatDecodingIssue(_ error: Error) -> (message: String, param: String?) {
@@ -933,67 +293,21 @@ final class ModelHTTPServer: @unchecked Sendable {
                 result += (result.isEmpty ? "" : ".") + key.stringValue
             }
         }
-        guard !path.isEmpty else { return (context.debugDescription, nil) }
+        guard !path.isEmpty else {
+            return (context.debugDescription, nil)
+        }
         return ("\(path): \(context.debugDescription)", path)
     }
 
-    private func mistralValidation(
-        _ message: String,
-        param: String?,
-        code: String = "invalid_parameter"
-    ) -> AudioHTTPError {
-        AudioHTTPError(
-            status: .unprocessableEntity,
-            message: message,
-            param: param,
-            code: code,
-            style: .mistralValidation
-        )
+    struct ValidatedChatRequest {
+        let completion: ChatCompletionRequest
+        let requestedMaximumTokens: Int?
+        let stop: [String]
+        let toolChoicePlan: ToolChoicePlan
     }
 
-    private func voiceNotFound(_ id: String) -> AudioHTTPError {
-        AudioHTTPError(
-            status: .notFound,
-            message: "The voice '\(id)' does not exist.",
-            param: "voice_id",
-            code: "voice_not_found"
-        )
-    }
-
-    private func speechBodyLooksOpenAI(_ body: Data) -> Bool {
-        guard let object = try? JSONSerialization.jsonObject(with: body) as? [String: Any]
-        else { return false }
-        return object["voice"] != nil
-    }
-
-    private func requestUsesMultipartFormData(_ head: HTTPRequestHead) -> Bool {
-        guard let contentType = head.headers.first(name: "content-type") else { return false }
-        return contentType.split(separator: ";", maxSplits: 1).first?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased() == "multipart/form-data"
-    }
-
-    private func contentType(for format: LocalSpeechAudioFormat) -> String {
-        switch format {
-        case .mp3: "audio/mpeg"
-        case .opus: "audio/ogg"
-        case .aac: "audio/aac"
-        case .flac: "audio/flac"
-        case .wav: "audio/wav"
-        case .pcm: "application/octet-stream"
-        }
-    }
-
-    private func handleChat(body: Data, channel: Channel, requestID: String) async throws {
-        guard let runner else {
-            throw ModelHTTPError(
-                status: .notImplemented,
-                message: "The loaded model does not provide chat completions.",
-                type: "invalid_request_error",
-                param: "model",
-                code: "unsupported_model_feature"
-            )
-        }
+    // Keep request decoding and validation independent of the NIO channel.
+    func decodeAndValidateChatRequest(_ body: Data) throws -> ValidatedChatRequest {
         let completion: ChatCompletionRequest
         do {
             completion = try JSONDecoder().decode(ChatCompletionRequest.self, from: body)
@@ -1084,14 +398,60 @@ final class ModelHTTPServer: @unchecked Sendable {
                 code: "invalid_parameter"
             )
         }
+        do {
+            try StructuredOutputRequest.validate(
+                format: completion.responseFormat,
+                tools: toolChoicePlan.tools, stop: stop)
+        } catch {
+            throw ModelHTTPError(
+                status: .badRequest, message: error.localizedDescription,
+                param: "response_format", code: "invalid_parameter")
+        }
+        if completion.nativeProtocol != nil && !stop.isEmpty {
+            throw ModelHTTPError(
+                status: .badRequest,
+                message: "Native protocol output requires complete framing; custom stop strings are unsupported.",
+                param: "stop", code: "invalid_parameter")
+        }
+        return ValidatedChatRequest(
+            completion: completion,
+            requestedMaximumTokens: requestedMaximumTokens,
+            stop: stop,
+            toolChoicePlan: toolChoicePlan
+        )
+    }
+
+    private func handleChat(body: Data, channel: Channel, requestID: String) async throws {
+        guard let runner else {
+            throw ModelHTTPError(
+                status: .notImplemented,
+                message: "The loaded model does not provide chat completions.",
+                type: "invalid_request_error",
+                param: "model",
+                code: "unsupported_model_feature"
+            )
+        }
+        let request = try decodeAndValidateChatRequest(body)
+        let completion = request.completion
+        let requestedMaximumTokens = request.requestedMaximumTokens
+        let stop = request.stop
+        let toolChoicePlan = request.toolChoicePlan
         let preparedPrompt: PreparedModelPrompt
         do {
-            preparedPrompt = try await runner.preparePrompt(messages: completion.messages,
+            preparedPrompt = try await runner.preparePrompt(
+                messages: completion.messages,
                 maximumTokens: requestedMaximumTokens, tools: toolChoicePlan.tools,
                 toolChoice: toolChoicePlan.constraint,
-                reasoningEffort: completion.reasoningEffort)
+                reasoningEffort: completion.reasoningEffort,
+                responseFormat: completion.responseFormat, thinkingEnabled: completion.includeReasoning,
+                nativeProtocol: completion.nativeProtocol)
+        } catch let error as StructuredOutputRequestError {
+            throw ModelHTTPError(
+                status: .unprocessableEntity, message: error.localizedDescription,
+                param: "response_format", code: "unsupported_model_feature")
         } catch let error as RequestAdmissionError {
-            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+            throw ModelHTTPError(
+                status: .badRequest, message: error.localizedDescription,
                 code: "request_exceeds_limits")
         } catch LocalModelRunnerError.unsupportedForcedToolChoiceFormat(let format) {
             throw ModelHTTPError(
@@ -1122,10 +482,12 @@ final class ModelHTTPServer: @unchecked Sendable {
                 code: "unsupported_model_feature"
             )
         } catch LocalModelRunnerError.busy {
-            throw ModelHTTPError(status: .conflict, message: LocalModelRunnerError.busy.localizedDescription,
+            throw ModelHTTPError(
+                status: .conflict, message: LocalModelRunnerError.busy.localizedDescription,
                 code: "model_busy")
         } catch {
-            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+            throw ModelHTTPError(
+                status: .badRequest, message: error.localizedDescription,
                 code: "invalid_prompt")
         }
         let maximumTokensDescription = requestedMaximumTokens.map { String($0) } ?? "default"
@@ -1175,7 +537,6 @@ final class ModelHTTPServer: @unchecked Sendable {
         channel: Channel,
         requestID: String
     ) async throws {
-
         var headers = HTTPHeaders()
         headers.add(name: "content-type", value: "text/event-stream; charset=utf-8")
         headers.add(name: "cache-control", value: "no-cache")
@@ -1206,13 +567,23 @@ final class ModelHTTPServer: @unchecked Sendable {
                 tools: toolChoicePlan.tools,
                 toolChoice: toolChoicePlan.constraint,
                 reasoningEffort: completion.reasoningEffort,
-                preparedPrompt: preparedPrompt
+                thinkingEnabled: completion.includeReasoning,
+                preparedPrompt: preparedPrompt,
+                responseFormat: completion.responseFormat
             )
             var finishReason = "stop"
             var toolCallIndex = 0
             var generationMetrics: LocalModelRunnerMetrics?
             for try await event in chunks {
                 switch event {
+                case .reasoning(let text):
+                    if completion.includeReasoning == true {
+                        try await writeEvent(
+                            ChatCompletionChunk(
+                                id: completionID,
+                                model: servedModelName,
+                                choices: [.init(delta: .init(reasoningContent: text))]), on: channel)
+                    }
                 case .content(let text):
                     contentChunks += 1
                     contentCharacters += text.count
@@ -1278,7 +649,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                         usage: completion.streamOptions?.includeUsage == true
                             ? ChatCompletionUsage(
                                 promptTokens: generationMetrics.promptTokenCount,
-                                completionTokens: generationMetrics.generationTokenCount
+                                completionTokens: generationMetrics.generationTokenCount,
+                                cachedTokens: generationMetrics.cachedPromptTokenCount
                             )
                             : nil
                     ),
@@ -1318,6 +690,7 @@ final class ModelHTTPServer: @unchecked Sendable {
     ) async throws {
         let completionID = "chatcmpl-\(UUID().uuidString.replacingOccurrences(of: "-", with: ""))"
         var content = ""
+        var reasoning = ""
         var toolCalls: [OpenAIToolCall] = []
         var generationMetrics: LocalModelRunnerMetrics?
         let events = await runner.stream(
@@ -1329,11 +702,17 @@ final class ModelHTTPServer: @unchecked Sendable {
             tools: toolChoicePlan.tools,
             toolChoice: toolChoicePlan.constraint,
             reasoningEffort: completion.reasoningEffort,
-            preparedPrompt: preparedPrompt
+            thinkingEnabled: completion.includeReasoning,
+            preparedPrompt: preparedPrompt,
+            responseFormat: completion.responseFormat
         )
         do {
             for try await event in events {
                 switch event {
+                case .reasoning(let text):
+                    if completion.includeReasoning == true {
+                        reasoning += text
+                    }
                 case .content(let text): content += text
                 case .toolCall(let call): toolCalls.append(call)
                 case .metrics(let metrics):
@@ -1342,7 +721,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                 }
             }
         } catch let error as RequestAdmissionError {
-            throw ModelHTTPError(status: .badRequest, message: error.localizedDescription,
+            throw ModelHTTPError(
+                status: .badRequest, message: error.localizedDescription,
                 code: "request_exceeds_limits")
         } catch LocalModelRunnerError.busy {
             throw ModelHTTPError(
@@ -1370,7 +750,8 @@ final class ModelHTTPServer: @unchecked Sendable {
         let message = OpenAIMessage(
             role: "assistant",
             content: content.isEmpty ? nil : content,
-            toolCalls: toolCalls.isEmpty ? nil : toolCalls
+            toolCalls: toolCalls.isEmpty ? nil : toolCalls,
+            reasoningContent: reasoning.isEmpty ? nil : reasoning
         )
         try await sendJSON(
             ChatCompletionResponse(
@@ -1379,7 +760,8 @@ final class ModelHTTPServer: @unchecked Sendable {
                 choices: [.init(message: message, finishReason: finishReason)],
                 usage: ChatCompletionUsage(
                     promptTokens: generationMetrics.promptTokenCount,
-                    completionTokens: generationMetrics.generationTokenCount
+                    completionTokens: generationMetrics.generationTokenCount,
+                    cachedTokens: generationMetrics.cachedPromptTokenCount
                 )
             ),
             on: channel
@@ -1395,7 +777,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         metrics.stopReason == "length" ? "length" : "stop"
     }
 
-    private func logGeneration(_ metrics: LocalModelRunnerMetrics, requestID: String) {
+    func logGeneration(_ metrics: LocalModelRunnerMetrics, requestID: String) {
         log(
             requestID,
             "generation prompt_tokens=\(metrics.promptTokenCount) "
@@ -1411,7 +793,7 @@ final class ModelHTTPServer: @unchecked Sendable {
     private func speculativeLogSuffix(_ metrics: LocalModelRunnerMetrics) -> String {
         var suffix = ""
         if let proposed = metrics.proposedDraftTokens,
-           let accepted = metrics.acceptedDraftTokens
+            let accepted = metrics.acceptedDraftTokens
         {
             suffix += " dflash_accepted=\(accepted)/\(proposed)"
         }
@@ -1422,78 +804,42 @@ final class ModelHTTPServer: @unchecked Sendable {
     }
 
     private func promptCacheLogSuffix(_ metrics: LocalModelRunnerMetrics) -> String {
-        guard metrics.cachedPromptTokenCount > 0 else { return "" }
+        guard metrics.cachedPromptTokenCount > 0 else {
+            return ""
+        }
         return "prompt_cached=\(metrics.cachedPromptTokenCount) "
             + "prompt_prefilled=\(metrics.prefilledPromptTokenCount) "
     }
 
-    private func sendJSON<Value: Encodable>(
+    func sendJSON<Value: Encodable>(
         _ value: Value,
         status: HTTPResponseStatus = .ok,
+        additionalHeaders: HTTPHeaders = HTTPHeaders(),
         on channel: Channel
     ) async throws {
         try await send(
             status: status,
             contentType: "application/json; charset=utf-8",
             data: try JSONEncoder().encode(value),
+            additionalHeaders: additionalHeaders,
             on: channel
         )
     }
 
-    private func sendAudioError(_ error: AudioHTTPError, on channel: Channel) async throws {
-        switch error.style {
-        case .openAI:
-            try await sendJSON(
-                OpenAIErrorEnvelope(
-                    message: error.message,
-                    type: error.type,
-                    param: error.param,
-                    code: error.code
-                ),
-                status: error.status,
-                on: channel
-            )
-        case .mistralValidation:
-            let location: [ValidationLocation] = error.param.map {
-                [.string(error.location), .string($0)]
-            } ?? [.string(error.location)]
-            try await sendJSON(
-                HTTPValidationError(
-                    detail: [
-                        ValidationErrorDetail(
-                            loc: location,
-                            msg: error.message,
-                            type: error.code ?? "value_error"
-                        )
-                    ]
-                ),
-                status: error.status,
-                on: channel
-            )
-        case .mistral:
-            try await sendJSON(
-                MistralError(
-                    message: error.message,
-                    type: error.type,
-                    param: error.param,
-                    code: error.code
-                ),
-                status: error.status,
-                on: channel
-            )
-        }
-    }
-
-    private func send(
+    func send(
         status: HTTPResponseStatus,
         contentType: String,
         data: Data,
+        additionalHeaders: HTTPHeaders = HTTPHeaders(),
         on channel: Channel
     ) async throws {
         var headers = HTTPHeaders()
         headers.add(name: "content-type", value: contentType)
         headers.add(name: "content-length", value: String(data.count))
         headers.add(name: "connection", value: "close")
+        for (name, value) in additionalHeaders {
+            headers.add(name: name, value: value)
+        }
         try await channel.writeAndFlush(
             HTTPServerResponsePart.head(
                 .init(version: .http1_1, status: status, headers: headers)
@@ -1506,7 +852,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         try? await channel.close().get()
     }
 
-    private func writeEvent<Value: Encodable>(_ value: Value, on channel: Channel) async throws {
+    func writeEvent<Value: Encodable>(_ value: Value, on channel: Channel) async throws {
         let data = try JSONEncoder().encode(value)
         var event = Data("data: ".utf8)
         event.append(data)
@@ -1514,7 +860,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         try await writeBody(event, on: channel)
     }
 
-    private func beginEventStream(on channel: Channel) async throws {
+    func beginEventStream(on channel: Channel) async throws {
         var headers = HTTPHeaders()
         headers.add(name: "content-type", value: "text/event-stream; charset=utf-8")
         headers.add(name: "cache-control", value: "no-cache")
@@ -1525,7 +871,7 @@ final class ModelHTTPServer: @unchecked Sendable {
         ).get()
     }
 
-    private func writeNamedEvent<Value: Encodable>(
+    func writeNamedEvent<Value: Encodable>(
         _ name: String,
         value: Value,
         on channel: Channel
@@ -1537,12 +883,12 @@ final class ModelHTTPServer: @unchecked Sendable {
         try await writeBody(event, on: channel)
     }
 
-    private func finishStream(on channel: Channel) async throws {
+    func finishStream(on channel: Channel) async throws {
         try await channel.writeAndFlush(HTTPServerResponsePart.end(nil)).get()
         try? await channel.close().get()
     }
 
-    private func writeBody(_ data: Data, on channel: Channel) async throws {
+    func writeBody(_ data: Data, on channel: Channel) async throws {
         var buffer = channel.allocator.buffer(capacity: data.count)
         buffer.writeBytes(data)
         try await channel.writeAndFlush(
@@ -1550,41 +896,63 @@ final class ModelHTTPServer: @unchecked Sendable {
         ).get()
     }
 
-    private func log(_ requestID: String, _ message: @autoclosure () -> String) {
-        guard verbose else { return }
+    func log(_ requestID: String, _ message: @autoclosure () -> String) {
+        guard verbose else {
+            return
+        }
         print("[verbose] request=\(requestID) \(message())")
     }
 
-    private func formatDuration(_ duration: Duration) -> String {
+    func formatDuration(_ duration: Duration) -> String {
         let components = duration.components
-        let milliseconds = Double(components.seconds) * 1_000
+        let milliseconds =
+            Double(components.seconds) * 1_000
             + Double(components.attoseconds) / 1_000_000_000_000_000
         return String(format: "%.1fms", milliseconds)
     }
 
-    private func formatRate(_ rate: Double) -> String {
-        guard rate.isFinite else { return "n/a" }
+    func formatRate(_ rate: Double) -> String {
+        guard rate.isFinite else {
+            return "n/a"
+        }
         return String(format: "%.2f", rate)
     }
 }
 
 final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked Sendable {
     typealias InboundIn = HTTPServerRequestPart
-    typealias ResponseAction = @Sendable (
-        HTTPRequestHead, Data, Bool, Channel
-    ) async -> Void
+    typealias ResponseAction =
+        @Sendable (
+            HTTPRequestHead, Data, Bool, Channel
+        ) async -> Void
 
     private let responseAction: ResponseAction
+    private let authentication: APIKeyAuthentication?
     private let maximumRequestBodyBytes = 32 * 1_024 * 1_024
     private var requestHead: HTTPRequestHead?
     private var body = Data()
     private var bodyExceededLimit = false
+    private var authenticationRejected = false
     private var responseInFlight = false
     private var responseTask: Task<Void, Never>?
 
     init(server: ModelHTTPServer) {
+        authentication = server.authentication
         responseAction = { head, body, exceededLimit, channel in
-            if exceededLimit {
+            if let authentication = server.authentication, !authentication.accepts(head.headers) {
+                var headers = HTTPHeaders()
+                headers.add(name: "www-authenticate", value: "Bearer realm=\"Midnight\"")
+                try? await server.sendJSON(
+                    OpenAIErrorEnvelope(
+                        message: "A valid API key is required.",
+                        type: "authentication_error",
+                        code: "invalid_api_key"
+                    ),
+                    status: .unauthorized,
+                    additionalHeaders: headers,
+                    on: channel
+                )
+            } else if exceededLimit {
                 await server.rejectPayloadTooLarge(head: head, channel: channel)
             } else {
                 await server.handle(head: head, body: body, channel: channel)
@@ -1593,6 +961,7 @@ final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked Sendable 
     }
 
     init(responseAction: @escaping ResponseAction) {
+        authentication = nil
         self.responseAction = responseAction
     }
 
@@ -1600,16 +969,24 @@ final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked Sendable 
         // Every response advertises `Connection: close`. Ignore a request that
         // NIO's pipelining helper releases while the first response is being
         // flushed, so it cannot start a second response task on this channel.
-        guard !responseInFlight else { return }
+        guard !responseInFlight else {
+            return
+        }
         switch unwrapInboundIn(data) {
         case .head(let head):
             requestHead = head
             body.removeAll(keepingCapacity: true)
-            bodyExceededLimit = head.headers.first(name: "content-length")
+            authenticationRejected = authentication.map { !$0.accepts(head.headers) } ?? false
+            bodyExceededLimit =
+                head.headers.first(name: "content-length")
                 .flatMap(Int.init)
                 .map { $0 > maximumRequestBodyBytes } ?? false
         case .body(var buffer):
             let incomingBytes = buffer.readableBytes
+            if authenticationRejected {
+                buffer.moveReaderIndex(forwardBy: incomingBytes)
+                return
+            }
             guard !bodyExceededLimit, body.count <= maximumRequestBodyBytes - incomingBytes else {
                 bodyExceededLimit = true
                 body.removeAll(keepingCapacity: false)
@@ -1620,17 +997,22 @@ final class ModelHTTPRequestHandler: ChannelInboundHandler, @unchecked Sendable 
                 body.append(contentsOf: bytes)
             }
         case .end:
-            guard let head = requestHead else { return }
+            guard let head = requestHead else {
+                return
+            }
             responseInFlight = true
             let requestBody = body
             let exceededLimit = bodyExceededLimit
             requestHead = nil
             body.removeAll(keepingCapacity: false)
             bodyExceededLimit = false
+            authenticationRejected = false
             let channel = context.channel
             let responseAction = responseAction
             responseTask = Task {
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else {
+                    return
+                }
                 await responseAction(head, requestBody, exceededLimit, channel)
             }
         }
@@ -1675,18 +1057,27 @@ private struct ModelResponse: Encodable {
     let prefillStepSize: Int?
     let kvCompression: String?
     let memoryLimitBytes: Int?
+    let maximumOutputTokens: Int?
+    let defaultOutputTokens: Int?
+
+    var modelCard: ModelCard? = nil
+    var nativeProtocol: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case id, created, object
+        case modelCard = "model_card"
+        case nativeProtocol = "native_protocol"
         case ownedBy = "owned_by"
         case contextLength = "context_length"
         case prefillStepSize = "prefill_step_size"
         case kvCompression = "kv_compression"
         case memoryLimitBytes = "memory_limit_bytes"
+        case maximumOutputTokens = "max_output_tokens"
+        case defaultOutputTokens = "default_output_tokens"
     }
 }
 
-private struct ModelHTTPError: Error {
+struct ModelHTTPError: Error {
     let status: HTTPResponseStatus
     let message: String
     let type: String
@@ -1705,154 +1096,5 @@ private struct ModelHTTPError: Error {
         self.type = type
         self.param = param
         self.code = code
-    }
-}
-
-private struct AudioHTTPError: Error {
-    enum Style: Equatable {
-        case openAI
-        case mistralValidation
-        case mistral
-    }
-
-    let status: HTTPResponseStatus
-    let message: String
-    let type: String
-    let param: String?
-    let code: String?
-    let style: Style
-    let location: String
-
-    init(
-        status: HTTPResponseStatus,
-        message: String,
-        type: String = "invalid_request_error",
-        param: String? = nil,
-        code: String? = nil,
-        style: Style = .mistral,
-        location: String = "body"
-    ) {
-        self.status = status
-        self.message = message
-        self.type = type
-        self.param = param
-        self.code = code
-        self.style = style
-        self.location = location
-    }
-}
-
-private struct VoiceListQuery {
-    enum VoiceType: String {
-        case all, custom, preset
-    }
-
-    let limit: Int
-    let offset: Int
-    let type: VoiceType
-
-    init(items: [URLQueryItem]) throws {
-        func value(named name: String) throws -> String? {
-            let values = items.filter { $0.name == name }
-            guard values.count <= 1 else {
-                throw AudioHTTPError(
-                    status: .unprocessableEntity,
-                    message: "Query parameter '\(name)' may only be provided once.",
-                    param: name,
-                    code: "invalid_query_parameter",
-                    style: .mistralValidation,
-                    location: "query"
-                )
-            }
-            guard let item = values.first else { return nil }
-            guard let value = item.value, !value.isEmpty else {
-                throw AudioHTTPError(
-                    status: .unprocessableEntity,
-                    message: "Query parameter '\(name)' requires a value.",
-                    param: name,
-                    code: "invalid_query_parameter",
-                    style: .mistralValidation,
-                    location: "query"
-                )
-            }
-            return value
-        }
-
-        let rawLimit = try value(named: "limit")
-        let limit: Int
-        if let rawLimit, let parsed = Int(rawLimit) {
-            limit = parsed
-        } else if rawLimit == nil {
-            limit = 10
-        } else {
-            throw AudioHTTPError(
-                status: .unprocessableEntity,
-                message: "limit must be an integer between 1 and 100.",
-                param: "limit",
-                code: "invalid_query_parameter",
-                style: .mistralValidation,
-                location: "query"
-            )
-        }
-        guard (1...100).contains(limit) else {
-            throw AudioHTTPError(
-                status: .unprocessableEntity,
-                message: "limit must be an integer between 1 and 100.",
-                param: "limit",
-                code: "invalid_query_parameter",
-                style: .mistralValidation,
-                location: "query"
-            )
-        }
-        let rawOffset = try value(named: "offset")
-        let offset: Int
-        if let rawOffset, let parsed = Int(rawOffset) {
-            offset = parsed
-        } else if rawOffset == nil {
-            offset = 0
-        } else {
-            throw AudioHTTPError(
-                status: .unprocessableEntity,
-                message: "offset must be a non-negative integer.",
-                param: "offset",
-                code: "invalid_query_parameter",
-                style: .mistralValidation,
-                location: "query"
-            )
-        }
-        guard offset >= 0 else {
-            throw AudioHTTPError(
-                status: .unprocessableEntity,
-                message: "offset must be a non-negative integer.",
-                param: "offset",
-                code: "invalid_query_parameter",
-                style: .mistralValidation,
-                location: "query"
-            )
-        }
-        guard offset / limit < Int.max else {
-            throw AudioHTTPError(
-                status: .unprocessableEntity,
-                message: "offset is too large for the requested page size.",
-                param: "offset",
-                code: "invalid_query_parameter",
-                style: .mistralValidation,
-                location: "query"
-            )
-        }
-        let typeValue = try value(named: "type") ?? "all"
-        guard let type = VoiceType(rawValue: typeValue) else {
-            throw AudioHTTPError(
-                status: .unprocessableEntity,
-                message: "type must be one of: all, custom, preset.",
-                param: "type",
-                code: "invalid_query_parameter",
-                style: .mistralValidation,
-                location: "query"
-            )
-        }
-        self.limit = limit
-        self.offset = offset
-        self.type = type
     }
 }

@@ -1,0 +1,201 @@
+--- a/Libraries/MLXLLM/Models/Gemma3Text.swift
++++ b/Libraries/MLXLLM/Models/Gemma3Text.swift
+@@ -286,6 +286,19 @@
+     let hiddenSize: Int
+     let layerIdx: Int
+ 
++    private let compiledPostAttentionTail = Gemma3CompiledTail()
++
++    /// Number of compiler traces, exposed only for experimental regression tests.
++    @_spi(GemmaCompiledTailTesting) public var compiledTailTraceCount: Int {
++        compiledPostAttentionTail.traceCount
++    }
++
++    public override func didSetTrain(_ mode: Bool) {
++        if mode {
++            compiledPostAttentionTail.invalidate()
++        }
++    }
++
+     init(_ config: Gemma3TextConfiguration, layerIdx: Int) {
+         self.numAttentionHeads = config.attentionHeads
+         self.hiddenSize = config.hiddenSize
+@@ -312,8 +325,19 @@
+         mask: MLXFast.ScaledDotProductAttentionMaskMode,
+         cache: KVCache? = nil
+     ) -> MLXArray {
++        // Snapshot before attention advances the cache. One-token prefill remains eager.
++        let hasCachedPrefix = (cache?.offset ?? 0) > 0
+         let inputNorm = inputLayerNorm(x)
+         let r = selfAttention(inputNorm, mask: mask, cache: cache)
++        if Gemma3RuntimeTuning.useCompiledTail,
++            let out = compiledPostAttentionTail(
++                residual: x, attention: r, hiddenSize: hiddenSize,
++                hasCachedPrefix: hasCachedPrefix, training: training,
++                postAttentionNorm: postAttentionLayerNorm, preMLPNorm: preFeedforwardLayerNorm,
++                postMLPNorm: postFeedforwardLayerNorm, mlp: mlp)
++        {
++            return out
++        }
+         let attnNorm = postAttentionLayerNorm(r)
+         let h = Gemma.clipResidual(x, attnNorm)
+         let preMLPNorm = preFeedforwardLayerNorm(h)
+@@ -350,7 +374,7 @@
+             dimensions: config.hiddenSize
+         )
+ 
+-        self._layers.wrappedValue = (0 ..< config.hiddenLayers).map { layerIdx in
++        self._layers.wrappedValue = (0..<config.hiddenLayers).map { layerIdx in
+             Gemma3TransformerBlock(config, layerIdx: layerIdx)
+         }
+ 
+@@ -397,7 +421,6 @@
+ }
+ 
+ public class Gemma3TextModel: Module, LLMModel {
+-
+     @ModuleInfo public var model: Gemma3Model
+     @ModuleInfo(key: "lm_head") var lmHead: Linear
+ 
+@@ -437,12 +460,12 @@
+ 
+         for key in keysToCheck {
+             if let tensor = processedWeights[key], tensor.dim(0) > expectedVocab {
+-                processedWeights[key] = tensor[0 ..< expectedVocab]
++                processedWeights[key] = tensor[0..<expectedVocab]
+             }
+         }
+ 
+         if processedWeights["lm_head.weight"] == nil {
+-            ["weight", "scales", "biases"].forEach { key in
++            for key in ["weight", "scales", "biases"] {
+                 if let embedWeight = processedWeights["model.embed_tokens.\(key)"] {
+                     processedWeights["lm_head.\(key)"] = embedWeight
+                 }
+@@ -481,7 +504,7 @@
+ 
+         guard promptCount > 0 else {
+             print("Warning: Preparing with empty prompt tokens.")
+-            let emptyToken = MLXArray(Int32(0))[0 ..< 0]
++            let emptyToken = MLXArray(Int32(0))[0..<0]
+             return .tokens(.init(tokens: emptyToken))
+         }
+ 
+--- /dev/null
++++ b/Libraries/MLXLLM/Models/Gemma3CompiledTail.swift
+@@ -0,0 +1,115 @@
++import Foundation
++import MLX
++import MLXLMCommon
++import MLXNN
++
++/// Experimental Gemma 3 inference graph controls. Disabled by default.
++public enum Gemma3RuntimeTuning {
++    @TaskLocal public static var useCompiledTail =
++        ProcessInfo.processInfo.environment["MIDNIGHT_GEMMA3_COMPILED_TAIL"] == "1"
++}
++
++// This must not inherit Module: reflected cached child snapshots would otherwise
++// become extra parameters/children of the owning decoder layer.
++final class Gemma3CompiledTail {
++    private struct Entry {
++        // Strong snapshots prevent identity-address reuse after child replacement.
++        let modules: [Module]
++        let function: @Sendable ([MLXArray]) -> [MLXArray]
++    }
++
++    private final class TraceCounter: @unchecked Sendable {
++        private let lock = NSLock()
++        private var count = 0
++        var value: Int { lock.withLock { count } }
++        func increment() { lock.withLock { count += 1 } }
++    }
++
++    private let lock = NSLock()
++    private let traces = TraceCounter()
++    private var entry: Entry?
++
++    var traceCount: Int { traces.value }
++
++    func invalidate() {
++        // Releasing a compiled function acquires MLX's evaluation lock. Do not
++        // release it while holding this cache lock, which tracing may re-enter.
++        let old = lock.withLock {
++            let old = entry
++            entry = nil
++            return old
++        }
++        withExtendedLifetime(old) {}
++    }
++
++    func callAsFunction(
++        residual: MLXArray, attention: MLXArray, hiddenSize: Int,
++        hasCachedPrefix: Bool, training: Bool,
++        postAttentionNorm: Gemma.RMSNorm, preMLPNorm: Gemma.RMSNorm,
++        postMLPNorm: Gemma.RMSNorm, mlp: Gemma3MLP
++    ) -> MLXArray? {
++        #if os(macOS)
++            let projections = [mlp.gateProj, mlp.upProj, mlp.downProj]
++            let modules: [Module] = [postAttentionNorm, preMLPNorm, postMLPNorm, mlp] + projections
++            guard !training, modules.allSatisfy({ !$0.training }),
++                projections.allSatisfy({ projection in
++                    // QLoRA and diagnostic/custom subclasses must execute eagerly:
++                    // their Swift behavior is not captured by array state alone.
++                    guard type(of: projection) == QuantizedLinear.self,
++                        let quantized = projection as? QuantizedLinear
++                    else { return false }
++                    return quantized.bits == 4 && quantized.groupSize == 64
++                        && quantized.mode == .affine && quantized.globalScale == nil
++                        && quantized.scales.dtype == .bfloat16
++                })
++            else {
++                invalidate()
++                return nil
++            }
++            // Prefill and unsupported shapes do not discard a valid warmed decode
++            // graph. It can be reused on the next request with fresh cache state.
++            guard Gemma3RuntimeTuning.useCompiledTail,
++                Device.defaultDevice().deviceType == .gpu, hasCachedPrefix,
++                residual.shape == [1, 1, hiddenSize], attention.shape == residual.shape,
++                residual.dtype == .bfloat16, attention.dtype == .bfloat16
++            else { return nil }
++
++            var previous: Entry?
++            let function = lock.withLock {
++                if let entry, entry.modules.count == modules.count,
++                    zip(entry.modules, modules).allSatisfy({ $0 === $1 })
++                {
++                    return entry.function
++                }
++
++                let counter = traces
++                // Current arrays cross the compilation boundary on EVERY call.
++                // Module.update(parameters:) updates those arrays in place, so a
++                // warm trace cannot keep stale weights after training/loading.
++                // Projection identity changes rebuild the trace because bits,
++                // group size and overridden Swift behavior are not array state.
++                let function = compile(
++                    inputs: [postAttentionNorm, preMLPNorm, postMLPNorm, mlp],
++                    shapeless: false
++                ) { inputs in
++                    counter.increment()
++                    let attnNorm = postAttentionNorm(inputs[1])
++                    let h = Gemma.clipResidual(inputs[0], attnNorm)
++                    let preNorm = preMLPNorm(h)
++                    let transformed = mlp(preNorm)
++                    let postNorm = postMLPNorm(transformed)
++                    return [Gemma.clipResidual(h, postNorm)]
++                }
++                previous = entry
++                entry = Entry(modules: modules, function: function)
++                return function
++            }
++            withExtendedLifetime(previous) {}
++            // No parent capture, KV arrays, positions or attention operation.
++            // Its fixed shapes survive growth and rollover of either KV cache.
++            return function([residual, attention]).first
++        #else
++            return nil
++        #endif
++    }
++}

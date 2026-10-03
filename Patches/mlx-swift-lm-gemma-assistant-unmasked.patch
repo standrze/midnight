@@ -1,0 +1,124 @@
+diff --git a/Libraries/MLXLLM/Models/Gemma4TextAssistant.swift b/Libraries/MLXLLM/Models/Gemma4TextAssistant.swift
+--- a/Libraries/MLXLLM/Models/Gemma4TextAssistant.swift
++++ b/Libraries/MLXLLM/Models/Gemma4TextAssistant.swift
+@@ -259,6 +259,9 @@
+         return concatenated(tokens, axis: 1)
+     }
+ 
++    private let omitZeroAttentionMasks =
++        ProcessInfo.processInfo.environment["MIDNIGHT_GEMMA_ASSISTANT_UNMASKED"] == "1"
++
+     /// One drafter forward — pre-projection, layer loop with shared K/V,
+     /// final norm, post-projection, and lm_head application.
+     ///
+@@ -268,7 +271,8 @@
+     @_spi(Testing) public func forwardHidden(
+         inputsEmbeds: MLXArray,
+         sharedKV: [String: (MLXArray, MLXArray)],
+-        queryOffset: Int
++        queryOffset: Int,
++        useUnmaskedAttention: Bool? = nil
+     ) -> (lastHidden: MLXArray, logits: MLXArray) {
+         let textCfg = config.textConfiguration
+         var h = preProjection(inputsEmbeds)
+@@ -286,11 +290,22 @@
+                 + "the production invariant that lets the bidirectional sliding-window "
+                 + "mask early-exit to all-zeros has been violated"
+         )
+-        let fullMask = createBidirectionalMask(
+-            queryLen: queryLen, kvLen: fullKvLen, dtype: h.dtype)
+-        let slidingMask = createBidirectionalSlidingWindowMask(
+-            queryLen: queryLen, kvLen: slidingKvLen,
+-            windowSize: textCfg.slidingWindow, dtype: h.dtype)
++        // Both additive masks are identically zero under the bounded-window
++        // invariant above. Keep an explicit reference path for parity tests.
++        let omitMasks = useUnmaskedAttention ?? omitZeroAttentionMasks
++        let fullMask: MLXFast.ScaledDotProductAttentionMaskMode =
++            omitMasks
++            ? .none
++            : .array(
++                createBidirectionalMask(
++                    queryLen: queryLen, kvLen: fullKvLen, dtype: h.dtype))
++        let slidingMask: MLXFast.ScaledDotProductAttentionMaskMode =
++            omitMasks
++            ? .none
++            : .array(
++                createBidirectionalSlidingWindowMask(
++                    queryLen: queryLen, kvLen: slidingKvLen,
++                    windowSize: textCfg.slidingWindow, dtype: h.dtype))
+ 
+         for layer in model.layers {
+             guard let kvPair = sharedKV[layer.layerType] else {
+@@ -300,8 +315,8 @@
+                 keys: kvPair.0, values: kvPair.1)
+             let layerMask: MLXFast.ScaledDotProductAttentionMaskMode =
+                 layer.layerType == "full_attention"
+-                ? .array(fullMask)
+-                : .array(slidingMask)
++                ? fullMask
++                : slidingMask
+             let (out, _, _) = layer(
+                 h, mask: layerMask, cache: nil, perLayerInput: nil,
+                 sharedKV: kvState, positionOffset: .scalar(queryOffset))
+diff --git a/Libraries/MLXVLM/Models/Gemma4Assistant.swift b/Libraries/MLXVLM/Models/Gemma4Assistant.swift
+--- a/Libraries/MLXVLM/Models/Gemma4Assistant.swift
++++ b/Libraries/MLXVLM/Models/Gemma4Assistant.swift
+@@ -257,6 +257,9 @@
+         return concatenated(tokens, axis: 1)
+     }
+ 
++    private let omitZeroAttentionMasks =
++        ProcessInfo.processInfo.environment["MIDNIGHT_GEMMA_ASSISTANT_UNMASKED"] == "1"
++
+     /// One drafter forward — pre-projection, layer loop with shared K/V,
+     /// final norm, post-projection, and lm_head application.
+     ///
+@@ -266,7 +269,8 @@
+     @_spi(Testing) public func forwardHidden(
+         inputsEmbeds: MLXArray,
+         sharedKV: [String: (MLXArray, MLXArray)],
+-        queryOffset: Int
++        queryOffset: Int,
++        useUnmaskedAttention: Bool? = nil
+     ) -> (lastHidden: MLXArray, logits: MLXArray) {
+         let textCfg = config.textConfiguration
+         var h = preProjection(inputsEmbeds)
+@@ -284,11 +288,22 @@
+                 + "the production invariant that lets the bidirectional sliding-window "
+                 + "mask early-exit to all-zeros has been violated"
+         )
+-        let fullMask = createBidirectionalMask(
+-            queryLen: queryLen, kvLen: fullKvLen, dtype: h.dtype)
+-        let slidingMask = createBidirectionalSlidingWindowMask(
+-            queryLen: queryLen, kvLen: slidingKvLen,
+-            windowSize: textCfg.slidingWindow, dtype: h.dtype)
++        // Both additive masks are identically zero under the bounded-window
++        // invariant above. Keep an explicit reference path for parity tests.
++        let omitMasks = useUnmaskedAttention ?? omitZeroAttentionMasks
++        let fullMask: MLXFast.ScaledDotProductAttentionMaskMode =
++            omitMasks
++            ? .none
++            : .array(
++                createBidirectionalMask(
++                    queryLen: queryLen, kvLen: fullKvLen, dtype: h.dtype))
++        let slidingMask: MLXFast.ScaledDotProductAttentionMaskMode =
++            omitMasks
++            ? .none
++            : .array(
++                createBidirectionalSlidingWindowMask(
++                    queryLen: queryLen, kvLen: slidingKvLen,
++                    windowSize: textCfg.slidingWindow, dtype: h.dtype))
+ 
+         for layer in model.layers {
+             guard let kvPair = sharedKV[layer.layerType] else {
+@@ -298,8 +313,8 @@
+                 keys: kvPair.0, values: kvPair.1)
+             let layerMask: MLXFast.ScaledDotProductAttentionMaskMode =
+                 layer.layerType == "full_attention"
+-                ? .array(fullMask)
+-                : .array(slidingMask)
++                ? fullMask
++                : slidingMask
+             let (out, _, _) = layer(
+                 h, mask: layerMask, cache: nil, perLayerInput: nil,
+                 sharedKV: kvState, offset: queryOffset)

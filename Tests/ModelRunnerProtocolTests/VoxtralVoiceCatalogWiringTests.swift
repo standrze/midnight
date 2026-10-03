@@ -56,7 +56,8 @@ struct VoxtralVoiceCatalogWiringTests {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
         let source = try String(
-            contentsOf: packageRoot
+            contentsOf:
+                packageRoot
                 .appendingPathComponent("Sources/ModelRunnerCore/VoxtralVoiceCatalog.swift"),
             encoding: .utf8
         )

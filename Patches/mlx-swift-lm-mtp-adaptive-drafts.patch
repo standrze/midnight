@@ -1,0 +1,212 @@
+diff --git a/Libraries/MLXLMCommon/MTPAdaptiveDraftPolicy.swift b/Libraries/MLXLMCommon/MTPAdaptiveDraftPolicy.swift
+new file mode 100644
+--- /dev/null
++++ b/Libraries/MLXLMCommon/MTPAdaptiveDraftPolicy.swift
+@@ -0,0 +1,68 @@
++/// An experimental, per-stream policy that chooses a bounded draft count from
++/// measured useful tokens per second. Public only for deterministic regression tests.
++@_spi(Testing) public struct MTPAdaptiveDraftPolicy {
++    public private(set) var nextDraftCount: Int
++
++    private let candidates: [Int]
++    private var warmed: [Bool]
++    private var tokensPerSecond: [Double?]
++    private var roundsUntilProbe = 8
++    private var probeIndex = 0
++
++    /// Public block size remains the upper bound; this experiment verifies at
++    /// most eight positions. Sparse candidates limit shape compilation overhead.
++    public init(maximumBlockSize: Int) {
++        precondition(maximumBlockSize >= 2)
++        let maximumDrafts = min(maximumBlockSize, 8) - 1
++        candidates = Array(Set([1, 3, 7, maximumDrafts].filter { $0 <= maximumDrafts })).sorted()
++        nextDraftCount = candidates[0]
++        warmed = Array(repeating: false, count: candidates.count)
++        tokensPerSecond = Array(repeating: nil, count: candidates.count)
++    }
++
++    /// Observe one completed greedy verification. Budget-clipped tails and
++    /// invalid timings do not train or advance the policy. The first round at
++    /// each width warms that graph without treating compilation as steady cost.
++    public mutating func observe(drafted: Int, accepted: Int, elapsedSeconds: Double) {
++        guard drafted == nextDraftCount,
++            accepted >= 0, accepted <= drafted,
++            elapsedSeconds.isFinite, elapsedSeconds > 0,
++            let index = candidates.firstIndex(of: drafted)
++        else { return }
++
++        if !warmed[index] {
++            warmed[index] = true
++            return
++        }
++
++        let rate = Double(accepted + 1) / elapsedSeconds
++        guard rate.isFinite else { return }
++        if let previous = tokensPerSecond[index] {
++            tokensPerSecond[index] = previous * 0.75 + rate * 0.25
++        } else {
++            tokensPerSecond[index] = rate
++        }
++
++        if let unmeasured = tokensPerSecond.firstIndex(where: { $0 == nil }) {
++            nextDraftCount = candidates[unmeasured]
++            return
++        }
++
++        // Revisit widths periodically as context and acceptance change. Stable
++        // ties choose the smaller width; no random numbers influence policy.
++        roundsUntilProbe -= 1
++        if roundsUntilProbe == 0 {
++            nextDraftCount = candidates[probeIndex]
++            probeIndex = (probeIndex + 1) % candidates.count
++            roundsUntilProbe = 8
++        } else {
++            var best = 0
++            for candidate in candidates.indices.dropFirst() {
++                if tokensPerSecond[candidate]! > tokensPerSecond[best]! {
++                    best = candidate
++                }
++            }
++            nextDraftCount = candidates[best]
++        }
++    }
++}
+diff --git a/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift b/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
+--- a/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
++++ b/Libraries/MLXLMCommon/MTPSpeculativeTokenIterator.swift
+@@ -59,6 +59,10 @@
+     /// `draft_block_size` parameter.
+     public let blockSize: Int
+ 
++    private var adaptiveDraftPolicy: MTPAdaptiveDraftPolicy?
++    private var adaptiveRoundClock: () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }
++    private var lastRoundUsedNativeHybridRewind: Bool?
++
+     private var pendingTokens = [Int]()
+     private var pendingIndex = 0
+     /// Number of pending tokens already represented by `mainCache`. The last
+@@ -150,6 +154,11 @@
+         let effectiveBlockSize = Swift.min(
+             drafterBlockSize, Self.maximumBlockSize(for: mainCache))
+         self.blockSize = effectiveBlockSize
++        if ProcessInfo.processInfo.environment["MIDNIGHT_MTP_ADAPTIVE_DRAFTS"] == "1",
++            effectiveBlockSize >= 2, self.processor == nil, self.sampler is ArgMaxSampler
++        {
++            self.adaptiveDraftPolicy = MTPAdaptiveDraftPolicy(maximumBlockSize: effectiveBlockSize)
++        }
+ 
+         // Probe by opening a round at the width rounds will actually use and discarding it,
+         // rather than duplicating the leaf classification as a predicate that could drift from
+@@ -380,19 +389,24 @@
+         // A speculative round can emit up to `numDraft + 1` tokens: the
+         // accepted draft prefix plus the verifier's correction/bonus token.
+         // Keep the whole pending buffer within the remaining output budget.
++        // A processor installed after initialization disables adaptation too.
++        // The public blockSize is unchanged and remains the absolute ceiling.
++        let adaptiveDraftCount =
++            processor == nil && sampler is ArgMaxSampler ? adaptiveDraftPolicy?.nextDraftCount : nil
++        let maximumDraftCount = Swift.min(blockSize - 1, adaptiveDraftCount ?? (blockSize - 1))
+         let numDraft: Int
+         if let maxTokens {
+             let remaining = maxTokens - tokenCount
+             guard remaining > 0 else { return }
+ 
+-            let draftBudget = Swift.min(remaining - 1, blockSize - 1)
++            let draftBudget = Swift.min(remaining - 1, maximumDraftCount)
+             guard draftBudget > 0 else {
+                 pendingTokens.append(materializedTargetStep())
+                 return
+             }
+             numDraft = draftBudget
+         } else {
+-            numDraft = blockSize - 1
++            numDraft = maximumDraftCount
+         }
+ 
+         guard let state = mainState,
+@@ -406,6 +420,11 @@
+             switchToPassthrough(reason: "main model did not emit shared target K/V")
+             return
+         }
++
++        // Time only active draft/verify work, excluding consumer drain time.
++        // The end timestamp follows the existing greedy eval/readback boundary.
++        let adaptiveRoundStart = adaptiveDraftCount == nil ? nil : adaptiveRoundClock()
++        var adaptiveRoundElapsed: TimeInterval?
+ 
+         // Attention-only targets verify through a staged round. Qwen's hybrid target instead
+         // checkpoints its recurrent entries and rewinds them in place; the typed capability and
+@@ -427,6 +446,8 @@
+             mainState = nil
+             return
+         }
++
++        lastRoundUsedNativeHybridRewind = nativeHybridRewind
+ 
+         // Slice the hidden at the slot that produced the newly-accepted
+         // bonus's prediction. Round 1: last (and only) position. Round 2+:
+@@ -521,6 +542,9 @@
+             eval(mainTokens, flatDraftTokens)
+             let mainTokensList = mainTokens.asArray(Int.self)
+             let draftTokensList = flatDraftTokens.asArray(Int.self)
++            if let adaptiveRoundStart {
++                adaptiveRoundElapsed = adaptiveRoundClock() - adaptiveRoundStart
++            }
+ 
+             while accepted < numDraft,
+                 mainTokensList[accepted] == draftTokensList[accepted]
+@@ -583,6 +607,10 @@
+             emittedFinalToken = finalToken!
+         }
+         committedPendingTokenCount = accepted
++        if let adaptiveRoundElapsed {
++            adaptiveDraftPolicy?.observe(
++                drafted: numDraft, accepted: accepted, elapsedSeconds: adaptiveRoundElapsed)
++        }
+ 
+         proposedCount += numDraft
+         acceptedCount += accepted
+@@ -837,11 +865,17 @@
+         let lookahead = committedPendingTokenCount - consumed
+         guard lookahead > 0 else { return }
+ 
+-        let usesNativeHybridRewind =
+-            ((mainModel as? any SpeculativeCacheRewindModel)?
+-                .maximumNativeTargetCacheRewind ?? 0) >= blockSize - 1
+-            && mainCache.contains { $0 is MambaCache }
+-            && mainCache.allSatisfy { $0.isTrimmable || $0 is MambaCache }
++        let usesNativeHybridRewind: Bool
++        if let lastRoundUsedNativeHybridRewind {
++            usesNativeHybridRewind = lastRoundUsedNativeHybridRewind
++        } else {
++            // Preserve prepare-time finalization before any speculative round.
++            usesNativeHybridRewind =
++                ((mainModel as? any SpeculativeCacheRewindModel)?
++                    .maximumNativeTargetCacheRewind ?? 0) >= blockSize - 1
++                && mainCache.contains { $0 is MambaCache }
++                && mainCache.allSatisfy { $0.isTrimmable || $0 is MambaCache }
++        }
+         let rewound: Int
+         if usesNativeHybridRewind {
+             let trimmed = mainCacheStorage.trim(lookahead)
+@@ -864,6 +898,20 @@
+ }
+ 
+ extension MTPSpeculativeTokenIterator {
++    /// Inject a deterministic policy and clock without changing process-wide environment.
++    @_spi(Testing) public mutating func _setAdaptiveDraftPolicyForTesting(
++        _ policy: MTPAdaptiveDraftPolicy?,
++        clock: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }
++    ) {
++        adaptiveDraftPolicy = policy
++        adaptiveRoundClock = clock
++    }
++
++    /// Exposes only the next width so tests can observe bounded policy transitions.
++    @_spi(Testing) public var _nextAdaptiveDraftCountForTesting: Int? {
++        adaptiveDraftPolicy?.nextDraftCount
++    }
++
+     /// Test-only setter for the canonical `LogitProcessor`. Lets regression
+     /// tests install a recording probe AFTER `init` (which calls `prepare`
+     /// and would otherwise consume the prepare-time bonus before the probe

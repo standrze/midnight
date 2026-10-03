@@ -62,10 +62,10 @@ than only through a Laguna shell workflow:
 
 ```bash
 MODEL_RUNNER_BUILD_CONFIGURATION=release \
-MODEL_RUNNER_BUILD_PRODUCT=model-runner-quantize \
-../midnight-quantization/build.sh
+WICK_BUILD_PRODUCT=wick \
+../wick/build.sh
 
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/unquantized-mlx-compatible-safetensors \
   /absolute/path/q4r8-scale-search-candidate \
   --dry-run
@@ -75,7 +75,7 @@ For an ordinary-affine-Q4 control with matching storage geometry, run the same
 source through the generic converter with a separate destination:
 
 ```bash
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/unquantized-mlx-compatible-safetensors \
   /absolute/path/q4-standard-control \
   --standard-q4
@@ -115,7 +115,7 @@ runtime. Each fresh artifact is deliberately labeled unbenchmarked at
 conversion time until that exact output is paired with a target and measured.
 
 ```bash
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4 \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4-MLX-Q4R8-ScaleSearch \
   --dry-run
@@ -140,7 +140,7 @@ Create a complete experimental candidate by adding one flag to the normal
 Swift conversion:
 
 ```bash
-Scripts/quantize-laguna-q4r8.sh \
+../wick/Scripts/quantize-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-bf16 \
   /absolute/path/Laguna-XS-2.1-mlx-q4r8-scale-search \
   --q4-scale-search \
@@ -154,7 +154,7 @@ For a large BF16 source and an existing standard Q4R8 layout, the bounded
 rescorer is the practical full-checkpoint path:
 
 ```bash
-Scripts/rescore-laguna-q4r8.sh \
+../wick/Scripts/rescore-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-BF16 \
   /absolute/path/Laguna-XS-2.1-MLX-Q4R8-standard \
   /absolute/path/Laguna-XS-2.1-MLX-Q4R8-ScaleSearch-LS2 \
@@ -173,7 +173,7 @@ Before spending the space and conversion time on a complete checkpoint, audit
 a deterministic Laguna sample directly from the BF16 safetensors:
 
 ```bash
-Scripts/audit-laguna-q4-scale-search.sh \
+../wick/Scripts/audit-laguna-q4-scale-search.sh \
   /absolute/path/Laguna-XS-2.1-BF16 \
   /absolute/path/laguna-q4-scale-search-audit.json
 ```
@@ -216,7 +216,7 @@ The dedicated A/B uses the same affine-Q4 group-64 `quantizedMM`
 specialization for both arrays and warms them together before ABBA timing:
 
 ```bash
-swift run --package-path ../midnight-quantization -c release model-runner-metal-quant-bench \
+swift run --package-path ../wick -c release wick-metal-quant-bench \
   --scale-search-only \
   --warmup 8 \
   --iterations 25 \
@@ -254,7 +254,7 @@ the template path.
 Run the backend-independent structural verifier with:
 
 ```bash
-Scripts/verify-laguna-q4r8.sh \
+../wick/Scripts/verify-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-MLX-Q4R8-standard \
   /absolute/path/Laguna-XS-2.1-MLX-Q4R8-ScaleSearch-LS2 \
   --report /absolute/new/path/q4r8-safetensors-verification.json
@@ -305,7 +305,7 @@ end-to-end runtime measurement, not a candidate-versus-baseline speed claim.
 
 ## ScalePlan-Q4R8
 
-`model-runner-scale-plan` consumes a measured, per-unit JSON ledger and emits
+`wick-scale-plan` consumes a measured, per-unit JSON ledger and emits
 separate decode-first and prefill-first plans. Each candidate records:
 
 - layer path, tensor shape, affine format, bit width, group size, and
@@ -322,7 +322,7 @@ default, planning stops unless that additive forecast passed a held-out
 full-model check. `--allow-unvalidated-proxy` exists only for plumbing work and
 does not remove the experimental label.
 
-[The illustrative ledger](../../midnight-quantization/Examples/scaleplan-q4r8-ledger.example.json)
+[The illustrative ledger](../../wick/Examples/scaleplan-q4r8-ledger.example.json)
 shows the complete format but contains fabricated costs and an intentionally
 unvalidated proxy. It is a schema example, not input for a deployable plan.
 
@@ -335,7 +335,7 @@ pretends the result is optimal.
 Generate both profiles:
 
 ```bash
-swift run --package-path ../midnight-quantization model-runner-scale-plan \
+swift run --package-path ../wick wick-scale-plan \
   /absolute/path/laguna-measured-ledger.json \
   /absolute/path/laguna-scale-plan.json \
   --max-stored-bytes 18821963264 \
@@ -346,7 +346,7 @@ swift run --package-path ../midnight-quantization model-runner-scale-plan \
 Apply one profile during conversion:
 
 ```bash
-Scripts/quantize-laguna-q4r8.sh \
+../wick/Scripts/quantize-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-bf16 \
   /absolute/path/Laguna-XS-2.1-mlx-scaleplan \
   --scale-plan /absolute/path/laguna-scale-plan.json \

@@ -1,7 +1,0 @@
-{
-  "variant": "turbo",
-  "language": "en",
-  "temperature": 0.8,
-  "top_p": 0.95,
-  "voices": {}
-}

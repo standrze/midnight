@@ -1,6 +1,6 @@
 # Runtime and API model research
 
-Last updated: 2026-08-29
+Last updated: 2026-09-30
 
 ## Decision
 
@@ -9,10 +9,12 @@ The runtime priorities for this project are:
 1. Mistral text models and Voxtral speech models.
 2. Poolside Laguna, especially the 4-bit MLX checkpoint and its DFlash draft model.
 3. OpenAI GPT-OSS.
-4. Qwen compatibility when it comes from upstream MLX support, without a custom Qwen TTS runtime.
+4. Qwen text compatibility from upstream MLX support and native Qwen3-TTS on Metal.
 
-Production inference stays inside the Swift process. Python is acceptable for an
-offline checkpoint conversion, but it is not part of the serving path.
+Production text, Voxtral, and Qwen3-TTS inference stays inside the Swift process.
+The optional VibeVoice backend launches a local Python/PyTorch worker; Python is
+also acceptable for offline checkpoint conversion. No backend uses a hosted
+inference dependency.
 
 ## API comparison
 
@@ -93,7 +95,7 @@ shard, and writes an optimization manifest. Tensor bytes are replaced in place;
 the output does not retain the obsolete projections.
 
 ```bash
-python3 ../midnight-quantization/Scripts/pack-laguna-gate-up.py \
+python3 ../wick/Scripts/pack-laguna-gate-up.py \
   /absolute/path/Laguna-XS-2.1-4bit \
   /absolute/path/Laguna-XS-2.1-4bit-fused-gate-up-compact
 ```
@@ -226,7 +228,7 @@ infrastructure. This project now:
 5. keeps non-greedy requests on the target-only path.
 
 DFlash is implemented natively. Its separate BF16 checkpoint can also be
-converted by `model-runner-quantize` with an experimental DFlash-specific
+converted by `wick` with an experimental DFlash-specific
 Q4R8 ScaleSearch profile; target-paired acceptance and throughput remain the
 decision criteria for keeping that quantized drafter.
 

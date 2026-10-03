@@ -1,0 +1,395 @@
+--- a/mlx/backend/metal/device.cpp
++++ b/mlx/backend/metal/device.cpp
+@@ -11,6 +11,7 @@
+ 
+ #include "mlx/backend/common/utils.h"
+ #include "mlx/backend/metal/device.h"
++#include "mlx/backend/metal/command_timing.h"
+ #include "mlx/backend/metal/event.h"
+ #include "mlx/backend/metal/metal.h"
+ #include "mlx/backend/metal/utils.h"
+@@ -33,6 +34,46 @@
+ namespace {
+ 
+ constexpr const char* default_mtllib_path = METAL_PATH;
++
++void timed_commit(
++    MTL::CommandBuffer* buffer,
++    uint64_t queue_key,
++    int operations,
++    uint64_t referenced_bytes) {
++  auto* collector = command_timing::collector();
++  auto* sample = collector
++      ? collector->reserve(queue_key, operations, referenced_bytes)
++      : nullptr;
++  if (!sample) {
++    buffer->commit();
++    return;
++  }
++  // Leave the native completion/error/event handler untouched. No ordering
++  // between handlers is assumed; this observer never signals events or waits.
++  buffer->addCompletedHandler([sample](MTL::CommandBuffer* completed) noexcept {
++    sample->row.callback_observed = command_timing::now();
++    sample->row.gpu_start = completed->GPUStartTime();
++    sample->row.gpu_end = completed->GPUEndTime();
++    sample->row.status = static_cast<int>(completed->status());
++    sample->completed.store(true, std::memory_order_release);
++  });
++  sample->row.commit_start = command_timing::now();
++  buffer->commit();
++  sample->row.commit_return = command_timing::now();
++  sample->returned.store(true, std::memory_order_release);
++}
++
++void timed_existing_wait(MTL::CommandBuffer* buffer, uint64_t queue_key) {
++  auto* collector = command_timing::collector();
++  if (!collector) {
++    buffer->waitUntilCompleted();
++    return;
++  }
++  const double start = command_timing::now();
++  buffer->waitUntilCompleted();
++  collector->record_wait(queue_key, start, command_timing::now());
++}
++
+ 
+ void set_compile_options(
+     MTL::CompileOptions* mtl_options,
+@@ -321,6 +362,11 @@
+   residency_sets_.attach_new_sets(queue_.get(), sets_attached_);
+   debug_set_stream_queue_label(queue_.get(), index);
+   buffer_ = NS::RetainPtr(queue_->commandBufferWithUnretainedReferences());
++  if (command_timing::enabled()) {
++    if (auto* collector = command_timing::collector()) {
++      collector->register_queue(reinterpret_cast<uint64_t>(queue_.get()), index);
++    }
++  }
+ }
+ 
+ CommandEncoder::~CommandEncoder() {
+@@ -555,7 +601,13 @@
+           }
+         }
+       });
+-  buffer_->commit();
++  if (command_timing::enabled()) {
++    timed_commit(
++        buffer_.get(), reinterpret_cast<uint64_t>(queue_.get()),
++        buffer_ops_, buffer_sizes_);
++  } else {
++    buffer_->commit();
++  }
+   buffer_ = NS::RetainPtr(queue_->commandBufferWithUnretainedReferences());
+   buffer_ops_ = 0;
+   buffer_sizes_ = 0;
+@@ -566,7 +618,11 @@
+   auto cbuf = buffer_; // retained
+   end_encoding();
+   commit();
+-  cbuf->waitUntilCompleted();
++  if (command_timing::enabled()) {
++    timed_existing_wait(cbuf.get(), reinterpret_cast<uint64_t>(queue_.get()));
++  } else {
++    cbuf->waitUntilCompleted();
++  }
+ 
+   if (!exiting_) {
+     error_.check();
+--- /dev/null
++++ b/mlx/backend/metal/command_timing.h
+@@ -0,0 +1,295 @@
++// Copyright © 2026 Midnight contributors.
++// Optional, bounded observations. No Metal synchronization or callback I/O.
++#pragma once
++
++#include <algorithm>
++#include <atomic>
++#include <cerrno>
++#include <cmath>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <cstdint>
++#include <fcntl.h>
++#include <mach/mach_time.h>
++#include <mach/kern_return.h>
++#include <memory>
++#include <string>
++#include <unistd.h>
++#include <utility>
++#include <vector>
++
++namespace mlx::core::metal::command_timing {
++
++inline bool enabled() noexcept {
++  static const bool value = [] {
++    const char* setting = std::getenv("MIDNIGHT_METAL_COMMAND_TIMING");
++    return setting && std::strcmp(setting, "1") == 0;
++  }();
++  return value;
++}
++
++inline double now() noexcept {
++  static const double seconds_per_tick = [] {
++    mach_timebase_info_data_t timebase{};
++    if (mach_timebase_info(&timebase) != KERN_SUCCESS || !timebase.denom) {
++      return 0.0;
++    }
++    return double(timebase.numer) / double(timebase.denom) * 1e-9;
++  }();
++  return double(mach_absolute_time()) * seconds_per_tick;
++}
++
++inline uint64_t environment_count(
++    const char* name, uint64_t fallback, uint64_t maximum) noexcept {
++  const char* value = std::getenv(name);
++  if (!value || !*value) {
++    return fallback;
++  }
++  uint64_t result = 0;
++  for (const char* digit = value; *digit; ++digit) {
++    if (*digit < '0' || *digit > '9' ||
++        result > (maximum - uint64_t(*digit - '0')) / 10) {
++      std::fprintf(stderr, "[metal timing] Invalid %s; using default.\n", name);
++      return fallback;
++    }
++    result = result * 10 + uint64_t(*digit - '0');
++  }
++  return result;
++}
++
++struct CommandRow {
++  uint64_t sequence{0};
++  uint64_t queue_key{0};
++  int operations{0};
++  uint64_t referenced_bytes{0};
++  double commit_start{0};
++  double commit_return{0};
++  double gpu_start{0};
++  double gpu_end{0};
++  double callback_observed{0};
++  int status{0};
++};
++
++struct CommandSample {
++  CommandRow row;
++  // A callback may run before commit() returns. Both writers must publish
++  // before the immutable row can be copied by the exit-time snapshot.
++  std::atomic<bool> returned{false};
++  std::atomic<bool> completed{false};
++};
++
++struct WaitRow {
++  uint64_t queue_key{0};
++  double start{0};
++  double end{0};
++};
++
++struct WaitSample {
++  WaitRow row;
++  std::atomic<bool> ready{false};
++};
++
++struct QueueRow {
++  uint64_t generation{0};
++  uint64_t queue_key{0};
++  int stream_index{0};
++  double created{0};
++};
++
++struct QueueSample {
++  QueueRow row;
++  std::atomic<bool> ready{false};
++};
++
++class Collector {
++ public:
++  static constexpr uint64_t queue_capacity = 128;
++
++  Collector(uint64_t capacity, uint64_t skip, std::string output)
++      : capacity_(capacity),
++        skip_(skip),
++        output_(std::move(output)),
++        commands_(std::make_unique<CommandSample[]>(capacity)),
++        waits_(std::make_unique<WaitSample[]>(capacity)) {}
++
++  void register_queue(uint64_t key, int stream_index) noexcept {
++    const uint64_t index = queues_created_.fetch_add(1, std::memory_order_relaxed);
++    if (index < queue_capacity) {
++      queues_[index].row = {index + 1, key, stream_index, now()};
++      queues_[index].ready.store(true, std::memory_order_release);
++    }
++  }
++
++  CommandSample* reserve(
++      uint64_t key, int operations, uint64_t bytes) noexcept {
++    const uint64_t sequence = submitted_.fetch_add(1, std::memory_order_relaxed);
++    if (sequence < skip_ || sequence - skip_ >= capacity_) {
++      return nullptr;
++    }
++    auto& sample = commands_[sequence - skip_];
++    sample.row.sequence = sequence + 1;
++    sample.row.queue_key = key;
++    sample.row.operations = operations;
++    sample.row.referenced_bytes = bytes;
++    return &sample;
++  }
++
++  void record_wait(uint64_t key, double start, double end) noexcept {
++    const uint64_t index = waits_seen_.fetch_add(1, std::memory_order_relaxed);
++    if (index < capacity_) {
++      waits_[index].row = {key, start, end};
++      waits_[index].ready.store(true, std::memory_order_release);
++    }
++  }
++
++  // Runs at process exit only. It never waits for an in-flight GPU or callback.
++  // Ready rows are immutable; acquire loads make concurrent publication safe.
++  void write_snapshot() const {
++    const uint64_t submitted = submitted_.load(std::memory_order_relaxed);
++    const uint64_t eligible = submitted > skip_ ? submitted - skip_ : 0;
++    const uint64_t slots = std::min(eligible, capacity_);
++    std::vector<CommandRow> commands;
++    commands.reserve(slots);
++    for (uint64_t index = 0; index < slots; ++index) {
++      const auto& sample = commands_[index];
++      if (sample.returned.load(std::memory_order_acquire) &&
++          sample.completed.load(std::memory_order_acquire)) {
++        commands.push_back(sample.row);
++      }
++    }
++    const uint64_t waits_seen = waits_seen_.load(std::memory_order_relaxed);
++    std::vector<WaitRow> waits;
++    for (uint64_t index = 0; index < std::min(waits_seen, capacity_); ++index) {
++      if (waits_[index].ready.load(std::memory_order_acquire)) {
++        waits.push_back(waits_[index].row);
++      }
++    }
++    const uint64_t queues_created = queues_created_.load(std::memory_order_relaxed);
++    std::vector<QueueRow> queues;
++    for (uint64_t index = 0; index < std::min(queues_created, queue_capacity); ++index) {
++      if (queues_[index].ready.load(std::memory_order_acquire)) {
++        queues.push_back(queues_[index].row);
++      }
++    }
++
++    // A caller must supply a fresh output path. Never overwrite prior evidence.
++    const int descriptor = ::open(
++        output_.c_str(), O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0600);
++    if (descriptor < 0) {
++      std::fprintf(stderr, "[metal timing] Cannot create output (errno=%d).\n", errno);
++      return;
++    }
++    FILE* stream = ::fdopen(descriptor, "w");
++    if (!stream) {
++      ::close(descriptor);
++      std::fprintf(stderr, "[metal timing] Cannot open output stream.\n");
++      return;
++    }
++    std::fprintf(stream,
++        "{\"format\":1,\"kind\":\"midnight_metal_command_timing\","
++        "\"clock\":\"system_mach_seconds\",\"snapshot\":\"atexit_without_gpu_wait\","
++        "\"pid\":%ld,\"capacity\":%llu,\"skip_command_buffers\":%llu,"
++        "\"submitted_command_buffers\":%llu,\"incomplete_sample_count\":%llu,"
++        "\"unsampled_due_to_capacity\":%llu,\"waits_seen\":%llu,"
++        "\"queues_created\":%llu,\"queue_metadata_overflow\":%llu,\"queues\":[",
++        long(::getpid()), (unsigned long long)capacity_, (unsigned long long)skip_,
++        (unsigned long long)submitted, (unsigned long long)(slots - commands.size()),
++        (unsigned long long)(eligible - slots), (unsigned long long)waits_seen,
++        (unsigned long long)queues_created,
++        (unsigned long long)(queues_created > queue_capacity ? queues_created - queue_capacity : 0));
++    bool first = true;
++    for (const auto& row : queues) {
++      std::fprintf(stream,
++          "%s{\"generation\":%llu,\"queue_key\":%llu,\"stream_index\":%d,\"created\":%.17g}",
++          first ? "" : ",", (unsigned long long)row.generation,
++          (unsigned long long)row.queue_key, row.stream_index, row.created);
++      first = false;
++    }
++    std::fprintf(stream, "],\"commands\":[");
++    first = true;
++    for (const auto& row : commands) {
++      const bool valid_gpu = std::isfinite(row.gpu_start) &&
++          std::isfinite(row.gpu_end) && row.gpu_start > 0 && row.gpu_end >= row.gpu_start;
++      std::fprintf(stream,
++          "%s{\"sequence\":%llu,\"queue_key\":%llu,\"operations\":%d,"
++          "\"referenced_bytes\":%llu,\"commit_start\":%.17g,\"commit_return\":%.17g,"
++          "\"gpu_start\":%.17g,\"gpu_end\":%.17g,\"callback_observed\":%.17g,"
++          "\"gpu_timing_valid\":%s,\"status\":%d}",
++          first ? "" : ",", (unsigned long long)row.sequence,
++          (unsigned long long)row.queue_key, row.operations,
++          (unsigned long long)row.referenced_bytes, row.commit_start, row.commit_return,
++          valid_gpu ? row.gpu_start : 0.0, valid_gpu ? row.gpu_end : 0.0,
++          row.callback_observed, valid_gpu ? "true" : "false", row.status);
++      first = false;
++    }
++    std::fprintf(stream, "],\"waits\":[");
++    first = true;
++    for (const auto& row : waits) {
++      std::fprintf(stream,
++          "%s{\"queue_key\":%llu,\"start\":%.17g,\"end\":%.17g}",
++          first ? "" : ",", (unsigned long long)row.queue_key, row.start, row.end);
++      first = false;
++    }
++    std::fprintf(stream, "]}\n");
++    const bool failed = std::ferror(stream);
++    if (std::fclose(stream) != 0 || failed) {
++      std::fprintf(stderr, "[metal timing] Output write failed; report may be incomplete.\n");
++    }
++  }
++
++ private:
++  uint64_t capacity_;
++  uint64_t skip_;
++  std::string output_;
++  std::unique_ptr<CommandSample[]> commands_;
++  std::unique_ptr<WaitSample[]> waits_;
++  QueueSample queues_[queue_capacity];
++  std::atomic<uint64_t> submitted_{0};
++  std::atomic<uint64_t> waits_seen_{0};
++  std::atomic<uint64_t> queues_created_{0};
++};
++
++inline Collector*& exit_collector() noexcept {
++  static Collector* pointer = nullptr;
++  return pointer;
++}
++
++inline Collector* collector() noexcept {
++  // Deliberately process-lived: asynchronous callbacks must never observe a
++  // destroyed collector. atexit snapshots ready records and does not free it.
++  static Collector* pointer = []() noexcept -> Collector* {
++    try {
++      const char* output = std::getenv("MIDNIGHT_METAL_COMMAND_TIMING_OUTPUT");
++      if (!output || !*output) {
++        std::fprintf(stderr, "[metal timing] Set MIDNIGHT_METAL_COMMAND_TIMING_OUTPUT to a fresh report path; telemetry disabled.\n");
++        return nullptr;
++      }
++      const uint64_t capacity = std::max(uint64_t{1}, environment_count(
++          "MIDNIGHT_METAL_COMMAND_TIMING_LIMIT", 8192, 65536));
++      const uint64_t skip = environment_count(
++          "MIDNIGHT_METAL_COMMAND_TIMING_SKIP", 0, uint64_t{1000000000});
++      auto* result = new Collector(capacity, skip, output);
++      exit_collector() = result;
++      if (std::atexit([] {
++            try {
++              exit_collector()->write_snapshot();
++            } catch (...) {
++              std::fprintf(stderr, "[metal timing] Snapshot allocation failed.\n");
++            }
++          }) != 0) {
++        exit_collector() = nullptr;
++        delete result;
++        std::fprintf(stderr, "[metal timing] Cannot register exit snapshot; telemetry disabled.\n");
++        return nullptr;
++      }
++      return result;
++    } catch (...) {
++      std::fprintf(stderr, "[metal timing] Initialization failed; telemetry disabled.\n");
++      return nullptr;
++    }
++  }();
++  return pointer;
++}
++
++} // namespace mlx::core::metal::command_timing

@@ -1,0 +1,7 @@
+{
+  "repo": "poolside/Laguna-XS-2.1",
+  "revision": "c5f36269bbdbd3f27fddc9a9f9dbae0cf2cf57db",
+  "files": [
+    "chat_template.jinja"
+  ]
+}

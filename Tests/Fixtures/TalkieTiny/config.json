@@ -1,0 +1,13 @@
+{
+  "model_type": "talkie",
+  "hidden_size": 16,
+  "num_hidden_layers": 2,
+  "num_attention_heads": 2,
+  "head_dim": 8,
+  "intermediate_size": 32,
+  "vocab_size": 32,
+  "rope_theta": 1000000.0,
+  "rms_norm_eps": 1.1920928955078125e-07,
+  "max_position_embeddings": 128,
+  "tie_word_embeddings": false
+}

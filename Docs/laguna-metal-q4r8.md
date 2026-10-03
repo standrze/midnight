@@ -33,7 +33,7 @@ The project benchmark exercises Laguna-shaped dense and selected-expert
 operations:
 
 ```bash
-Scripts/benchmark-metal-quantization.sh \
+../wick/Scripts/benchmark-metal-quantization.sh \
   --warmup 8 --iterations 40 --queue-depth 32 --queue-rounds 9
 ```
 
@@ -142,7 +142,7 @@ Poolside checkpoint. Python is not used by the converter or by inference. It:
 - accepts an exact Q8 allowlist and writes normal per-module MLX config
   overrides.
 
-The unified `model-runner-quantize` executable keeps these Laguna-specific
+The unified `wick` executable keeps these Laguna-specific
 rules rather than replacing them with filename heuristics. With `--template`,
 it dispatches in-process to the bounded Laguna rescorer: the existing fused
 gate/up ordering, expert batching, mandatory Q8 routers, standard-Q4 embedding,
@@ -153,7 +153,7 @@ policy and ScalePlan-driven full-model conversion.
 Inspect the mandatory policy without touching weights:
 
 ```bash
-Scripts/quantize-laguna-q4r8.sh \
+../wick/Scripts/quantize-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-bf16 \
   /absolute/path/Laguna-XS-2.1-mlx-q4r8 \
   --dry-run
@@ -173,7 +173,7 @@ An allowlist file has this shape:
 Create the checkpoint after the allowlist has been calibrated:
 
 ```bash
-Scripts/quantize-laguna-q4r8.sh \
+../wick/Scripts/quantize-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-bf16 \
   /absolute/path/Laguna-XS-2.1-mlx-q4r8 \
   --policy /absolute/path/laguna-q8-policy.json
@@ -186,7 +186,7 @@ GPU host whose VRAM is smaller than the source, use `--cpu` so conversion uses
 system RAM while preserving exactly the same MLX affine output:
 
 ```bash
-Scripts/quantize-laguna-q4r8.sh \
+../wick/Scripts/quantize-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-bf16 \
   /absolute/path/Laguna-XS-2.1-mlx-q4r8 \
   --cpu

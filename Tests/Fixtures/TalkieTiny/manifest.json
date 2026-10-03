@@ -1,0 +1,36 @@
+{
+  "generator": "generate_reference.py",
+  "mlx_version": "0.31.2",
+  "tokens": [
+    3,
+    1,
+    4,
+    1,
+    5,
+    9,
+    2
+  ],
+  "fp32_reference_cache_max_error": 7.152557373046875e-07,
+  "sensitivity_max_logit_error": {
+    "wrong_rope_sign": 0.07657468318939209,
+    "missing_embedding_skip": 0.2553861141204834,
+    "missing_query_head_gain": 0.0717763900756836
+  },
+  "bf16_reference_cache_max_error": 0.0,
+  "q4_bf16_packed_vs_dense_max_error": 0.109375,
+  "q4_bf16_sensitivity_max_token_relative_rms": {
+    "wrong_rope_sign": 0.07310633361339569,
+    "missing_embedding_skip": 0.17915649712085724,
+    "missing_query_head_gain": 0.021915767341852188
+  },
+  "q4_fp32_manual_unpack_vs_packed_max_error": 1.1920928955078125e-06,
+  "sha256": {
+    "expected-bf16.safetensors": "9fd269424f07e05e5f2eeb891c363f1b7f5b5c9b8c12eec3ad9360556fcaf76b",
+    "expected-fp32.safetensors": "7c189679551aab914bf42afbbafec4b755548d3634f7d4f71e00f42ae221cba6",
+    "expected-q4-fp32.safetensors": "91d3a2246606fea7c793ebc1ff9be34837108a57c0a0bcaeba9d7a72c45d5b81",
+    "expected-q4.safetensors": "907088f2b4ccbfc4265529b504b30ee6af42bc602fe609d954ec540a72fdda50",
+    "weights-bf16.safetensors": "808bead237c14eed1c6b95f703de76ed3a751c2e84bd327b846ddb86918e0f9e",
+    "weights-fp32.safetensors": "a3008550b1cb77a3a36d9454e7c9b107d60a51fb406403344dee4ce12d42e77f",
+    "weights-q4.safetensors": "b4afe57ab7083bf53d1ca594d4dca90688369ef697a0b4c05c9ae06611178dc0"
+  }
+}

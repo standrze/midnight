@@ -6,7 +6,8 @@ import Testing
 struct ReasoningEffortTests {
     @Test("GPT-OSS accepts each supported reasoning effort", arguments: ["low", "medium", "high"])
     func decodesSupportedEffort(_ effort: String) throws {
-        let data = Data("""
+        let data = Data(
+            """
             {"model":"gpt-oss-20b","messages":[{"role":"user","content":"Hello"}],
              "reasoning_effort":"\(effort)"}
             """.utf8)
@@ -14,13 +15,15 @@ struct ReasoningEffortTests {
 
         #expect(request.reasoningEffort?.rawValue == effort)
         #expect(request.stream == nil)
-        #expect(try JSONDecoder().decode(
-            ChatCompletionRequest.self, from: JSONEncoder().encode(request)) == request)
+        #expect(
+            try JSONDecoder().decode(
+                ChatCompletionRequest.self, from: JSONEncoder().encode(request)) == request)
     }
 
     @Test("Omitted and null effort preserve the model default", arguments: ["", ",\"reasoning_effort\":null"])
     func preservesDefault(_ optionalField: String) throws {
-        let data = Data("""
+        let data = Data(
+            """
             {"model":"local-model","messages":[{"role":"user","content":"Hello"}]\(optionalField)}
             """.utf8)
         let request = try JSONDecoder().decode(ChatCompletionRequest.self, from: data)
@@ -47,7 +50,8 @@ struct ReasoningEffortTests {
 
     @Test("Unsupported effort values are rejected", arguments: ["none", "minimal", "xhigh", "LOW", ""])
     func rejectsUnsupportedEffort(_ effort: String) throws {
-        let data = Data("""
+        let data = Data(
+            """
             {"model":"gpt-oss-20b","messages":[{"role":"user","content":"Hello"}],
              "reasoning_effort":"\(effort)"}
             """.utf8)

@@ -1,0 +1,183 @@
+diff --git a/mlx/backend/metal/scaled_dot_product_attention.cpp b/mlx/backend/metal/scaled_dot_product_attention.cpp
+--- a/mlx/backend/metal/scaled_dot_product_attention.cpp
++++ b/mlx/backend/metal/scaled_dot_product_attention.cpp
+@@ -31,6 +31,20 @@
+       env::get_var("MIDNIGHT_METAL_SDPA_D512", 0) == 1;
+ }
+ 
++// Initial masked D256 prefill experiment: enough rows for tiled NAX, with
++// a bounded cache footprint. Keep this separate from the D512 decode flag.
++bool experimental_d256_masked_prefill(
++    const array& q,
++    const array& k,
++    const array& v,
++    bool has_arr_mask) {
++  return has_arr_mask && q.shape(0) == 1 && q.shape(2) == 512 &&
++      q.shape(-1) == 256 && v.shape(-1) == 256 && q.dtype() == bfloat16 &&
++      k.shape(2) >= 512 && k.shape(2) <= 1536 &&
++      q.shape(1) / k.shape(1) <= 8 && metal::is_nax_available() &&
++      env::get_var("MIDNIGHT_METAL_SDPA_D256_MASKED", 0) == 1;
++}
++
+ void sdpa_full_self_attention_nax(
+     const Stream& s,
+     metal::Device& d,
+@@ -95,13 +109,19 @@
+   const bool has_mask = mask.has_value();
+   const bool do_causal = do_causal_;
+   const bool has_sinks = sinks.has_value();
++  const bool exclude_padded_keys =
++      experimental_d256_masked_prefill(q, k, v, has_mask);
++  const bool prune_masked_tiles = exclude_padded_keys &&
++      env::get_var("MIDNIGHT_METAL_SDPA_D256_PRUNE", 1) != 0;
+ 
+   metal::MTLFCList func_consts = {
+       {&align_Q, MTL::DataType::DataTypeBool, 200},
+       {&align_K, MTL::DataType::DataTypeBool, 201},
+       {&has_mask, MTL::DataType::DataTypeBool, 300},
+       {&do_causal, MTL::DataType::DataTypeBool, 301},
+-      {&has_sinks, MTL::DataType::DataTypeBool, 302}};
++      {&has_sinks, MTL::DataType::DataTypeBool, 302},
++      {&prune_masked_tiles, MTL::DataType::DataTypeBool, 303},
++      {&exclude_padded_keys, MTL::DataType::DataTypeBool, 304}};
+ 
+   std::string base_name;
+   concatenate(
+@@ -134,7 +154,11 @@
+       "_do_causal_",
+       (do_causal ? 't' : 'n'),
+       "_has_sinks_",
+-      (has_sinks ? 't' : 'n'));
++      (has_sinks ? 't' : 'n'),
++      "_prune_masked_tiles_",
++      (prune_masked_tiles ? 't' : 'n'),
++      "_exclude_padded_keys_",
++      (exclude_padded_keys ? 't' : 'n'));
+ 
+   auto& compute_encoder = metal::get_command_encoder(s);
+ 
+@@ -768,6 +792,10 @@
+   const int query_head_dim = q.shape(-1);
+   const int value_head_dim = v.shape(-1);
+ 
++  if (experimental_d256_masked_prefill(q, k, v, has_arr_mask)) {
++    return false;
++  }
++
+   // Use headdim-split kernel when NAX is enabled and there are enough query
+   // blocks to fill the machine.
+   if (metal::is_nax_available() &&
+diff --git a/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention_nax.h b/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention_nax.h
+--- a/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention_nax.h
++++ b/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention_nax.h
+@@ -17,6 +17,8 @@
+ constant bool has_mask [[function_constant(300)]];
+ constant bool do_causal [[function_constant(301)]];
+ constant bool has_sinks [[function_constant(302)]];
++constant bool prune_masked_tiles [[function_constant(303)]];
++constant bool exclude_padded_keys [[function_constant(304)]];
+ 
+ template <typename T>
+ struct TransformScale {
+@@ -655,8 +657,70 @@
+   const short sm = simd_coord.y;
+   const short sn = simd_coord.x;
+ 
+-  // Loop over KV seq length
+-  for (int kb = 0; kb < kb_lim; kb++) {
++  int kb_start = 0;
++  if (prune_masked_tiles && has_mask) {
++    // Find conservative occupied tile bounds from the actual mask, without
++    // inferring a window size or synchronizing the mask back to the CPU.
++    // Each SIMD owns complete query rows so an entirely excluded row can
++    // disable pruning: bool masks use finite_min and retain a uniform mean
++    // for such rows. Finite additive biases must never be discarded.
++    threadgroup int first_tiles[WM * WN];
++    threadgroup int last_tiles[WM * WN];
++    threadgroup bool empty_rows[WM * WN];
++    int first_tile = params->NK;
++    int last_tile = -1;
++    bool has_empty_row = false;
++    for (int qr = simd_group_id; qr < BQ; qr += WM * WN) {
++      int row = int(tid.x) * BQ + qr;
++      if (row >= params->qL) {
++        continue;
++      }
++      bool row_active = false;
++      for (int col = simd_lane_id; col < params->kL; col += 32) {
++        auto value = mask[int64_t(row) * mask_params->M_strides[2] + col];
++        bool active;
++        if constexpr (is_same_v<MaskType, bool>) {
++          active = value;
++        } else {
++          // Preserve finite negative values, positive infinity, and NaNs.
++          active = !(isinf(float(value)) && float(value) < 0);
++        }
++        if (active) {
++          row_active = true;
++          first_tile = min(first_tile, col / BK);
++          last_tile = max(last_tile, col / BK);
++        }
++      }
++      has_empty_row = has_empty_row || !simd_any(row_active);
++    }
++    first_tile = simd_min(first_tile);
++    last_tile = simd_max(last_tile);
++    if (simd_lane_id == 0) {
++      first_tiles[simd_group_id] = first_tile;
++      last_tiles[simd_group_id] = last_tile;
++      empty_rows[simd_group_id] = has_empty_row;
++    }
++    threadgroup_barrier(mem_flags::mem_threadgroup);
++    int first = params->NK;
++    int last = -1;
++    bool any_empty_row = false;
++    STEEL_PRAGMA_UNROLL
++    for (int group = 0; group < WM * WN; group++) {
++      first = min(first, first_tiles[group]);
++      last = max(last, last_tiles[group]);
++      any_empty_row = any_empty_row || empty_rows[group];
++    }
++    if (!any_empty_row && last >= first) {
++      kb_start = first;
++      kb_lim = min(kb_lim, last + 1);
++    }
++  }
++
++  K += kb_start * BK * int(params->K_strides[2]);
++  V += kb_start * BK * int(params->V_strides[2]);
++
++  // Loop over the occupied KV tile range. Edge/interior masks remain exact.
++  for (int kb = kb_start; kb < kb_lim; kb++) {
+     const int is_last_k = (kb == (params->NK_aligned));
+ 
+     stile_t Stile;
+@@ -826,6 +890,28 @@
+       }
+     }
+ 
++    // Array-mask loads outside kL return false/zero. Clamp padding after
++    // masking so a bool mask cannot restore padded scores to finite_min.
++    // Real fully masked bool rows keep finite_min and average exactly kL
++    // values, rather than counting the padded tail in their denominator.
++    if (exclude_padded_keys && !align_K && is_last_k) {
++      STEEL_PRAGMA_UNROLL
++      for (short ik = 0; ik < TK; ik++) {
++        const short col_pos = ik * kU + sn;
++        thread auto& fg = Stile.frag_at(0, ik);
++        STEEL_PRAGMA_UNROLL
++        for (short ii = 0; ii < stile_t::kFragThrRows; ii++) {
++          STEEL_PRAGMA_UNROLL
++          for (short jj = 0; jj < stile_t::kFragThrCols; jj++) {
++            const auto loc = ii * stile_t::kFragThrCols + jj;
++            if (col_pos + jj >= params->kL_rem) {
++              fg[loc] = -INFINITY;
++            }
++          }
++        }
++      }
++    }
++
+     // Do softmax (redundantly per half; the row statistics are cheap)
+     metal::vec<AccumType, kRowsPT> new_max;
+     metal::vec<AccumType, kRowsPT> factor;

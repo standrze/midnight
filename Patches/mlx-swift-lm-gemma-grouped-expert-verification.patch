@@ -1,0 +1,202 @@
+diff --git a/Libraries/MLXLMCommon/GemmaGroupedExpertVerification.swift b/Libraries/MLXLMCommon/GemmaGroupedExpertVerification.swift
+new file mode 100644
+--- /dev/null
++++ b/Libraries/MLXLMCommon/GemmaGroupedExpertVerification.swift
+@@ -0,0 +1,152 @@
++import Foundation
++import MLX
++
++package let gemmaGroupedExpertVerificationEnabled =
++    ProcessInfo.processInfo.environment["MIDNIGHT_METAL_GROUPED_EXPERT_VERIFY"] == "1"
++
++/// Experimental Q4/G64 Gemma expert projection for short verification chunks.
++/// IDs are produced by the unchanged router and must be valid expert indices.
++/// The SPI allows numerical tests without enabling the model-wide experiment.
++@_spi(Testing) public enum GemmaGroupedExpertVerificationKernel {
++    public static func supports(
++        input: MLXArray, weight: MLXArray, scales: MLXArray, biases: MLXArray, indices: MLXArray
++    ) -> Bool {
++        guard input.ndim >= 3, input.dim(-2) == 1, input.dtype == .bfloat16,
++            weight.ndim == 3, weight.dim(0) == 128, weight.dtype == .uint32,
++            scales.dtype == .bfloat16, biases.dtype == .bfloat16,
++            indices.dtype == .uint32 || indices.dtype == .int32,
++            (16...64).contains(indices.size), indices.size % 8 == 0
++        else { return false }
++        let width = input.dim(-1)
++        let output = weight.dim(1)
++        guard (width == 2816 && (output == 704 || output == 1408)) || (width == 704 && output == 2816),
++            weight.shape == [128, output, width / 8],
++            scales.shape == [128, output, width / 64], biases.shape == scales.shape
++        else { return false }
++        let rows = input.size / width
++        if indices.ndim == 1 {
++            // gatherSort has already duplicated token inputs into assignment order.
++            return rows == indices.size && input.shape == [rows, 1, width]
++        }
++        guard indices.ndim == 2, indices.dim(1) == 8 else { return false }
++        return input.shape == [indices.dim(0), 1, 1, width]
++            || input.shape == [indices.dim(0), 8, 1, width]
++    }
++
++    public static func callAsFunction(
++        input: MLXArray, weight: MLXArray, scales: MLXArray, biases: MLXArray,
++        indices: MLXArray, outputFill: Float? = nil
++    ) -> MLXArray? {
++        #if os(macOS)
++            guard Device.defaultDevice().deviceType == .gpu,
++                supports(input: input, weight: weight, scales: scales, biases: biases, indices: indices)
++            else { return nil }
++            let width = input.dim(-1)
++            let output = weight.dim(1)
++            let assignments = indices.size
++            return kernel(
++                [input, weight, scales, biases, indices.asType(.uint32)],
++                template: [
++                    ("T", DType.bfloat16), ("K_", width), ("N_", output), ("S_", assignments),
++                    ("EXPANDED_", input.size / width == assignments ? 1 : 0),
++                ],
++                grid: ((output / 8) * 64, assignments, 1), threadGroup: (64, 1, 1),
++                outputShapes: [indices.shape + [1, output]], outputDTypes: [.bfloat16],
++                initValue: outputFill)[0]
++        #else
++            return nil
++        #endif
++    }
++
++    #if os(macOS)
++        private static let kernel = MLXFast.metalKernel(
++            name: "gemma_affine_q4_g64_grouped_verify_v1",
++            inputNames: ["x", "packed", "scales", "biases", "indices"],
++            outputNames: ["output"], source: source, ensureRowContiguous: true)
++    #endif
++
++    // Based on MLX's MIT-licensed affine qmv_wide arithmetic: decode an
++    // eight-value subchunk once and reuse it across four independent vectors.
++    public static let source = """
++        const uint lane = thread_position_in_threadgroup.x % 32;
++        const uint simd = thread_position_in_threadgroup.x / 32;
++        const uint slot = threadgroup_position_in_grid.y;
++        const uint expert = indices[slot];
++
++        // Exactly one leader owns every four equal IDs, even when unsorted.
++        // The decision is uniform over the threadgroup, so inactive groups
++        // leave before any threadgroup barrier or weight access.
++        uint earlier = 0;
++        for (uint i = 0; i < slot; ++i) {
++            earlier += uint(indices[i] == expert);
++        }
++        if ((earlier % 4) != 0) {
++            return;
++        }
++        threadgroup uint members[4];
++        threadgroup uint member_count;
++        if (thread_position_in_threadgroup.x == 0) {
++            uint count = 0;
++            for (uint i = slot; i < S_ && count < 4; ++i) {
++                if (indices[i] == expert) {
++                    members[count++] = i;
++                }
++            }
++            for (uint i = count; i < 4; ++i) {
++                members[i] = slot;
++            }
++            member_count = count;
++        }
++        threadgroup_barrier(mem_flags::mem_threadgroup);
++
++        const uint k_lane = lane % 8;
++        const uint row = threadgroup_position_in_grid.x * 8 + simd * 4 + lane / 8;
++        float result[4] = {0.0f, 0.0f, 0.0f, 0.0f};
++        if (expert < 128) {
++            const uint weight_row = expert * N_ + row;
++            for (uint group = k_lane; group < K_ / 64; group += 8) {
++                const uint metadata = weight_row * (K_ / 64) + group;
++                const float scale = float(scales[metadata]);
++                const float bias = float(biases[metadata]);
++                #pragma unroll
++                for (uint word_index = 0; word_index < 8; ++word_index) {
++                    const uint word = packed[weight_row * (K_ / 8) + group * 8 + word_index];
++                    const uint k0 = group * 64 + word_index * 8;
++                    float decoded[8];
++                    #pragma unroll
++                    for (uint i = 0; i < 8; ++i) {
++                        decoded[i] = scale * float((word >> (4 * i)) & 15u) + bias;
++                    }
++                    #pragma unroll
++                    for (uint vector = 0; vector < 4; ++vector) {
++                        if (vector < member_count) {
++                            const uint input_row = EXPANDED_ ? members[vector] : members[vector] / 8;
++                            float partial = 0.0f;
++                            #pragma unroll
++                            for (uint i = 0; i < 8; ++i) {
++                                partial += float(x[input_row * K_ + k0 + i]) * decoded[i];
++                            }
++                            result[vector] += partial;
++                        }
++                    }
++                }
++            }
++        } else {
++            // Router IDs are in range by construction. Fail visibly without
++            // an out-of-bounds load if an invalid caller violates that contract.
++            #pragma unroll
++            for (uint vector = 0; vector < 4; ++vector) {
++                result[vector] = NAN;
++            }
++        }
++        #pragma unroll
++        for (uint vector = 0; vector < 4; ++vector) {
++            result[vector] += simd_shuffle_down(result[vector], 4);
++            result[vector] += simd_shuffle_down(result[vector], 2);
++            result[vector] += simd_shuffle_down(result[vector], 1);
++            if (k_lane == 0 && vector < member_count) {
++                output[members[vector] * N_ + row] = T(result[vector]);
++            }
++        }
++        """
++}
+diff --git a/Libraries/MLXLMCommon/SwitchLayers.swift b/Libraries/MLXLMCommon/SwitchLayers.swift
+--- a/Libraries/MLXLMCommon/SwitchLayers.swift
++++ b/Libraries/MLXLMCommon/SwitchLayers.swift
+@@ -348,18 +348,29 @@
+     override public func callAsFunction(
+         _ x: MLXArray, _ indices: MLXArray, sortedIndices: Bool = false
+     ) -> MLXArray {
+-        var result = MLX.gatherQuantizedMM(
+-            x,
+-            self.weight,
+-            scales: self.scales,
+-            biases: self.biases,
+-            rhsIndices: indices,
+-            transpose: true,
+-            groupSize: self.groupSize,
+-            bits: self.bits,
+-            mode: mode,
+-            sortedIndices: sortedIndices
+-        )
++        let grouped: MLXArray?
++        if gemmaGroupedExpertVerificationEnabled, !training, mode == .affine, bits == 4, groupSize == 64,
++            let biases
++        {
++            grouped = GemmaGroupedExpertVerificationKernel.callAsFunction(
++                input: x, weight: weight, scales: scales, biases: biases, indices: indices)
++        } else {
++            grouped = nil
++        }
++        var result =
++            grouped
++            ?? MLX.gatherQuantizedMM(
++                x,
++                self.weight,
++                scales: self.scales,
++                biases: self.biases,
++                rhsIndices: indices,
++                transpose: true,
++                groupSize: self.groupSize,
++                bits: self.bits,
++                mode: mode,
++                sortedIndices: sortedIndices
++            )
+ 
+         if let bias = self.bias {
+             result = result + MLX.expandedDimensions(bias[indices], axis: -2)

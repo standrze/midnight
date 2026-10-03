@@ -14,16 +14,18 @@ separate projects; see the [project layout](project-layout.md).
 
 ## Model-family priorities
 
-The runner optimizes for Mistral/Voxtral, Poolside Laguna, and GPT-OSS. Model
-execution stays in the Swift process; production inference does not launch a
-Python model server.
+The runner optimizes for Mistral/Voxtral, Poolside Laguna, and GPT-OSS. Text,
+Voxtral, and Qwen3-TTS execution stays in the Swift process. The optional
+VibeVoice backend launches a local Python/PyTorch worker.
 
 | Family | Native runtime | HTTP surface | Project status |
 | --- | --- | --- | --- |
 | Mistral / Voxtral | Swift + MLX | OpenAI-compatible chat; OpenAI and Mistral speech/voice dialects | Primary |
 | [Poolside Laguna](https://huggingface.co/poolside/Laguna-XS-2.1) | Swift + MLX hybrid-attention/MoE implementation | OpenAI-compatible chat | Primary |
 | [GPT-OSS](https://developers.openai.com/api/docs/models/gpt-oss-20b) | Upstream MLX Swift architecture | OpenAI-compatible chat | Supported |
-| Qwen | Upstream MLX Swift architectures where available | OpenAI-compatible chat | Compatibility only; no project-specific TTS path |
+| [Talkie](talkie.md) | Native Swift + MLX; BF16 and affine Q4/Q8 | OpenAI-compatible chat | Validated on Metal; 2,048-token checkpoint limit |
+| Qwen | Upstream MLX Swift architectures where available; native Qwen3-TTS on Metal | OpenAI-compatible chat and local speech | Qwen3-TTS CustomVoice preset speakers; Base reference conditioning with audio and transcript |
+| VibeVoice | Optional local Python/PyTorch worker on Metal or CPU | OpenAI and Mistral speech dialects | 1.5B and 7B converted checkpoints; reference-audio conditioning |
 
 "OpenAI-compatible" describes the runner's HTTP contract, not the model's
 internal architecture. Laguna, Mistral text models, and GPT-OSS therefore use
@@ -48,19 +50,22 @@ adds same-format affine-Q4 scale search and validation-gated per-layer planning
 without changing the deployment kernels.
 The [Laguna DFlash guide](laguna-dflash.md) documents the native
 five-layer block drafter, checkpoint pairing, and benchmark procedure.
+The [Gemma 4 26B-A4B assistant guide](gemma-a4b-assistant.md) covers the
+experimental text-only assistant, Q4 conversion in memory, CLI/API options,
+and measured throughput and output-parity limits.
 
 ### Standalone Swift ScaleSearch quantizer
 
-`model-runner-quantize` is the architecture-aware Swift quantization program in
-the sibling [Midnight Quantization](../../midnight-quantization/README.md)
-project. The remaining quantization shell launchers in this repository forward
-to that project. From the Midnight directory, build it with the MLX Metal
+`wick` is the architecture-aware Swift quantization program in the independent
+[Wick](../../wick/README.md) project. Its build and model support are local to
+that project; `model-runner-quantize` remains a compatibility executable. The
+quantization launchers and planning tools live in Wick; Midnight has no forwarding scripts. From the Midnight directory, build it with the MLX Metal
 library on macOS:
 
 ```bash
-MODEL_RUNNER_BUILD_CONFIGURATION=release \
-MODEL_RUNNER_BUILD_PRODUCT=model-runner-quantize \
-../midnight-quantization/build.sh
+WICK_BUILD_CONFIGURATION=release \
+WICK_BUILD_PRODUCT=wick \
+../wick/build.sh
 ```
 
 Inspect a local Mixtral, Mistral, Llama, GPT-OSS, Qwen, Poolside Laguna
@@ -68,12 +73,12 @@ DFlash drafter, or other registered MLX Swift text model without writing
 output, then perform the conversion directly:
 
 ```bash
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/unquantized-model \
   /absolute/path/model-q4r8-scalesearch \
   --dry-run
 
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/unquantized-model \
   /absolute/path/model-q4r8-scalesearch
 ```
@@ -82,7 +87,7 @@ Create a matched ordinary-affine-Q4 control from the same source by adding
 `--standard-q4` and choosing a separate destination:
 
 ```bash
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/unquantized-model \
   /absolute/path/model-q4-standard-control \
   --standard-q4
@@ -147,7 +152,7 @@ DFlash is a separate checkpoint from the Laguna target. The official
 INT4 target, so quantize it with a second invocation:
 
 ```bash
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4 \
   /absolute/path/Laguna-XS-2.1-DFlash-INT4-MLX-Q4R8-ScaleSearch
 ```
@@ -194,7 +199,7 @@ For Laguna, retain the measured bounded-memory and fused-layout path by giving
 the same binary a standard Q4R8 template:
 
 ```bash
-../midnight-quantization/.build/release/model-runner-quantize \
+../wick/.build/release/wick \
   /absolute/path/Laguna-XS-2.1-BF16 \
   /absolute/path/Laguna-XS-2.1-Q4R8-ScaleSearch-LS2 \
   --template /absolute/path/Laguna-XS-2.1-Q4R8-standard \
@@ -228,7 +233,7 @@ For a compact deployment artifact with lower GPU residency, prepack the 39
 sparse MoE layers offline, then serve the destination directory normally:
 
 ```bash
-python3 ../midnight-quantization/Scripts/pack-laguna-gate-up.py \
+python3 ../wick/Scripts/pack-laguna-gate-up.py \
   /absolute/path/Laguna-XS-2.1-4bit \
   /absolute/path/Laguna-XS-2.1-4bit-fused-gate-up-compact
 ```
@@ -250,7 +255,7 @@ fused before quantization and must share one precision.
 Inspect module paths without loading or writing the BF16 weights:
 
 ```bash
-Scripts/quantize-laguna-q4r8.sh \
+../wick/Scripts/quantize-laguna-q4r8.sh \
   /absolute/path/Laguna-XS-2.1-bf16 \
   /absolute/path/Laguna-XS-2.1-mlx-q4r8 \
   --dry-run
@@ -261,7 +266,7 @@ Pass `--q4-scale-search` to build an explicitly experimental same-format Q4
 candidate; standard Q4 remains the fallback for every group and all routers
 remain standard Q8. A measured ScalePlan bundle can instead select standard
 Q4, searched Q4, or Q8 per indivisible module with `--scale-plan`.
-Run `Scripts/audit-laguna-q4-scale-search.sh` first to measure the search on a
+Run `../wick/Scripts/audit-laguna-q4-scale-search.sh` first to measure the search on a
 representative set of real BF16 Laguna tensors without writing a checkpoint.
 The input must be an unquantized safetensors checkpoint, and conversion needs
 memory headroom beyond the roughly 62 GB BF16 source. Pass `--cpu` on a
@@ -287,8 +292,8 @@ weighted reconstruction MSE by 15.0543%. Direct safetensors verification found
 all 399 searched Q4 modules changed and all 320 preserved tensors exactly
 identical. Balanced ten-trial CUDA medians were 126.815 tok/s standard versus
 125.650 tok/s searched (-0.919%); this is an accuracy candidate, not a speed
-optimization. Use `Scripts/rescore-laguna-q4r8.sh` to build from a standard
-layout, `Scripts/verify-laguna-q4r8.sh` for exact integrity checks, and
+optimization. Use `../wick/Scripts/rescore-laguna-q4r8.sh` to build from a standard
+layout, `../wick/Scripts/verify-laguna-q4r8.sh` for exact integrity checks, and
 `Scripts/benchmark-cuda-laguna-ab.sh` for matched CUDA A/Bs. The direct
 `Scripts/benchmark-runtime-model.sh` harness records native runner metrics on
 Metal or CUDA without HTTP overhead. A standalone run of the archived LS2
@@ -352,13 +357,20 @@ Load an MLX model and listen on a chosen local port:
 ./run.sh --model /absolute/path/to/mlx-model --host 127.0.0.1 --port 8080
 ```
 
+Run `midnight api-key generate` to print a random 256-bit key. Set
+`MIDNIGHT_API_KEY` to that key before starting the
+listener; see [getting started](getting-started.md). Every HTTP request must
+send it as an `Authorization: Bearer` header, including `/v1/models` and
+`/v1/runtime/*`. Missing or invalid credentials return HTTP 401 with
+`code: invalid_api_key` and a `WWW-Authenticate: Bearer` challenge.
+
 When model loading finishes, connect an OpenAI-compatible client to
 `http://127.0.0.1:8080/v1`. Change `--port` to any available port; it defaults
 to `8080`.
 
-Models are discovered by name under `~/.runner/models` (override with
+Models are discovered by name under `~/.midnight/models` (override with
 `MODEL_RUNNER_MODELS_DIR`). A bundle such as
-`~/.runner/models/gemma-4-e2b-it-cyber` may contain `base-model` and `adapter`
+`~/.midnight/models/gemma-4-e2b-it-cyber` may contain `base-model` and `adapter`
 directories; `--model gemma-4-e2b-it-cyber` then loads both automatically and
 uses the bundle folder name as the served model name. Absolute and relative
 paths remain supported.
@@ -369,14 +381,25 @@ List every valid model directory without loading a model:
 ./run.sh --list-models
 ```
 
-The OpenAI-compatible `GET /v1/models` endpoint returns only the model loaded by
-the current process, because it is the only model clients can select for an
-inference request. `GET /v1/models/{model}` retrieves that model's descriptor.
+The OpenAI-compatible `GET /v1/models` endpoint returns preflight-valid,
+available checkpoints from the installed catalog. The Midnight-specific
+`loaded` boolean marks the one resident selection. Named inference requests can
+load another catalog entry after draining active work. `GET /v1/models/{model}`
+retrieves an installed model's descriptor without loading its weights. Preflight
+validates metadata and required files; successful loading and memory fit are
+established only when the model is selected.
 
 Chat completions support streaming and non-streaming requests, `developer`
 messages, `max_tokens` or `max_completion_tokens`, `temperature`, `top_p`, and
 up to four `stop` strings. Invalid parameters use the standard OpenAI error
-shape with `message`, `type`, `param`, and `code` fields.
+shape with `message`, `type`, `param`, and `code` fields. Unsupported or
+misspelled top-level Chat Completions fields are rejected instead of ignored.
+
+The [OpenAI Responses API](responses-api.md) additionally exposes
+`POST /v1/responses`, retrieval/deletion, and paginated input history. It supports
+text, client function calls/results, `text.format` structured output, semantic
+streaming events, and `previous_response_id` continuation with bounded local
+history. The guide lists supported controls and explicit unsupported features.
 
 OpenAI chat and model responses contain only OpenAI-compatible fields. Local
 performance details, including prompt and generated tokens per second, are
@@ -393,13 +416,17 @@ Verbose logs include a request ID, client address, HTTP method and path, body
 size, generation settings, output counts, finish reason, elapsed time, and
 errors. Prompt text and tool arguments remain redacted.
 
-The shared `../model-stack.local.json` already contains the local Gemma path, served name, host, port, and token limit. Start it without arguments:
+When a local model-stack settings file selects an existing checkpoint, start it
+without arguments:
 
 ```bash
 ./run.sh
 ```
 
-Settings are discovered automatically. `MODEL_STACK_CONFIG` or `--config PATH` can select another file, and individual command-line options override file values. `mlxRunner.maximumTokens` (or `--max-tokens`) is both the default when an HTTP request omits `max_tokens` and a hard per-request ceiling. Requests with a non-positive value or a value above that ceiling are rejected before streaming starts.
+Settings are discovered automatically. Verify that an environment-specific
+`model-stack.local.json` path still exists before relying on a no-argument
+launch. `MODEL_STACK_CONFIG` or `--config PATH` can select another file, and
+individual command-line options override file values. For text models without an explicit output cap, the reply default is `min(4096, contextLength / 4)`, bounded by the model output ceiling. The automatic ceiling is the configured context length minus one token, further bounded by a positive integer `max_output_tokens` in the checkpoint’s `text_config` or top-level `config.json`. An explicit `mlxRunner.maximumTokens`, per-model `maximumTokens`, or `--max-tokens` still sets the default and hard ceiling, bounded by model capacity. `/v1/models` and model detail/runtime metadata advertise `default_output_tokens` and `max_output_tokens` separately from `context_length`. After exact chat-template tokenization, generation uses the smaller of the requested/default output allowance and `contextLength - promptTokens - 1`. A full prompt or non-positive/above-ceiling request is rejected before streaming. Memory admission remains enforced. Speech-token/frame policies are unchanged.
 
 ### Resource guard
 
@@ -530,6 +557,12 @@ The server exposes:
 
 ### Speech and voice API contracts
 
+Speech is selected by loading a compatible speech checkpoint. A loaded text
+model does not allocate speech weights, synthesize audio, or preprocess images.
+The loader constructs only the selected backend, and an explicit speech/text
+switch drains and releases the previous model before loading its replacement.
+API route availability does not imply that speech is active in a text session.
+
 The same server also recognizes these routes directly under `/v1`; there is no
 provider or server-mode switch:
 
@@ -542,7 +575,8 @@ provider or server-mode switch:
 the existing OpenAI chat API. A request containing OpenAI's required `voice`
 field uses the OpenAI speech contract. A request containing Mistral's
 `voice_id`, `ref_audio`, `metadata`, `prompt_cache_key`, or `stream` fields uses
-the Mistral contract. Mixing the two sets of fields is rejected.
+the Mistral contract. Mixing the two sets of fields is rejected. Both dialects
+require `input` to contain between 1 and 4,096 characters.
 
 Mistral non-streaming speech responses are JSON with base64 `audio_data`.
 Streaming uses named `speech.audio.delta` and `speech.audio.done` server-sent
@@ -588,6 +622,7 @@ This first native slice supports 24-kHz mono WAV and PCM. OpenAI defaults
 ```bash
 curl --fail-with-body --silent --show-error \
   http://127.0.0.1:8080/v1/audio/speech \
+  -H "Authorization: Bearer $MIDNIGHT_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "voxtral-4b-tts",
@@ -602,6 +637,14 @@ Use `GET /v1/audio/voices` to list the checkpoint's preset voices. Speed is
 currently fixed at `1.0`; instructions, reference-audio cloning, custom voice
 creation, and compressed output formats remain unavailable for this checkpoint
 path.
+
+Qwen3-TTS CustomVoice MLX checkpoints are also a native Metal speech backend.
+They use the same OpenAI-compatible speech endpoint with WAV or PCM output;
+the checkpoint's `spk_id` entries are its preset voices, and `instructions`
+provide optional delivery guidance. Qwen3-TTS Base uses the Mistral speech
+dialect with base64 `ref_audio` and its transcript in `ref_text`; both are
+required for reference conditioning. Base reports `audio_input:true`, while
+CustomVoice correctly reports output-only capability.
 
 For the in-process MLX backend, tools are passed to both the model's chat
 template and MLX Swift LM's tool-call parser. Accepted calls stream in
@@ -981,4 +1024,17 @@ The safe default binds the runner only to `127.0.0.1`. Keep that setting on the 
 ssh -L 8080:127.0.0.1:8080 USER@GPU-HOST
 ```
 
-The existing Mac chat setting can then stay at `http://127.0.0.1:8080/v1`. Binding the runner to `0.0.0.0` is also possible with `--host 0.0.0.0`, but this minimal server does not yet authenticate inbound requests; expose it only on a trusted, firewalled network.
+The existing Mac chat setting can then stay at `http://127.0.0.1:8080/v1`, but
+the client must send the configured API key. Binding the runner to `0.0.0.0` is
+also possible with `--host 0.0.0.0`. Bearer keys travel in cleartext over HTTP,
+so use a trusted TLS termination boundary for remote access.
+
+### Editable model-card metadata
+
+See [model cards](model-cards.md) for `model-card.json`, the display name and
+optional description returned by the existing model lookup and inspector
+endpoints. Model routing IDs are unchanged.
+
+## API organization
+
+The [single-page API field guide](api-field-guide/index.html) documents all existing calls, their OpenAI/Mistral/Midnight contracts, and availability. One listener serves inference, runtime control, inspection and audio. Runtime, inspector, audio, vision and Responses handlers have separate source files and share the same model lifecycle. Existing paths and wire formats are preserved. Each process loads one model; `/v1/models` reports only the ready selection, while managed downloads remain a disk inventory.

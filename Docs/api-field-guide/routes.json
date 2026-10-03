@@ -1,0 +1,198 @@
+[
+  {
+    "method": "GET",
+    "path": "/v1/models",
+    "family": "openai",
+    "status": "Available",
+    "purpose": "List preflight-valid installed models, including unloaded entries; loaded marks the ready selection."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/models/{id}",
+    "family": "openai",
+    "status": "Available",
+    "purpose": "Retrieve an installed model by its exact, URL-encoded catalog ID, even when unloaded."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "family": "openai",
+    "status": "Model-dependent",
+    "purpose": "Text chat and SSE. Image chat requires the vision backend; that path is non-streaming."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/responses",
+    "family": "openai",
+    "status": "Text models",
+    "purpose": "Text responses, function tools, optional SSE and stored continuation. Local subset."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/responses/{id}",
+    "family": "openai",
+    "status": "Stored only",
+    "purpose": "Retrieve a response retained by this listener, even after model unload."
+  },
+  {
+    "method": "DELETE",
+    "path": "/v1/responses/{id}",
+    "family": "openai",
+    "status": "Stored only",
+    "purpose": "Delete one saved response. Does not delete model weights."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/responses/{id}/input_items",
+    "family": "openai",
+    "status": "Stored only",
+    "purpose": "List inputs. Query: order=asc|desc, limit=1..100, after=<item-id>."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "family": "openai",
+    "status": "Speech model",
+    "purpose": "OpenAI body uses voice; returns audio. Also accepts the Mistral voice_id dialect. Do not mix dialects."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runtime",
+    "family": "midnight",
+    "status": "Available",
+    "purpose": "Read phase, modelGeneration, loadedModel, MLX allocator memory, lastError and optional latest generationMetrics (including headless serving)."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/runtime/load",
+    "family": "midnight",
+    "status": "Local control",
+    "purpose": "Load a folder/path; optional name sets the routing ID. Returns 202; poll runtime until ready."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/runtime/unload",
+    "family": "midnight",
+    "status": "Local control",
+    "purpose": "Unload weights from RAM; keep disk files. Send {} or selection guards. Returns 202."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runtime/downloads",
+    "family": "midnight",
+    "status": "Local control",
+    "purpose": "List managed downloads with repository, revision and inUse. Not every manually copied model."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/runtime/remove",
+    "family": "midnight",
+    "status": "Destructive",
+    "purpose": "Delete a managed download by folder name. Refuses unmanaged or in-use files."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/inspector/runtime",
+    "family": "midnight",
+    "status": "Alias",
+    "purpose": "Managed listener: same runtime state as /v1/runtime. Legacy direct handler: process identity only."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/inspector/model",
+    "family": "midnight",
+    "status": "Text inspector",
+    "purpose": "Activation Capture discovery: model/layer geometry, quantization, modelCard and traceCapabilities. Check traceSupported."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/inspector/trace",
+    "family": "midnight",
+    "status": "Supported models",
+    "purpose": "Activation Capture: selected residual vectors for any authorized client. Requires layers and tokenPositions; raw or summary output."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/inspector/recordings",
+    "family": "midnight",
+    "status": "Supported text models",
+    "purpose": "Arm bounded summary capture for the next ordinary Chat Completions or Responses request on the loaded model."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/inspector/recordings/{recording_id}",
+    "family": "midnight",
+    "status": "Retained recordings",
+    "purpose": "Poll recording state and retrieve a completed capture, including during generation or after model unload."
+  },
+  {
+    "method": "DELETE",
+    "path": "/v1/inspector/recordings/{recording_id}",
+    "family": "midnight",
+    "status": "Capture control",
+    "purpose": "Cancel an armed or active recording without cancelling the external chat request; returns the session state."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/vision/status",
+    "family": "midnight",
+    "status": "Vision backend",
+    "purpose": "Read status from the selected optional vision worker."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/audio/voices",
+    "family": "mistral",
+    "status": "Preset discovery",
+    "purpose": "List voice metadata. Query: limit, offset, type=all|custom|preset."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/audio/voices",
+    "family": "mistral",
+    "status": "Unsupported",
+    "purpose": "Mistral JSON voice creation is rejected. OpenAI multipart creation shares this path and returns an unsupported-feature error."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/audio/voices/{id}",
+    "family": "mistral",
+    "status": "Preset discovery",
+    "purpose": "Retrieve metadata for a known preset voice ID."
+  },
+  {
+    "method": "PATCH",
+    "path": "/v1/audio/voices/{id}",
+    "family": "mistral",
+    "status": "Read-only presets",
+    "purpose": "Route recognized, but bundled presets cannot be changed."
+  },
+  {
+    "method": "DELETE",
+    "path": "/v1/audio/voices/{id}",
+    "family": "mistral",
+    "status": "Read-only presets",
+    "purpose": "Route recognized, but bundled presets cannot be deleted."
+  },
+  {
+    "method": "GET",
+    "path": "/v1/audio/voices/{id}/sample",
+    "family": "mistral",
+    "status": "Unavailable",
+    "purpose": "Route recognized; bundled checkpoint does not provide original sample WAV files."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/runtime/reset-cache",
+    "family": "midnight",
+    "status": "Managed text models",
+    "purpose": "Reset retained KV caches for all clients while keeping model weights and stored conversations. Local JSON clients only."
+  },
+  {
+    "method": "POST",
+    "path": "/v1/decisions",
+    "family": "midnight",
+    "status": "Decision-contract models",
+    "purpose": "Native boolean/enum/rubric candidate scoring with per-choice probabilities and release-specific calibration; no generated JSON or reasoning."
+  }
+]

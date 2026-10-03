@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "model": {"path": "/absolute/local/checkpoint", "served_name": "bench"},
+  "config": {"mlxRunner": {}},
+  "blocks": 8,
+  "variants": [
+    {
+      "name": "baseline",
+      "command": ["/absolute/baseline/midnight", "--config", "{config}", "--model", "{model}", "--name", "{served_model}", "--host", "127.0.0.1", "--port", "{port}", "--engine", "metal", "--context-length", "8192", "--prefill-step-size", "512", "--max-tokens", "256", "--kv-compression", "none"],
+      "env": {"HF_HUB_OFFLINE": "1"},
+      "identity_paths": ["/absolute/baseline/mlx.metallib", "/absolute/baseline/Package.resolved"]
+    },
+    {
+      "name": "candidate",
+      "command": ["/absolute/candidate/midnight", "--config", "{config}", "--model", "{model}", "--name", "{served_model}", "--host", "127.0.0.1", "--port", "{port}", "--engine", "metal", "--context-length", "8192", "--prefill-step-size", "512", "--max-tokens", "256", "--kv-compression", "none"],
+      "env": {"HF_HUB_OFFLINE": "1"},
+      "identity_paths": ["/absolute/candidate/mlx.metallib", "/absolute/candidate/Package.resolved"]
+    }
+  ],
+  "request": {"temperature": 0, "top_p": 1},
+  "workloads": ["short", "fresh_long", "repeat_long", "shared_prefix", "decode", "multiturn", "cancel_next"],
+  "conversation_api": "responses",
+  "cache_expectations": {"fresh_long": "zero", "repeat_long": "positive", "shared_prefix": "positive"},
+  "limits": {"request_seconds": 180, "startup_seconds": 180, "startup_poll_seconds": 0.01},
+  "gate": {"latency_tolerance": 0.03, "minimum_pairs": 4, "drift_tolerance": 0.1}
+}

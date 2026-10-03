@@ -53,9 +53,11 @@ quantization metadata or label an MXFP4-to-affine requantization as lossless.
 From the repository root:
 
 ```bash
+export MIDNIGHT_API_KEY="$(openssl rand -hex 32)"
 ./run.sh --config Examples/gpt-oss-mxfp4.json
 
 curl --fail-with-body http://127.0.0.1:8080/v1/chat/completions \
+  -H "Authorization: Bearer $MIDNIGHT_API_KEY" \
   -H 'Content-Type: application/json' \
   --data-binary @Examples/gpt-oss-fast-request.json
 ```

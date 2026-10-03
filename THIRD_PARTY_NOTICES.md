@@ -6,12 +6,6 @@ Nothing in Midnight's license replaces those terms.
 
 ## MLX projects
 
-- [mlx-audio-swift](https://github.com/Blaizzy/mlx-audio-swift) — MIT License,
-  copyright (c) 2025 Prince Canuma. Midnight pins this dependency and carries
-  Chatterbox compatibility patches. Chatterbox checkpoints retain their own
-  model licenses. Optional FFmpeg is a separately installed executable and is
-  not bundled by Midnight.
-
 - [mlx-swift](https://github.com/ml-explore/mlx-swift) — MIT License,
   copyright (c) 2023 ml-explore.
 - [MLX](https://github.com/ml-explore/mlx) — MIT License,
@@ -52,7 +46,14 @@ The following direct dependencies are licensed under the Apache License 2.0:
 - [swift-huggingface](https://github.com/huggingface/swift-huggingface)
 - [swift-transformers](https://github.com/huggingface/swift-transformers)
 - [SwiftNIO](https://github.com/apple/swift-nio)
+- [loom](https://github.com/standrze/loom)
+- [weft](https://github.com/standrze/weft)
 - [Swift Argument Parser](https://github.com/apple/swift-argument-parser)
+
+The console also brings in Apache-licensed [Swift Markdown](https://github.com/swiftlang/swift-markdown)
+and [Swift System](https://github.com/apple/swift-system), with their runtime exceptions,
+and [swift-cmark](https://github.com/swiftlang/swift-cmark) under its upstream BSD/MIT component licenses.
+Preserve their license texts when distributing these components.
 
 The Apache License 2.0 text is included in [`LICENSE`](LICENSE). SwiftNIO also
 publishes an upstream [`NOTICE.txt`](https://github.com/apple/swift-nio/blob/2.101.3/NOTICE.txt)

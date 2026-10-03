@@ -1,0 +1,20 @@
+--- a/Libraries/MLXLLM/Models/Gemma4Text.swift
++++ b/Libraries/MLXLLM/Models/Gemma4Text.swift
+@@ -813,8 +813,15 @@
+             let lt = layer.layerType
+             if maskByType[lt] == nil {
+                 if lt == "sliding_attention" {
+-                    maskByType[lt] = createAttentionMask(
+-                        h: h, cache: fullCache[i], windowSize: config.slidingWindow)
++                    // Ordinary caches retain the whole history. Their default
++                    // mask does not enforce a window for short chunks or decode.
++                    let offset = fullCache[i]?.offset ?? 0
++                    if offset + h.dim(1) > config.slidingWindow {
++                        maskByType[lt] = .array(createCausalMask(
++                            n: h.dim(1), offset: offset, windowSize: config.slidingWindow))
++                    } else {
++                        maskByType[lt] = createAttentionMask(h: h, cache: fullCache[i])
++                    }
+                 } else {
+                     maskByType[lt] = createAttentionMask(h: h, cache: fullCache[i])
+                 }

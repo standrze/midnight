@@ -1,0 +1,46 @@
+--- a/Libraries/MLXLLM/Models/Gemma4Text.swift
++++ b/Libraries/MLXLLM/Models/Gemma4Text.swift
+@@ -210,6 +210,7 @@
+ // MARK: - Attention
+ 
+ private class Gemma4Attention: Module {
++    private let sliceWindow = ProcessInfo.processInfo.environment["MIDNIGHT_GEMMA4_WINDOW_SLICING"] == "1"
+     let config: Gemma4TextConfiguration
+     let layerIdx: Int
+     let layerType: String
+@@ -370,18 +371,27 @@
+             }
+         }
+ 
+-        let attentionOutput: MLXArray =
+-            switch kvState {
++        let attentionOutput: MLXArray
++        switch kvState {
+             case .regular(let keys, let values):
+-                MLXFast.scaledDotProductAttention(
+-                    queries: queries,
+-                    keys: keys,
+-                    values: values,
++                let shouldSlice = (Gemma4RuntimeTuning.useWindowSlicing ?? sliceWindow)
++                    && isSliding && L == 1 && keys.dim(2) > config.slidingWindow
++                let firstKey = shouldSlice ? keys.dim(2) - config.slidingWindow : 0
++                let attentionKeys = shouldSlice ? keys[.ellipsis, firstKey..., 0...] : keys
++                let attentionValues = shouldSlice ? values[.ellipsis, firstKey..., 0...] : values
++                var attentionMask = adjustedMask
++                if shouldSlice, case .array(let array) = adjustedMask {
++                    attentionMask = .array(array[.ellipsis, firstKey...])
++                }
++                attentionOutput = MLXFast.scaledDotProductAttention(
++                    queries: queries,
++                    keys: attentionKeys,
++                    values: attentionValues,
+                     scale: scale,
+-                    mask: adjustedMask ?? .none
++                    mask: attentionMask ?? .none
+                 )
+             case .quantized(let keys, let values, let groupSize, let bits, let mode):
+-                quantizedScaledDotProductAttention(
++                attentionOutput = quantizedScaledDotProductAttention(
+                     queries: queries,
+                     quantizedKeys: keys,
+                     quantizedValues: values,

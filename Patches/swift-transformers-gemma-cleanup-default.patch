@@ -1,0 +1,14 @@
+--- a/Sources/Tokenizers/Tokenizer.swift
++++ b/Sources/Tokenizers/Tokenizer.swift
+@@ -559,6 +559,10 @@
+         normalizer = NormalizerFactory.fromConfig(config: tokenizerData["normalizer"])
+         postProcessor = PostProcessorFactory.fromConfig(config: tokenizerData["postProcessor"])
+         decoder = DecoderFactory.fromConfig(config: tokenizerData["decoder"], addedTokens: self.addedTokens)
+-        cleanUpTokenizationSpaces = tokenizerConfig.cleanUpTokenizationSpaces.boolean(or: true)
++        // Gemma preserves spaces in decoded code and text by default. Explicit
++        // checkpoint settings remain authoritative; other families keep their default.
++        let tokenizerClass = tokenizerConfig.tokenizerClass.string()
++        let defaultsToCleanup = tokenizerClass != "GemmaTokenizer" && tokenizerClass != "GemmaTokenizerFast"
++        cleanUpTokenizationSpaces = tokenizerConfig.cleanUpTokenizationSpaces.boolean(or: defaultsToCleanup)
+         self.tokenizerConfig = tokenizerConfig
+ 

@@ -1,0 +1,24 @@
+--- a/Libraries/MLXLMCommon/Evaluate.swift
++++ b/Libraries/MLXLMCommon/Evaluate.swift
+@@ -4,4 +4,9 @@
+ import MLX
+ import MLXNN
++
++/// Passive request-local observation of emitted token counts. This does not alter sampling.
++public enum GenerationTokenObserver {
++    @TaskLocal public static var onToken: (@Sendable (Int) -> Void)?
++}
+ 
+ /// A `LogitSampler` is responsible for sampling `logits` produced by
+@@ -2359,4 +2364,11 @@
+                 }
+ 
++                let previousTokenCount = tokenCount
++                defer {
++                    if tokenCount > previousTokenCount {
++                        GenerationTokenObserver.onToken?(tokenCount)
++                    }
++                }
++
+                 // Check for end-of-sequence tokens
+                 if token == tokenizer.unknownTokenId || stopTokenIds.contains(token) {
