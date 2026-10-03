@@ -1,8 +1,0 @@
-MLX resource guard: memory=54975581389 bytes cache=268435456 bytes
-Measured MLX wired-memory plan: peak=12514685952 kv=49379328 workspace=1286825856 limit=14034590004 cap=54975581389
-Context policy: limit=8192, prefill=2048, KV=none, geometry=known
-GPT-OSS hot conversation cache: zero-copy session reuse enabled; Harmony token reconciliation preserves safe rebuilds
-warmup 1/1 [target_only]: 122.27 tok/s, TTFT 1888.84 ms
-trial 1/1 [target_only]: 113.37 tok/s, TTFT 1967.79 ms
-median decode: 113.37 tok/s
-Wrote /Users/stephen/Documents/ChatGPT/midnight/benchmark-results/gpt-oss-20260906/prefill-campaign/runs/runtime-notes-long-prefill2048-001-1-prefill2048/native.json

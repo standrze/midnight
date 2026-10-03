@@ -10,6 +10,8 @@ import time
 import urllib.error
 import urllib.request
 
+from midnight_api_auth import json_headers
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -31,7 +33,7 @@ def main():
         def request(route, body=None):
             data = None if body is None else json.dumps(body).encode()
             req = urllib.request.Request(base + route, data=data,
-                headers={'Content-Type': 'application/json'})
+                headers=json_headers())
             try:
                 with urllib.request.urlopen(req, timeout=180) as response:
                     return response.status, response.headers.get('Content-Type', ''), response.read()

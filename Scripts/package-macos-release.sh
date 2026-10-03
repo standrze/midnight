@@ -38,7 +38,7 @@ The installer asks whether to add ~/.midnight/bin to PATH.
 Open a new terminal after accepting, then run midnight download.
 
 This prerelease is ad-hoc signed, not Developer ID signed or notarized.
-It includes no model weights. Linux/CUDA builds are available from source.
+It includes no model weights. Linux/CUDA builds are available in a separate release archive.
 TEXT
 COPYFILE_DISABLE=1 tar -czf "$OUTPUT/midnight-$VERSION-macos-arm64.tar.gz" -C "$STAGE" midnight
 cp "$ROOT/Scripts/install-latest.sh" "$OUTPUT/install.sh"

@@ -1,0 +1,70 @@
+diff --git a/mlx/backend/metal/kernels/scaled_dot_product_attention.metal b/mlx/backend/metal/kernels/scaled_dot_product_attention.metal
+index 187e6fffc..4a96a0d0f 100644
+--- a/mlx/backend/metal/kernels/scaled_dot_product_attention.metal
++++ b/mlx/backend/metal/kernels/scaled_dot_product_attention.metal
+@@ -56,4 +56,15 @@ using namespace metal;
+ instantiate_sdpa_vector_heads(float)
+ instantiate_sdpa_vector_heads(bfloat16_t)
+ instantiate_sdpa_vector_heads(float16_t)
++
++// Initial D512 decode support deliberately instantiates only the two-pass
++// kernels, avoiding the single-pass kernel's 1024-thread register footprint.
++#define instantiate_sdpa_vector_d512(type)                    \
++  instantiate_kernel(                                        \
++      "sdpa_vector_2pass_1_" #type "_512_512",                 \
++      sdpa_vector_2pass_1, type, 512, 512)                    \
++  instantiate_sdpa_vector_aggregation(type, 512)
++
++instantiate_sdpa_vector_d512(bfloat16_t)
++instantiate_sdpa_vector_d512(float16_t)
+     // clang-format on
+diff --git a/mlx/backend/metal/scaled_dot_product_attention.cpp b/mlx/backend/metal/scaled_dot_product_attention.cpp
+index 981d2b181..b139f6e15 100644
+--- a/mlx/backend/metal/scaled_dot_product_attention.cpp
++++ b/mlx/backend/metal/scaled_dot_product_attention.cpp
+@@ -15,6 +15,22 @@ namespace mlx::core::fast {
+ 
+ namespace {
+ 
++// D512 is used by Gemma's global attention. Keep this initial decode-only
++// specialization opt-in until its numerical and performance checks pass on
++// supported devices. The two-pass templates support D divisible by 32; only
++// FP16/BF16 D512 variants are instantiated in the Metal library.
++bool experimental_d512_decode(
++    const array& q,
++    const array& k,
++    const array& v,
++    bool has_mask) {
++  return q.shape(-1) == 512 && v.shape(-1) == 512 && q.shape(0) == 1 &&
++      q.shape(2) == 1 && k.shape(2) > 0 && !has_mask &&
++      (q.dtype() == float16 || q.dtype() == bfloat16) &&
++      q.shape(1) / k.shape(1) <= 8 &&
++      env::get_var("MIDNIGHT_METAL_SDPA_D512", 0) == 1;
++}
++
+ void sdpa_full_self_attention_nax(
+     const Stream& s,
+     metal::Device& d,
+@@ -648,6 +664,9 @@ std::tuple<bool, std::string> has_fused_kernel(
+         "the fused forward does not produce the logsumexp required for "
+         "the fused VJP; use default routing when training."};
+   }
++  if (experimental_d512_decode(q, k, v, has_mask)) {
++    return {true, ""};
++  }
+ 
+   const int value_head_dim = v.shape(-1);
+   const int query_head_dim = q.shape(-1);
+@@ -870,9 +889,11 @@ void ScaledDotProductAttention::eval_gpu(
+     // We route to the 2 pass fused attention if
+     // - The device is large and the sequence length long
+     // - The sequence length is even longer and we have gqa
++    // - The opt-in D512 decode path, whose single-pass variant is not built
+     bool do_causal = do_causal_ && q.shape(2) > 1;
+     char devc = d.get_architecture().back();
+-    if (((devc == 'd' || devc == 's') && k.shape(2) >= 1024) ||
++    if (q.shape(-1) == 512 ||
++        ((devc == 'd' || devc == 's') && k.shape(2) >= 1024) ||
+         (k.shape(1) < q.shape(1) && k.shape(2) >= 4096)) {
+       sdpa_vector_2pass(s, d, q, k, v, o, scale_, do_causal, mask, sinks);
+     } else {

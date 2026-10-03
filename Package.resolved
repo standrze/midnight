@@ -1,5 +1,5 @@
 {
-  "originHash" : "ea7d0c68fdcecc1665efc3a95ca92ee4c1cd60fb9d4137a20f2cb74b9fb99d64",
+  "originHash" : "ea79357668a41f2bb1b7347bc662572af66d035f935011d7d3bfaf54c8a250cb",
   "pins" : [
     {
       "identity" : "eventsource",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "86b5096ac59ab46e66bd1f6377c604bc1dab0bc2",
         "version" : "1.5.1"
+      }
+    },
+    {
+      "identity" : "loom",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/standrze/loom.git",
+      "state" : {
+        "revision" : "2fe311be854108fba3c48a96ca4100ac6b3dcde0",
+        "version" : "0.1.1"
       }
     },
     {
@@ -62,6 +71,15 @@
       }
     },
     {
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-cmark.git",
+      "state" : {
+        "revision" : "08ddb528923cc1a6527e02b7a1aee9e516ca749a",
+        "version" : "0.9.0"
+      }
+    },
+    {
       "identity" : "swift-collections",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
@@ -95,6 +113,15 @@
       "state" : {
         "revision" : "7d0b8880ef8e567dd4e0089f8b99fb354129017c",
         "version" : "2.4.2"
+      }
+    },
+    {
+      "identity" : "swift-markdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-markdown",
+      "state" : {
+        "revision" : "25cb61d3482054b09ae76ca4f281b1bfe7fe5a43",
+        "version" : "0.9.0"
       }
     },
     {
@@ -140,6 +167,15 @@
       "state" : {
         "revision" : "2fa33e1f5e7131a7fc64c28e6d161dcec0d24820",
         "version" : "1.3.3"
+      }
+    },
+    {
+      "identity" : "weft",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/standrze/weft.git",
+      "state" : {
+        "revision" : "5e0eba579448603833150222fb73d2414fc63e82",
+        "version" : "0.1.1"
       }
     },
     {

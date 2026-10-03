@@ -1,0 +1,23 @@
+diff --git a/Sources/Tokenizers/Tokenizer.swift b/Sources/Tokenizers/Tokenizer.swift
+--- a/Sources/Tokenizers/Tokenizer.swift
++++ b/Sources/Tokenizers/Tokenizer.swift
+@@ -514,9 +514,18 @@
+             $0.content.count > $1.content.count
+         }
+ 
+-        // then concatenate into regular expression
++        // Nonempty literals without whitespace stripping equal the full match.
++        // Avoid one capture group per alternative and the splitter's group scan.
++        // Keep captures for stripping and empty tokens: () is valid, but an empty
++        // regex pattern fails compilation and would change zero-width splitting.
++        let needsAddedTokenCaptures = unwrappedAddedTokens.contains {
++            $0.prefix || $0.suffix || $0.content.isEmpty
++        }
+         let addedTokensRegexString = unwrappedAddedTokens.map {
+             let token = NSRegularExpression.escapedPattern(for: $0.content)
++            if !needsAddedTokenCaptures {
++                return token
++            }
+             let prefix = $0.prefix ? #"\s*"# : ""
+             let suffix = $0.suffix ? #"\s*"# : ""
+             return "\(prefix)(\(token))\(suffix)"

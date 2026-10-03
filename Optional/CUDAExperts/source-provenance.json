@@ -1,0 +1,11 @@
+{
+  "mlx_revision": "7a1d4f5c12ac82f4b4d0a6e71538d89ca0605247",
+  "status": "compiled_exact_parity_failed",
+  "source_sha256": {
+    "mlx/backend/cuda/quantized/quantized.cpp": "7bda94061d29f24d1a3cbce97c95c299885ee0bc7fdef5afbe1daa6d1cc71161",
+    "mlx/backend/cuda/quantized/qmm/qmm.h": "12959c805b93aa0149303d5de19a9cf6fda548480f1fcd7481e1db71165e2d19",
+    "mlx/backend/cuda/quantized/qmm/qmv.cu": "abb688f41014d875c23c8c7bce0c28a23f8baf6c6f5f713ca2ca04b93aa5e23f"
+  },
+  "patch_sha256": "a4f47118f18d70cc30b9eba2058c53200c9f71acd2ad4f57f61c410e65151d90",
+  "header_sha256": "969d0d5254917875b026df2b9dbee3fbfd93daf5dabf303bb3d03f723e97da5c"
+}

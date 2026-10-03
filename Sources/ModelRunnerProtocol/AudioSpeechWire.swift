@@ -1,15 +1,18 @@
 import Foundation
 
+/// An OpenAI speech voice supplied as a name or an object containing an ID.
 public enum OpenAISpeechVoice: Codable, Equatable, Sendable {
     case name(String)
     case id(String)
 
+    /// The voice name or ID without its wire wrapper.
     public var value: String {
         switch self {
         case .name(let value), .id(let value): value
         }
     }
 
+    /// Decodes a voice string or an object containing a voice ID.
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let name = try? container.decode(String.self) {
@@ -19,6 +22,7 @@ public enum OpenAISpeechVoice: Codable, Equatable, Sendable {
         self = .id(try container.decode(VoiceID.self).id)
     }
 
+    /// Writes a named voice as a string or an ID as a voice object.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -32,23 +36,28 @@ public enum OpenAISpeechVoice: Codable, Equatable, Sendable {
     }
 }
 
+/// Encoded audio formats accepted by the OpenAI speech request shape.
 public enum OpenAISpeechResponseFormat: String, Codable, CaseIterable, Sendable {
     case mp3, opus, aac, flac, wav, pcm
 }
 
+/// Selects SSE events or a direct audio response for speech generation.
 public enum OpenAISpeechStreamFormat: String, Codable, CaseIterable, Sendable {
     case sse, audio
 }
 
+/// The OpenAI-compatible speech generation request fields and defaults.
 public struct OpenAISpeechRequest: Codable, Equatable, Sendable {
     public let model: String
     public let input: String
     public let voice: OpenAISpeechVoice
     public let instructions: String?
     public let responseFormat: OpenAISpeechResponseFormat
+    /// Requested playback rate relative to normal speed (1.0).
     public let speed: Double
     public let streamFormat: OpenAISpeechStreamFormat
 
+    /// Creates an OpenAI speech request with explicit output and stream defaults.
     public init(
         model: String,
         input: String,
@@ -67,21 +76,24 @@ public struct OpenAISpeechRequest: Codable, Equatable, Sendable {
         self.streamFormat = streamFormat
     }
 
+    /// Decodes an OpenAI speech request, applying defaults to omitted format and speed fields.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         model = try container.decode(String.self, forKey: .model)
         input = try container.decode(String.self, forKey: .input)
         voice = try container.decode(OpenAISpeechVoice.self, forKey: .voice)
         instructions = try container.decodeNonNullIfPresent(String.self, forKey: .instructions)
-        responseFormat = try container.decodeNonNullIfPresent(
-            OpenAISpeechResponseFormat.self,
-            forKey: .responseFormat
-        ) ?? .mp3
+        responseFormat =
+            try container.decodeNonNullIfPresent(
+                OpenAISpeechResponseFormat.self,
+                forKey: .responseFormat
+            ) ?? .mp3
         speed = try container.decodeNonNullIfPresent(Double.self, forKey: .speed) ?? 1
-        streamFormat = try container.decodeNonNullIfPresent(
-            OpenAISpeechStreamFormat.self,
-            forKey: .streamFormat
-        ) ?? .audio
+        streamFormat =
+            try container.decodeNonNullIfPresent(
+                OpenAISpeechStreamFormat.self,
+                forKey: .streamFormat
+            ) ?? .audio
     }
 
     enum CodingKeys: String, CodingKey {
@@ -91,11 +103,13 @@ public struct OpenAISpeechRequest: Codable, Equatable, Sendable {
     }
 }
 
+/// Input, output, and total token counts for an OpenAI speech response.
 public struct OpenAISpeechUsage: Codable, Equatable, Sendable {
     public let inputTokens: Int
     public let outputTokens: Int
     public let totalTokens: Int
 
+    /// Records input, output, and total token counts for speech usage.
     public init(inputTokens: Int, outputTokens: Int, totalTokens: Int) {
         self.inputTokens = inputTokens
         self.outputTokens = outputTokens
@@ -109,30 +123,36 @@ public struct OpenAISpeechUsage: Codable, Equatable, Sendable {
     }
 }
 
+/// An OpenAI SSE event carrying a chunk of encoded speech audio.
 public struct OpenAISpeechAudioDeltaEvent: Codable, Equatable, Sendable {
     public let type: String
     public let audio: String
 
+    /// Wraps one encoded audio fragment in a speech delta event.
     public init(audio: String) {
         self.type = "speech.audio.delta"
         self.audio = audio
     }
 }
 
+/// The final OpenAI speech SSE event carrying token usage.
 public struct OpenAISpeechAudioDoneEvent: Codable, Equatable, Sendable {
     public let type: String
     public let usage: OpenAISpeechUsage
 
+    /// Wraps final speech usage in a completion event.
     public init(usage: OpenAISpeechUsage) {
         self.type = "speech.audio.done"
         self.usage = usage
     }
 }
 
+/// Encoded audio formats accepted by the Mistral speech request shape.
 public enum MistralSpeechOutputFormat: String, Codable, CaseIterable, Sendable {
     case pcm, wav, mp3, flac, opus
 }
 
+/// Mistral-style speech fields, including optional voice and reference audio.
 public struct MistralSpeechRequest: Codable, Equatable, Sendable {
     public let input: String
     public let model: String?
@@ -141,8 +161,10 @@ public struct MistralSpeechRequest: Codable, Equatable, Sendable {
     public let promptCacheKey: String?
     public let voiceID: String?
     public let refAudio: String?
+    public let refText: String?
     public let responseFormat: MistralSpeechOutputFormat?
 
+    /// Creates a Mistral speech request with optional voice and reference inputs.
     public init(
         input: String,
         model: String? = nil,
@@ -151,6 +173,7 @@ public struct MistralSpeechRequest: Codable, Equatable, Sendable {
         promptCacheKey: String? = nil,
         voiceID: String? = nil,
         refAudio: String? = nil,
+        refText: String? = nil,
         responseFormat: MistralSpeechOutputFormat? = nil
     ) {
         self.input = input
@@ -160,9 +183,11 @@ public struct MistralSpeechRequest: Codable, Equatable, Sendable {
         self.promptCacheKey = promptCacheKey
         self.voiceID = voiceID
         self.refAudio = refAudio
+        self.refText = refText
         self.responseFormat = responseFormat
     }
 
+    /// Decodes Mistral speech fields, defaulting an omitted stream flag to false.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         input = try container.decode(String.self, forKey: .input)
@@ -175,6 +200,7 @@ public struct MistralSpeechRequest: Codable, Equatable, Sendable {
         promptCacheKey = try container.decodeIfPresent(String.self, forKey: .promptCacheKey)
         voiceID = try container.decodeIfPresent(String.self, forKey: .voiceID)
         refAudio = try container.decodeIfPresent(String.self, forKey: .refAudio)
+        refText = try container.decodeIfPresent(String.self, forKey: .refText)
         responseFormat = try container.decodeNonNullIfPresent(
             MistralSpeechOutputFormat.self,
             forKey: .responseFormat
@@ -186,14 +212,17 @@ public struct MistralSpeechRequest: Codable, Equatable, Sendable {
         case promptCacheKey = "prompt_cache_key"
         case voiceID = "voice_id"
         case refAudio = "ref_audio"
+        case refText = "ref_text"
         case responseFormat = "response_format"
     }
 }
 
+/// A speech request classified by its OpenAI or Mistral wire shape.
 public enum AudioSpeechRequest: Equatable, Sendable {
     case openAI(OpenAISpeechRequest)
     case mistral(MistralSpeechRequest)
 
+    /// Selects the provider shape from request keys and rejects mixed voice fields.
     public static func decode(from data: Data, decoder: JSONDecoder = JSONDecoder()) throws -> Self {
         let object = try JSONSerialization.jsonObject(with: data)
         guard let dictionary = object as? [String: Any] else {
@@ -205,7 +234,7 @@ public enum AudioSpeechRequest: Equatable, Sendable {
         // Mistral explicitly allows additional request properties.
         let openAIKeys: Set<String> = ["voice"]
         let mistralKeys: Set<String> = [
-            "voice_id", "ref_audio", "metadata", "prompt_cache_key", "stream",
+            "voice_id", "ref_audio", "ref_text", "metadata", "prompt_cache_key", "stream",
         ]
         let hasOpenAIKeys = !keys.isDisjoint(with: openAIKeys)
         let hasMistralKeys = !keys.isDisjoint(with: mistralKeys)
@@ -219,10 +248,12 @@ public enum AudioSpeechRequest: Equatable, Sendable {
     }
 }
 
+/// A speech body is not an object or combines incompatible provider fields.
 public enum AudioSpeechRequestError: LocalizedError, Equatable {
     case expectedObject
     case mixedProtocols
 
+    /// User-facing explanation for this error.
     public var errorDescription: String? {
         switch self {
         case .expectedObject: "The speech request must be a JSON object."
@@ -232,9 +263,11 @@ public enum AudioSpeechRequestError: LocalizedError, Equatable {
     }
 }
 
+/// A Mistral-style response containing encoded speech audio.
 public struct MistralSpeechResponse: Codable, Equatable, Sendable {
     public let audioData: String
 
+    /// Wraps encoded speech audio in the Mistral response shape.
     public init(audioData: String) { self.audioData = audioData }
 
     enum CodingKeys: String, CodingKey {
@@ -242,6 +275,7 @@ public struct MistralSpeechResponse: Codable, Equatable, Sendable {
     }
 }
 
+/// Optional usage and service-tier fields returned with Mistral-style speech.
 public struct MistralUsageInfo: Codable, Equatable, Sendable {
     public let promptAudioSeconds: Int?
     public let promptTokens: Int
@@ -254,6 +288,7 @@ public struct MistralUsageInfo: Codable, Equatable, Sendable {
     public let promptTokenDetails: OpenAIJSONValue?
     public let numCachedTokens: Int?
 
+    /// Records optional Mistral speech usage and service-tier fields.
     public init(
         promptAudioSeconds: Int? = nil,
         promptTokens: Int = 0,
@@ -292,10 +327,12 @@ public struct MistralUsageInfo: Codable, Equatable, Sendable {
     }
 }
 
+/// A Mistral SSE event carrying a chunk of encoded speech audio.
 public struct MistralSpeechAudioDeltaEvent: Codable, Equatable, Sendable {
     public let type: String
     public let audioData: String
 
+    /// Wraps one encoded audio fragment in a Mistral delta event.
     public init(audioData: String) {
         self.type = "speech.audio.delta"
         self.audioData = audioData
@@ -307,35 +344,42 @@ public struct MistralSpeechAudioDeltaEvent: Codable, Equatable, Sendable {
     }
 }
 
+/// The final Mistral speech SSE event carrying usage metadata.
 public struct MistralSpeechAudioDoneEvent: Codable, Equatable, Sendable {
     public let type: String
     public let usage: MistralUsageInfo
 
+    /// Wraps Mistral speech usage in a completion event.
     public init(usage: MistralUsageInfo) {
         self.type = "speech.audio.done"
         self.usage = usage
     }
 }
 
+/// Distinguishes an omitted update field from explicit JSON null and a value.
 public enum PatchField<Value: Codable & Equatable & Sendable>: Equatable, Sendable {
     case missing
     case null
     case value(Value)
 }
 
+/// Metadata and sample audio for creating a managed local voice.
 public struct VoiceCreateRequest: Codable, Equatable, Sendable {
     public let name: String
     public let sampleAudio: String
     public let slug: String?
     public let languages: [String]
     public let gender: String?
+    /// Optional descriptive age in years; local creation remains unsupported.
     public let age: Int?
     public let tags: [String]?
     public let color: String?
     public let description: String?
+    /// Provider metadata accepted in the wire shape; custom voice creation is unsupported locally.
     public let retentionNotice: Int
     public let sampleFilename: String?
 
+    /// Creates a voice with sample audio and optional descriptive metadata.
     public init(
         name: String,
         sampleAudio: String,
@@ -362,6 +406,7 @@ public struct VoiceCreateRequest: Codable, Equatable, Sendable {
         self.sampleFilename = sampleFilename
     }
 
+    /// Decodes a voice creation body, applying defaults to language and retention fields.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
@@ -373,10 +418,11 @@ public struct VoiceCreateRequest: Codable, Equatable, Sendable {
         tags = try container.decodeIfPresent([String].self, forKey: .tags)
         color = try container.decodeIfPresent(String.self, forKey: .color)
         description = try container.decodeIfPresent(String.self, forKey: .description)
-        retentionNotice = try container.decodeNonNullIfPresent(
-            Int.self,
-            forKey: .retentionNotice
-        ) ?? 30
+        retentionNotice =
+            try container.decodeNonNullIfPresent(
+                Int.self,
+                forKey: .retentionNotice
+            ) ?? 30
         sampleFilename = try container.decodeIfPresent(String.self, forKey: .sampleFilename)
     }
 
@@ -388,6 +434,7 @@ public struct VoiceCreateRequest: Codable, Equatable, Sendable {
     }
 }
 
+/// Partial voice metadata update with omission and null kept distinct.
 public struct VoiceUpdateRequest: Codable, Equatable, Sendable {
     public let name: PatchField<String>
     public let languages: PatchField<[String]>
@@ -396,6 +443,7 @@ public struct VoiceUpdateRequest: Codable, Equatable, Sendable {
     public let tags: PatchField<[String]>
     public let description: PatchField<String>
 
+    /// Creates a partial voice update; omitted fields remain unchanged.
     public init(
         name: PatchField<String> = .missing,
         languages: PatchField<[String]> = .missing,
@@ -412,6 +460,7 @@ public struct VoiceUpdateRequest: Codable, Equatable, Sendable {
         self.description = description
     }
 
+    /// Decodes patch fields while distinguishing omission from explicit JSON null.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try Self.decodePatch(String.self, key: .name, from: container)
@@ -422,6 +471,7 @@ public struct VoiceUpdateRequest: Codable, Equatable, Sendable {
         description = try Self.decodePatch(String.self, key: .description, from: container)
     }
 
+    /// Encodes only supplied patch fields, retaining explicit null values.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try Self.encodePatch(name, key: .name, to: &container)
@@ -437,8 +487,12 @@ public struct VoiceUpdateRequest: Codable, Equatable, Sendable {
         key: CodingKeys,
         from container: KeyedDecodingContainer<CodingKeys>
     ) throws -> PatchField<Value> {
-        guard container.contains(key) else { return .missing }
-        if try container.decodeNil(forKey: key) { return .null }
+        guard container.contains(key) else {
+            return .missing
+        }
+        if try container.decodeNil(forKey: key) {
+            return .null
+        }
         return .value(try container.decode(Value.self, forKey: key))
     }
 
@@ -459,6 +513,7 @@ public struct VoiceUpdateRequest: Codable, Equatable, Sendable {
     }
 }
 
+/// Voice metadata returned by the local voice management routes.
 public struct VoiceResponse: Codable, Equatable, Sendable {
     public let name: String
     public let id: String
@@ -467,13 +522,16 @@ public struct VoiceResponse: Codable, Equatable, Sendable {
     public let slug: String?
     public let languages: [String]
     public let gender: String?
+    /// Optional descriptive age in years from voice metadata.
     public let age: Int?
     public let tags: [String]?
     public let color: String?
     public let description: String?
+    /// Compatibility metadata in the wire response; local preset voices are read-only.
     public let retentionNotice: Int
     public let trimmedSeconds: Double?
 
+    /// Creates a voice response with an absolute creation date and metadata.
     public init(
         name: String,
         id: String,
@@ -504,6 +562,7 @@ public struct VoiceResponse: Codable, Equatable, Sendable {
         self.trimmedSeconds = trimmedSeconds
     }
 
+    /// Decodes voice metadata and requires an ISO 8601 creation date.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
@@ -521,6 +580,7 @@ public struct VoiceResponse: Codable, Equatable, Sendable {
         trimmedSeconds = try container.decodeIfPresent(Double.self, forKey: .trimmedSeconds)
     }
 
+    /// Encodes the creation date as ISO 8601 and emits voice metadata fields.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
@@ -544,10 +604,14 @@ public struct VoiceResponse: Codable, Equatable, Sendable {
 
     private static func decodeDate(_ value: String) throws -> Date {
         let regular = ISO8601DateFormatter()
-        if let date = regular.date(from: value) { return date }
+        if let date = regular.date(from: value) {
+            return date
+        }
         let fractional = ISO8601DateFormatter()
         fractional.formatOptions.insert(.withFractionalSeconds)
-        if let date = fractional.date(from: value) { return date }
+        if let date = fractional.date(from: value) {
+            return date
+        }
         throw DecodingError.dataCorrupted(
             .init(codingPath: [], debugDescription: "Invalid ISO-8601 date: \(value)")
         )
@@ -562,13 +626,18 @@ public struct VoiceResponse: Codable, Equatable, Sendable {
     }
 }
 
+/// A page of voice records and its pagination counts.
 public struct VoiceListResponse: Codable, Equatable, Sendable {
     public let items: [VoiceResponse]
+    /// Number of matching voices before pagination.
     public let total: Int
+    /// One-based page number derived from the requested offset and limit.
     public let page: Int
+    /// Maximum number of voices requested for this page.
     public let pageSize: Int
     public let totalPages: Int
 
+    /// Creates a page of voice records with total and page counts.
     public init(items: [VoiceResponse], total: Int, page: Int, pageSize: Int, totalPages: Int) {
         self.items = items
         self.total = total
@@ -584,16 +653,22 @@ public struct VoiceListResponse: Codable, Equatable, Sendable {
     }
 }
 
+/// One string or integer segment of a Mistral-style validation path.
 public enum ValidationLocation: Codable, Equatable, Sendable {
     case string(String)
     case integer(Int)
 
+    /// Decodes a validation path component as a string or integer.
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let value = try? container.decode(String.self) { self = .string(value) }
-        else { self = .integer(try container.decode(Int.self)) }
+        if let value = try? container.decode(String.self) {
+            self = .string(value)
+        } else {
+            self = .integer(try container.decode(Int.self))
+        }
     }
 
+    /// Encodes a path segment as its original string or integer value.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -603,6 +678,7 @@ public enum ValidationLocation: Codable, Equatable, Sendable {
     }
 }
 
+/// One Mistral-style validation error with its field path and optional input.
 public struct ValidationErrorDetail: Codable, Equatable, Sendable {
     public let loc: [ValidationLocation]
     public let msg: String
@@ -610,6 +686,7 @@ public struct ValidationErrorDetail: Codable, Equatable, Sendable {
     public let input: OpenAIJSONValue?
     public let ctx: [String: OpenAIJSONValue]?
 
+    /// Creates one validation error with a location, message, and type.
     public init(
         loc: [ValidationLocation],
         msg: String,
@@ -625,9 +702,11 @@ public struct ValidationErrorDetail: Codable, Equatable, Sendable {
     }
 }
 
+/// The validation error envelope returned by Mistral-style routes.
 public struct HTTPValidationError: Codable, Equatable, Sendable {
     public let detail: [ValidationErrorDetail]?
 
+    /// Creates a validation error envelope with optional details.
     public init(detail: [ValidationErrorDetail]? = nil) { self.detail = detail }
 }
 
@@ -640,6 +719,7 @@ public struct MistralError: Codable, Equatable, Sendable {
     public let param: String?
     public let code: String?
 
+    /// Creates a non-validation Mistral error with optional parameter and code.
     public init(
         message: String,
         type: String = "invalid_request_error",
@@ -654,15 +734,17 @@ public struct MistralError: Codable, Equatable, Sendable {
     }
 }
 
-private extension KeyedDecodingContainer {
+extension KeyedDecodingContainer {
     /// Decode an optional schema property while still rejecting an explicit
     /// JSON `null`. `decodeIfPresent` intentionally treats missing and null as
     /// the same value, which is too permissive for defaulted non-null fields.
-    func decodeNonNullIfPresent<Value: Decodable>(
+    fileprivate func decodeNonNullIfPresent<Value: Decodable>(
         _ type: Value.Type,
         forKey key: Key
     ) throws -> Value? {
-        guard contains(key) else { return nil }
+        guard contains(key) else {
+            return nil
+        }
         guard try !decodeNil(forKey: key) else {
             throw DecodingError.valueNotFound(
                 Value.self,

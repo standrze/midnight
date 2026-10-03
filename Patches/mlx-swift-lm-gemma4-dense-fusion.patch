@@ -1,0 +1,30 @@
+--- a/Libraries/MLXLLM/Models/Gemma4Text.swift
++++ b/Libraries/MLXLLM/Models/Gemma4Text.swift
+@@ -403,8 +403,15 @@
+ }
+ 
+ // MARK: - MLP
++
++/// Per-generation override for paired benchmarks on one loaded model.
++public enum Gemma4RuntimeTuning {
++    @TaskLocal public static var useDenseFusion: Bool? = nil
++    @TaskLocal public static var useWindowSlicing: Bool? = nil
++}
+ 
+ private class Gemma4MLP: Module {
++    private let fusedActivation = ProcessInfo.processInfo.environment["MIDNIGHT_GEMMA4_DENSE_FUSION"] == "1"
+     @ModuleInfo(key: "gate_proj") var gateProj: Linear
+     @ModuleInfo(key: "up_proj") var upProj: Linear
+     @ModuleInfo(key: "down_proj") var downProj: Linear
+@@ -423,7 +430,10 @@
+     }
+ 
+     func callAsFunction(_ x: MLXArray) -> MLXArray {
+-        downProj(geluApproximate(gateProj(x)) * upProj(x))
++        let gate = gateProj(x)
++        let up = upProj(x)
++        let fuse = Gemma4RuntimeTuning.useDenseFusion ?? fusedActivation
++        return downProj(fuse ? _geluMul(gate, up) : geluApproximate(gate) * up)
+     }
+ }
+ 

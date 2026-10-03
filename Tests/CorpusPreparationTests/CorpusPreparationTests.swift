@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import CorpusPreparationCore
 
 private let fixtures = Bundle.module.url(forResource: "Fixtures", withExtension: nil)!
@@ -23,7 +24,8 @@ private struct Sandbox {
     func cleanup() { try? FileManager.default.removeItem(at: root) }
 }
 private func manifest() throws -> PinnedManifest {
-    try JSONDecoder().decode(PinnedManifest.self, from: Data(contentsOf: fixtures.appendingPathComponent("reference-manifest.json")))
+    try JSONDecoder().decode(
+        PinnedManifest.self, from: Data(contentsOf: fixtures.appendingPathComponent("reference-manifest.json")))
 }
 private func forbiddenDownload(_ url: URL) async throws -> Data {
     Issue.record("Unexpected network request: \(url)")
@@ -37,12 +39,17 @@ private actor Requests {
 @Suite("Native corpus preparation")
 struct CorpusPreparationTests {
     @Test func textMatchesFrozenPythonOutputs() throws {
-        let cases = try JSONDecoder().decode([TextGolden].self, from: Data(contentsOf: fixtures.appendingPathComponent("text-goldens.json")))
+        let cases = try JSONDecoder().decode(
+            [TextGolden].self, from: Data(contentsOf: fixtures.appendingPathComponent("text-goldens.json")))
         for item in cases {
-            let (data, characters) = try TextCorpus.payload(data: Data(item.input.utf8), json: item.json,
+            let (data, characters) = try TextCorpus.payload(
+                data: Data(item.input.utf8), json: item.json,
                 samples: item.samples, targetCharacters: item.target)
             #expect(data == Data(item.expected.utf8), "Golden mismatch: \(item.name)")
-            #expect(item.stdout == "samples=\(item.samples) characters=\(characters)\nsource_sha256=\(corpusSHA256(Data(item.input.utf8)))\noutput_sha256=\(corpusSHA256(data))\n")
+            #expect(
+                item.stdout
+                    == "samples=\(item.samples) characters=\(characters)\nsource_sha256=\(corpusSHA256(Data(item.input.utf8)))\noutput_sha256=\(corpusSHA256(data))\n"
+            )
         }
     }
     @Test func textErrorsAndOutputProtection() throws {
@@ -52,7 +59,8 @@ struct CorpusPreparationTests {
         #expect(throws: CorpusError.self) { try TextCorpus.payload(data: Data("tiny".utf8), json: false, samples: 2) }
         #expect(throws: CorpusError.self) { try TextCorpus.payload(data: Data(), json: false, samples: 0) }
         #expect(throws: CorpusError.self) { try TextCorpus.payload(data: Data(), json: false, targetCharacters: 127) }
-        let box = try Sandbox(); defer { box.cleanup() }
+        let box = try Sandbox()
+        defer { box.cleanup() }
         let source = box.root.appendingPathComponent("source.txt")
         try Data("preserve me".utf8).write(to: source)
         let alias = box.root.appendingPathComponent("alias.txt")
@@ -66,8 +74,10 @@ struct CorpusPreparationTests {
         #expect(try String(contentsOf: box.output, encoding: .utf8).contains("preserve me"))
     }
     @Test func exactReferenceFilesAndReuse() async throws {
-        let box = try Sandbox(); defer { box.cleanup() }
-        let result = try await ReferenceCorpus.prepare(output: box.output, cache: box.cache, offline: true, manifest: manifest(), fetch: forbiddenDownload)
+        let box = try Sandbox()
+        defer { box.cleanup() }
+        let result = try await ReferenceCorpus.prepare(
+            output: box.output, cache: box.cache, offline: true, manifest: manifest(), fetch: forbiddenDownload)
         let expected = fixtures.appendingPathComponent("reference-expected")
         let paths = try FileManager.default.contentsOfDirectory(at: expected, includingPropertiesForKeys: nil)
         #expect(paths.count == 6)
@@ -76,57 +86,76 @@ struct CorpusPreparationTests {
             let actual = box.output.appendingPathComponent(path.lastPathComponent)
             #expect(try Data(contentsOf: actual) == Data(contentsOf: path), "Mismatch: \(path.lastPathComponent)")
             #expect(result.files[path.lastPathComponent] == corpusSHA256(try Data(contentsOf: path)))
-            dates[path.lastPathComponent] = try actual.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+            dates[path.lastPathComponent] = try actual.resourceValues(forKeys: [.contentModificationDateKey])
+                .contentModificationDate
         }
-        let again = try await ReferenceCorpus.prepare(output: box.output, offline: true, manifest: manifest(), fetch: forbiddenDownload)
+        let again = try await ReferenceCorpus.prepare(
+            output: box.output, offline: true, manifest: manifest(), fetch: forbiddenDownload)
         #expect(again.sha256 == result.sha256)
         for (name, date) in dates {
-            #expect(try box.output.appendingPathComponent(name).resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate == date)
+            #expect(
+                try box.output.appendingPathComponent(name).resourceValues(forKeys: [.contentModificationDateKey])
+                    .contentModificationDate == date)
         }
     }
     @Test func corruptCacheNeverFallsBackToDownload() async throws {
-        let box = try Sandbox(); defer { box.cleanup() }
+        let box = try Sandbox()
+        defer { box.cleanup() }
         try Data("tampered".utf8).write(to: box.cache.appendingPathComponent("gsm8k-source.jsonl"))
         await #expect(throws: CorpusError.self) {
-            try await ReferenceCorpus.prepare(output: box.output, cache: box.cache, manifest: manifest(), fetch: forbiddenDownload)
+            try await ReferenceCorpus.prepare(
+                output: box.output, cache: box.cache, manifest: manifest(), fetch: forbiddenDownload)
         }
         #expect(!FileManager.default.fileExists(atPath: box.output.path))
     }
     @Test func missingOfflineInputsNeverDownload() async throws {
-        let box = try Sandbox(); defer { box.cleanup() }
+        let box = try Sandbox()
+        defer { box.cleanup() }
         await #expect(throws: CorpusError.self) {
-            try await ReferenceCorpus.prepare(output: box.output, offline: true, manifest: manifest(), fetch: forbiddenDownload)
+            try await ReferenceCorpus.prepare(
+                output: box.output, offline: true, manifest: manifest(), fetch: forbiddenDownload)
         }
         #expect(!FileManager.default.fileExists(atPath: box.output.path))
     }
     @Test func conflictsArePreflightedBeforeAnyWrites() async throws {
-        let box = try Sandbox(); defer { box.cleanup() }
+        let box = try Sandbox()
+        defer { box.cleanup() }
         try FileManager.default.createDirectory(at: box.output, withIntermediateDirectories: true)
         let conflict = box.output.appendingPathComponent("provenance.json")
         try Data("existing work".utf8).write(to: conflict)
         await #expect(throws: CorpusError.self) {
-            try await ReferenceCorpus.prepare(output: box.output, cache: box.cache, offline: true, manifest: manifest(), fetch: forbiddenDownload)
+            try await ReferenceCorpus.prepare(
+                output: box.output, cache: box.cache, offline: true, manifest: manifest(), fetch: forbiddenDownload)
         }
         #expect(try FileManager.default.contentsOfDirectory(atPath: box.output.path) == ["provenance.json"])
         #expect(try String(contentsOf: conflict, encoding: .utf8) == "existing work")
     }
     @Test func derivedAndCombinedHashesMustMatch() async throws {
-        let box = try Sandbox(); defer { box.cleanup() }
+        let box = try Sandbox()
+        defer { box.cleanup() }
         var invalid = try manifest()
         invalid.sources[0].corpus_sha256 = String(repeating: "0", count: 64)
         await #expect(throws: CorpusError.self) {
-            try await ReferenceCorpus.prepare(output: box.output, cache: box.cache, offline: true, manifest: invalid, fetch: forbiddenDownload)
+            try await ReferenceCorpus.prepare(
+                output: box.output, cache: box.cache, offline: true, manifest: invalid, fetch: forbiddenDownload)
         }
-        invalid = try manifest(); invalid.combined_sha256 = String(repeating: "0", count: 64)
+        invalid = try manifest()
+        invalid.combined_sha256 = String(repeating: "0", count: 64)
         await #expect(throws: CorpusError.self) {
-            try await ReferenceCorpus.prepare(output: box.output, cache: box.cache, offline: true, manifest: invalid, fetch: forbiddenDownload)
+            try await ReferenceCorpus.prepare(
+                output: box.output, cache: box.cache, offline: true, manifest: invalid, fetch: forbiddenDownload)
         }
         #expect(!FileManager.default.fileExists(atPath: box.output.path))
     }
     @Test func downloadsUsePinnedURLsAndVerifyBeforeWriting() async throws {
-        let box = try Sandbox(); defer { box.cleanup() }
-        let pins = try manifest(), requests = Requests()
-        let inputs = try Dictionary(uniqueKeysWithValues: pins.sources.map { ($0.url, try Data(contentsOf: box.cache.appendingPathComponent("\($0.name)-source.jsonl"))) })
+        let box = try Sandbox()
+        defer { box.cleanup() }
+        let pins = try manifest()
+        let requests = Requests()
+        let inputs = try Dictionary(
+            uniqueKeysWithValues: pins.sources.map {
+                ($0.url, try Data(contentsOf: box.cache.appendingPathComponent("\($0.name)-source.jsonl")))
+            })
         let result = try await ReferenceCorpus.prepare(output: box.output, manifest: pins) { url in
             await requests.record(url)
             return try #require(inputs[url])
@@ -140,11 +169,18 @@ struct CorpusPreparationTests {
         #expect(!FileManager.default.fileExists(atPath: badOutput.path))
     }
     @Test func rejectsReorderedMissingOrMalformedRecords() throws {
-        let original = try String(contentsOf: fixtures.appendingPathComponent("reference-cache/mbpp-source.jsonl"), encoding: .utf8)
+        let original = try String(
+            contentsOf: fixtures.appendingPathComponent("reference-cache/mbpp-source.jsonl"), encoding: .utf8)
         let lines = original.split(separator: "\n")
-        #expect(throws: CorpusError.self) { try ReferenceCorpus.payload(name: "mbpp", data: Data(lines.reversed().joined(separator: "\n").utf8)) }
-        #expect(throws: CorpusError.self) { try ReferenceCorpus.payload(name: "mbpp", data: Data("{\"task_id\":true}".utf8)) }
-        #expect(throws: CorpusError.self) { try ReferenceCorpus.payload(name: "gsm8k", data: Data("{\"question\":\"a\",\"answer\":\"b\"}".utf8)) }
+        #expect(throws: CorpusError.self) {
+            try ReferenceCorpus.payload(name: "mbpp", data: Data(lines.reversed().joined(separator: "\n").utf8))
+        }
+        #expect(throws: CorpusError.self) {
+            try ReferenceCorpus.payload(name: "mbpp", data: Data("{\"task_id\":true}".utf8))
+        }
+        #expect(throws: CorpusError.self) {
+            try ReferenceCorpus.payload(name: "gsm8k", data: Data("{\"question\":\"a\",\"answer\":\"b\"}".utf8))
+        }
         #expect(throws: CorpusError.self) { try ReferenceCorpus.payload(name: "other", data: Data()) }
     }
     @Test func bundledPinsRemainOriginal() throws {
@@ -153,9 +189,14 @@ struct CorpusPreparationTests {
         #expect(pins.combined_sha256 == "5fc84a9794338a138e7284f415018323aa6bfec54227d09db8a95ad562e532f6")
     }
     @Test func portableHashMatchesKnownAnswersAndPlatformHash() {
-        let vectors = [("", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"),
-                       ("abc", "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"),
-                       (String(repeating: "a", count: 1_000_000), "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0")]
+        let vectors = [
+            ("", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"),
+            ("abc", "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"),
+            (
+                String(repeating: "a", count: 1_000_000),
+                "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0"
+            ),
+        ]
         for (input, hash) in vectors {
             #expect(portableCorpusSHA256(Data(input.utf8)) == hash)
             #expect(corpusSHA256(Data(input.utf8)) == hash)

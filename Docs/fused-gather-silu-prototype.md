@@ -2,7 +2,7 @@
 
 This opt-in synthetic benchmark evaluates one Metal kernel for Laguna's
 256-expert, top-8, input-width-2048, hidden-width-512 affine-Q4/group-64 graph.
-The same kernel source and wrapper are used by `model-runner-metal-quant-bench`
+The same kernel source and wrapper are used by `wick-metal-quant-bench`
 and a narrowly scoped runner experiment. Default execution remains unchanged;
 `MODEL_RUNNER_LAGUNA_FUSED_GATHER_SILU=1` opts Metal inference into the experiment.
 The public `LagunaRuntimeTuning.useFusedGateUpSilu` optional override takes precedence,
@@ -26,12 +26,12 @@ After building the Metal benchmark in release mode, run the two order controls
 in separate processes with other GPU work stopped:
 
 ```sh
-../midnight-quantization/.build/release/model-runner-metal-quant-bench \
+../wick/.build/release/wick-metal-quant-bench \
   --fused-gather-silu-ab --warmup 16 --iterations 20 \
   --queue-depth 32 --queue-rounds 9 \
   --fused-gather-silu-output /private/tmp/fused-gather-silu-ab.json
 
-../midnight-quantization/.build/release/model-runner-metal-quant-bench \
+../wick/.build/release/wick-metal-quant-bench \
   --fused-gather-silu-ab --fused-gather-silu-candidate-first \
   --warmup 16 --iterations 20 --queue-depth 32 --queue-rounds 9 \
   --fused-gather-silu-output /private/tmp/fused-gather-silu-ba.json

@@ -1,4 +1,0 @@
-Laguna decode-graph interleaved Metal A/B
-workload	first	second	first_total_ms	second_total_ms	second_total_speedup	first_execution_ms	second_execution_ms	second_execution_speedup
-sigmoid-topk8-router	current-eager	compiled-fused	0.022	0.015	1.459x	0.019	0.013	1.417x
-moe-weighted-shared-residual	current-split	compiled-fused	0.011	0.009	1.320x	0.010	0.007	1.344x

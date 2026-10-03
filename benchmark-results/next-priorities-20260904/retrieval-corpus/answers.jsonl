@@ -1,9 +1,0 @@
-{"id":"retrieval-est4096-pos10","kind":"exact","answer":"V8df5207d17ff"}
-{"id":"retrieval-est4096-pos50","kind":"exact","answer":"V11f0e09862de"}
-{"id":"retrieval-est4096-pos90","kind":"exact","answer":"Vba2951d8449b"}
-{"id":"retrieval-est16384-pos10","kind":"exact","answer":"V191b70e985e1"}
-{"id":"retrieval-est16384-pos50","kind":"exact","answer":"Vda378bbd026a"}
-{"id":"retrieval-est16384-pos90","kind":"exact","answer":"Vc0224154c63a"}
-{"id":"retrieval-est32768-pos10","kind":"exact","answer":"V9bb7022568a4"}
-{"id":"retrieval-est32768-pos50","kind":"exact","answer":"V667ed4e32a92"}
-{"id":"retrieval-est32768-pos90","kind":"exact","answer":"Ve46fc9d6adb2"}

@@ -1,0 +1,150 @@
+--- a/Libraries/MLXLMCommon/Evaluate.swift
++++ b/Libraries/MLXLMCommon/Evaluate.swift
+@@ -2627,6 +2627,9 @@
+ public enum Generation: Sendable {
+     /// A generated text chunk as a String.
+     case chunk(String)
++
++    /// Model-emitted reasoning, separate from public answer content.
++    case reasoning(String)
+ 
+     /// Completion information summarizing token counts and performance metrics.
+     case info(GenerateCompletionInfo)
+@@ -2640,6 +2643,7 @@
+     /// Generated text or nil
+     public var chunk: String? {
+         switch self {
++        case .reasoning: nil
+         case .chunk(let string): string
+         case .info: nil
+         case .toolCall: nil
+@@ -2650,6 +2654,7 @@
+     /// Completion info or nil
+     public var info: GenerateCompletionInfo? {
+         switch self {
++        case .reasoning: nil
+         case .chunk: nil
+         case .info(let info): info
+         case .toolCall: nil
+@@ -2660,6 +2665,7 @@
+     /// Tool call or nil
+     public var toolCall: ToolCall? {
+         switch self {
++        case .reasoning: nil
+         case .chunk: nil
+         case .info: nil
+         case .toolCall(let toolCall): toolCall
+@@ -2670,6 +2676,7 @@
+     /// Rejected tool call or nil.
+     public var rejectedToolCall: RejectedToolCall? {
+         switch self {
++        case .reasoning: nil
+         case .chunk: nil
+         case .info: nil
+         case .toolCall: nil
+@@ -2852,10 +2859,10 @@
+         emit: (sending Generation) -> AsyncStream<Generation>.Continuation.YieldResult
+     ) -> TokenLoopDisposition {
+         switch event {
+-        case .reasoning:
+-            // The public Generation stream intentionally exposes only response
+-            // text and tool calls. Protocol-aware clients consume reasoning via
+-            // the package-level TokenStreamDecoder contract.
++        case .reasoning(let text):
++            if case .terminated = emit(.reasoning(text)) {
++                return .cancelled
++            }
+             return .more
+ 
+         case .response(let response):
+--- a/Libraries/MLXFoundationModels/MLXLanguageModel.swift
++++ b/Libraries/MLXFoundationModels/MLXLanguageModel.swift
+@@ -1794,6 +1794,8 @@
+                 switch generation {
+                 case .chunk(let text):
+                     await Self.emit(
+                         text: text, entryID: entryID, destination: .response, into: channel)
++                case .reasoning:
++                    break
+                 case .info(let info):
+                     // MLX-LM emits one .info event at end-of-generation with
+                     // authoritative scalar token counts (`totalPromptTokenCount`
+--- a/Libraries/MLXLMCommon/Tool/TokenStreamDecoder.swift
++++ b/Libraries/MLXLMCommon/Tool/TokenStreamDecoder.swift
+@@ -56,6 +56,7 @@
+     private var detokenizer: NaiveStreamingDetokenizer
+     private let toolCallProcessor: ToolCallProcessor
+     private var stopStringFilter: StopStringFilter
++    private var reasoningEmitter: ReasoningEventEmitter?
+ 
+     init(
+         tokenizer: any Tokenizer,
+@@ -63,12 +64,21 @@
+         tools: [[String: any Sendable]]?,
+         stopStrings: Set<String>
+     ) {
++        // Gemma's template leaves the thought opener for the model to emit.
++        self.reasoningEmitter = format == .gemma4
++            ? ReasoningEventEmitter(
++                config: .init(
++                    startDelimiter: "<|channel>thought", endDelimiter: "<channel|>",
++                    promptStrategy: .templateFlag(key: "enable_thinking", defaultOn: false)),
++                primedInside: false)
++            : nil
+         self.detokenizer = NaiveStreamingDetokenizer(tokenizer: tokenizer)
+         self.toolCallProcessor = ToolCallProcessor(format: format, tools: tools)
+         self.stopStringFilter = StopStringFilter(stopStrings: stopStrings)
+     }
+ 
+     var rejectedToolCallCount: Int { toolCallProcessor.rejectedToolCallCount }
++    var isInsideReasoning: Bool { reasoningEmitter?.isInsideReasoning ?? false }
+ 
+     mutating func push(_ token: Int, emit: (TokenStreamEvent) -> Bool) -> Bool {
+         detokenizer.append(token: token)
+@@ -76,7 +86,7 @@
+ 
+         let result = stopStringFilter.process(chunk)
+         if let text = result.text,
+-            !emitOutputs(toolCallProcessor.processChunkOutputs(text), emit: emit)
++            !processText(text, emit: emit)
+         {
+             return false
+         }
+@@ -89,14 +99,36 @@
+ 
+     mutating func finish(emit: (TokenStreamEvent) -> Bool) -> Bool {
+         if let text = stopStringFilter.finish(),
+-            !emitOutputs(toolCallProcessor.processChunkOutputs(text), emit: emit)
++            !processText(text, emit: emit)
+         {
+             return false
+         }
+ 
++        if let segments = reasoningEmitter?.finalize(), !emitSegments(segments, emit: emit) {
++            return false
++        }
+         return emitOutputs(toolCallProcessor.processEOSOutputs(), emit: emit)
+     }
+ 
++    private mutating func processText(_ text: String, emit: (TokenStreamEvent) -> Bool) -> Bool {
++        guard let segments = reasoningEmitter?.process(text) else {
++            return emitOutputs(toolCallProcessor.processChunkOutputs(text), emit: emit)
++        }
++        return emitSegments(segments, emit: emit)
++    }
++
++    private func emitSegments(_ segments: [ReasoningEventEmitter.Segment], emit: (TokenStreamEvent) -> Bool) -> Bool {
++        for segment in segments {
++            switch segment {
++            case .reasoning(let text):
++                if !emit(.reasoning(text)) { return false }
++            case .response(let text):
++                if !emitOutputs(toolCallProcessor.processChunkOutputs(text), emit: emit) { return false }
++            }
++        }
++        return true
++    }
++
+     /// Maps ordered processor outputs onto stream events, keeping response text,
+     /// accepted calls, and rejected calls in the order the model emitted them.
+     private func emitOutputs(

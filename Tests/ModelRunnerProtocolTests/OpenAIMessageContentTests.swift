@@ -18,10 +18,12 @@ struct OpenAIMessageContentTests {
         #expect(request.reasoningEffort == nil)
     }
 
-    @Test("Text parts preserve order and whitespace for each text role",
-          arguments: ["system", "developer", "user", "assistant", "tool"])
+    @Test(
+        "Text parts preserve order and whitespace for each text role",
+        arguments: ["system", "developer", "user", "assistant", "tool"])
     func joinsTextParts(_ role: String) throws {
-        let message = try decode("""
+        let message = try decode(
+            """
             {"role":"\(role)","content":[
               {"type":"text","text":"Hello ","cache_control":{"type":"ephemeral"}},
               {"type":"text","text":"world!\\n"},
@@ -38,8 +40,9 @@ struct OpenAIMessageContentTests {
         #expect(try JSONDecoder().decode(OpenAIMessage.self, from: encoded) == message)
     }
 
-    @Test("String, null, omitted, and empty array content remain distinct",
-          arguments: [#""plain text""#, "null", "[]", ""])
+    @Test(
+        "String, null, omitted, and empty array content remain distinct",
+        arguments: [#""plain text""#, "null", "[]", ""])
     func handlesBasicContent(_ content: String) throws {
         let field = content.isEmpty ? "" : ",\"content\":\(content)"
         let message = try decode("{\"role\":\"assistant\"\(field)}")
@@ -47,10 +50,12 @@ struct OpenAIMessageContentTests {
         #expect(message.content == expected)
     }
 
-    @Test("Non-text parts are rejected even when mixed with text",
-          arguments: ["image_url", "input_audio", "file", "refusal", "unknown"])
+    @Test(
+        "Non-text parts are rejected even when mixed with text",
+        arguments: ["image_url", "input_audio", "file", "refusal", "unknown"])
     func rejectsUnsupportedParts(_ type: String) throws {
-        let data = Data("""
+        let data = Data(
+            """
             {"model":"local","messages":[{"role":"user","content":[
               {"type":"text","text":"Keep this"}, {"type":"\(type)","text":"Do not silently drop"}
             ]}]}
@@ -64,11 +69,14 @@ struct OpenAIMessageContentTests {
         }
     }
 
-    @Test("Malformed content parts and scalar values are rejected",
-          arguments: [#"[{"type":"text"}]"#, #"[{"type":"text","text":null}]"#,
-                      #"[{"type":"text","text":42}]"#, #"[{"text":"missing type"}]"#,
-                      #"["plain string"]"#, #"{"type":"text","text":"not an array"}"#,
-                      "42", "true"])
+    @Test(
+        "Malformed content parts and scalar values are rejected",
+        arguments: [
+            #"[{"type":"text"}]"#, #"[{"type":"text","text":null}]"#,
+            #"[{"type":"text","text":42}]"#, #"[{"text":"missing type"}]"#,
+            #"["plain string"]"#, #"{"type":"text","text":"not an array"}"#,
+            "42", "true",
+        ])
     func rejectsMalformedContent(_ content: String) throws {
         #expect(throws: DecodingError.self) {
             try decode("{\"role\":\"user\",\"content\":\(content)}")

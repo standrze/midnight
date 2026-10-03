@@ -5,7 +5,7 @@ actual routed inputs. It does not estimate routed-expert importance by sharing
 one dense activation vector across all experts.
 
 ```sh
-../midnight-quantization/.build/release/model-runner-mistral-activation-stats \
+../wick/.build/release/wick-mistral-activation-stats \
   /absolute/path/Laguna-BF16 \
   /absolute/path/calibration.jsonl \
   /absolute/path/laguna-calibration.safetensors \
@@ -57,13 +57,13 @@ The previous activation stage is deleted only after the next stage completes;
 the owned spool is removed on successful completion or a handled error.
 
 ```sh
-../midnight-quantization/.build/release/model-runner-mistral-activation-stats \
+../wick/.build/release/wick-mistral-activation-stats \
   /absolute/path/Laguna-BF16 /absolute/path/calibration.jsonl \
   /absolute/path/laguna-calibration.safetensors \
   --layerwise --segment-tokens 512 --maximum-total-tokens 65536 \
   --spool-directory /absolute/path/scratch
 
-../midnight-quantization/.build/release/model-runner-laguna-q4r8-rescore \
+../wick/.build/release/wick-laguna-q4r8-rescore \
   /absolute/path/Laguna-BF16 /absolute/path/Laguna-Q4R8-LS2 \
   /absolute/path/Laguna-Q4R8-AWSS \
   --activation-stats /absolute/path/laguna-calibration.safetensors \

@@ -1,13 +1,17 @@
 import Foundation
+import ModelRunnerProtocol
 
+/// A checkpoint voice preset and its stable ID exposed through the API.
 public struct VoxtralPresetVoice: Equatable, Sendable {
     public let id: String
     public let apiID: String
     public let name: String
+    /// Numeric preset position read from the checkpoint's voice map.
     public let position: Int
     public let languages: [String]
     public let gender: String?
 
+    /// Creates a checkpoint voice preset with an API ID and language metadata.
     public init(
         id: String,
         apiID: String,
@@ -25,10 +29,27 @@ public struct VoxtralPresetVoice: Equatable, Sendable {
     }
 }
 
+/// Ordered voice presets read from a Voxtral TTS checkpoint configuration.
 public struct VoxtralVoiceCatalog: Equatable, Sendable {
+    /// Voice records converted to model-card IDs and capability fields.
+    public var modelCardVoices: [ModelCard.Voice] {
+        voices.map {
+            .init(
+                id: $0.apiID, slug: $0.id, name: $0.name,
+                languages: $0.languages, gender: $0.gender,
+                requiresReferenceAudio: $0.id == "clone")
+        }
+    }
     public let voices: [VoxtralPresetVoice]
     public let createdAt: Date
 
+    /// Creates an ordered voice catalog with a creation timestamp.
+    public init(voices: [VoxtralPresetVoice], createdAt: Date = .now) {
+        self.voices = voices
+        self.createdAt = createdAt
+    }
+
+    /// Loads voice presets from a Voxtral TTS checkpoint, returning nil for other layouts.
     public init?(modelDirectory: String, fileManager: FileManager = .default) throws {
         let directory = URL(
             fileURLWithPath: NSString(string: modelDirectory).expandingTildeInPath,
@@ -42,10 +63,14 @@ public struct VoxtralVoiceCatalog: Equatable, Sendable {
             let tokenizer = multimodal["audio_tokenizer_args"] as? [String: Any],
             let voiceMap = tokenizer["voice"] as? [String: Any],
             !voiceMap.isEmpty
-        else { return nil }
+        else {
+            return nil
+        }
 
         let voices = voiceMap.compactMap { id, rawPosition -> VoxtralPresetVoice? in
-            guard let position = (rawPosition as? NSNumber)?.intValue else { return nil }
+            guard let position = (rawPosition as? NSNumber)?.intValue else {
+                return nil
+            }
             return VoxtralPresetVoice(
                 id: id,
                 apiID: Self.stableAPIID(for: id),
@@ -57,7 +82,9 @@ public struct VoxtralVoiceCatalog: Equatable, Sendable {
         }.sorted { lhs, rhs in
             lhs.position == rhs.position ? lhs.id < rhs.id : lhs.position < rhs.position
         }
-        guard voices.count == voiceMap.count else { return nil }
+        guard voices.count == voiceMap.count else {
+            return nil
+        }
 
         let values = try? configurationURL.resourceValues(
             forKeys: [.creationDateKey, .contentModificationDateKey]
@@ -66,6 +93,7 @@ public struct VoxtralVoiceCatalog: Equatable, Sendable {
         self.createdAt = values?.creationDate ?? values?.contentModificationDate ?? .distantPast
     }
 
+    /// Finds a preset by checkpoint slug or case-insensitive API voice ID.
     public func voice(id: String) -> VoxtralPresetVoice? {
         voices.first { $0.id == id || $0.apiID.caseInsensitiveCompare(id) == .orderedSame }
     }
@@ -89,7 +117,9 @@ public struct VoxtralVoiceCatalog: Equatable, Sendable {
         id.split(separator: "_")
             .map { component in
                 let value = String(component)
-                if let language = languageNames[value] { return language }
+                if let language = languageNames[value] {
+                    return language
+                }
                 return value.prefix(1).uppercased() + value.dropFirst()
             }
             .joined(separator: " ")
